@@ -1,0 +1,9 @@
+div#pages input[type=button] {
+    margin: 5px;
+    border-radius: 50%;
+    border: 0;
+}
+
+div#pages span{
+	font-size: 13px;
+}

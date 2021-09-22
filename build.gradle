@@ -1,0 +1,66 @@
+plugins {
+	id 'org.springframework.boot' version '2.4.3'
+	id 'io.spring.dependency-management' version '1.0.11.RELEASE'
+	id 'java'
+}
+
+group = 'br.com.javamoon'
+version = '0.0.1-SNAPSHOT'
+sourceCompatibility = 11
+
+configurations {
+	compileOnly {
+		extendsFrom annotationProcessor
+	}
+}
+
+repositories {
+	mavenCentral()
+}
+
+dependencies {
+	
+	//Databind
+	implementation group: 'com.google.code.gson', name: 'gson', version: '2.7'
+	
+	//Report generation
+	implementation group: 'net.sf.jasperreports', name: 'jasperreports', version: '6.15.0'
+	implementation group: 'com.lowagie', name: 'itext', version: '2.1.7'
+	
+	//Spring boot web
+	implementation 'org.springframework.boot:spring-boot-starter-validation'
+	implementation 'org.springframework.boot:spring-boot-starter-web'
+	implementation 'org.springframework.boot:spring-boot-starter-web-services'
+	
+	//Database
+	implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
+	runtimeOnly 'mysql:mysql-connector-java'
+	implementation group: 'org.flywaydb', name: 'flyway-core', version: '7.15.0'
+	
+	//Security
+	implementation 'org.springframework.boot:spring-boot-starter-security'
+	
+	//Template engine
+	implementation 'org.springframework.boot:spring-boot-starter-thymeleaf'
+	implementation 'org.thymeleaf.extras:thymeleaf-extras-springsecurity5'
+	implementation 'org.thymeleaf.extras:thymeleaf-extras-java8time'
+	runtimeOnly 'nz.net.ultraq.thymeleaf:thymeleaf-layout-dialect'
+	
+	//Devtools
+	compileOnly 'org.projectlombok:lombok'
+	developmentOnly 'org.springframework.boot:spring-boot-devtools'
+	annotationProcessor 'org.projectlombok:lombok'
+	
+	//Test
+	testImplementation 'org.springframework.boot:spring-boot-starter-test'
+	testImplementation 'org.springframework.security:spring-security-test'
+	testRuntime group: 'com.h2database', name: 'h2', version: '1.4.200'
+	
+	//Cloud
+	// https://mvnrepository.com/artifact/com.amazonaws/aws-java-sdk-s3
+	//implementation group: 'com.amazonaws', name: 'aws-java-sdk-s3', version: '1.12.42'
+}
+
+test {
+	useJUnitPlatform()
+}

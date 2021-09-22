@@ -1,0 +1,65 @@
+<!-- TODO test recaptchav3 on localhost -->
+<!DOCTYPE html>
+<html
+  xmlns="http://www.w3.org/1999/xhtml"
+  xmlns:th="http://www.thymeleaf.org">
+  <head>
+    <meta charset="utf-8" />
+    <title>Sorteio de Juízes Militares</title>
+    <link th:href="@{/styles/global.css}" type="text/css" rel="stylesheet" />
+    <link th:href="@{/styles/pagination-search-list.css}" type="text/css" rel="stylesheet" />
+    <script type="text/javascript" th:src="@{/scripts/global.js}"></script>
+    <script type="text/javascript" th:src="@{/scripts/pagination-search-list.js}"></script>
+    <script src="https://www.google.com/recaptcha/api.js" async defer></script>
+    <style layout:fragment="style"></style>
+    <style>
+      body{
+        width: 60% !important;
+      }
+    </style>
+  </head>
+  <body>
+    <header>
+      <div id="appHBar">
+        <a id="appTitle" th:href="@{/gp/home}">Sorteio de Juízes Militares</a>
+        <span id="spanLoggedUser" th:text="${#authentication.principal.user.username}"></span>
+      </div>
+    </header>
+    <!-- end header -->
+    <!-- content -->
+    <div id="vMenu">
+      <ul>
+        <li class="vMenu-sub">
+          <span>Navegação</span>
+          <ul>
+            <li class="vMenu-link"><a th:href="@{/gp/home/0}">Início</a></li>
+          </ul>
+        </li>
+        <li class="vMenu-sub">
+          <span>Gerenciar Militares</span>
+          <ul>
+            <li class="vMenu-link"><a id="newSoldier" th:href="@{/gp/sd/register}">Novo militar</a></li>
+          </ul>
+        </li>
+        <!--
+        <li class="vMenu-sub">
+          <span>Conta</span>
+          <ul>
+            <li class="vMenu-link"><a href="#">Redefinir senha</a></li>
+          </ul>
+        </li>
+        -->
+        <li class="vMenu-sub">
+          <span>Sistema</span>
+          <ul>
+            <li class="vMenu-link"><a th:href="@{/gp/dw}">Sorteios</a></li>
+            <li class="vMenu-link"><a th:href="@{/logout}">Sair</a></li>
+          </ul>
+        </li>
+      </ul>
+    </div>
+    <div id="content" layout:fragment="content"></div>
+    <script layout:fragment="page-script"></script>
+    <!-- footer -->
+  </body>
+</html>

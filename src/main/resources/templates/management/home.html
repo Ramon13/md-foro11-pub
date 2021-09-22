@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html
+  xmlns="http://www.w3.org/1999/xhtml"
+  xmlns:th="http://www.thymeleaf.org" layout:decorate="~{management/layout}">
+  
+  <style layout:fragment="style">
+    div.dw-info{
+      width: 96%;
+      background-color: #f2ffc0;
+      padding: 13px;
+      margin: 5px;
+      border-radius: 7px;
+    }
+    
+    div.dw-info span{
+      color: #636363;
+    }
+  </style>
+  <body>
+    <div layout:fragment="content">
+      <div id=content>
+        <div class="dw-info" th:if="${alert != null}" >
+          <img th:src="@{/images/info.svg}"/>
+          <span th:text="${alert.message}"></span>
+        </div>
+      </div>
+    </div>
+  </body>
+</html>

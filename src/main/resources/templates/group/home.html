@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html
+  xmlns="http://www.w3.org/1999/xhtml"
+  xmlns:th="http://www.thymeleaf.org" layout:decorate="~{group/layout}">
+  
+  <style layout:fragment="style">    
+    fieldset#saveEditSoldierFieldset {
+      margin: 32px auto;
+    }
+    
+    div.s-options{
+      text-align: center;
+    }
+    
+    div.s-options button{
+      margin: 0 10px;
+    }
+    
+    button.edit-soldier, button.add-draw-exclusion{
+      background-color: #fff !important;
+    }
+    
+    button img{
+      width: 12px;
+    }
+  </style>
+  <body>
+    <div layout:fragment="content">
+      <div id="paginationSearchMenu">
+        <div id="pages" class="pages">
+        </div>  
+        <div id="search">
+          <input id="searchInput" th:value='${key}' type="text" placeholder="Pesquisar...">
+          <input id="searchBtn" type="button" value="buscar">
+        </div>
+      </div>
+      
+      <table id="soldiers">
+        <thead>
+          <tr>
+            <th>Nome</th>
+            <th>OM</th>
+            <th>Posto</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr th:each="soldier : ${soldiers}">
+            <td><span th:text="${soldier.name}"></span></td>
+            
+            <td><span th:text="${soldier.militaryOrganization.alias}"></span></td>
+            
+            <td><span th:text="${soldier.militaryRank.alias}"></span></td>
+            
+            <td>
+              <div class="s-options">
+              
+                <button title="Editar informações" class="editSoldier" th:attr="data-sid=${soldier.id}">
+                  <img th:src="@{/images/edit-pencil.svg}" alt="editar informações do militar"/>
+                </button>
+                
+                <button title="Adicionar Impedimentos" class="addDrawExclusion" th:attr="data-sid=${soldier.id}">
+                  <img th:src="@{/images/new-plus.svg}" alt="editar informações do militar"/>
+                </button>
+              </div>
+            </td>
+            
+          </tr>
+          
+        </tbody>
+      </table>
+    </div>
+    
+    <script layout:fragment="page-script" th:inline="javascript">
+    	const pagNext = document.querySelector("#pagNext");
+    	const pagPrev = document.querySelector("#pagPrev");
+    	
+    	let paginationURL = '[(@{${paginationURL}})]';;
+    	
+    	let currentPage = '[(${paginationSearchFilter.selectedPage})]';
+    	const paginationFirstResult = '[(${paginationSearchFilter.firstResult})]';
+    	const paginationLastResult = '[(${paginationSearchFilter.lastResult})]';
+    	const paginationTotal = '[(${paginationSearchFilter.total})]';
+    	
+    	showPages(paginationFirstResult, paginationLastResult, paginationTotal, currentPage);
+    	
+    	addEditSoldierListeners();
+    	addDrawExclusionListeners()
+    	
+    	const searchSoldierURL = '[(@{/gp/home/sd/search/})]';
+    	const searchBtn = document.querySelector("#searchBtn");
+    	
+    	searchBtn.addEventListener('click', function(){
+    		let key = document.querySelector("#searchInput").value;
+    		location.href = searchSoldierURL + key + "/0"; 
+    	});
+    	
+    	function addEditSoldierListeners(){
+    		const editSoldiers = document.querySelectorAll("button.editSoldier");
+    		let sid;
+    		for (let i = 0; i < editSoldiers.length; i++){
+    			editSoldiers[i].addEventListener('click', function(){
+    	    		sid = editSoldiers[i].dataset.sid;
+    	    		location.href = '[(@{/gp/sd/register/edit/})]' + sid;
+    	    	});		
+    		}
+    	}
+    	
+    	function addDrawExclusionListeners(){
+    		const drawExclusionBtns = document.querySelectorAll("button.addDrawExclusion");
+    		let soldierId;
+    		for (let i = 0; i < drawExclusionBtns.length; i++){
+    			drawExclusionBtns[i].addEventListener('click', function(){
+    				soldierId = drawExclusionBtns[i].dataset.sid;
+    				location.href = '[(@{/gp/sd/exclusion/})]' + soldierId;
+    			});
+    		}
+    	} 
+    	
+    </script>
+  </body>
+</html>

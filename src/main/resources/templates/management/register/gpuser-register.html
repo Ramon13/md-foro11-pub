@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html
+  xmlns="http://www.w3.org/1999/xhtml"
+  xmlns:th="http://www.thymeleaf.org" layout:decorate="~{management/layout}">
+  <style layout:fragment="style">
+    form {
+      text-align: center;
+      width: 50%;
+      margin: auto;
+    }
+    button.save-user {
+      background-color: #2EA44F;
+      color: #FFF;
+      padding: 7px;
+      border-radius: 4px;
+    }
+    
+    div.successMsg {
+      background-color: #47ab5b;
+      width: 50%;
+      margin: auto;
+      color: #ffffff;
+      text-align: center;
+      font-family: "Roboto", sans-serif;
+      border-radius: 4px;
+    }
+  </style>
+  <body>
+    <div layout:fragment="content">
+      <div id="content">
+        <fieldset>
+          <legend th:text="${!editMode} ? 'Adicionar Usuário' : 'Editar Informações'"></legend>
+          <div class="successMsg" th:if="${msg != null}">
+            <img th:src="@{/images/check-light.svg}">
+            <span th:text="${msg}"></span>
+          </div>
+          <form id="gpUserForm" method="post" th:object="${gpUser}" 
+            th:action="${!editMode} ? @{/mngmt/gpuser/register/save} : @{/mngmt/gpuser/register/edit}">
+            <input type="hidden" th:field="*{id}"/>
+                    
+            <label for="army">Força Armada* </label><br/>
+            <div th:if="${#fields.hasErrors('army')}">
+              <span class="error" th:errors="*{army}"></span>
+            </div>
+            <select name="army" id="army" th:field="*{army}" class="app-select" th:classappend="${#fields.hasErrors('army')} ? 'error' : ''">
+              <option value='0'>Selecione...</option>
+              <option th:each="army : ${armies}" th:value="${army.id}" th:text="${army.name}"></option>
+            </select><br />
+            
+            <label for="cjm">CJM/Região* </label><br/>
+            <div th:if="${#fields.hasErrors('cjm')}">
+              <span class="error" th:errors="*{cjm}"></span>
+            </div>
+            <select name="cjm" id="cjm" th:field="*{cjm}" class="app-select" th:classappend="${#fields.hasErrors('cjm')} ? 'error' : ''">
+              <option value='0'>Selecione...</option>
+              <option th:each="cjm : ${cjmList}" th:value="${cjm.id}" th:text="${cjm.alias} + '/' + ${cjm.regions}"></option>
+            </select><br />
+            
+            <label>Nome(username)* </label><br/>
+            <div th:if="${#fields.hasErrors('username')}">
+              <span class="error" th:errors="*{username}"></span>
+            </div>
+            <input type="text" name="username" placeholder="username para login no sistema..." th:field="*{username}"
+               class="app-txtinput" th:classappend="${#fields.hasErrors('username')} ? 'error' : ''"/><br/>
+                        
+            <label>E-mail</label><br/>
+            <div th:if="${#fields.hasErrors('email')}">
+              <span class="error" th:errors="*{email}"></span>
+            </div>
+            <input type="text" name="email" placeholder="Email ativo do militar..." th:field="*{email}"
+              class="app-txtinput" th:classappend="${#fields.hasErrors('email')} ? 'error' : ''"/><br/>
+            
+            <label>Senha</label><br/>
+            <div th:if="${#fields.hasErrors('password')}">
+              <span class="error" th:errors="*{password}"></span>
+            </div>
+            <input id="mpassword" type="password" name="password" th:field="*{password}"
+              class="app-txtinput" th:classappend="${#fields.hasErrors('password')} ? 'error' : ''"/><br/>
+            
+            <label>Confirmar Senha</label><br/>
+            <input id="cpassword" type="password" class="app-txtinput" /><br/>
+            
+            <button id="saveBtn" type="button" class="save-user">
+              <span th:text="${!editMode} ? 'Salvar' : 'Editar'"></span>
+            </button>
+          </form>
+        </fieldset>
+      </div>
+    </div>
+    <script layout:fragment="page-script">
+    	var mpassword = document.getElementById("mpassword");
+    	var cpassword = document.getElementById("cpassword");
+    	var uForm = document.getElementById("gpUserForm");
+    	var saveBtn = document.getElementById("saveBtn");
+    	
+    	saveBtn.onclick = function(){
+    		if (mpassword.value === cpassword.value){
+    			uForm.submit();
+    		}
+    		else{
+    			mpassword.classList.add("error");
+    			cpassword.classList.add("error");
+    		}
+    	}
+    </script>
+  </body>
+</html>

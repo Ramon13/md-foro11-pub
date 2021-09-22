@@ -1,0 +1,18 @@
+package br.com.javamoon.domain.soldier;
+
+import java.util.List;
+
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
+import org.springframework.stereotype.Repository;
+
+@Repository
+public interface ArmyRepository extends JpaRepository<Army, Integer>{
+
+	@Query("FROM Soldier s WHERE s.army = :army order by s.militaryRank.rankWeight asc")
+	public List<Soldier> findAllSoldiers(@Param("army") Army army);
+	
+	@Query("FROM Soldier s WHERE s.army = :army and s.enabledForDraw = true order by s.militaryRank.rankWeight asc")
+	public List<Soldier> findAllEnabledSoldiers(@Param("army") Army army);
+}

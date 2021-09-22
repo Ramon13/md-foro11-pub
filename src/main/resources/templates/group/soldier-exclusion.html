@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html
+  xmlns="http://www.w3.org/1999/xhtml"
+  xmlns:th="http://www.thymeleaf.org" layout:decorate="~{group/layout}">
+  <style layout:fragment="style">
+    input[type=date].app-dateinput {
+      width: 20% !important;
+      padding: 2px !important;
+    }
+    
+    h1{
+      font-size: 16px;
+    }
+    
+    div#content textarea {
+      font-family: "Roboto", sans-serif;
+      width: 99%;
+    }
+    
+    button.add-impediments {
+      background-color: #1A88FF;
+      padding: 5px;
+      color: #FFFFFF;
+      border-radius: 4px;
+      float: right;
+    }
+    
+    div.impediment {
+      float: left;
+      padding: 10px;
+      text-align: left;
+      width: 97%;
+      background-color: #E7E9EB;
+      margin: 10px 0;
+    }
+    
+    div.impediment span {
+      font-style: italic;
+      font-size: 12px;
+    }
+    
+    div.impediment p {
+      margin: 3px;
+    }
+    
+    span.sd-name{
+      font-weight: normal;
+    }
+    
+    div.no-exclusions{
+      text-align: center;
+      padding: 50px 0;
+    }
+    
+    div.no-exclusions span{
+        font-family: 'Roboto';
+        font-size: 24px;
+        color: gray;
+    }
+    
+    div.impediment-header{
+      width: 100%;
+    }
+    
+    img.remove-exclusion{
+      float: right;
+      margin: 0 5px;
+    }
+  </style>
+  <body>
+    <div layout:fragment="content">      
+      <h1>Adicionar impedimentos (<span class="sd-name" th:text="${drawExclusion.soldier.name}"></span>)</h1>
+      <form method="post" th:action="@{/gp/sd/exclusion/save}" th:object="${drawExclusion}">
+        <input type="hidden" th:field="*{soldier}">
+        
+        <div th:if="${#fields.hasErrors('startDate')}">
+          <span class="error" th:errors="*{startDate}"></span>
+        </div>
+        <div th:if="${#fields.hasErrors('endDate')}">
+          <span class="error" th:errors="*{endDate}"></span>
+        </div>
+        <span>De: </span>
+        <input type="date" class="app-dateinput" th:field="*{startDate}"
+          th:classappend="${#fields.hasErrors('startDate') ? 'error' : ''}"/>
+        
+        <span>Até: </span>
+        <input type="date" class="app-dateinput" th:field="*{endDate}"
+          th:classappend="${#fields.hasErrors('endDate') ? 'error' : ''}"/><br/>
+        
+        <div th:if="${#fields.hasErrors('message')}">
+          <span class="error" th:errors="*{message}"></span>
+        </div>
+        <textarea rows="5" cols="50" placeholder="Adicionar novo impedimento..." th:field="*{message}"
+          th:classappend="${#fields.hasErrors('message') ? 'error' : ''}"></textarea><br/>
+        <button type="submit" class="add-impediments">
+          <span>Adicionar</span>
+        </button>
+      </form>
+      
+      <br/><br/><br/>
+      
+      <div class="no-exclusions" th:if="${#lists.isEmpty(exclusions)}">
+        <span>
+          Este usuário não possui impedimentos registrados
+        </span>
+      </div>
+        
+      <div class="impediment" th:each="exclusion : ${exclusions}">
+        <div class="impediment-header">
+          <span th:text="'De:' + ${#temporals.format(exclusion.startDate, 'dd/MM/yyyy')} + ';   Até:' + ${#temporals.format(exclusion.endDate, 'dd/MM/yyyy')}"></span>
+          
+          <img class="remove-exclusion" th:src="@{/images/delete.svg}" 
+            th:attr="data-exclusionId=${exclusion.id}"/>
+        </div>
+        
+        <p th:text="${exclusion.message}"></p><br/>
+      </div>
+    </div>
+  </body>
+  <script layout:fragment="page-script" th:inline="javascript">
+  	let exclusionIdInput = document.getElementById("exclusionIdInput");
+  	
+  	addRemoveExclusionListeners();
+  	
+  	function addRemoveExclusionListeners(){
+  		let removeExclusionImgs = document.querySelectorAll('img.remove-exclusion');
+  		
+  		for (let i = 0; i < removeExclusionImgs.length; i++){
+  			removeExclusionImgs[i].addEventListener('click', function(){
+  				let exclusionId = removeExclusionImgs[i].dataset.exclusionid;
+  				submitDeletionRequest(exclusionId);
+  			});
+  		}
+  	}
+  	
+  	function submitDeletionRequest(exclusionId){
+  		if (confirm("Após deletar um impedimento as informações não poderão ser recuperadas. Deseja prosseguir?")){
+  			let tmpForm = document.createElement('form');
+			tmpForm.action = '[(@{/gp/sd/exclusion/delete/})]' + exclusionId;
+			tmpForm.method = 'post';
+			
+			document.body.append(tmpForm);
+			tmpForm.submit();
+  		}
+  	}
+  </script>
+</html>

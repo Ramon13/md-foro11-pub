@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html
+  xmlns="http://www.w3.org/1999/xhtml"
+  xmlns:th="http://www.thymeleaf.org" layout:decorate="~{management/layout}">
+  <style layout:fragment="style">
+    input[type=date].app-dateinput {
+      width: 20% !important;
+      padding: 2px !important;
+    }
+    
+    h1{
+      font-size: 16px;
+      overflow: auto;
+      padding: 5px 10px;
+    }
+    
+    span.enabled-for-draw{
+      color: #358638;
+    }
+    
+    span.deleted-by-om{
+      color: red;
+    }
+    
+    div#sdInfo div{
+      width: 300px;
+      overflow: auto;
+      display: inline-block;
+      text-align: center;
+    }
+    
+    div#sdInfo div label{
+      font-weight: bold;
+      font-size: 14px;
+    }
+    
+    div#sdInfo div span{
+      color: #565353;
+    }
+    
+    div.impediment-header{
+      width: 100%;
+    }
+    
+    div.impediment {
+      padding: 10px;
+      text-align: left;
+      background-color: #E7E9EB;
+      margin: 10px 0;
+      overflow: auto;
+    }
+    
+    div.impediment span {
+      font-style: italic;
+      font-size: 12px;
+    }
+    
+    div.impediment p {
+      margin: 3px;
+    }
+  </style>
+  <body>
+    <div layout:fragment="content">      
+      <h1>
+        <span th:text="${soldier.name}"></span>
+        <span th:text="${soldier.enabledForDraw} ? ' (Disponivel para sorteio)' : ' (Excluído pela organização militar)'"
+          th:classappend="${soldier.enabledForDraw} ? 'enabled-for-draw' : 'deleted-by-om'"></span>
+      </h1>
+      <div id="sdInfo">
+        <div>
+          <label>Força Armada</label><br />
+          <span th:text="${soldier.army.name}"></span>
+        </div>
+        <div>
+          <label>Organização Militar</label><br />
+          <span th:text="${soldier.militaryOrganization.name}"></span>
+        </div>
+        <div>
+          <label>Posto</label><br />
+          <span th:text="${soldier.militaryRank.name}"></span>
+        </div>
+        <br/><br/>
+        <div>
+          <label>E-mail</label><br />
+          <span th:text="${soldier.email}"></span>
+        </div>
+        <div>
+          <label>Telefone</label><br />
+          <span th:text="${soldier.phone}"></span>
+        </div>
+      </div> 
+      <br/><br/><br/>
+      <div class="empty-list" th:if="${#lists.isEmpty(exclusions)}">
+        <span>
+          Este usuário não possui impedimentos registrados
+        </span>
+      </div>
+      <div class="impediment" th:each="exclusion : ${exclusions}">
+        <div class="impediment-header">
+          <span th:text="'De:' + ${#temporals.format(exclusion.startDate, 'dd/MM/yyyy')} + ';   Até:' + ${#temporals.format(exclusion.endDate, 'dd/MM/yyyy')}"></span>
+        </div>
+        <p th:text="${exclusion.message}"></p><br/>
+      </div>
+      
+    </div>
+  </body>
+</html>

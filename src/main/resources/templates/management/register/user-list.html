@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html
+  xmlns="http://www.w3.org/1999/xhtml"
+  xmlns:th="http://www.thymeleaf.org" layout:decorate="~{management/layout}">
+  
+  <style layout:fragment="style">
+    table {
+      font-family: Roboto, sans-serif;
+      border-collapse: collapse;
+      width: 100%;
+    }
+    
+    table td {
+      font-size: 14px;
+    }
+    
+    table td, table th {
+      border: 1px solid #ddd;
+      padding: 8px;
+    }
+    
+    table th {
+      padding-top: 12px;
+      padding-bottom: 12px;
+      text-align: left;
+      background-color: #ffffff;
+      color: #808080;
+      font-weight: bold;
+    }
+    
+    tr:nth-child(even){background-color: #f2f2f2;}
+
+    tr:hover {background-color: #ddd;}
+  </style>
+  <body>
+    <div layout:fragment="content">
+    <div id="content">
+        <table id="soldiers">
+          <thead>
+            <tr>
+              <th>username</th>
+              <th>email</th>
+              <th>is cretentials expired</th>
+              <th></th>
+              <th colspan="2">
+                <div>
+                  <input id="myInput" onkeyup="filterSoldiersByName()" type="text" placeholder="Pesquisar...">
+                </div>
+              </th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr th:each="user : ${users}">
+              <td><span th:text="${user.username}"></span></td>
+              <td><span th:text="${user.email}"></span></td>
+              <td><span th:text="${user.isCredentialsExpired}"></span></td>
+              <td><a th:href="@{/mngmt/user/register/password/reset/home(username=${user.username})}">reset password</a></td>
+              <td colspan="2"></td>
+            </tr>
+          </tbody>
+        </table>
+        <a th:href="@{/mngmt/gpuser/register}">novo usuário OM</a><br/>
+        <a th:href="@{/mngmt/cjmuser/register}">novo usuário cjm</a>
+      </div>
+    </div>
+  </body>
+</html>
