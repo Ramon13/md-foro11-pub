@@ -4,6 +4,7 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Set;
 
 import javax.transaction.Transactional;
 
@@ -56,22 +57,25 @@ public class SoldierListJsonConverterService {
 		Soldier soldier;
 		for (SoldierJSONWrapper soldierWrapper : soldierWrapperList) {
 			soldier = getSoldier(soldierWrapper);
-			soldier.setName(soldierWrapper.getName());
 			
-			setSoldierRank(soldier, soldierWrapper);
-			
-			try {
-				setSoldierOM(soldier, soldierWrapper);
-			}catch(SoldierConversionException e) {
-				continue;
+			if (soldier.getId() == null) {
+				soldier.setName(soldierWrapper.getName());
+				
+				setSoldierRank(soldier, soldierWrapper);
+				
+				try {
+					setSoldierOM(soldier, soldierWrapper); 
+				}catch(SoldierConversionException e) {
+					continue;
+				}
+				
+				soldier.setArmy(army);
+				soldier.setCjm(loggedUser.getCjm());	
 			}
 			
 			setSoldierEmail(soldier, soldierWrapper.getEmail());
 			soldier.setPhone(soldierWrapper.getPhone());
-			soldier.setArmy(army);
-			soldier.setCjm(loggedUser.getCjm());
 			soldier.setEnabledForDraw(true);
-			
 			try {
 				saveSoldier(soldier);
 				setExclusion(soldier, soldierWrapper, loggedUser);
@@ -103,6 +107,13 @@ public class SoldierListJsonConverterService {
 			drawExclusion.setGroupUser(groupUser);
 			drawExclusion.setCreationDate(LocalDateTime.now());
 			drawExclusion.setSoldier(soldier);
+			
+			if (soldier.getId() != null) {
+				Set<DrawExclusion> soldierExclusions = drawExclusionRepo
+						.findBySoldierBetweenDates(soldier.getId(), startDate, endDate);
+				if (!soldierExclusions.isEmpty())
+					return;
+			}
 			
 			drawExclusionRepo.save(drawExclusion);
 		}
