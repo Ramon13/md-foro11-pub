@@ -22,6 +22,7 @@ import javax.validation.constraints.Size;
 
 import br.com.javamoon.domain.cjm_user.CJM;
 import br.com.javamoon.domain.draw.Draw;
+import br.com.javamoon.domain.draw.DrawList;
 import br.com.javamoon.domain.draw_exclusion.DrawExclusion;
 import br.com.javamoon.util.StringUtils;
 import lombok.EqualsAndHashCode;
@@ -92,6 +93,9 @@ public class Soldier implements Serializable{
 	
 	@ManyToMany(mappedBy = "soldiers")
 	private Set<Draw> drawList = new HashSet<>(0);
+	
+	@ManyToMany(mappedBy = "soldiers")
+	private Set<DrawList> soldierList = new HashSet<DrawList>(0);
 	
 	private transient Set<DrawExclusion> customExclusions = new HashSet<>(0);
 	

@@ -29,6 +29,8 @@ import br.com.javamoon.application.service.SoldierService;
 import br.com.javamoon.application.service.ValidationException;
 import br.com.javamoon.domain.cjm_user.CJM;
 import br.com.javamoon.domain.draw.Draw;
+import br.com.javamoon.domain.draw.DrawList;
+import br.com.javamoon.domain.draw.DrawListRepository;
 import br.com.javamoon.domain.draw.DrawRepository;
 import br.com.javamoon.domain.draw_exclusion.DrawExclusion;
 import br.com.javamoon.domain.draw_exclusion.DrawExclusionRepository;
@@ -83,6 +85,9 @@ public class GroupController {
 	
 	@Autowired
 	private DrawRepository drawRepo;
+	
+	@Autowired
+	private DrawListRepository drawListRepo;
 	
 	@Autowired
 	private DrawService drawSvc;
@@ -273,6 +278,13 @@ public class GroupController {
 		model.addAttribute("cjm", loggedUser.getCjm());
 		
 		return "group/draw-list";
+	}
+	
+	@GetMapping("/dw/sd/list")
+	public String drawSoldierList(Model model) {
+		List<DrawList> drawSoldierList = drawListRepo.findAll();
+		model.addAttribute("drawSoldierList", drawSoldierList);
+		return "group/draw-soldier-list";
 	}
 	
 	@GetMapping("/sd/registerall/home")
