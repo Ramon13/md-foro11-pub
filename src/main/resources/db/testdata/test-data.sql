@@ -115,7 +115,7 @@ insert into DRAW_LIST (id, creation_date, update_date, army_id, quarter_year, de
 		
 insert into DRAW_LIST_HAS_SOLDIER (draw_list_id, soldier_id)
 	values
-		(1, 1), (1, 2), (1, 3), (1, 4), (1, 5), (1, 6), (1, 7), (1, 8), (1, 9), (1, 10);
+		(1, 1), (1, 2), (1, 3), (1, 4), (1, 5);
 
 #cjm_user 1aud1cjm
 insert into CJM_USER (id, username, email, user_password, is_credentials_expired, auditorship_id)

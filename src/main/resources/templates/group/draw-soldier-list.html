@@ -4,76 +4,211 @@
   xmlns:th="http://www.thymeleaf.org" layout:decorate="~{group/layout}">
   
   <style layout:fragment="style">
-    h1{
-      font-family: "Roboto", sans-serif;
-      color: #4e4848;
+    input#listDescription{
       font-size: 20px;
-      font-weight: bold;
     }
     
-    div .list-header{
-      font-family: "Roboto", sans-serif;
-      color: #4e4848;
-      font-size: 20px;
-      font-weight: bold;
-      margin-bottom: 15px;
+    #searchInputs{
+      overflow: auto;
     }
     
-    div .list-info{
-      color: #606060;
-      font-size: 12px;
+    #searchInputs #left{
+      width: 40%;
+      float: left;
     }
     
-    div .draw-soldier-list{
-    margin: auto;
-      width: 90%;
+     #searchInputs #right{
+      width: 40%;
+      float: right;
+    }
+  
+    div#pickList{
+      margin: 0;
+      overflow: auto;
+    }
+    
+    div#pickOptions{
+      display: inline-block;
+      margin: 5px
+    }
+    
+    div#pickOptions button{
+      padding: 5px 25px;
+    }
+    
+    div#pickList .left{
+      width: 45%;
+      float: left;
+      height: 350px;
+      border: 1px solid #eee;
+      overflow: auto;
+    }
+    
+    div#pickList .right{
+      width: 45%;
+      float: right;
+      height: 350px;
+      border: 1px solid #eee;
+      overflow: auto;
+    }
+    
+    div#pickList .soldier{
+      padding: 10px 10px;
+    }
+    
+    div#pickList .soldier:hover{
       background-color: #eee;
-      padding: 15px;
-      margin-bottom: 15px;
     }
     
-    div .draw-soldier-list:hover {
-      width: 92%;
-      transition: 0.3s;
-      box-shadow: 0px 3px 6px 3px #ddd;
-	}
+    div#pickList .soldier label{
+      font-size: 14px;
+    }
+    
+    button#saveList{
+      float: right;
+      background-color: #2EA44F;
+      color: #eee;
+    }
   </style>
   
   <body>
     <div layout:fragment="content">
-      <h1>Relações de militares para sorteio</h1>
+      <input id="listDescription" class="app-txtinput" name="listDescription" type="text" value="Nova Relação"/>
       
       <hr />
-      
-      <div th:each="drawSoldiers : ${drawSoldierList}">
-        <div class="draw-soldier-list" th:attr="data-listId=${drawSoldiers.id}">
-          <div class="list-header">
-            <span th:text="'[' + ${drawSoldiers.quarterYear} + ']' + ' ' + ${drawSoldiers.description}"></span>
+      <div id="pickList">
+        <div id="searchInputs">
+          <input id="left" class="app-txtinput" type="text" placeholder="buscar por nome..."/>
+          <input id="right" class="app-txtinput" type="text" placeholder="buscar por nome..."/>
+        </div>
+        <div class="left">
+          <div class="soldier" th:each="soldier : ${soldiers}">
+            <input type="checkbox" th:attr="data-soldierId=${soldier.id}"/> <label th:text="${soldier.name}"></label> <br />
           </div>
-          <div class="list-info">
-            <span>criado em:</span>
-            <span th:text="${drawSoldiers.creationDate}"></span> 
-            <span> | </span>
-            <span>ultima modificação:</span>
-            <span th:text="${drawSoldiers.updateDate}"></span>
+        </div>
+        
+        <div id="pickOptions">
+          <button id="toRight"> > </button>
+          <br/><br/>
+      	  <button id="toLeft"> < </button>
+        </div>
+        
+        <div class="right">
+           <div class="soldier" th:each="soldier : ${drawListSoldiers}">
+            <input type="checkbox" th:attr="data-soldierId=${soldier.id}"/> <label th:text="${soldier.name}"></label> <br />
           </div>
         </div>
       </div>
+      
+      <br/>
+      <div >
+        <button type="submit" id="saveList">
+          <span>Salvar</span>
+        </button>
+      </div>
+      
     </div>
     
     <script layout:fragment="page-script" th:inline="javascript">
-     	addDrawSoldierListListeners();
+    	const listDescription = document.querySelector("input#listDescription");
+    	const rightDiv = document.querySelector(".right");
+    	const leftDiv = document.querySelector(".left");
+    	
+     	listDescription.focus();
      	
-    	function addDrawSoldierListListeners(){
-    		const drawSoldiersList = document.querySelectorAll("div.draw-soldier-list");
-    		let listId;
-    		for (let i = 0; i < drawSoldiersList.length; i++){
-    			drawSoldiersList[i].addEventListener('click', function(){
-    				listId = drawSoldiersList[i].dataset.listid;
-        			location.href = '[(@{/gp/dw/sd/list/})]' + listId;
-    			});
-    		}
-    	}
+     	addSoldiersCheckboxListeners(leftDiv);
+     	addSoldiersCheckboxListeners(rightDiv);
+     	
+     	const btnToRight = document.querySelector("#toRight");
+     	btnToRight.addEventListener('click', function(){
+     		sendToList(leftDiv, rightDiv);
+     	});
+     	
+     	const btnToLeft = document.querySelector("#toLeft");
+     	btnToLeft.addEventListener('click', function(){
+     		sendToList(rightDiv, leftDiv);
+     	});
+     	
+     	const leftFilter = document.querySelector("#searchInputs #left");
+     	leftFilter.addEventListener("keyup", function(){
+     		searchOnList(leftDiv, leftFilter.value.toUpperCase());
+     	});
+     	
+     	const rightFilter = document.querySelector("#searchInputs #right");
+     	rightFilter.addEventListener("keyup", function(){
+     		searchOnList(rightDiv, rightFilter.value.toUpperCase());
+     	});
+     	
+     	const saveListBtn = document.querySelector("button#saveList");
+     	saveListBtn.addEventListener("click", saveList);
+     	
+     	function saveList(){
+     		let form, soldiers, checkbox, soldierId, input;
+     		form = document.createElement("form");
+     		form.action = '[(@{/gp/dw/list/new/save})]';
+     		document.querySelector("html").append(form);
+     		
+     		//append list description and selected soldiers to form
+     		form.append(listDescription);
+     		
+     		soldiers = rightDiv.querySelectorAll(".soldier");
+     		for (let i = 0; i < soldiers.length; i++){
+     			checkbox = soldiers[i].querySelector("input[type=checkbox]");
+     			soldierId = checkbox.dataset.soldierid;
+     			
+     			input = document.createElement("input");
+     			input.name = "soldierId";
+     			input.value = soldierId;
+     			
+     			form.append(input);
+     		}
+     		
+     		//submit to server
+     		var oReq = new XMLHttpRequest();
+     		oReq.open("post", form.action);
+     		oReq.send(new FormData(form));
+     	}
+     	
+     	function addSoldiersCheckboxListeners(list){
+     		let soldiers = list.querySelectorAll(".soldier");
+     		let checkbox;
+     		for (let i = 0; i < soldiers.length; i++){
+     			soldiers[i].addEventListener('click', function(){
+     				checkbox = soldiers[i].querySelector("input[type=checkbox]");
+     				checkbox.checked = !checkbox.checked;
+     			})
+     		}	
+     	}
+     	
+     	function sendToList(fromList, toList){
+     		let soldiers = fromList.querySelectorAll(".soldier");
+     		let checkbox;
+     		for (let i = 0; i < soldiers.length; i++){
+   				checkbox = soldiers[i].querySelector("input[type=checkbox]");
+   				if (checkbox.checked){
+   					toList.append(soldiers[i]);
+   					checkbox.checked = !checkbox.checked;
+   				}	
+     		}
+     	}
+     	
+     	function searchOnList(fromList, filter){
+     		let label, txtValue, soldiers;
+     		
+     		soldiers = fromList.querySelectorAll(".soldier");
+     		
+     		for (let i = 0; i < soldiers.length; i++){
+     			label = soldiers[i].querySelector("label");
+     			
+     			if(label){
+     				txtValue = label.textContent;
+     				if (txtValue.indexOf(filter) > -1)
+     					soldiers[i].style.display = "";
+     				else
+     					soldiers[i].style.display = "none";
+     			}
+     		}
+     	}
     </script>
   </body>
 </html>

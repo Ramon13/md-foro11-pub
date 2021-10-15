@@ -6,6 +6,8 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+import java.util.SortedSet;
+import java.util.TreeSet;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -85,9 +87,6 @@ public class GroupController {
 	
 	@Autowired
 	private DrawRepository drawRepo;
-	
-	@Autowired
-	private DrawListRepository drawListRepo;
 	
 	@Autowired
 	private DrawService drawSvc;
@@ -266,8 +265,8 @@ public class GroupController {
 				Collections.singletonMap("sid", exclusion.getSoldier().getId().toString()));
 	}
 	
-	@GetMapping("/dw")
-	public String listDraw(Model model) {
+	@GetMapping("/cjm/dw")
+	public String listCJMCompletedDraw(Model model) {
 		GroupUser loggedUser = SecurityUtils.groupUser();
 		
 		List<Draw> drawList = ControllerHelper
@@ -277,14 +276,7 @@ public class GroupController {
 		model.addAttribute("quarterDrawMap", quarterDrawMap);
 		model.addAttribute("cjm", loggedUser.getCjm());
 		
-		return "group/draw-list";
-	}
-	
-	@GetMapping("/dw/sd/list")
-	public String drawSoldierList(Model model) {
-		List<DrawList> drawSoldierList = drawListRepo.findAll();
-		model.addAttribute("drawSoldierList", drawSoldierList);
-		return "group/draw-soldier-list";
+		return "group/cjm-draw";
 	}
 	
 	@GetMapping("/sd/registerall/home")

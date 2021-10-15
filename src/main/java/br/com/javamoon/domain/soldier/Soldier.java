@@ -36,7 +36,7 @@ import lombok.ToString;
 @EqualsAndHashCode(onlyExplicitlyIncluded = true)
 @Entity
 @Table(name = "SOLDIER")
-public class Soldier implements Serializable{
+public class Soldier implements Serializable, Comparable<Soldier>{
 
 	@EqualsAndHashCode.Include
 	@Id
@@ -92,10 +92,10 @@ public class Soldier implements Serializable{
 	private Set<DrawExclusion> exclusions = new HashSet<>(0);
 	
 	@ManyToMany(mappedBy = "soldiers")
-	private Set<Draw> drawList = new HashSet<>(0);
+	private Set<Draw> drawnSoldiers = new HashSet<>(0);
 	
 	@ManyToMany(mappedBy = "soldiers")
-	private Set<DrawList> soldierList = new HashSet<DrawList>(0);
+	private Set<DrawList> drawList = new HashSet<DrawList>(0);
 	
 	private transient Set<DrawExclusion> customExclusions = new HashSet<>(0);
 	
@@ -121,5 +121,10 @@ public class Soldier implements Serializable{
 	
 	public boolean hasImpediment() {
 		return !customExclusions.isEmpty();
+	}
+
+	@Override
+	public int compareTo(Soldier soldier) {
+		return Integer.compare(this.id, soldier.getId());
 	}
 }

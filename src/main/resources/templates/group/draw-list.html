@@ -10,49 +10,76 @@
       font-size: 20px;
       font-weight: bold;
     }
+    
+    div .list-header{
+      font-family: "Roboto", sans-serif;
+      color: #4e4848;
+      font-size: 20px;
+      font-weight: bold;
+      margin-bottom: 15px;
+    }
+    
+    div .list-info{
+      color: #606060;
+      font-size: 12px;
+    }
+    
+    div .draw-soldier-list{
+    margin: auto;
+      width: 90%;
+      background-color: #eee;
+      padding: 15px;
+      margin-bottom: 15px;
+    }
+    
+    div .draw-soldier-list:hover {
+      width: 92%;
+      transition: 0.3s;
+      box-shadow: 0px 3px 6px 3px #ddd;
+	}
   </style>
   
   <body>
     <div layout:fragment="content">
-      <h1 th:text="${cjm.name} + ' - Sorteios'"></h1>
-      
+      <h1>Relações de militares para sorteio</h1>
+      <button id="newList">Nova Relação</button>
       <hr />
       
-      <div class="draw-list" th:each="drawMap : ${quarterDrawMap}">
-        <div class="quarter">
-          <span th:text="${drawMap.key}"></span>
+      <div th:each="drawSoldiers : ${drawSoldierList}">
+        <div class="draw-soldier-list" th:attr="data-listId=${drawSoldiers.id}">
+          <div class="list-header">
+            <span th:text="'[' + ${drawSoldiers.quarterYear} + ']' + ' ' + ${drawSoldiers.description}"></span>
+          </div>
+          <div class="list-info">
+            <span>criado em:</span>
+            <span th:text="${drawSoldiers.creationDate}"></span> 
+            <span> | </span>
+            <span>ultima modificação:</span>
+            <span th:text="${drawSoldiers.updateDate}"></span>
+          </div>
         </div>
-        <div th:each="draw : ${drawMap.value}">
-          <button th:text="${draw.cjmUser.auditorship.name} + ' (' + ${draw.justiceCouncil.name} + ')'"
-              class="accordion" ></button>
-              
-          <div class="panel">
-            <table>
-              <thead>
-                <tr>
-                  <th>Nome</th>
-                  <th>OM</th>
-                  <th>Posto</th>
-                  <th>Arma</th>
-                </tr>
-              </thead>
-              <tbody th:each="soldier : ${draw.soldiers}" 
-                th:classappend="${draw.substitute != null and draw.substitute.id eq soldier.id ? 'highlight-sup': ''}">
-                <tr>
-                  <td><span th:text="${soldier.name} + ${draw.substitute != null and draw.substitute.id eq soldier.id ? ' (SUPLENTE)': ''}"></span></td>
-                  <td><span th:text="${soldier.militaryOrganization.alias}"></span></td>
-                  <td><span th:text="${soldier.militaryRank.alias}"></span></td>
-                  <td><span th:text="${soldier.army.alias}"></span></td>
-                </tr>
-              </tbody>
-            </table>
-          </div>    
-        </div>        
       </div>
     </div>
     
     <script layout:fragment="page-script" th:inline="javascript">
-    	accordion(document.getElementsByClassName("accordion"));
+    	const newListBtn = document.querySelector("button#newList");
+    	newListBtn.addEventListener("click", function(){
+    		location.href = '[(@{/gp/dw/list/new})]';
+    	})
+    	
+     	addDrawSoldierListListeners();
+     	
+     	
+    	function addDrawSoldierListListeners(){
+    		const drawSoldiersList = document.querySelectorAll("div.draw-soldier-list");
+    		let listId;
+    		for (let i = 0; i < drawSoldiersList.length; i++){
+    			drawSoldiersList[i].addEventListener('click', function(){
+    				listId = drawSoldiersList[i].dataset.listid;
+        			location.href = '[(@{/gp/dw/list/})]' + listId;
+    			});
+    		}
+    	}
     </script>
   </body>
 </html>

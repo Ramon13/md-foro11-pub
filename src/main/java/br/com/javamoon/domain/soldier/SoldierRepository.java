@@ -30,6 +30,9 @@ public interface SoldierRepository extends JpaRepository<Soldier, Integer>{
 	@Query("select s from Draw d join d.soldiers s where d.id = :drawId")
 	public List<Soldier> findAllByDraw(@Param("drawId") Integer drawId);
 	
+	@Query("select s from DrawList dl join dl.soldiers s where dl.id = :drawListId and dl.army = :army")
+	public List<Soldier> findAllByDrawList(@Param("drawListId") Integer drawListId, @Param("army") Army army);
+	
 	@Query("from Soldier s where s.army = :army and s.id = :soldierId and s.cjm = :cjm")
 	public Soldier findByIdAndArmyAndCjm(@Param("soldierId") Integer soldierId, @Param("army") Army army, @Param("cjm") CJM cjm);
 	
