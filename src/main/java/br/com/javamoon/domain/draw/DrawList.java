@@ -14,6 +14,8 @@ import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
+import javax.validation.constraints.NotEmpty;
+import javax.validation.constraints.Size;
 
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
@@ -35,7 +37,10 @@ public class DrawList {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Integer id;
-	
+
+	@Column(nullable = false, unique = true)
+	@NotEmpty(message = "A descrição deve conter no mínimo 16 caracteres")
+	@Size(min = 16, max = 2048, message = "A descrição deve conter entre 16 e 2048 caracteres")
 	private String description;
 	
 	@CreationTimestamp
@@ -58,5 +63,6 @@ public class DrawList {
 			name = "DRAW_LIST_HAS_SOLDIER",
 			joinColumns = @JoinColumn(name = "draw_list_id"),
 			inverseJoinColumns = @JoinColumn(name = "soldier_id"))
+	@Size(min = 5, max=1000, message = "A lista de destino deve conter no mínimo 5 e no máximo 100 militares")
 	private Set<Soldier> soldiers = new HashSet<Soldier>(0);
 }

@@ -10,6 +10,8 @@ import br.com.javamoon.domain.soldier.Army;
 
 public interface DrawListRepository extends JpaRepository<DrawList, Integer>{
 
-	@Query("from DrawList dl where dl.army = :army")
-	List<DrawList> findByArmy(@Param("army") Army army);
+	List<DrawList> findByArmyOrderByIdDesc(Army army);
+	
+	@Query("from DrawList dl where upper(dl.description) like concat('%',upper(:description),'%') and dl.army = :army")
+	DrawList findByDescriptionIgnoreCase(@Param("description") String description, @Param("army") Army army);
 }

@@ -6,7 +6,6 @@ import java.util.Set;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -59,7 +58,7 @@ public class Army implements Serializable{
 	@OneToMany(mappedBy = "army")
 	private Set<Draw> drawList = new HashSet<>(0);
 	
-	@ManyToMany(fetch = FetchType.EAGER)
+	@ManyToMany
 	@JoinTable(
 	    name="ARMY_HAS_MILITARY_RANK",
 	    joinColumns = @JoinColumn(name="army_id"),

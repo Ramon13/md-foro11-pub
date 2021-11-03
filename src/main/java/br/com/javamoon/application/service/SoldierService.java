@@ -112,7 +112,7 @@ public class SoldierService{
 	 * Check if this soldier belongs to this army
 	 */
 	public boolean isValidArmy(Army army, Soldier soldier) {
-		return army.getId().equals(soldier.getArmy().getId());
+		return soldierRepository.findByIdAndArmy(soldier.getId(), army) != null;
 	}
 	
 	private boolean wasDrawn(Soldier soldier) {

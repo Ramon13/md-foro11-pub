@@ -44,6 +44,13 @@
       overflow: auto;
     }
     
+    div#pickList .left p, .right p{
+      background-color: #f7f7f7;
+      padding: 5px;
+      border: 1px solid #eee;
+      text-align: center;
+    }
+    
     div#pickList .right{
       width: 45%;
       float: right;
@@ -73,7 +80,8 @@
   
   <body>
     <div layout:fragment="content">
-      <input id="listDescription" class="app-txtinput" name="listDescription" type="text" value="Nova Relação"/>
+      <span class="error" style="display: none"></span>
+      <input id="listDescription" class="app-txtinput" name="description" type="text" placeholder="nome ou descrição..."/>
       
       <hr />
       <div id="pickList">
@@ -82,6 +90,7 @@
           <input id="right" class="app-txtinput" type="text" placeholder="buscar por nome..."/>
         </div>
         <div class="left">
+          <p>Disponível</p>
           <div class="soldier" th:each="soldier : ${soldiers}">
             <input type="checkbox" th:attr="data-soldierId=${soldier.id}"/> <label th:text="${soldier.name}"></label> <br />
           </div>
@@ -94,6 +103,7 @@
         </div>
         
         <div class="right">
+          <p>Selecionado</p>
            <div class="soldier" th:each="soldier : ${drawListSoldiers}">
             <input type="checkbox" th:attr="data-soldierId=${soldier.id}"/> <label th:text="${soldier.name}"></label> <br />
           </div>
@@ -143,13 +153,38 @@
      	saveListBtn.addEventListener("click", saveList);
      	
      	function saveList(){
+     		let form, action;
+     		
+     		form = mountForm();
+     		action = '[(@{/gp/dw/list/new/save})]';
+     		
+     		//submit to server
+     		sendAjaxRequest(
+     				'POST', 
+     				action, 
+     				/*send content*/ new FormData(form), 
+     				runSavedListSuccessTasks,
+     				runSavedListFailedTasks);
+     		
+     	}
+     	
+     	function runSavedListSuccessTasks(responseText){
+     		alert(responseText);
+     	}
+     	
+     	function runSavedListFailedTasks(responseText){
+     		let spanError = document.querySelector(".error");
+     		spanError.textContent = responseText;
+     		spanError.style.display = "";
+     	}
+     	
+     	function mountForm(){
      		let form, soldiers, checkbox, soldierId, input;
      		form = document.createElement("form");
-     		form.action = '[(@{/gp/dw/list/new/save})]';
      		document.querySelector("html").append(form);
      		
      		//append list description and selected soldiers to form
-     		form.append(listDescription);
+     		form.append(listDescription.cloneNode(true));
      		
      		soldiers = rightDiv.querySelectorAll(".soldier");
      		for (let i = 0; i < soldiers.length; i++){
@@ -157,16 +192,14 @@
      			soldierId = checkbox.dataset.soldierid;
      			
      			input = document.createElement("input");
-     			input.name = "soldierId";
+     			input.name = "soldiers";
      			input.value = soldierId;
      			
      			form.append(input);
      		}
      		
-     		//submit to server
-     		var oReq = new XMLHttpRequest();
-     		oReq.open("post", form.action);
-     		oReq.send(new FormData(form));
+     		form.style.display = 'none';
+     		return form;
      	}
      	
      	function addSoldiersCheckboxListeners(list){

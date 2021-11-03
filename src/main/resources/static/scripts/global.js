@@ -38,3 +38,30 @@ function filterTable(tableId){
 	    }       
 	  }
 }
+
+// Open and send an asynchronous xmlHttpRequest. If the server response is 
+// HTTP.OK (200) then call successFunction, else call errorFunction.
+function sendAjaxRequest(
+	httpMethod,
+	action,
+	sendContent, 
+	successFunction,
+	errorFunction){
+	
+	let httpRequest = new XMLHttpRequest();
+	
+	httpRequest.onreadystatechange = function(){
+		if (httpRequest.readyState === XMLHttpRequest.DONE){
+			if (httpRequest.status === 200){
+				successFunction(httpRequest.responseText);
+			}else if (httpRequest.status === 400){
+				errorFunction(httpRequest.responseText);
+			}else{
+				alert("There was an internal server error. Please try again later");
+			}
+		}	
+	}
+	
+	httpRequest.open(httpMethod, action, true);
+    httpRequest.send(sendContent);
+}
