@@ -18,6 +18,8 @@ import javax.persistence.criteria.Root;
 import org.springframework.stereotype.Repository;
 
 import br.com.javamoon.domain.cjm_user.CJM;
+import br.com.javamoon.domain.draw.DrawList;
+import br.com.javamoon.infrastructure.web.model.PaginationSearchFilter;
 
 @Repository
 public class SoldierRepositoryImpl {
@@ -93,6 +95,38 @@ public class SoldierRepositoryImpl {
 		return query.getResultList();
 	}
 	
+	public <T> Object findByDrawListPaginable(Class<T> type, DrawList drawList, PaginationSearchFilter filter) {
+		List<String> hql = new ArrayList<String>();
+		hql.add("select s ");
+		hql.add("from DrawList dl join dl.soldiers s ");
+		hql.add("left join fetch s.militaryOrganization ");
+		hql.add("where dl.id = :drawListId ");
+		
+		if (type == Long.class) {
+			hql.set(0, "select count(s) ");
+			hql.set(2, " ");
+		}
+		
+		if (filter.getKey() != null)
+			hql.add("and s.name like :soldierName");
+			
+		StringBuilder hqlBuilder = new StringBuilder();
+		for (String s : hql)
+			hqlBuilder.append(s);
+		
+		TypedQuery<T> query = entityManager.createQuery(hqlBuilder.toString(), type);
+		query.setParameter("drawListId", drawList.getId());
+		if (filter.getKey() != null)
+			query.setParameter("soldierName", "%" + filter.getKey() + "%");
+		
+		if (type == Long.class)
+			return query.getSingleResult();
+		
+		query.setFirstResult(filter.getFirstResult() - 1);
+		query.setMaxResults(PaginationSearchFilter.ELEMENTS_BY_PAGE);
+		return query.getResultList();
+	}
+
 	public Long countEnabledByArmyAndCJM(Army army, CJM cjm) {
 		initCriteriaConfig();
 		CriteriaQuery<Long> cq = builder.createQuery(Long.class);

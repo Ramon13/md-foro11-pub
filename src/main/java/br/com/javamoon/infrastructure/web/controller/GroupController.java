@@ -102,7 +102,7 @@ public class GroupController {
 		CJM cjm = loggedUser.getCjm();
 		
 		int soldiersCount = soldierRepoImpl.countEnabledByArmyAndCJM(army, cjm).intValue();
-		PaginationSearchFilter paginationSearchFilter = new PaginationSearchFilter(selectedPage, soldiersCount);
+		PaginationSearchFilter paginationSearchFilter = new PaginationSearchFilter(null, selectedPage, soldiersCount);
 		
 		List<Soldier> soldiers = soldierRepoImpl.
 				findEnabledByArmyAndCJMPaginable(
@@ -127,7 +127,7 @@ public class GroupController {
 				loggedUser.getCjm(),
 				key).intValue();
 		
-		PaginationSearchFilter paginationSearchFilter = new PaginationSearchFilter(selectedPage, soldiersCount);
+		PaginationSearchFilter paginationSearchFilter = new PaginationSearchFilter(null, selectedPage, soldiersCount);
 		
 		List<Soldier> soldiers = soldierRepoImpl.
 				searchEnabledByArmyAndCJMPaginable(

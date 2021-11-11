@@ -9,7 +9,6 @@
     <link th:href="@{/styles/global.css}" type="text/css" rel="stylesheet" />
     <link th:href="@{/styles/pagination-search-list.css}" type="text/css" rel="stylesheet" />
     <script type="text/javascript" th:src="@{/scripts/global.js}"></script>
-    <script type="text/javascript" th:src="@{/scripts/pagination-search-list.js}"></script>
     <script src="https://www.google.com/recaptcha/api.js" async defer></script>
     <style layout:fragment="style"></style>
     <style>
@@ -35,13 +34,14 @@
             <li class="vMenu-link"><a th:href="@{/gp/home/0}">Início</a></li>
           </ul>
         </li>
+        <!--  
         <li class="vMenu-sub">
           <span>Gerenciar Militares</span>
           <ul>
             <li class="vMenu-link"><a id="newSoldier" th:href="@{/gp/sd/register}">Novo militar</a></li>
           </ul>
         </li>
-        <!--
+        
         <li class="vMenu-sub">
           <span>Conta</span>
           <ul>

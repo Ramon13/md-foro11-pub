@@ -82,6 +82,10 @@ public class ControllerHelper {
 		 return SecurityUtils.groupUser().getArmy();
 	 }
 	 
+	 public static CJM getGpUserCjm() {
+		 return SecurityUtils.groupUser().getCjm();
+	 }
+	 
 	 public static Role getUserRole(User user) {
 		 if (user instanceof GroupUser)
 			 return Role.GROUP_USER;

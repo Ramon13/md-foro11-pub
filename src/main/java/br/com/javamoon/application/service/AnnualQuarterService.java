@@ -32,4 +32,12 @@ public class AnnualQuarterService {
 				new AnnualQuarter(now.plusMonths(3))
 				);
 	}
+	
+	public boolean isSelectableQuarter(String quarterYear) {
+		for (AnnualQuarter quarter : getSelectableQuarters())
+			if (quarter.toShortFormat().equals(quarterYear))
+				return true;
+		
+		return false;
+	}
 }

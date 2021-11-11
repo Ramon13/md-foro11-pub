@@ -22,8 +22,8 @@ public interface SoldierRepository extends JpaRepository<Soldier, Integer>{
 	
 	public List<Soldier> findByNameContaining(String name);
 	
-	@Query("from Soldier s left join fetch s.militaryOrganization where s.army = :army")
-	public List<Soldier> findByArmy(@Param("army") Army army);
+	@Query("from Soldier s left join fetch s.militaryOrganization where s.army = :army and s.cjm = :cjm")
+	public List<Soldier> findAllByArmyAndCjm(@Param("army") Army army, @Param("cjm") CJM cjm);
 	
 	@Query("select s.id from Soldier s where s.id = :id and s.army = :army")
 	public Integer findByIdAndArmy(@Param("id") Integer soldierId, @Param("army") Army army);
@@ -36,8 +36,8 @@ public interface SoldierRepository extends JpaRepository<Soldier, Integer>{
 	
 	@Query("select s from DrawList dl "
 			+ "join dl.soldiers s "
-			+ "left join fetch s.militaryOrganization where dl.id = :drawListId and dl.army = :army")
-	public List<Soldier> findAllByDrawList(@Param("drawListId") Integer drawListId, @Param("army") Army army);
+			+ "left join fetch s.militaryOrganization where dl.id = :drawListId")
+	public List<Soldier> findAllByDrawList(@Param("drawListId") Integer drawListId);
 	
 	@Query("from Soldier s where s.army = :army and s.id = :soldierId and s.cjm = :cjm")
 	public Soldier findByIdAndArmyAndCjm(@Param("soldierId") Integer soldierId, @Param("army") Army army, @Param("cjm") CJM cjm);

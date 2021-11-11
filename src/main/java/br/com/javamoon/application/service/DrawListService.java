@@ -19,18 +19,20 @@ public class DrawListService {
 	@Autowired
 	private DrawListRepository drawListRepo;
 	
+	@Autowired
+	private AnnualQuarterService annualQuarterSvc;
+	
 	@Transactional
 	public DrawList save(DrawList drawList) throws ValidationException {
 		if (!soldiersHasValidArmy(drawList))
 			throw new IllegalStateException();
 
-		if (!isValidDescription(drawList.getDescription(), drawList.getArmy()))
+		if (!isValidDescription(drawList.getDescription(), drawList.getId(), drawList.getArmy()))
 			throw new ValidationException("Nome de relação já cadastrado.");
 		
-		//TODO: static for while
-		drawList.setQuarterYear("4/2021");
-		
-		drawListRepo.save(drawList);
+		if (!annualQuarterSvc.isSelectableQuarter(drawList.getQuarterYear()))
+			throw new ValidationException("Trimestre inválido.");
+		//drawListRepo.save(drawList);
 		return null;
 	}
 	
@@ -43,7 +45,14 @@ public class DrawListService {
 		return true;
 	}
 	
-	private boolean isValidDescription(String description, Army army) {
-		return drawListRepo.findByDescriptionIgnoreCase(description, army) == null;
+	private boolean isValidDescription(String description, Integer id, Army army) {
+		DrawList drawListDb = drawListRepo
+				.findByDescriptionIgnoreCase(description, army);
+		
+		if(drawListDb != null)
+			if (id == null || drawListDb.getId().equals(id) == Boolean.FALSE)
+				return false;
+			
+		return true;
 	}
 }
