@@ -97,7 +97,7 @@
 	      
 	      <div th:if="${quarters != null}">
 		      <label>Trimestre:</label><br/>
-		      <select class="app-select" >
+		      <select class="app-select" name="quarterYear">
 		        <option th:each="quarter : ${quarters}" name="quarterYear" th:value="${quarter.toShortFormat()}"
 		           th:text="${quarter.description}" th:selected="${quarter.toShortFormat() eq drawList.quarterYear}"></option>
 		      </select>
@@ -114,10 +114,8 @@
         <div class="left">
           <p>Disponível</p>
           <div class="soldier" th:each="soldier : ${soldiers}">
-          	<div class="sd-name">
-    			   <input type="checkbox" th:attr="data-soldierId=${soldier.id}"/> 
-    			   <label th:text="${soldier.name}"></label>
-    		    </div>
+            <input type="checkbox" th:attr="data-soldierId=${soldier.id}"/>
+    			  <label th:text="${soldier.name}"></label>
           </div>
         </div>
         
@@ -130,10 +128,8 @@
         <div class="right">
           <p>Selecionado</p>
            <div class="soldier" th:each="soldier : ${drawListSoldiers}">
-           	<div class="sd-name">
-            	<input type="checkbox" th:attr="data-soldierId=${soldier.id}"/> 
-            	<label th:text="${soldier.name}"></label>
-            </div>
+            <input type="checkbox" th:attr="data-soldierId=${soldier.id}"/> 
+            <label th:text="${soldier.name}"></label>
           </div>
         </div>
       </div>
@@ -157,9 +153,6 @@
     	const leftDiv = document.querySelector(".left");
     	
      	listDescription.focus();
-     	
-     	addSoldiersCheckboxListeners(leftDiv);
-     	addSoldiersCheckboxListeners(rightDiv);
      	
      	const btnToRight = document.querySelector("#toRight");
      	btnToRight.addEventListener('click', function(){
@@ -208,6 +201,7 @@
      	
      	function runSavedListSuccessTasks(responseText){
      		alert(responseText);
+     		window.location = '[(@{/gp/dw/list})]';
      	}
      	
      	function runSavedListFailedTasks(responseText){
@@ -240,17 +234,6 @@
      		
      		form.style.display = 'none';
      		return form;
-     	}
-     	
-     	function addSoldiersCheckboxListeners(list){
-     		let soldiers = list.querySelectorAll(".soldier input");
-     		let checkbox;
-     		for (let i = 0; i < soldiers.length; i++){
-     			soldiers[i].addEventListener('click', function(){
-     				checkbox = soldiers[i].querySelector("input[type=checkbox]");
-     				checkbox.checked = !checkbox.checked;
-     			})
-     		}	
      	}
      	
      	function sendToList(fromList, toList){

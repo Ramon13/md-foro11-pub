@@ -1,7 +1,11 @@
 package br.com.javamoon.infrastructure.web.controller;
 
+import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 import java.util.SortedSet;
 import java.util.TreeSet;
 
@@ -21,6 +25,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import br.com.javamoon.application.service.AnnualQuarterService;
 import br.com.javamoon.application.service.DrawListService;
 import br.com.javamoon.application.service.ValidationException;
+import br.com.javamoon.domain.draw.AnnualQuarter;
 import br.com.javamoon.domain.draw.DrawList;
 import br.com.javamoon.domain.draw.DrawListRepository;
 import br.com.javamoon.domain.soldier.Army;
@@ -48,41 +53,6 @@ public class GroupDrawList {
 	
 	@Autowired
 	private AnnualQuarterService annualQuarterSvc;
-	
-	@GetMapping("/list/new")
-	public String createList(Model model) {
-		List<Soldier> soldiers = soldierRepo
-				.findAllByArmyAndCjm(ControllerHelper.getGpUserArmy(), ControllerHelper.getGpUserCjm());
-		
-		ControllerHelper.addSelectableQuartersToRequest(annualQuarterSvc, model);
-		model.addAttribute("drawList", new DrawList());
-		model.addAttribute("soldiers", soldiers);
-		
-		return "group/draw-soldier-list";
-	}
-	
-	@PostMapping("/list/new/save")
-	public ResponseEntity<String> saveList(@Valid DrawList drawList, Errors errors) throws IllegalStateException{
-		String errorMsg;
-		
-		if (errors.hasErrors() == Boolean.FALSE) {
-			try {
-				Army army = ControllerHelper.getGpUserArmy();
-				drawList.setArmy(army);
-				
-				drawListSvc.save(drawList);
-				
-				return new ResponseEntity<String>("A lista foi salva", HttpStatus.OK);
-			}catch(ValidationException e) {
-				errorMsg = e.getMessage();
-			}
-		
-		}else {
-			errorMsg = errors.getFieldError().getDefaultMessage();
-		}
-			
-		return new ResponseEntity<String>(errorMsg, HttpStatus.BAD_REQUEST);
-	}
 	
 	@GetMapping("/list")
 	public String drawSoldierList(Model model) {
@@ -124,38 +94,66 @@ public class GroupDrawList {
 		throw new IllegalStateException("Lista inexistente!");
 	}
 	
+	@GetMapping("/list/new")
+	public String createList(Model model) {
+		List<Soldier> soldiers = soldierRepo
+				.findAllByArmyAndCjm(ControllerHelper.getGpUserArmy(), ControllerHelper.getGpUserCjm());
+		
+		DrawList drawList = new DrawList();
+		drawList.setQuarterYear(new AnnualQuarter(LocalDate.now()).toShortFormat());
+		
+		ControllerHelper.addSelectableQuartersToRequest(annualQuarterSvc, model);
+		model.addAttribute("drawList", drawList);
+		model.addAttribute("soldiers", soldiers);
+		
+		return "group/draw-list/soldier-list";
+	}
+	
 	@GetMapping("/list/edit/{drawListId}")
 	public String editDrawList(@PathVariable Integer drawListId,
 			Model model) {
 		Optional<DrawList> drawList = drawListRepo.findById(drawListId);
 		
 		if (drawList.isPresent()) {
-			Army loggedUserArmy = SecurityUtils.groupUser().getArmy();
-			
 			List<Soldier> drawListSoldiers = soldierRepo.findAllByDrawList(drawListId);
-			List<Soldier> soldiersByArmy = soldierRepo.findByArmy(loggedUserArmy);
+			List<Soldier> soldiersByArmy = soldierRepo
+					.findAllByArmyAndCjm(ControllerHelper.getGpUserArmy(), ControllerHelper.getGpUserCjm());
 			
-			//Use TreeSet to avoid repeated elements
-			TreeSet<Soldier> treeSet = new TreeSet<Soldier>();
-			treeSet.addAll(drawListSoldiers);
-			treeSet.addAll(soldiersByArmy);
-			
-			Soldier firstSoldier = drawListSoldiers.get(drawListSoldiers.size() - 1);
-			Soldier lastSoldier = soldiersByArmy.get(soldiersByArmy.size() - 1);
-		    
-			//soldiers subset = [all soldiers by army] - [soldiers on the draw list]
-			SortedSet<Soldier> soldiers = treeSet.subSet(firstSoldier, false, lastSoldier, true);
-			
+			soldiersByArmy.removeAll(drawListSoldiers);
+				
 			model.addAttribute("drawList", drawList.get());
 			model.addAttribute("drawListSoldiers", drawListSoldiers);
-			model.addAttribute("soldiers", soldiers);
+			model.addAttribute("soldiers", soldiersByArmy);
 			
 			if (annualQuarterSvc.isSelectableQuarter(drawList.get().getQuarterYear()))
 				ControllerHelper.addSelectableQuartersToRequest(annualQuarterSvc, model);
 			
-			return "group/draw-list/edit-list";
+			return "group/draw-list/soldier-list";
 		}
 		
 		throw new IllegalStateException("Lista não encontrada!");
+	}
+	
+	@PostMapping("/list/new/save")
+	public ResponseEntity<String> saveList(@Valid DrawList drawList, Errors errors) throws IllegalStateException{
+		String errorMsg;
+		
+		if (errors.hasErrors() == Boolean.FALSE) {
+			try {
+				Army army = ControllerHelper.getGpUserArmy();
+				drawList.setArmy(army);
+				
+				drawListSvc.save(drawList, SecurityUtils.groupUser().getCjm());
+				
+				return new ResponseEntity<String>("A lista foi salva", HttpStatus.OK);
+			}catch(ValidationException e) {
+				errorMsg = e.getMessage();
+			}
+		
+		}else {
+			errorMsg = errors.getFieldError().getDefaultMessage();
+		}
+			
+		return new ResponseEntity<String>(errorMsg, HttpStatus.BAD_REQUEST);
 	}
 }

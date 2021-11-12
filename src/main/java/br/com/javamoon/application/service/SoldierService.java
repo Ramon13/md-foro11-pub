@@ -5,6 +5,7 @@ import java.util.Collection;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import br.com.javamoon.domain.cjm_user.CJM;
 import br.com.javamoon.domain.draw.DrawRepository;
 import br.com.javamoon.domain.exception.DeleteSoldierException;
 import br.com.javamoon.domain.group_user.GroupUser;
@@ -113,6 +114,14 @@ public class SoldierService{
 	 */
 	public boolean isValidArmy(Army army, Soldier soldier) {
 		return soldierRepository.findByIdAndArmy(soldier.getId(), army) != null;
+	}
+	
+	public boolean isValidCjm(CJM cjm, Soldier...soldiers) {
+		for (Soldier s : soldiers)
+			if (!cjm.equals(s.getCjm()))
+				return false;
+		
+		return true;
 	}
 	
 	private boolean wasDrawn(Soldier soldier) {
