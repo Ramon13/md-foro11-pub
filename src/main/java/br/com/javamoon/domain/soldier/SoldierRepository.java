@@ -2,10 +2,7 @@ package br.com.javamoon.domain.soldier;
 
 import java.util.List;
 
-import javax.transaction.Transactional;
-
 import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
@@ -22,7 +19,7 @@ public interface SoldierRepository extends JpaRepository<Soldier, Integer>{
 	
 	public List<Soldier> findByNameContaining(String name);
 	
-	@Query("from Soldier s left join fetch s.militaryOrganization where s.army = :army and s.cjm = :cjm")
+	@Query("from Soldier s left join fetch s.militaryOrganization where s.army = :army and s.cjm = :cjm order by s.name")
 	public List<Soldier> findAllByArmyAndCjm(@Param("army") Army army, @Param("cjm") CJM cjm);
 	
 	@Query("select s.id from Soldier s where s.id = :id and s.army = :army")
@@ -36,22 +33,15 @@ public interface SoldierRepository extends JpaRepository<Soldier, Integer>{
 	
 	@Query("select s from DrawList dl "
 			+ "join dl.soldiers s "
-			+ "left join fetch s.militaryOrganization where dl.id = :drawListId")
+			+ "left join fetch s.militaryOrganization where dl.id = :drawListId order by s.name")
 	public List<Soldier> findAllByDrawList(@Param("drawListId") Integer drawListId);
 	
 	@Query("from Soldier s where s.army = :army and s.id = :soldierId and s.cjm = :cjm")
 	public Soldier findByIdAndArmyAndCjm(@Param("soldierId") Integer soldierId, @Param("army") Army army, @Param("cjm") CJM cjm);
 	
-	@Query("from Soldier s where s.army = :army and s.cjm = :cjm and s.enabledForDraw = true order by s.militaryRank.rankWeight asc")
-	public List<Soldier> findByArmyAndCjmAndNotEnabledForDraw(@Param("army") Army army, @Param("cjm") CJM cjm);
 	
 	@Query("from DrawExclusion dex where dex.soldier = :soldier order by dex.id desc")
 	public List<DrawExclusion> findAllDrawExclusions(@Param("soldier") Soldier soldier);
-	
-	@Transactional
-	@Modifying
-	@Query("update from Soldier set enabledForDraw = false where army = :army")
-	public void disableAllSoldiersForDrawByArmy(@Param("army") Army army);
 	
 	@Query("select count(s) from Soldier s")
 	public Integer getSoldiersNum();

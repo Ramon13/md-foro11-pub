@@ -88,23 +88,30 @@
   
   <body>
     <div layout:fragment="content">
-      <div id="listInfo">
-	      <span class="error" style="display: none"></span>
-	      <input id="listDescription" th:value="${drawList.description}" 
-	      	class="app-txtinput" name="description" type="text" placeholder="nome ou descrição..."/>
-	      <input id="listId" name="id" type="hidden" th:value="${drawList.id}" />
-	      <br /> <br />
-	      
-	      <div th:if="${quarters != null}">
-		      <label>Trimestre:</label><br/>
-		      <select class="app-select" name="quarterYear">
-		        <option th:each="quarter : ${quarters}" name="quarterYear" th:value="${quarter.toShortFormat()}"
-		           th:text="${quarter.description}" th:selected="${quarter.toShortFormat() eq drawList.quarterYear}"></option>
-		      </select>
-		    </div>
-	    </div>
-	    
-      <hr />
+      <form id="formList" method="get" th:action="@{/gp/dw/list/new/save}" th:object="${drawList}">
+        <input id="listId" name="id" type="hidden" th:field="*{id}" />
+          
+        <div id="listInfo">
+          <span class="error" style="display: none"></span>
+          <br/>
+          
+          <label>Descrição:</label><br/>
+          <input id="listDescription" th:field="*{description}" 
+          	class="app-txtinput" type="text" placeholder="nome ou descrição..."/>
+          
+          <br /> <br />
+  	      
+          <div th:if="${quarters != null}">
+      	      <label>Trimestre:</label><br/>
+      	      <select class="app-select" th:field="*{quarterYear}">
+      	        <option th:each="quarter : ${quarters}" th:value="${quarter.toShortFormat()}"
+      	           th:text="${quarter.description}"></option>
+      	      </select>
+          </div>
+        </div>
+  	  
+      </form>  
+        <hr />
       
       <div id="pickList">
         <div id="searchInputs">
@@ -114,26 +121,28 @@
         <div class="left">
           <p>Disponível</p>
           <div class="soldier" th:each="soldier : ${soldiers}">
-            <input type="checkbox" th:attr="data-soldierId=${soldier.id}"/>
-    			  <label th:text="${soldier.name}"></label>
+            <input type="hidden" th:value="${soldier.id}"/>
+            <input type="checkbox"/>
+  		    <label th:text="${soldier.getIdInfoAsText()}"></label>
           </div>
         </div>
         
         <div id="pickOptions">
-          <button id="toRight"> > </button>
+          <button id="toRight" type="button"> > </button>
           <br/><br/>
-      	  <button id="toLeft"> < </button>
+      	  <button id="toLeft" type="button"> < </button>
         </div>
         
-        <div class="right">
+        <div id="rightList" class="right">
           <p>Selecionado</p>
            <div class="soldier" th:each="soldier : ${drawListSoldiers}">
-            <input type="checkbox" th:attr="data-soldierId=${soldier.id}"/> 
-            <label th:text="${soldier.name}"></label>
+            <input type="hidden" name="soldiers" th:value="${soldier.id}"/>
+            <input type="checkbox"/> 
+            <label th:text="${soldier.getIdInfoAsText()}"></label>
           </div>
         </div>
       </div>
-      <br />
+        <br />
       
       <div>
       	<a href="#" id="newSoldier">Novo Militar</a>
@@ -148,55 +157,34 @@
     </div>
     
     <script layout:fragment="page-script" th:inline="javascript">
-    	const listDescription = document.querySelector("input#listDescription");
-    	const rightDiv = document.querySelector(".right");
-    	const leftDiv = document.querySelector(".left");
-    	
-     	listDescription.focus();
-     	
-     	const btnToRight = document.querySelector("#toRight");
-     	btnToRight.addEventListener('click', function(){
-     		sendToList(leftDiv, rightDiv);
-     	});
-     	
-     	const btnToLeft = document.querySelector("#toLeft");
-     	btnToLeft.addEventListener('click', function(){
-     		sendToList(rightDiv, leftDiv);
-     	});
-     	
-     	const leftFilter = document.querySelector("#searchInputs #left");
-     	leftFilter.addEventListener("keyup", function(){
-     		searchOnList(leftDiv, leftFilter.value.toUpperCase());
-     	});
-     	
-     	const rightFilter = document.querySelector("#searchInputs #right");
-     	rightFilter.addEventListener("keyup", function(){
-     		searchOnList(rightDiv, rightFilter.value.toUpperCase());
-     	});
-     	
-     	const saveListBtn = document.querySelector("button#saveList");
-     	saveListBtn.addEventListener("click", saveList);
-     	
-     	const newSoldier = document.querySelector("a#newSoldier"); 
-     	newSoldier.addEventListener('click', function(){
-     		putLocationOnSessionStorage();
-     		location.href='[(@{/gp/sd/register/})]';
-     	});
+     	listDescription.focus(); 	
+     	addListeners();
      	
      	function saveList(){
-     		let form, action;
+     		const form = document.querySelector("#formList");
+     		let formData = getFormData();
      		
-     		form = mountForm();
-     		action = '[(@{/gp/dw/list/new/save})]';
-     		
-     		//submit to server
      		sendAjaxRequest(
      				'POST', 
-     				action, 
-     				/*send content*/ new FormData(form), 
+     				form.action, 
+     				formData, 
      				runSavedListSuccessTasks,
      				runSavedListFailedTasks);
      		
+     	}
+     	
+     	function getFormData(){
+     		const form = document.querySelector("#formList");
+     		const soldiers = document.querySelectorAll('#rightList .soldier');
+     		let formData = new FormData(form);
+     		
+     		let soldierId;
+     		for (let i = 0; i < soldiers.length; ++i){
+     			soldierId = soldiers[i].querySelector("input[type=hidden]").value;
+     			formData.append("soldiers", soldierId);
+     		}
+     		
+     		return formData;
      	}
      	
      	function runSavedListSuccessTasks(responseText){
@@ -208,32 +196,6 @@
      		let spanError = document.querySelector(".error");
      		spanError.textContent = responseText;
      		spanError.style.display = "";
-     	}
-     	
-     	function mountForm(){
-     		let form, soldiers, checkbox, soldierId, input, listInfo;
-     		 
-     		form = document.createElement("form");
-     		document.querySelector("html").append(form);
-     		
-     		//append list description and selected soldiers to form
-     		listInfo = document.querySelector("#listInfo");
-     		form.append(listInfo.cloneNode(true));
-     		
-     		soldiers = rightDiv.querySelectorAll(".soldier");
-     		for (let i = 0; i < soldiers.length; i++){
-     			checkbox = soldiers[i].querySelector("input[type=checkbox]");
-     			soldierId = checkbox.dataset.soldierid;
-     			
-     			input = document.createElement("input");
-     			input.name = "soldiers";
-     			input.value = soldierId;
-     			
-     			form.append(input);
-     		}
-     		
-     		form.style.display = 'none';
-     		return form;
      	}
      	
      	function sendToList(fromList, toList){
@@ -249,13 +211,13 @@
      	}
      	
      	function searchOnList(fromList, filter){
-     		let label, txtValue, soldiers;
-     		
+   			let label, txtValue, soldiers;
+   		
      		soldiers = fromList.querySelectorAll(".soldier");
      		
      		for (let i = 0; i < soldiers.length; i++){
      			label = soldiers[i].querySelector("label");
-     			
+   			
      			if(label){
      				txtValue = label.textContent;
      				if (txtValue.indexOf(filter) > -1)
@@ -263,13 +225,47 @@
      				else
      					soldiers[i].style.display = "none";
      			}
-     		}
- 		  }
+   			}
+	  	}
+       	
+   		function putLocationOnSessionStorage(){
+      		sessionStorage.setItem('previousPage', location.href);
+        }
      	
-     	function putLocationOnSessionStorage(){
-        sessionStorage.setItem('previousPage', location.href);
-      }
-     	
+     	function addListeners(){
+     		const listDescription = document.querySelector("input#listDescription");
+        	const rightDiv = document.querySelector(".right");
+        	const leftDiv = document.querySelector(".left");
+  
+         	const btnToRight = document.querySelector("#toRight");
+         	btnToRight.addEventListener('click', function(){
+         		sendToList(leftDiv, rightDiv);
+         	});
+         	
+         	const btnToLeft = document.querySelector("#toLeft");
+         	btnToLeft.addEventListener('click', function(){
+         		sendToList(rightDiv, leftDiv);
+         	});
+         	
+         	const leftFilter = document.querySelector("#searchInputs #left");
+         	leftFilter.addEventListener("keyup", function(){
+         		searchOnList(leftDiv, leftFilter.value.toUpperCase());
+         	});
+         	
+         	const rightFilter = document.querySelector("#searchInputs #right");
+         	rightFilter.addEventListener("keyup", function(){
+         		searchOnList(rightDiv, rightFilter.value.toUpperCase());
+         	});
+         	
+         	const saveListBtn = document.querySelector("button#saveList");
+         	saveListBtn.addEventListener("click", saveList);
+         	
+         	const newSoldier = document.querySelector("a#newSoldier"); 
+         	newSoldier.addEventListener('click', function(){
+         		putLocationOnSessionStorage();
+         		location.href='[(@{/gp/sd/register/})]';
+         	});     		
+     	}
     </script>
   </body>
 </html>

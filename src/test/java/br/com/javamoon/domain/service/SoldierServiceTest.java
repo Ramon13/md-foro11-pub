@@ -67,16 +67,6 @@ public class SoldierServiceTest {
 	}
 	
 	@Test
-	public void shouldPassWhenDisableASoldier() {
-		Soldier sd = getSimpleSoldier();
-		
-		Mockito.when(soldierRepoMock.save(sd)).thenReturn(null);
-		soldierSvc.delete(sd.getArmy(), sd);
-		
-		assertThat(sd.getEnabledForDraw()).isEqualTo(false);
-	}
-	
-	@Test
 	public void shouldFailWhenPersistDuplicatedEmail() throws Exception{
 		Soldier sd = getSimpleSoldier();
 		sd.setId(null);
@@ -146,20 +136,6 @@ public class SoldierServiceTest {
 		});
 	}
 	
-	@Test
-	public void shouldFailWhenTryDeleteWithAnotherArmy() {
-		Soldier sd = getSimpleSoldier();
-		
-		Army diffArmy = new Army();
-		diffArmy.setId(2);
-		
-		Assertions.assertThrows(ApplicationServiceException.class, () -> {
-			soldierSvc.delete(diffArmy, sd);
-		});
-		
-		assertThat(sd.getEnabledForDraw()).isEqualTo(true);
-	}
-	
 	public static Soldier getSimpleSoldier() {
 		Soldier sd = new Soldier();
 		sd.setId(1);
@@ -170,8 +146,6 @@ public class SoldierServiceTest {
 		sd.setMilitaryOrganization(MilitaryOrganizationServiceTest.getSimpleOM());
 		sd.setMilitaryRank(MilitaryRankServiceTest.getSimpleRank());
 		sd.setCjm(CJMServiceTest.getSimpleCJm());
-		sd.setEnabledForDraw(true);
-		
 		return sd;
 	}
 }

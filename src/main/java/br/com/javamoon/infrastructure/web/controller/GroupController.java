@@ -2,12 +2,9 @@ package br.com.javamoon.infrastructure.web.controller;
 
 import java.io.IOException;
 import java.net.URLEncoder;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
-import java.util.SortedSet;
-import java.util.TreeSet;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -23,20 +20,16 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
-import com.google.gson.Gson;
+
 import br.com.javamoon.application.service.DrawExclusionService;
 import br.com.javamoon.application.service.DrawService;
-import br.com.javamoon.application.service.SoldierListJsonConverterService;
 import br.com.javamoon.application.service.SoldierService;
 import br.com.javamoon.application.service.ValidationException;
 import br.com.javamoon.domain.cjm_user.CJM;
 import br.com.javamoon.domain.draw.Draw;
-import br.com.javamoon.domain.draw.DrawList;
-import br.com.javamoon.domain.draw.DrawListRepository;
 import br.com.javamoon.domain.draw.DrawRepository;
 import br.com.javamoon.domain.draw_exclusion.DrawExclusion;
 import br.com.javamoon.domain.draw_exclusion.DrawExclusionRepository;
-import br.com.javamoon.domain.exception.SoldierConversionException;
 import br.com.javamoon.domain.group_user.GroupUser;
 import br.com.javamoon.domain.soldier.Army;
 import br.com.javamoon.domain.soldier.ArmyRepository;
@@ -47,7 +40,6 @@ import br.com.javamoon.domain.soldier.Soldier;
 import br.com.javamoon.domain.soldier.SoldierRepository;
 import br.com.javamoon.domain.soldier.SoldierRepositoryImpl;
 import br.com.javamoon.infrastructure.web.model.PaginationSearchFilter;
-import br.com.javamoon.infrastructure.web.model.SoldierJSONWrapper;
 import br.com.javamoon.util.SecurityUtils;
 import br.com.javamoon.util.StringUtils;
 
@@ -78,9 +70,6 @@ public class GroupController {
 	
 	@Autowired
 	private MilitaryOrganizationRepository militaryOrganizationRepo;
-	
-	@Autowired
-	private SoldierListJsonConverterService soldierConverterSvc;
 	
 	@Autowired
 	private ArmyRepository armyRepository;
@@ -289,23 +278,4 @@ public class GroupController {
 		
 		return "group/upload-soldier-list"; 
 	}
-
-	@PostMapping("/sd/registerall/save")
-	public String uploadSoldierList(@RequestParam(required = true, name = "army") Integer armyId,
-			@RequestParam(required = true, name = "jsonlist") String soldierJSONList) {
-		
-		Army army = armyRepository.findById(armyId).orElseThrow();
-		GroupUser loggedUser = SecurityUtils.groupUser();
-		SoldierJSONWrapper[] soldierArr = new Gson().fromJson(soldierJSONList, SoldierJSONWrapper[].class);
-		try {
-			soldierConverterSvc.disableAllSoldiersByArmy(army);
-			soldierConverterSvc.saveAll(army, loggedUser, Arrays.asList(soldierArr));
-			
-		}catch(SoldierConversionException e) {
-			e.printStackTrace();
-			return ControllerHelper.getRedirectURL("/gp/sd/registerall/home", Collections.singletonMap("msg", e.getMessage()));
-		}
-		return ControllerHelper.getRedirectURL("/gp/sd/registerall/home", Collections.emptyMap());
-	}
-	
 }

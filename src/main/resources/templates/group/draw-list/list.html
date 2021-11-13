@@ -4,9 +4,9 @@
   xmlns:th="http://www.thymeleaf.org" layout:decorate="~{group/layout}">
   
   <style layout:fragment="style">    
-		span#listDescription{
-		  font-size: 20px;
-		}
+	span#listDescription{
+	  font-size: 20px;
+	}
     
     fieldset#saveEditSoldierFieldset {
       margin: 32px auto;
@@ -67,7 +67,7 @@
         </thead>
         <tbody>
           <tr th:each="soldier : ${soldiers}">
-            <td><span th:text="${soldier.name}"></span></td>
+            <td><span th:text="${soldier.getIdInfoAsText()}"></span></td>
             
             <td><span th:text="${soldier.militaryOrganization.alias}"></span></td>
             

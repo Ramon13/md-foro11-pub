@@ -100,7 +100,7 @@ public class SoldierRepositoryImpl {
 		hql.add("select s ");
 		hql.add("from DrawList dl join dl.soldiers s ");
 		hql.add("left join fetch s.militaryOrganization ");
-		hql.add("where dl.id = :drawListId ");
+		hql.add("where dl.id = :drawListId order by s.name");
 		
 		if (type == Long.class) {
 			hql.set(0, "select count(s) ");

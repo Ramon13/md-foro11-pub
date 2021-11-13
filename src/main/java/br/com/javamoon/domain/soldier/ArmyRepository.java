@@ -12,7 +12,4 @@ public interface ArmyRepository extends JpaRepository<Army, Integer>{
 
 	@Query("FROM Soldier s WHERE s.army = :army order by s.militaryRank.rankWeight asc")
 	public List<Soldier> findAllSoldiers(@Param("army") Army army);
-	
-	@Query("FROM Soldier s WHERE s.army = :army and s.enabledForDraw = true order by s.militaryRank.rankWeight asc")
-	public List<Soldier> findAllEnabledSoldiers(@Param("army") Army army);
 }

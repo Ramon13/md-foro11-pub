@@ -59,10 +59,6 @@ public class Soldier implements Serializable, Comparable<Soldier>{
 	@Column(length = 64, nullable = true, unique = true)
 	private String email;
 	
-	@NotNull(message = "É necessário especificar a disponibilidade.")
-	@Column(name="enabled_for_draw", nullable = false)
-	private Boolean enabledForDraw = true;
-	
 	@ManyToOne
 	@JoinColumn(name = "army_id", nullable = false)
 	private Army army;
@@ -104,6 +100,11 @@ public class Soldier implements Serializable, Comparable<Soldier>{
 				phone,
 				militaryRank.getName(),
 				String.format("%s - %s", militaryOrganization.getAlias(), militaryOrganization.getName())));
+	}
+	
+	public String getIdInfoAsText() {
+		return String.format("%s <%s>", name, 
+				(email == null) ? "Não enviado" : email);
 	}
 	
 	public String getOmAliasAndName() {

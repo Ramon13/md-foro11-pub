@@ -25,7 +25,9 @@ import br.com.javamoon.domain.soldier.Soldier;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
+import lombok.ToString;
 
+@ToString
 @Setter
 @Getter
 @EqualsAndHashCode(onlyExplicitlyIncluded = true)

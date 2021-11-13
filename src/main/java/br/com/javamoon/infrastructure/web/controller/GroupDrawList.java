@@ -1,13 +1,8 @@
 package br.com.javamoon.infrastructure.web.controller;
 
 import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Optional;
-import java.util.Set;
-import java.util.SortedSet;
-import java.util.TreeSet;
 
 import javax.validation.Valid;
 
@@ -18,6 +13,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.Errors;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -135,7 +131,8 @@ public class GroupDrawList {
 	}
 	
 	@PostMapping("/list/new/save")
-	public ResponseEntity<String> saveList(@Valid DrawList drawList, Errors errors) throws IllegalStateException{
+	public ResponseEntity<String> saveList(@Valid @ModelAttribute("drawList") DrawList drawList,
+			Errors errors) throws IllegalStateException{
 		String errorMsg;
 		
 		if (errors.hasErrors() == Boolean.FALSE) {
