@@ -145,10 +145,13 @@
         <br />
       
       <div>
-      	<a href="#" id="newSoldier">Novo Militar</a>
+      	<a th:href="@{/gp/sd/register}" id="newSoldier">Novo Militar</a>
       </div>
       <br/>
       <div >
+        <button type="button" id="back" class="app-gray-btn">
+          <span>Voltar</span>
+        </button>
         <button type="submit" id="saveList">
           <span>Salvar</span>
         </button>
@@ -227,10 +230,6 @@
      			}
    			}
 	  	}
-       	
-   		function putLocationOnSessionStorage(){
-      		sessionStorage.setItem('previousPage', location.href);
-        }
      	
      	function addListeners(){
      		const listDescription = document.querySelector("input#listDescription");
@@ -257,14 +256,13 @@
          		searchOnList(rightDiv, rightFilter.value.toUpperCase());
          	});
          	
-         	const saveListBtn = document.querySelector("button#saveList");
-         	saveListBtn.addEventListener("click", saveList);
+			const backBtn = document.querySelector("button#back");
+			backBtn.addEventListener("click", function(){
+				window.history.back();
+			});
          	
-         	const newSoldier = document.querySelector("a#newSoldier"); 
-         	newSoldier.addEventListener('click', function(){
-         		putLocationOnSessionStorage();
-         		location.href='[(@{/gp/sd/register/})]';
-         	});     		
+         	const saveListBtn = document.querySelector("button#saveList");
+         	saveListBtn.addEventListener("click", saveList);     		
      	}
     </script>
   </body>

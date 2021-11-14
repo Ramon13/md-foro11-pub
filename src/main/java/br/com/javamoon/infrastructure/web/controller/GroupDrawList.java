@@ -17,13 +17,16 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.servlet.ModelAndView;
 
 import br.com.javamoon.application.service.AnnualQuarterService;
 import br.com.javamoon.application.service.DrawListService;
+import br.com.javamoon.application.service.SoldierService;
 import br.com.javamoon.application.service.ValidationException;
 import br.com.javamoon.domain.draw.AnnualQuarter;
 import br.com.javamoon.domain.draw.DrawList;
 import br.com.javamoon.domain.draw.DrawListRepository;
+import br.com.javamoon.domain.group_user.GroupUser;
 import br.com.javamoon.domain.soldier.Army;
 import br.com.javamoon.domain.soldier.Soldier;
 import br.com.javamoon.domain.soldier.SoldierRepository;
@@ -46,6 +49,9 @@ public class GroupDrawList {
 	
 	@Autowired
 	private DrawListService drawListSvc;
+	
+	@Autowired
+	private SoldierService soldierSvc;
 	
 	@Autowired
 	private AnnualQuarterService annualQuarterSvc;
@@ -136,21 +142,74 @@ public class GroupDrawList {
 		String errorMsg;
 		
 		if (errors.hasErrors() == Boolean.FALSE) {
+			GroupUser loggedUser = SecurityUtils.groupUser();
+			
 			try {
-				Army army = ControllerHelper.getGpUserArmy();
-				drawList.setArmy(army);
+				Soldier[] soldiers = drawList.getSoldiers().toArray(new Soldier[0]);
 				
-				drawListSvc.save(drawList, SecurityUtils.groupUser().getCjm());
+				if (!soldierSvc.isValidArmy(loggedUser.getArmy(), soldiers))
+					throw new IllegalStateException();
+
+				if (!drawListSvc.isValidDescription(drawList.getDescription(), drawList.getId(), drawList.getArmy()))
+					throw new ValidationException("Nome de relação já cadastrado.");
 				
-				return new ResponseEntity<String>("A lista foi salva", HttpStatus.OK);
+				if (!annualQuarterSvc.isSelectableQuarter(drawList.getQuarterYear()))
+					throw new ValidationException("Trimestre inválido.");
+								
+				if (!soldierSvc.isValidCjm(loggedUser.getCjm(), soldiers))
+					throw new ValidationException("O militar selecionado não pertence a outra região militar");
+			
 			}catch(ValidationException e) {
 				errorMsg = e.getMessage();
 			}
-		
+			
+			drawList.setArmy(loggedUser.getArmy());
+			drawList.setCreationUser(loggedUser);
+			
+			drawListSvc.save(drawList);
+			
+			return new ResponseEntity<String>("A lista foi salva", HttpStatus.OK);
 		}else {
 			errorMsg = errors.getFieldError().getDefaultMessage();
 		}
 			
 		return new ResponseEntity<String>(errorMsg, HttpStatus.BAD_REQUEST);
+	}
+	
+	@PostMapping("/list/remove/{drawListId}")
+	public ModelAndView removeList(@PathVariable Integer drawListId) {
+		Optional<DrawList> drawList = drawListRepo.findById(drawListId);
+		GroupUser loggedUser = SecurityUtils.groupUser();
+		
+		if (drawList.isPresent()) {
+			GroupUser creationUser = drawList.get().getCreationUser();
+			
+			if (loggedUser.getArmy().equals(creationUser.getArmy()) &&
+					loggedUser.getCjm().equals(creationUser.getCjm())) {
+				
+				drawListSvc.delete(drawList.get());
+			}
+		}
+		
+		return new ModelAndView("redirect:/gp/dw/list");
+	}
+	
+	@PostMapping("/list/duplicate/{drawListId}")
+	public ModelAndView duplicateList(@PathVariable Integer drawListId) {
+		Optional<DrawList> drawList = drawListRepo.findById(drawListId);
+		GroupUser loggedUser = SecurityUtils.groupUser();
+		
+		if (drawList.isPresent()) {
+			GroupUser creationUser = drawList.get().getCreationUser();
+			
+			if (drawList.get().getId() != null &&
+					loggedUser.getArmy().equals(creationUser.getArmy()) &&
+					loggedUser.getCjm().equals(creationUser.getCjm())) {
+				
+				drawListSvc.duplicate(drawList.get());
+			}
+		}
+		
+		return new ModelAndView("redirect:/gp/dw/list");
 	}
 }

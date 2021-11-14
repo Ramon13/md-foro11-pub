@@ -112,8 +112,12 @@ public class SoldierService{
 	/**
 	 * Check if this soldier belongs to this army
 	 */
-	public boolean isValidArmy(Army army, Soldier soldier) {
-		return soldierRepository.findByIdAndArmy(soldier.getId(), army) != null;
+	public boolean isValidArmy(Army army, Soldier...soldiers) {
+		for (Soldier s : soldiers)
+			if (!army.equals(s.getArmy()))
+				return false;
+		
+		return true;
 	}
 	
 	public boolean isValidCjm(CJM cjm, Soldier...soldiers) {

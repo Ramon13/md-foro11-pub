@@ -20,6 +20,7 @@ import javax.validation.constraints.Size;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
+import br.com.javamoon.domain.group_user.GroupUser;
 import br.com.javamoon.domain.soldier.Army;
 import br.com.javamoon.domain.soldier.Soldier;
 import lombok.EqualsAndHashCode;
@@ -60,7 +61,11 @@ public class DrawList {
 	@JoinColumn(name = "army_id", nullable = false)
 	private Army army;
 	
-	@ManyToMany
+	@ManyToOne
+	@JoinColumn(name = "creation_user_id", nullable = false)
+	private GroupUser creationUser;
+	
+	@ManyToMany()
 	@JoinTable(
 			name = "DRAW_LIST_HAS_SOLDIER",
 			joinColumns = @JoinColumn(name = "draw_list_id"),

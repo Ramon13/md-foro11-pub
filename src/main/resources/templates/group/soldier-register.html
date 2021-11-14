@@ -5,7 +5,7 @@
   <style layout:fragment="style">
     form {
       text-align: center;
-      width: 50%;
+      width: 30%;
       margin: auto;
     }
     button.save-soldier {
@@ -75,14 +75,7 @@
           </div>
           <input type="text" name="email" placeholder="Email ativo do militar..." th:field="*{email}"
             class="app-txtinput" th:classappend="${#fields.hasErrors('email')} ? 'error' : ''"/><br/>
-         
-          <br/>
-          
-          <div>
-            <span>Habilitado para sorteios futuros</span>
-            <input type="checkbox" th:field="*{enabledForDraw}">
-          </div>
-          
+                   
           <br/>
           
           <div>
@@ -106,7 +99,7 @@
     	const backBtn = document.querySelector("button#back");
     	
     	backBtn.addEventListener('click', function(){
-    		location.href	= sessionStorage.getItem('previousPage');
+    		window.history.back();
     	});
     	
     	showSuccessMsg();

@@ -80,40 +80,24 @@
 	              
 	            <a style="float:right" th:href="@{/gp/sd/exclusion/} + ${soldier.id}">
 	              <img th:src="@{/images/new-plus.svg}" title="Gerenciar impedimentos"/></a>
-            </td>
-            
+            </td>            
           </tr>
           
         </tbody>
       </table>
+      
+      <br/><br/>
+      
+      <button type="button" id="back" class="app-gray-btn">
+        <span>Voltar</span>
+      </button>
     </div>
     
     <script layout:fragment="page-script" th:inline="javascript">
-    	addEditSoldierListeners();
-    	addDrawExclusionListeners();
-    	
-    	function addEditSoldierListeners(){
-    		const editSoldiers = document.querySelectorAll("button.editSoldier");
-    		let sid;
-    		for (let i = 0; i < editSoldiers.length; i++){
-    			editSoldiers[i].addEventListener('click', function(){
-    	    		sid = editSoldiers[i].dataset.sid;
-    	    		location.href = '[(@{/gp/sd/register/edit/})]' + sid;
-    	    	});		
-    		}
-    	}
-    	
-    	function addDrawExclusionListeners(){
-    		const drawExclusionBtns = document.querySelectorAll("button.addDrawExclusion");
-    		let soldierId;
-    		for (let i = 0; i < drawExclusionBtns.length; i++){
-    			drawExclusionBtns[i].addEventListener('click', function(){
-    				soldierId = drawExclusionBtns[i].dataset.sid;
-    				location.href = '[(@{/gp/sd/exclusion/})]' + soldierId;
-    			});
-    		}
-    	} 
-    	
+      	const backBtn = document.querySelector("button#back");
+  		backBtn.addEventListener("click", function(){
+    		window.history.back();
+    	});
     </script>
   </body>
 </html>

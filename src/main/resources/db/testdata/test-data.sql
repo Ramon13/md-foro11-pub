@@ -109,14 +109,6 @@ insert into SOLDIER (id, email, soldier_name, phone, army_id, cjm_id, military_b
 		(29, null, 'SHELLY GABRIELA LEAL', '61 98243-8988', 3, 2, 15, 5, null),
 		(30, null, 'MARCO AURÉLIO LEITE DE PAULA', '61 98179-1248', 3, 2, 15, 5, null);
 
-insert into DRAW_LIST (id, creation_date, update_date, army_id, quarter_year, description)
-	values
-		(1, '2021-10-13', '2021-10-13', 1, '4/2021', 'Primeira lista exército 4º trimestre de 2021');
-		
-insert into DRAW_LIST_HAS_SOLDIER (draw_list_id, soldier_id)
-	values
-		(1, 1), (1, 2), (1, 3), (1, 4), (1, 5);
-
 #cjm_user 1aud1cjm
 insert into CJM_USER (id, username, email, user_password, is_credentials_expired, auditorship_id)
 	values
@@ -184,3 +176,13 @@ insert into DRAW (id, draw_date, process_number, quarter, year, army_id, cjm_use
 insert into DRAW_HAS_SOLDIER (draw_id, soldier_id)
 	values
 		(4, 4), (4, 5), (4, 6), (4, 7), (4, 10);
+
+		
+#Draw List		
+insert into DRAW_LIST (id, creation_date, update_date, army_id, quarter_year, description, creation_user_id)
+	values
+		(1, '2021-10-13', '2021-10-13', 1, '4/2021', 'Primeira lista exército 4º trimestre de 2021', 1);
+		
+insert into DRAW_LIST_HAS_SOLDIER (draw_list_id, soldier_id)
+	values
+		(1, 1), (1, 2), (1, 3), (1, 4), (1, 5);		

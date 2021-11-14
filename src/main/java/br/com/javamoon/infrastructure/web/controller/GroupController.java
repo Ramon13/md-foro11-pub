@@ -25,21 +25,17 @@ import br.com.javamoon.application.service.DrawExclusionService;
 import br.com.javamoon.application.service.DrawService;
 import br.com.javamoon.application.service.SoldierService;
 import br.com.javamoon.application.service.ValidationException;
-import br.com.javamoon.domain.cjm_user.CJM;
 import br.com.javamoon.domain.draw.Draw;
 import br.com.javamoon.domain.draw.DrawRepository;
 import br.com.javamoon.domain.draw_exclusion.DrawExclusion;
 import br.com.javamoon.domain.draw_exclusion.DrawExclusionRepository;
 import br.com.javamoon.domain.group_user.GroupUser;
 import br.com.javamoon.domain.soldier.Army;
-import br.com.javamoon.domain.soldier.ArmyRepository;
 import br.com.javamoon.domain.soldier.MilitaryOrganizationRepository;
 import br.com.javamoon.domain.soldier.MilitaryRankRepository;
 import br.com.javamoon.domain.soldier.NoAvaliableSoldierException;
 import br.com.javamoon.domain.soldier.Soldier;
 import br.com.javamoon.domain.soldier.SoldierRepository;
-import br.com.javamoon.domain.soldier.SoldierRepositoryImpl;
-import br.com.javamoon.infrastructure.web.model.PaginationSearchFilter;
 import br.com.javamoon.util.SecurityUtils;
 import br.com.javamoon.util.StringUtils;
 
@@ -66,72 +62,10 @@ public class GroupController {
 	private SoldierRepository soldierRepository;
 	
 	@Autowired
-	private SoldierRepositoryImpl soldierRepoImpl;
-	
-	@Autowired
-	private MilitaryOrganizationRepository militaryOrganizationRepo;
-	
-	@Autowired
-	private ArmyRepository armyRepository;
-	
-	@Autowired
 	private DrawRepository drawRepo;
 	
 	@Autowired
 	private DrawService drawSvc;
-	
-	@GetMapping("/home/{selectedPage}")
-	public String home(Model model, @PathVariable int selectedPage) {
-		GroupUser loggedUser = SecurityUtils.groupUser();
-		if (loggedUser.isCredentialsExpired()) {
-			return "redirect:/lu/user/password/reset/page";
-		}
-		
-		Army army = loggedUser.getArmy();
-		CJM cjm = loggedUser.getCjm();
-		
-		int soldiersCount = soldierRepoImpl.countEnabledByArmyAndCJM(army, cjm).intValue();
-		PaginationSearchFilter paginationSearchFilter = new PaginationSearchFilter(null, selectedPage, soldiersCount);
-		
-		List<Soldier> soldiers = soldierRepoImpl.
-				findEnabledByArmyAndCJMPaginable(
-						army,
-						cjm,
-						paginationSearchFilter.getFirstResult(),
-						PaginationSearchFilter.ELEMENTS_BY_PAGE);
-		
-		model.addAttribute("soldiers", soldiers);
-		model.addAttribute("paginationURL", "/gp/home");
-		model.addAttribute("paginationSearchFilter", paginationSearchFilter);
-		return "group/home";
-	}
-	
-	@GetMapping("/home/sd/search/{key}/{selectedPage}")
-	public String searchBySoldier(Model model, @PathVariable String key,
-			@PathVariable int selectedPage) {
-		
-		GroupUser loggedUser = SecurityUtils.groupUser();
-		int soldiersCount = soldierRepoImpl.countEnabledByArmyAndCJM(
-				loggedUser.getArmy(), 
-				loggedUser.getCjm(),
-				key).intValue();
-		
-		PaginationSearchFilter paginationSearchFilter = new PaginationSearchFilter(null, selectedPage, soldiersCount);
-		
-		List<Soldier> soldiers = soldierRepoImpl.
-				searchEnabledByArmyAndCJMPaginable(
-						key,
-						loggedUser.getArmy(),
-						loggedUser.getCjm(),
-						paginationSearchFilter.getFirstResult(),
-						PaginationSearchFilter.ELEMENTS_BY_PAGE);
-		
-		model.addAttribute("soldiers", soldiers);
-		model.addAttribute("key", key);
-		model.addAttribute("paginationURL", "/gp/home/sd/search/" + key);
-		model.addAttribute("paginationSearchFilter", paginationSearchFilter);
-		return "group/home";
-	}
 	
 	@GetMapping("/sd/register")
 	public String soldierRegisterPage(@RequestParam(value = "successMsg", required = false) String successMsg,
@@ -266,16 +200,5 @@ public class GroupController {
 		model.addAttribute("cjm", loggedUser.getCjm());
 		
 		return "group/cjm-draw";
-	}
-	
-	@GetMapping("/sd/registerall/home")
-	public String uploadSoldierList(Model model,
-			@RequestParam(required = false) String msg) {
-		model.addAttribute("msg", msg);
-		model.addAttribute("militaryOrganizations", militaryOrganizationRepo.findAll());
-		ControllerHelper.addArmiesToRequest(armyRepository, model);
-		
-		
-		return "group/upload-soldier-list"; 
 	}
 }

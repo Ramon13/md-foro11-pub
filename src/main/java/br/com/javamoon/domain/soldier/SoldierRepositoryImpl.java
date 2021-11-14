@@ -9,15 +9,9 @@ import javax.persistence.NoResultException;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
 import javax.persistence.TypedQuery;
-import javax.persistence.criteria.CriteriaBuilder;
-import javax.persistence.criteria.CriteriaQuery;
-import javax.persistence.criteria.JoinType;
-import javax.persistence.criteria.Predicate;
-import javax.persistence.criteria.Root;
 
 import org.springframework.stereotype.Repository;
 
-import br.com.javamoon.domain.cjm_user.CJM;
 import br.com.javamoon.domain.draw.DrawList;
 import br.com.javamoon.infrastructure.web.model.PaginationSearchFilter;
 
@@ -26,18 +20,6 @@ public class SoldierRepositoryImpl {
 
 	@PersistenceContext
 	private EntityManager entityManager;
-	
-	private CriteriaBuilder builder;
-	
-	private Root<Soldier> root;
-	
-	private CriteriaQuery<Soldier> criteriaQuery;
-	
-	private void initCriteriaConfig() {
-		builder = entityManager.getCriteriaBuilder();
-		criteriaQuery = builder.createQuery(Soldier.class);
-		root = criteriaQuery.from(Soldier.class);
-	}
 	
 	public Soldier findByMilitaryRankAndArmy(MilitaryRank rank, Army army, Collection<Soldier> excludeSoldiers) throws NoAvaliableSoldierException {
 		List<Integer> excludeSoldierIds = new ArrayList<>();
@@ -59,40 +41,6 @@ public class SoldierRepositoryImpl {
 		} catch (NoResultException e) {
 			throw new NoAvaliableSoldierException(rank.getAlias(), e);
 		}
-	}
-	
-	public List<Soldier> findEnabledByArmyAndCJMPaginable(Army army, CJM cjm, 
-			int firstResult, int maxResults){
-		initCriteriaConfig();
-		criteriaQuery.where(builder.and(
-		    equalArmyPredicate(army), equalCJMPredicate(cjm)));
-		
-		root.fetch("militaryOrganization", JoinType.LEFT);
-		
-		criteriaQuery.orderBy(builder.asc(root.get("militaryRank").get("rankWeight")));
-		
-		TypedQuery<Soldier> query = entityManager.createQuery(criteriaQuery);
-		query.setFirstResult(firstResult - 1);
-		query.setMaxResults(maxResults);
-		return query.getResultList();
-	}
-	
-	public List<Soldier> searchEnabledByArmyAndCJMPaginable(String key, Army army, CJM cjm, 
-			int firstResult, int maxResults){
-		initCriteriaConfig();
-		criteriaQuery.where(builder.and(
-		    equalArmyPredicate(army),
-		    equalCJMPredicate(cjm),
-		    likeNamePredicate(key)));
-		
-		root.fetch("militaryOrganization", JoinType.LEFT);
-		
-		criteriaQuery.orderBy(builder.asc(root.get("militaryRank").get("rankWeight")));
-		
-		TypedQuery<Soldier> query = entityManager.createQuery(criteriaQuery);
-		query.setFirstResult(firstResult - 1);
-		query.setMaxResults(maxResults);
-		return query.getResultList();
 	}
 	
 	public <T> Object findByDrawListPaginable(Class<T> type, DrawList drawList, PaginationSearchFilter filter) {
@@ -125,43 +73,5 @@ public class SoldierRepositoryImpl {
 		query.setFirstResult(filter.getFirstResult() - 1);
 		query.setMaxResults(PaginationSearchFilter.ELEMENTS_BY_PAGE);
 		return query.getResultList();
-	}
-
-	public Long countEnabledByArmyAndCJM(Army army, CJM cjm) {
-		initCriteriaConfig();
-		CriteriaQuery<Long> cq = builder.createQuery(Long.class);
-		this.root = cq.from(Soldier.class);
-		
-		cq.select(builder.count(root));
-		cq.where(builder.and(
-			    equalArmyPredicate(army), equalCJMPredicate(cjm)));
-		
-		return entityManager.createQuery(cq).getSingleResult();
-	}
-	
-	public Long countEnabledByArmyAndCJM(Army army, CJM cjm, String key) {
-		initCriteriaConfig();
-		CriteriaQuery<Long> cq = builder.createQuery(Long.class);
-		this.root = cq.from(Soldier.class);
-		
-		cq.select(builder.count(root));
-		cq.where(builder.and(
-			    equalArmyPredicate(army),
-			    equalCJMPredicate(cjm),
-			    likeNamePredicate(key)));
-		
-		return entityManager.createQuery(cq).getSingleResult();
-	}
-	
-	private Predicate likeNamePredicate(String name) {
-		return builder.like(root.get("name"), "%" + name + "%");
-	}
-	
-	private Predicate equalArmyPredicate(Army army) {
-		return builder.equal(root.get("army"), army);
-	}
-	
-	private Predicate equalCJMPredicate(CJM cjm) {
-		return builder.equal(root.get("cjm"), cjm);
 	}
 }
