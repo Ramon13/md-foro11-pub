@@ -1,7 +1,7 @@
 package br.com.javamoon.domain.draw;
 
 import java.io.Serializable;
-import java.time.LocalDateTime;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
@@ -19,6 +19,9 @@ import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.validation.constraints.Size;
 
+import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.UpdateTimestamp;
+
 import br.com.javamoon.domain.cjm_user.CJMUser;
 import br.com.javamoon.domain.soldier.Army;
 import br.com.javamoon.domain.soldier.MilitaryRank;
@@ -27,6 +30,7 @@ import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
+
 //TODO: add finishedDraw when justice council is CPJ
 @SuppressWarnings("serial")
 @Getter
@@ -42,14 +46,13 @@ public class Draw implements Serializable{
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Integer id;
 	
-	@Column(name = "draw_date", nullable = false)
-	private LocalDateTime drawDate;
+	@CreationTimestamp
+	@Column(name = "creation_date", nullable = false)
+	private LocalDate creationDate;
 	
-	@Column(nullable = true)
-	private Integer quarter;
-	
-	@Column(nullable = true)
-	private Integer year;
+	@UpdateTimestamp
+	@Column(name = "update_date", nullable = false)
+	private LocalDate updateDate;
 	
 	@Size(max = 64, message="Número de caracteres máximo permitido: 64")
 	@Column(name="process_number", nullable = true, unique = true, length = 64)
@@ -85,12 +88,16 @@ public class Draw implements Serializable{
     )
 	private List<Soldier> soldiers = new LinkedList<>();
 	
+	@ManyToOne
+	@JoinColumn(name="draw_list_id", nullable = true)
+	private DrawList drawList;
+	
 	@ToString.Exclude
 	private transient List<MilitaryRank> ranks = new ArrayList<>();
 	
 	@ToString.Exclude
-	private transient AnnualQuarter annualQuarter;
-	
+	private transient List<Integer> excludeSoldiers = new ArrayList<Integer>();
+
 	@ToString.Exclude
 	private transient CouncilType councilType;
 	
@@ -99,26 +106,11 @@ public class Draw implements Serializable{
 		councilType = CouncilType.fromAlias(justiceCouncil.getAlias());
 	}
 	
-	/**
-	 * utilitary method for biding AnnualQuarter short format to AnnualQuarter object
-	 * sets Draw.quarter and Draw.year values
-	 */
-	public void setAnnualQuarter(String shortQuarterFormat) {
-		this.annualQuarter = new AnnualQuarter(shortQuarterFormat);
-		setAnnualQuarter(annualQuarter);
-	}
-	
-	public void setAnnualQuarter(AnnualQuarter annualQuarter) {
-		this.annualQuarter = annualQuarter;
-		this.quarter = annualQuarter.getQuarter();
-		this.year = annualQuarter.getYear();
-	}
-	
 	public String getManagementListHeader() {
 		councilType = CouncilType.fromAlias(justiceCouncil.getAlias());
 		
 		return (councilType == CouncilType.CPJ)
-					? String.format("%s (%d/%d) - %s", justiceCouncil.getName(), quarter, year, army.getName())
+					? String.format("%s (%s) - %s", justiceCouncil.getName(), drawList.getQuarterYear(), army.getName())
 					: String.format("%s (%s) - %s", justiceCouncil.getName(), processNumber, army.getName());		
 	}
 	

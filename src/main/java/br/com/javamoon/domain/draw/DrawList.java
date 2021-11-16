@@ -70,6 +70,6 @@ public class DrawList {
 			name = "DRAW_LIST_HAS_SOLDIER",
 			joinColumns = @JoinColumn(name = "draw_list_id"),
 			inverseJoinColumns = @JoinColumn(name = "soldier_id"))
-	@Size(min = 5, max=1000, message = "A lista de destino deve conter no mínimo 5 e no máximo 100 militares")
+	@Size(min = 5, max=2000, message = "A lista de destino deve conter no mínimo 5 e no máximo 1000 militares")
 	private Set<Soldier> soldiers = new HashSet<Soldier>(0);
 }

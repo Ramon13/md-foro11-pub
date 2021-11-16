@@ -1,11 +1,12 @@
 package br.com.javamoon.application.service;
 
-import java.util.Collection;
+import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import br.com.javamoon.domain.cjm_user.CJM;
+import br.com.javamoon.domain.draw.DrawList;
 import br.com.javamoon.domain.draw.DrawRepository;
 import br.com.javamoon.domain.exception.DeleteSoldierException;
 import br.com.javamoon.domain.group_user.GroupUser;
@@ -67,8 +68,8 @@ public class SoldierService{
 		soldierRepository.save(soldier);
 	}
 	
-	public Soldier getRandomSoldiersByRank(MilitaryRank rank, Army army, Collection<Soldier> excludeSoldiers) throws NoAvaliableSoldierException{
-		return soldierRepositoryImpl.findByMilitaryRankAndArmy(rank, army, excludeSoldiers);
+	public Soldier getRandomSoldier(MilitaryRank rank, Army army, DrawList drawList, List<Integer> excludeSoldiers) throws NoAvaliableSoldierException{
+		return soldierRepositoryImpl.findByMilitaryRankAndArmy(rank, army, drawList, excludeSoldiers);
 	}
 	
 	private boolean validateMilitaryOrganization(Soldier soldier) {

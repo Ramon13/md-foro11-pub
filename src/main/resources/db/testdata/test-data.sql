@@ -138,12 +138,41 @@ insert into GROUP_USER (id, username, email, user_password, is_credentials_expir
 insert into GROUP_USER (id, username, email, user_password, is_credentials_expired, cjm_id, army_id)
 	values
 		(3, 'fabadmin', null, '{bcrypt}$2a$10$IgXSs3978BKQMSyrIRF/ROA8V7f/v.G.Zr0F2l1yLJGamjGbYBjXe', 0, 2, 3);
+
 		
-#draw
-#cpj 0 EB 1aud1cjm
-insert into DRAW (id, draw_date, process_number, quarter, year, army_id, cjm_user_id, justice_council_id, soldier_substitute_id, finished)
+		
+		
+#Draw List------------------------------------------------------------------------------------------------------		
+insert into DRAW_LIST (id, creation_date, update_date, army_id, quarter_year, description, creation_user_id)
 	values
-		(1, '2021-06-08 14:24:14', null, 3, 2021, 1, 1, 1, 1, 1);
+		(1, '2021-10-13', '2021-10-13', 1, '4/2021', 'Primeira lista exército 4º trimestre de 2021', 1);
+		
+insert into DRAW_LIST_HAS_SOLDIER (draw_list_id, soldier_id)
+	values
+		(1, 1), (1, 2), (1, 3), (1, 4), (1, 5);			
+
+
+insert into DRAW_LIST (id, creation_date, update_date, army_id, quarter_year, description, creation_user_id)
+	values
+		(2, '2021-10-13', '2021-10-13', 2, '3/2021', 'Primeira lista exército 4º trimestre de 2021', 1);
+		
+insert into DRAW_LIST_HAS_SOLDIER (draw_list_id, soldier_id)
+	values
+		(2, 11), (2, 12), (2, 13), (2, 14), (2, 15), (2, 16), (2, 18);		
+
+insert into DRAW_LIST (id, creation_date, update_date, army_id, quarter_year, description, creation_user_id)
+	values
+		(3, '2021-10-13', '2021-10-13', 3, '3/2021', 'Primeira lista exército 4º trimestre de 2021', 3);
+		
+insert into DRAW_LIST_HAS_SOLDIER (draw_list_id, soldier_id)
+	values
+		(3, 21), (3, 22), (3, 23), (3, 24), (3, 25), (3, 26), (3, 28);		
+		
+#draw----------------------------------------------------------------------------------------------------------------
+#cpj 0 EB 1aud1cjm
+insert into DRAW (id, creation_date, update_date, process_number, army_id, cjm_user_id, justice_council_id, soldier_substitute_id, draw_list_id, finished)
+	values
+		(1, '2021-06-08', '2021-06-08', null, 1, 1, 1, 1, 1, 1);
 		
 insert into DRAW_HAS_SOLDIER (draw_id, soldier_id)
 	values
@@ -151,38 +180,28 @@ insert into DRAW_HAS_SOLDIER (draw_id, soldier_id)
 		
 		
 #cej 0 MB 1aud1CJM
-insert into DRAW (id, draw_date, process_number, quarter, year, army_id, cjm_user_id, justice_council_id, soldier_substitute_id, finished)
+insert into DRAW (id, creation_date, update_date, process_number, army_id, cjm_user_id, justice_council_id, soldier_substitute_id, draw_list_id, finished)
 	values
-		(2, '2021-09-08 14:24:14', 1232133-33, null, null, 2, 1, 2, null, 0);
+		(2, '2021-06-08', '2021-06-08', 1232133-33, 2, 1, 2, null, 1, 0);
 		
 insert into DRAW_HAS_SOLDIER (draw_id, soldier_id)
 	values
 		(2, 11), (2, 12), (2, 13), (2, 14);
 
 #cpj 1 fab 1aud2cjm
-insert into DRAW (id, draw_date, process_number, quarter, year, army_id, cjm_user_id, justice_council_id, soldier_substitute_id, finished)
+insert into DRAW (id, creation_date, update_date, process_number, army_id, cjm_user_id, justice_council_id, soldier_substitute_id, draw_list_id, finished)
 	values
-		(3, '2021-06-08 14:24:14', null, 3, 2021, 3, 3, 1, 21, 1);
+		(3, '2021-06-08', '2021-06-08', null, 3, 3, 1, 21, 1, 1);
 		
 insert into DRAW_HAS_SOLDIER (draw_id, soldier_id)
 	values
 		(3, 21), (3, 22), (3, 23), (3, 24), (3, 25);				
 						
 #cpj 2 EB 2aud1CJM
-insert into DRAW (id, draw_date, process_number, quarter, year, army_id, cjm_user_id, justice_council_id, soldier_substitute_id, finished)
+insert into DRAW (id, creation_date, update_date, process_number, army_id, cjm_user_id, justice_council_id, soldier_substitute_id, draw_list_id, finished)
 	values
-		(4, '2021-06-08 14:24:14', null, 4, 2021, 1, 2, 1, 4, 0);
+		(4, '2021-06-08', '2021-06-08', null, 1, 2, 1, 4, 1, 0);
 		
 insert into DRAW_HAS_SOLDIER (draw_id, soldier_id)
 	values
 		(4, 4), (4, 5), (4, 6), (4, 7), (4, 10);
-
-		
-#Draw List		
-insert into DRAW_LIST (id, creation_date, update_date, army_id, quarter_year, description, creation_user_id)
-	values
-		(1, '2021-10-13', '2021-10-13', 1, '4/2021', 'Primeira lista exército 4º trimestre de 2021', 1);
-		
-insert into DRAW_LIST_HAS_SOLDIER (draw_list_id, soldier_id)
-	values
-		(1, 1), (1, 2), (1, 3), (1, 4), (1, 5);		

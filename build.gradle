@@ -1,5 +1,5 @@
 plugins {
-	id 'org.springframework.boot' version '2.4.3'
+	id 'org.springframework.boot' version '2.5.1'
 	id 'io.spring.dependency-management' version '1.0.11.RELEASE'
 	id 'java'
 }
@@ -47,7 +47,8 @@ dependencies {
 	runtimeOnly 'nz.net.ultraq.thymeleaf:thymeleaf-layout-dialect'
 	
 	//Devtools
-	compileOnly 'org.projectlombok:lombok'
+	
+	compileOnly group: 'org.projectlombok', name: 'lombok', version: '1.18.20'
 	developmentOnly 'org.springframework.boot:spring-boot-devtools'
 	annotationProcessor 'org.projectlombok:lombok'
 	

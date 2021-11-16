@@ -1,7 +1,6 @@
 package br.com.javamoon.domain.soldier;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 
 import javax.persistence.EntityManager;
@@ -21,18 +20,17 @@ public class SoldierRepositoryImpl {
 	@PersistenceContext
 	private EntityManager entityManager;
 	
-	public Soldier findByMilitaryRankAndArmy(MilitaryRank rank, Army army, Collection<Soldier> excludeSoldiers) throws NoAvaliableSoldierException {
-		List<Integer> excludeSoldierIds = new ArrayList<>();
-		excludeSoldierIds.add(0);
-		for (Soldier s : excludeSoldiers)
-			excludeSoldierIds.add(s.getId());
+	public Soldier findByMilitaryRankAndArmy(MilitaryRank rank, Army army, DrawList drawList, List<Integer> excludeSoldierIds) throws NoAvaliableSoldierException {
 		
-		Query query = entityManager.createQuery("from Soldier s where s.militaryRank = :rank "
+		excludeSoldierIds.add(0);
+		
+		Query query = entityManager.createQuery("select s from DrawList dl join dl.soldiers s where s.militaryRank = :rank "
 				+ "and s.army = :army "
+				+ "and dl.id = :drawListId "
 				+ "and s.id not in (:excludeSoldierIds) "
-				+ "and s.enabledForDraw = true "
 				+ "order by rand()", Soldier.class);
 		query.setParameter("rank", rank);
+		query.setParameter("drawListId", drawList.getId());
 		query.setParameter("army", army);
 		query.setParameter("excludeSoldierIds", excludeSoldierIds);
 		query.setMaxResults(1);
@@ -48,7 +46,7 @@ public class SoldierRepositoryImpl {
 		hql.add("select s ");
 		hql.add("from DrawList dl join dl.soldiers s ");
 		hql.add("left join fetch s.militaryOrganization ");
-		hql.add("where dl.id = :drawListId order by s.name");
+		hql.add("where dl.id = :drawListId ");
 		
 		if (type == Long.class) {
 			hql.set(0, "select count(s) ");
@@ -56,12 +54,15 @@ public class SoldierRepositoryImpl {
 		}
 		
 		if (filter.getKey() != null)
-			hql.add("and s.name like :soldierName");
-			
+			hql.add("and s.name like :soldierName ");
+		
+		hql.add("order by s.name");
+		
 		StringBuilder hqlBuilder = new StringBuilder();
 		for (String s : hql)
 			hqlBuilder.append(s);
 		
+		System.out.println(hqlBuilder.toString());
 		TypedQuery<T> query = entityManager.createQuery(hqlBuilder.toString(), type);
 		query.setParameter("drawListId", drawList.getId());
 		if (filter.getKey() != null)

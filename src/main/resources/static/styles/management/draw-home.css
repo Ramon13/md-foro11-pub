@@ -35,9 +35,6 @@ p.ranks{
   min-width: 300px;
 }
 
-#drawForm select.ranks{
-  width: 80%;
-  float: right;
 }
 
 #drawForm span.sequence{
@@ -109,4 +106,9 @@ p.ranks{
   margin-top: 40px;
   color: red;
   text-decoration: underline;
+}
+
+button#randAll, button#saveDraw{
+	float: right;
+	margin: 5px 0 5px 0;
 }

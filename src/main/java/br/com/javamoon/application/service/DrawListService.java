@@ -1,6 +1,10 @@
 package br.com.javamoon.application.service;
 
+import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
+import java.util.Map;
+import java.util.TreeMap;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
@@ -62,6 +66,33 @@ public class DrawListService {
 		BeanUtils.copyProperties(drawList, newDrawList, "id", "soldiers");
 		
 		save(newDrawList);
+	}
+	
+	public Map<String, List<DrawList>> getMapAnnualQuarterDrawList(List<DrawList> drawLists){
+		Map<String, List<DrawList>> quarterDrawListMap = new TreeMap<>(new Comparator<String>() {
+			public int compare(String o1, String o2) {
+				int value = o2.substring(2, 6).compareTo(o1.substring(2, 6));
+				if (value != 0)
+					return value;
+				
+				return Integer.compare(o2.charAt(0), o1.charAt(0));
+			};
+		});
+		
+		
+		List<DrawList> quarterDrawLists;
+		for (DrawList drawList : drawLists) {
+			
+			quarterDrawLists = quarterDrawListMap.get(drawList.getQuarterYear());
+			
+			if (quarterDrawLists == null)
+				quarterDrawLists = new ArrayList<DrawList>();
+			
+			quarterDrawLists.add(drawList);
+			quarterDrawListMap.put(drawList.getQuarterYear(), quarterDrawLists);
+		}
+		
+		return quarterDrawListMap;
 	}
 	
 	public boolean isValidDescription(String description, Integer id, Army army) {

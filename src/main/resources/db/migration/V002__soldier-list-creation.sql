@@ -20,3 +20,16 @@ create table DRAW_LIST_HAS_SOLDIER(
 	constraint FK_DRAW_LIST_HAS_SOLDIER_SOLDIER foreign key (soldier_id)
 	references SOLDIER (id)
 )engine=InnoDB default charset=utf8mb4;
+
+
+ALTER TABLE SOLDIER DROP COLUMN enabled_for_draw;
+
+ALTER TABLE DRAW DROP COLUMN quarter;
+ALTER TABLE DRAW DROP COLUMN year;
+ALTER TABLE DRAW DROP COLUMN draw_date;
+
+ALTER TABLE DRAW ADD COLUMN creation_date date not null default '2021-01-01';
+ALTER TABLE DRAW ADD COLUMN update_date date not null default '2021-01-01';
+
+ALTER TABLE DRAW ADD COLUMN draw_list_id int; 
+ALTER TABLE DRAW ADD CONSTRAINT FK_DRAW_DRAW_LIST foreign key (draw_list_id) references DRAW_LIST (id);

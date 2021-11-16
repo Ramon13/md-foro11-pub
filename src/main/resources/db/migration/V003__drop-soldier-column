@@ -1,1 +1,0 @@
-ALTER TABLE SOLDIER DROP COLUMN enabled_for_draw;

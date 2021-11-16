@@ -12,16 +12,14 @@ import br.com.javamoon.domain.exception.InvalidAnnualQuarterException;
 @Service
 public class AnnualQuarterService {
 
-	public void validate(AnnualQuarter selectedQuarter) throws InvalidAnnualQuarterException{
+	public boolean isValidAnnualQuarter(String quarterYear) throws InvalidAnnualQuarterException{
 		List<AnnualQuarter> selectableQuarters = getSelectableQuarters();
 		
-		for (AnnualQuarter quarter : selectableQuarters) {
-			if (quarter.getQuarter() == selectedQuarter.getQuarter() && quarter.getYear() == selectedQuarter.getYear()) {
-				return;
-			}
-		}
+		for (AnnualQuarter quarter : selectableQuarters)
+			if (quarter.toShortFormat().equals(quarterYear))
+				return true;
 		
-		throw new InvalidAnnualQuarterException("Trimestre Inválido");
+		return false;
 	}
 	
 	public List<AnnualQuarter> getSelectableQuarters(){

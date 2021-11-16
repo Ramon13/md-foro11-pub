@@ -14,12 +14,8 @@
       padding: 5px 10px;
     }
     
-    span.enabled-for-draw{
-      color: #358638;
-    }
-    
-    span.deleted-by-om{
-      color: red;
+    div#sdInfo{
+      text-align: center;
     }
     
     div#sdInfo div{
@@ -63,8 +59,6 @@
     <div layout:fragment="content">      
       <h1>
         <span th:text="${soldier.name}"></span>
-        <span th:text="${soldier.enabledForDraw} ? ' (Disponivel para sorteio)' : ' (Excluído pela organização militar)'"
-          th:classappend="${soldier.enabledForDraw} ? 'enabled-for-draw' : 'deleted-by-om'"></span>
       </h1>
       <div id="sdInfo">
         <div>
@@ -88,7 +82,8 @@
           <label>Telefone</label><br />
           <span th:text="${soldier.phone}"></span>
         </div>
-      </div> 
+        <div></div>
+      </div>
       <br/><br/><br/>
       <div class="empty-list" th:if="${#lists.isEmpty(exclusions)}">
         <span>
@@ -101,7 +96,17 @@
         </div>
         <p th:text="${exclusion.message}"></p><br/>
       </div>
-      
+      <br/>
+      <button type="button" id="back" class="app-gray-btn">
+        <span>Voltar</span>
+      </button>
     </div>
+    
+    <script layout:fragment="page-script" th:inline="javascript">
+      const backBtn = document.querySelector("button#back");
+      backBtn.addEventListener("click", function(){
+        window.history.back();
+      });
+    </script>
   </body>
 </html>

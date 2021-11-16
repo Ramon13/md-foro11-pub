@@ -28,7 +28,6 @@ import br.com.javamoon.application.service.DrawService;
 import br.com.javamoon.application.service.GroupUserService;
 import br.com.javamoon.application.service.ValidationException;
 import br.com.javamoon.domain.cjm_user.AuditorshipRepository;
-import br.com.javamoon.domain.cjm_user.CJM;
 import br.com.javamoon.domain.cjm_user.CJMRepository;
 import br.com.javamoon.domain.cjm_user.CJMUser;
 import br.com.javamoon.domain.cjm_user.CJMUserRepository;
@@ -36,13 +35,10 @@ import br.com.javamoon.domain.draw.Draw;
 import br.com.javamoon.domain.draw.DrawRepository;
 import br.com.javamoon.domain.group_user.GroupUser;
 import br.com.javamoon.domain.group_user.GroupUserRepository;
-import br.com.javamoon.domain.soldier.Army;
 import br.com.javamoon.domain.soldier.ArmyRepository;
 import br.com.javamoon.domain.soldier.Soldier;
 import br.com.javamoon.domain.soldier.SoldierRepository;
-import br.com.javamoon.domain.soldier.SoldierRepositoryImpl;
 import br.com.javamoon.domain.user.User;
-import br.com.javamoon.infrastructure.web.model.PaginationSearchFilter;
 import br.com.javamoon.util.SecurityUtils;
 
 @ControllerAdvice
@@ -58,9 +54,6 @@ public class ManagementController {
 	
 	@Autowired
 	private SoldierRepository soldierRepository;
-	
-	@Autowired
-	private SoldierRepositoryImpl soldierRepoImpl;
 	
 	@Autowired
 	private ArmyRepository armyRepository;
@@ -114,63 +107,8 @@ public class ManagementController {
 		response.setHeader("Content-disposition", String.format("inline; filename=%s.pdf", draw.getJusticeCouncil().getName()));
 		return drawService.generateDrawReport(draw);
 	}
-
-	@GetMapping("/sd/list/{armyId}/{selectedPage}")
-	public String listSoldiers(@PathVariable Integer armyId, 
-			@PathVariable Integer selectedPage,
-			Model model) {
-		
-		Army army = armyRepository.findById(armyId).orElseThrow();
-		CJM cjm = SecurityUtils.cjmUser().getAuditorship().getCjm();
-		
-		int soldiersCount = soldierRepoImpl.countEnabledByArmyAndCJM(army, cjm).intValue();
-		PaginationSearchFilter paginationSearchFilter = new PaginationSearchFilter(selectedPage, soldiersCount);
-		
-		List<Soldier> soldiers = soldierRepoImpl.
-				findEnabledByArmyAndCJMPaginable(
-						army,
-						cjm,
-						paginationSearchFilter.getFirstResult(),
-						PaginationSearchFilter.ELEMENTS_BY_PAGE);
-		
-		
-		model.addAttribute("soldiers", soldiers);
-		model.addAttribute("army", army);
-		model.addAttribute("paginationURL", "/mngmt/sd/list/" + armyId);
-		model.addAttribute("paginationSearchFilter", paginationSearchFilter);
-		
-		return "management/soldier-list";
-	}
 	
-	@GetMapping("/sd/search/{armyId}/{key}/{selectedPage}")
-	public String searchBySoldier(Model model,
-			@PathVariable Integer armyId,
-			@PathVariable String key,
-			@PathVariable Integer selectedPage) {
-		
-		Army army = armyRepository.findById(armyId).orElseThrow();
-		CJM cjm = SecurityUtils.cjmUser().getAuditorship().getCjm();
-		
-		int soldiersCount = soldierRepoImpl.countEnabledByArmyAndCJM(army, cjm, key).intValue();
-		
-		PaginationSearchFilter paginationSearchFilter = new PaginationSearchFilter(selectedPage, soldiersCount);
-		
-		List<Soldier> soldiers = soldierRepoImpl.
-				searchEnabledByArmyAndCJMPaginable(
-						key, 
-						army, 
-						cjm,
-						paginationSearchFilter.getFirstResult(),
-						PaginationSearchFilter.ELEMENTS_BY_PAGE);
-		
-		model.addAttribute("soldiers", soldiers);
-		model.addAttribute("army", army);
-		model.addAttribute("key", key);
-		model.addAttribute("paginationURL", String.format("/mngmt/sd/search/%d/%s", armyId, key) );
-		model.addAttribute("paginationSearchFilter", paginationSearchFilter);
-		
-		return "management/soldier-list";
-	}
+	
 	
 	@GetMapping("/sd/profile/{soldierId}")
 	public String showSoldierProfile(@PathVariable Integer soldierId,
