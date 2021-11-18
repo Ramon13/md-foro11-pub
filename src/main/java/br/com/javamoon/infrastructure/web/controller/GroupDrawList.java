@@ -138,7 +138,7 @@ public class GroupDrawList {
 	
 	@PostMapping("/list/new/save")
 	public ResponseEntity<String> saveList(@Valid @ModelAttribute("drawList") DrawList drawList,
-			Errors errors) throws IllegalStateException{
+			Errors errors) throws IllegalStateException, InterruptedException{
 		String errorMsg;
 		
 		if (errors.hasErrors() == Boolean.FALSE) {

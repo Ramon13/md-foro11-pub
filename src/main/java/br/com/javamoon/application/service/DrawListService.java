@@ -10,6 +10,7 @@ import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.transaction.Transactional;
 
+import org.hibernate.Hibernate;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -34,16 +35,22 @@ public class DrawListService {
 	
 	@Transactional
 	public DrawList save(DrawList drawList){
+		DrawList drawListDb = drawList;
+		
 		if (drawList.getId() != null) {
-			DrawList drawListDb = drawListRepo.findById(drawList.getId()).orElseThrow();
+			drawListDb = drawListRepo.findById(drawList.getId()).orElseThrow();
 			drawListDb.setDescription(drawList.getDescription());
-			drawListDb.setQuarterYear(drawList.getQuarterYear());
-			drawListDb.setSoldiers(drawList.getSoldiers());
-			
-			return drawListRepo.save(drawListDb);	
+			drawListDb.setQuarterYear(drawList.getQuarterYear());	
 		}
 		
-		return drawListRepo.save(drawList);
+		Hibernate.initialize(drawListDb);
+		for(Soldier s : drawList.getSelectedSoldiers())
+			drawListDb.getSoldiers().add(s);
+		
+		for(Soldier s : drawList.getDeselectedSoldiers())
+			drawListDb.getSoldiers().remove(s);
+		
+		return drawListRepo.save(drawListDb);
 	}
 	
 	@Transactional

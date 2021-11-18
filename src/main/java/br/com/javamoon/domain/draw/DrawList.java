@@ -65,11 +65,13 @@ public class DrawList {
 	@JoinColumn(name = "creation_user_id", nullable = false)
 	private GroupUser creationUser;
 	
-	@ManyToMany()
+	@ManyToMany
 	@JoinTable(
 			name = "DRAW_LIST_HAS_SOLDIER",
 			joinColumns = @JoinColumn(name = "draw_list_id"),
 			inverseJoinColumns = @JoinColumn(name = "soldier_id"))
-	@Size(min = 5, max=2000, message = "A lista de destino deve conter no mínimo 5 e no máximo 1000 militares")
 	private Set<Soldier> soldiers = new HashSet<Soldier>(0);
+	
+	private transient Set<Soldier> selectedSoldiers = new HashSet<Soldier>(0);
+	private transient Set<Soldier> deselectedSoldiers = new HashSet<Soldier>(0);
 }
