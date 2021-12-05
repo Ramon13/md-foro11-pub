@@ -2,6 +2,7 @@ package br.com.javamoon.infrastructure.web.controller;
 
 import java.io.IOException;
 import java.net.URLEncoder;
+import java.time.LocalDate;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
@@ -25,6 +26,7 @@ import br.com.javamoon.application.service.DrawExclusionService;
 import br.com.javamoon.application.service.DrawService;
 import br.com.javamoon.application.service.SoldierService;
 import br.com.javamoon.application.service.ValidationException;
+import br.com.javamoon.domain.draw.AnnualQuarter;
 import br.com.javamoon.domain.draw.Draw;
 import br.com.javamoon.domain.draw.DrawRepository;
 import br.com.javamoon.domain.draw_exclusion.DrawExclusion;
@@ -149,6 +151,10 @@ public class GroupController {
 		
 		DrawExclusion exclusion = new DrawExclusion();
 		exclusion.setSoldier(soldier);
+		
+		AnnualQuarter nextQuarter = new AnnualQuarter(LocalDate.now().plusMonths(3));
+		exclusion.setStartDate(nextQuarter.getStartQuarterDate());
+		exclusion.setEndDate(nextQuarter.getEndQuarterDate());
 		
 		model.addAttribute("exclusions", soldierRepository.findAllDrawExclusions(soldier));
 		model.addAttribute("drawExclusion", exclusion);
