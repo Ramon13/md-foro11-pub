@@ -204,22 +204,33 @@
      		}
      	}
      	
-     	function searchOnList(fromList, filter){
-   			let label, txtValue, soldiers;
+     	function searchOnList(fromList, searchKey){
+   			let label, txtValue, soldiers, key;
+   			
+   			var keys = searchKey.split(",");
+   			var selSoldiers = [];
    		
      		soldiers = fromList.querySelectorAll(".soldier");
      		
      		for (let i = 0; i < soldiers.length; i++){
      			label = soldiers[i].querySelector("label");
-   			
+     			
      			if(label){
      				txtValue = label.textContent;
-     				if (txtValue.indexOf(filter) > -1)
-     					soldiers[i].style.display = "";
-     				else
-     					soldiers[i].style.display = "none";
+     				
+     				for (let j = 0; j < keys.length; j++){
+     				   key = keys[j].trim();
+     				   if (txtValue.indexOf(key) > -1)
+     					  selSoldiers.push(soldiers[i]);
+     				
+     				   soldiers[i].style.display = "none";
+     				}
      			}
    			}
+     		
+     		console.log(selSoldiers.length);
+     		for (let i = 0; i < selSoldiers.length; i++)
+     			selSoldiers[i].style.display = "";
 	  	}
      	
      	function addListeners(){
