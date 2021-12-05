@@ -1,6 +1,5 @@
 package br.com.javamoon.application.service;
 
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -50,7 +49,6 @@ public class DrawService {
 		draw.setSoldiers(selectedSoldiers);
 		
 		if (councilType == CouncilType.CEJ) {
-			validateProcessNumber(draw.getProcessNumber(), draw.getId());
 			draw.setFinished(Boolean.FALSE);
 		}
 	
@@ -60,7 +58,6 @@ public class DrawService {
 			}
 		}
 		
-		draw.setDrawDate(LocalDateTime.now());
 		drawRepository.save(draw);
 	}
 	
@@ -78,8 +75,8 @@ public class DrawService {
 		AnnualQuarter quarter;
 		for (Draw draw : drawList) {
 			quarter = (StringUtils.isEmpty(draw.getProcessNumber())) 
-					? new AnnualQuarter(draw.getQuarter(), draw.getYear())
-				    : new AnnualQuarter(draw.getDrawDate().toLocalDate());
+					? new AnnualQuarter(draw.getDrawList().getQuarterYear())
+				    : new AnnualQuarter(draw.getDrawList().getQuarterYear());
 			
 			List<Draw> quarterDrawList = quarterDrawMap.get(quarter.toShortFormat());
 			
@@ -117,7 +114,7 @@ public class DrawService {
 			throw new ApplicationServiceException("Incorrect soldiers amount");
 	}
 	
-	private void validateProcessNumber(String processNumber, Integer drawId) throws ValidationException{
+	public void validateProcessNumber(String processNumber, Integer drawId) throws ValidationException{
 		if (StringUtils.isEmpty(processNumber))
 			throw new ValidationException("processNumber", "O número do processo deve ser preenchido");
 		if (processNumberAlreadyExists(processNumber, drawId))
@@ -151,9 +148,10 @@ public class DrawService {
 		String councilType = draw.getJusticeCouncil().getName();
 		String cjm = draw.getCjmUser().getAuditorship().getCjm().getName();
 		String army = draw.getArmy().getName();
+		AnnualQuarter annualQuarter = new AnnualQuarter(draw.getDrawList().getQuarterYear());
 		String date = "";
 		if (draw.getJusticeCouncil().getAlias().equalsIgnoreCase("CPJ")) {
-			date = draw.getQuarter() + "º Trimestre - " + draw.getYear();
+			date = annualQuarter.getQuarter() + "º Trimestre - " + annualQuarter.getYear();
 		}
 		 
 		parameters.put("cjm", cjm);

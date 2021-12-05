@@ -1,13 +1,14 @@
 package br.com.javamoon.application.service;
 
+import java.util.ArrayList;
 import java.util.HashSet;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import br.com.javamoon.domain.draw.AnnualQuarter;
 import br.com.javamoon.domain.draw.Draw;
 import br.com.javamoon.domain.draw_exclusion.DrawExclusion;
 import br.com.javamoon.domain.soldier.Army;
@@ -24,25 +25,34 @@ public class RandomSoldierService {
 	@Autowired
 	private DrawExclusionService drawExclusionSvc;
 	
-	@Autowired
-	private ArmyService armySvc;
+	public void randomAllSoldiers(Draw draw) throws NoAvaliableSoldierException{
+		MilitaryRank[] ranks = draw.getRanks().toArray(new MilitaryRank[0]);
+		List<Integer> excludeSoldiers = new ArrayList<Integer>();
+		List<Soldier> soldiers = new ArrayList<Soldier>();
 	
-
-	
-	public void randomAllSoldiers(Army army, MilitaryRank[] ranks, LinkedList<Soldier> soldiers) throws NoAvaliableSoldierException{
+		Soldier randomSoldier;
 		for (int i = 0; i < ranks.length; i++) {
-			Soldier randomSoldier = soldierSvc.getRandomSoldiersByRank(ranks[i], army, soldiers);
-			soldiers.add(i, randomSoldier);
+			randomSoldier = soldierSvc.getRandomSoldier(
+					ranks[i], 
+					draw.getArmy(), 
+					draw.getDrawList(),
+					excludeSoldiers);
+			soldiers.add(randomSoldier);
+			excludeSoldiers.add(randomSoldier.getId());
 		}
+		
+		draw.setSoldiers(soldiers);
+		draw.getExcludeSoldiers().addAll(excludeSoldiers);
 	}
 	
 	public void setSoldierExclusionMessages(Draw draw) {
 		Set <DrawExclusion> exclusions;
 		
+		AnnualQuarter selectedQuarter = new AnnualQuarter(draw.getDrawList().getQuarterYear());
 		for (Soldier soldier : draw.getSoldiers()) {
 			exclusions = new HashSet<>();
 			
-			exclusions.addAll( drawExclusionSvc.findByAnnualQuarter(draw.getAnnualQuarter(), soldier) );
+			exclusions.addAll( drawExclusionSvc.findByAnnualQuarter(selectedQuarter, soldier) );
 			
 			exclusions.addAll( drawExclusionSvc.getByLatestDraws(soldier) );
 			
@@ -55,7 +65,8 @@ public class RandomSoldierService {
 		
 		exclusions = new HashSet<>();
 		
-		exclusions.addAll( drawExclusionSvc.findByAnnualQuarter(draw.getAnnualQuarter(), soldier) );
+		AnnualQuarter selectedQuarter = new AnnualQuarter(draw.getDrawList().getQuarterYear());
+		exclusions.addAll( drawExclusionSvc.findByAnnualQuarter(selectedQuarter, soldier) );
 		
 		exclusions.addAll( drawExclusionSvc.getByLatestDraws(soldier) );
 		
@@ -72,15 +83,15 @@ public class RandomSoldierService {
 		Integer selectedIndex = getSelectedIndex(draw.getSoldiers(), replaceSoldier);
 		
 		Army army = draw.getArmy();
+		if (draw.getExcludeSoldiers().isEmpty())
+			for(Soldier soldier : draw.getSoldiers())
+				draw.getExcludeSoldiers().add(soldier.getId());
 		
-		if (!armySvc.isMilitaryRankBelongsToArmy(army, replaceRank))
-			throw new IllegalStateException("The rank does not belong to this army");
-		
-		Soldier oldSoldier = draw.getSoldiers().get(selectedIndex);
-		Soldier newSoldier = soldierSvc.getRandomSoldiersByRank(replaceRank, army, draw.getSoldiers());
+		Soldier newSoldier = soldierSvc.getRandomSoldier(replaceRank, army, draw.getDrawList(), draw.getExcludeSoldiers());
 		
 		draw.getSoldiers().set(selectedIndex, newSoldier);
-		draw.getSoldiers().add(oldSoldier);
+		draw.getRanks().set(selectedIndex, replaceRank);
+		draw.getExcludeSoldiers().add(newSoldier.getId());
 		
 		if (replaceSoldier.equals(draw.getSubstitute()))
 			draw.setSubstitute(newSoldier);

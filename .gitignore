@@ -1,6 +1,6 @@
-/.settings/*
+!.gitignore
+.*
 /bin/*
 /build/*
 /gradle/*
-
-
+gradlew*

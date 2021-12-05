@@ -1,0 +1,273 @@
+<!DOCTYPE html>
+<html
+  xmlns="http://www.w3.org/1999/xhtml"
+  xmlns:th="http://www.thymeleaf.org" layout:decorate="~{group/layout}">
+  
+  <style layout:fragment="style">
+    input#listDescription{
+      font-size: 20px;
+    }
+    
+    #searchInputs{
+      overflow: auto;
+    }
+    
+    #searchInputs #left{
+      width: 40%;
+      float: left;
+    }
+    
+     #searchInputs #right{
+      width: 40%;
+      float: right;
+    }
+  
+    div#pickList{
+      margin: 0;
+      overflow: auto;
+    }
+    
+    div#pickOptions{
+      display: inline-block;
+      margin: 5px
+    }
+    
+    div#pickOptions button{
+      padding: 5px 25px;
+    }
+    
+    div#pickList .left{
+      width: 45%;
+      float: left;
+      height: 350px;
+      border: 1px solid #eee;
+      overflow: auto;
+    }
+    
+    div#pickList .left p, .right p{
+      background-color: #f7f7f7;
+      padding: 5px;
+      border: 1px solid #eee;
+      text-align: center;
+    }
+    
+    div#pickList .right{
+      width: 45%;
+      float: right;
+      height: 350px;
+      border: 1px solid #eee;
+      overflow: auto;
+    }
+    
+    div#pickList .soldier{
+      padding: 10px 10px;
+    }
+    
+    div#pickList .soldier:hover{
+      background-color: #eee;
+    }
+    
+    div#pickList .soldier label{
+      font-size: 12px;
+    }
+    
+    button#saveList{
+      float: right;
+      background-color: #2EA44F;
+      color: #eee;
+    }
+    
+    button#saveList img{
+      width: 20px;
+    }
+    
+    label{
+      word-wrap: break-word;
+    }
+    
+    select.app-select{
+      width: 30%;
+    }
+  </style>
+  
+  <body>
+    <div layout:fragment="content">
+      <form id="formList" method="get" th:action="@{/gp/dw/list/new/save}" th:object="${drawList}">
+        <input id="listId" name="id" type="hidden" th:field="*{id}" />
+          
+        <div id="listInfo">
+          <span class="error" style="display: none"></span>
+          <br/>
+          
+          <label>Descrição:</label><br/>
+          <input id="listDescription" th:field="*{description}" 
+          	class="app-txtinput" type="text" placeholder="nome ou descrição..."/>
+          
+          <br /> <br />
+  	      
+          <div th:if="${quarters != null}">
+      	      <label>Trimestre:</label><br/>
+      	      <select class="app-select" th:field="*{quarterYear}">
+      	        <option th:each="quarter : ${quarters}" th:value="${quarter.toShortFormat()}"
+      	           th:text="${quarter.description}"></option>
+      	      </select>
+          </div>
+        </div>
+  	    
+        <hr />
+      
+	      <div id="pickList">
+	        <div id="searchInputs">
+	          <input id="left" class="app-txtinput" type="text" placeholder="buscar por nome..."/>
+	          <input id="right" class="app-txtinput" type="text" placeholder="buscar por nome..."/>
+	        </div>
+	        
+	        <div class="left">
+	          <p>Disponível</p>
+	          <div class="soldier" th:each="soldier : ${soldiers}">
+	            <input class="sid" type="hidden" disabled="disabled" name="deselectedSoldiers" th:value="${soldier.id}"/>
+	            <input type="checkbox"/>
+	  		    <label th:text="${soldier.getIdInfoAsText()}"></label>
+	          </div>
+	        </div>
+	        
+	        <div id="pickOptions">
+	          <button id="toRight" type="button"> > </button>
+	          <br/><br/>
+	      	  <button id="toLeft" type="button"> < </button>
+	        </div>
+	        
+	        <div id="rightList" class="right">
+	          <p>Selecionado</p>
+	           <div class="soldier" th:each="soldier : ${drawListSoldiers}">
+	            <input class="sid" type="hidden" disabled="disabled" name="selectedSoldiers" th:value="${soldier.id}"/>
+	            <input type="checkbox"/> 
+	            <label th:text="${soldier.getIdInfoAsText()}"></label>
+	          </div>
+	        </div>
+	      </div>
+        <br />
+	      
+	      <div>
+	      	<a th:href="@{/gp/sd/register}" id="newSoldier">Novo Militar</a>
+	      </div>
+	      <br/>
+	      
+	      <div >
+	        <button type="button" id="back" class="app-gray-btn">
+	          <span>Voltar</span>
+	        </button>
+	        <button type="button" id="saveList">
+	          <span>Salvar</span>
+	          <img id="loadCircle" th:src="@{/images/load-green.gif}" alt="carregando..." />
+	        </button>
+	      </div>
+	   </form>    
+    </div>
+    
+    <script layout:fragment="page-script" th:inline="javascript">
+	    const saveListBtn = document.querySelector("button#saveList");
+	    saveListBtn.addEventListener("click", saveList);
+	    saveListBtn.querySelector('#loadCircle').style.display = 'none';
+	    
+     	listDescription.focus(); 	
+     	addListeners();
+     	
+     	function saveList(){
+     		const form = document.querySelector("#formList");
+     		showLoadStatus();
+     		
+     		sendAjaxRequest(
+     				'POST', 
+     				form.action, 
+     				new FormData(form), 
+     				runSavedListSuccessTasks,
+     				runSavedListFailedTasks);
+     	}
+     	
+     	
+     	function sendToList(fromList, toList){
+     		let soldiers = fromList.querySelectorAll(".soldier");
+     		let checkbox, soldierId;
+     		for (let i = 0; i < soldiers.length; i++){
+   				checkbox = soldiers[i].querySelector("input[type=checkbox]");
+   				
+   				if (checkbox.checked){
+   					toList.append(soldiers[i]);
+   					checkbox.checked = !checkbox.checked;
+   					
+   					soldierId = soldiers[i].querySelector(".sid");
+   					soldierId.disabled = false
+   					
+   					soldierId.name = (fromList.id === 'rightList') ? 'deselectedSoldiers' : 'selectedSoldiers' ;
+   				}	
+     		}
+     	}
+     	
+     	function searchOnList(fromList, filter){
+   			let label, txtValue, soldiers;
+   		
+     		soldiers = fromList.querySelectorAll(".soldier");
+     		
+     		for (let i = 0; i < soldiers.length; i++){
+     			label = soldiers[i].querySelector("label");
+   			
+     			if(label){
+     				txtValue = label.textContent;
+     				if (txtValue.indexOf(filter) > -1)
+     					soldiers[i].style.display = "";
+     				else
+     					soldiers[i].style.display = "none";
+     			}
+   			}
+	  	}
+     	
+     	function addListeners(){
+     		const listDescription = document.querySelector("input#listDescription");
+        	const rightDiv = document.querySelector(".right");
+        	const leftDiv = document.querySelector(".left");
+  
+         	const btnToRight = document.querySelector("#toRight");
+         	btnToRight.addEventListener('click', function(){
+         		sendToList(leftDiv, rightDiv);
+         	});
+         	
+         	const btnToLeft = document.querySelector("#toLeft");
+         	btnToLeft.addEventListener('click', function(){
+         		sendToList(rightDiv, leftDiv);
+         	});
+         	
+         	const leftFilter = document.querySelector("#searchInputs #left");
+         	leftFilter.addEventListener("keyup", function(){
+         		searchOnList(leftDiv, leftFilter.value.toUpperCase());
+         	});
+         	
+         	const rightFilter = document.querySelector("#searchInputs #right");
+         	rightFilter.addEventListener("keyup", function(){
+         		searchOnList(rightDiv, rightFilter.value.toUpperCase());
+         	});
+         	
+					const backBtn = document.querySelector("button#back");
+					backBtn.addEventListener("click", function(){
+						window.history.back();
+					});
+     	}
+     	
+     	function showLoadStatus(){
+     		saveListBtn.querySelector('#loadCircle').style.display = '';
+     		saveListBtn.disabled = true;
+     	}
+     	
+   	  function runSavedListSuccessTasks(responseText){
+   		  alert(responseText);
+        window.location = '[(@{/gp/dw/list})]';
+      }
+          
+	    function runSavedListFailedTasks(responseText){
+	      let spanError = document.querySelector(".error");
+	      spanError.textContent = responseText;
+	      spanError.style.display = "";
+	    }
+    </script>
+  </body>
+</html>

@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html
+  xmlns="http://www.w3.org/1999/xhtml"
+  xmlns:th="http://www.thymeleaf.org" layout:decorate="~{management/layout}">
+  
+  <style layout:fragment="style">
+    h1{
+      font-family: "Roboto", sans-serif;
+      color: #4e4848;
+      font-size: 20px;
+      font-weight: bold;
+      text-align: left;
+    }
+    
+    div .list-header{
+      font-family: "Roboto", sans-serif;
+      color: #4e4848;
+      font-size: 20px;
+      font-weight: bold;
+      margin-bottom: 15px;
+    }
+    
+    div .list-info{
+      color: #606060;
+      font-size: 12px;
+    }
+      
+    div .draw-list{
+      margin: auto;
+      background-color: #eee;
+      padding: 15px;
+      margin-bottom: 15px;
+      transition: 0.3s;
+      box-shadow: 0px 3px 6px 3px #ddd;
+    }
+  </style>
+  
+  <body>
+    <div layout:fragment="content">
+      <h1>Relações de militares para sorteio</h1>
+      <hr />
+      
+      <div class="empty-list" th:if="${#lists.isEmpty(drawListsMap)}">
+          <span>Não há listas cadastradas no sistema</span>
+        </div>    
+      <div th:each="drawListMap : ${drawListsMap}">
+        <div class="quarter">
+          <span th:text="${drawListMap.key}"></span>
+        </div>
+        
+        <div class="draw-list" th:each="drawList : ${drawListMap.value}">
+          <div class="list-header">
+            <span th:text="'[' + ${drawList.quarterYear} + ']' + ' ' + ${drawList.description}"></span>
+          </div>
+          
+          <div class="list-info">
+            <span th:text="${drawList.army.name}"></span><br/>
+            <span>criado em:</span>
+            <span th:text="${drawList.creationDate}"></span> 
+            <span> | </span>
+            <span>por:</span>
+            <span th:text="${drawList.creationUser.username}"></span> 
+            <span> | </span>
+            <span>ultima modificação:</span>
+            <span th:text="${drawList.updateDate}"></span>
+          </div>
+          <br/>
+          <a th:href="@{/mngmt/dw-list/list/} + '' + ${drawList.id}">exibir</a>
+        </div>
+      </div>
+      
+      <script type="text/javascript" th:src="@{/scripts/dropdown.js}"></script>
+    </div>
+    
+    <script layout:fragment="page-script" th:inline="javascript">
+    	
+    </script>
+  </body>
+</html>

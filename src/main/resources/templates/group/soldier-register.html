@@ -5,7 +5,7 @@
   <style layout:fragment="style">
     form {
       text-align: center;
-      width: 50%;
+      width: 30%;
       margin: auto;
     }
     button.save-soldier {
@@ -14,6 +14,10 @@
       padding: 5px;
       border-radius: 4px;
       float: right;
+    }
+    
+    button#back{
+      float: left;
     }
     
     a#deleteSdBtn {
@@ -54,7 +58,7 @@
           <select id="rank" class="app-select" name="militaryRank"
             th:classappend="${#fields.hasErrors('militaryRank')} ? 'error' : ''">
             <option value="0">Selecione...</option>
-            <option th:each="rank : ${ranks}" th:value="${rank.id}" th:text="${rank.name}"
+            <option th:each="rank : ${ranksByArmy}" th:value="${rank.id}" th:text="${rank.name}"
               th:selected="${soldier.militaryRank != null and rank.id == soldier.militaryRank.id}"></option>
           </select><br/>
           
@@ -71,18 +75,18 @@
           </div>
           <input type="text" name="email" placeholder="Email ativo do militar..." th:field="*{email}"
             class="app-txtinput" th:classappend="${#fields.hasErrors('email')} ? 'error' : ''"/><br/>
-         
+                   
           <br/>
           
           <div>
-            <span>Habilitado para sorteios futuros</span>
-            <input type="checkbox" th:field="*{enabledForDraw}">
+            <button type="button" id="back" class="app-gray-btn">
+              <span>Voltar</span>
+            </button>
+            
+	          <button type="submit" class="save-soldier edit-soldier">
+	            <span>Salvar</span>
+	          </button>
           </div>
-          
-          <br/>
-          <button type="submit" class="save-soldier edit-soldier">
-            <span>Salvar</span>
-          </button>
         </form>
         <br /><br /><br />
         
@@ -91,12 +95,11 @@
         </div>
       </fieldset>
     </div>
-    <script layout:fragment="page-script" th:inline="javascript">
-    	const deleteSoldier = document.querySelector("a#deleteSdBtn");	
-    
-    	deleteSoldier.addEventListener('click', function(){
-    		const url = '[(@{/gp/sd/delete/})]' + deleteSoldier.dataset.sid;
-    		confirmSoldierRm(url)
+    <script layout:fragment="page-script" th:inline="javascript">	
+    	const backBtn = document.querySelector("button#back");
+    	
+    	backBtn.addEventListener('click', function(){
+    		window.history.back();
     	});
     	
     	showSuccessMsg();

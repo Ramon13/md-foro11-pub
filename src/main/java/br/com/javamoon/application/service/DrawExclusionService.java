@@ -67,8 +67,7 @@ public class DrawExclusionService {
 		LocalDate endDate = selectableQuarters.get(selectableQuarters.size() - 1).getEndQuarterDate();
 		
 		
-		List<Draw> drawList = drawRepo.findBySoldierBetweenDates( 
-				soldier.getId(), startDate.atStartOfDay(), endDate.atStartOfDay() );
+		List<Draw> drawList = drawRepo.findBySoldierBetweenDates(soldier.getId(), startDate, endDate);
 		
 		drawList.addAll( drawRepo.findUnfinishedBySoldierAndCJM(soldier.getId()) );
 		
@@ -77,7 +76,7 @@ public class DrawExclusionService {
 		for (Draw draw : drawList) {
 			StringBuilder msg = new StringBuilder();
 			msg.append("[Gerado pelo sistema] ");
-			msg.append("Sorteado em: " + DateTimeUtils.convertToFormat(draw.getDrawDate(), "dd/MM/yyyy"));
+			msg.append("Sorteado em: " + DateTimeUtils.convertToFormat(draw.getCreationDate(), "dd/MM/yyyy"));
 			msg.append(" | Conselho: " + draw.getJusticeCouncil().getAlias());
 			msg.append(" | Auditoria: " + draw.getCjmUser().getAuditorship().getName());
 			

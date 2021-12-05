@@ -3,11 +3,9 @@ package br.com.javamoon.infrastructure.web.controller;
 import java.io.IOException;
 import java.time.LocalDate;
 import java.util.Collections;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
-import javax.servlet.http.HttpSession;
 import javax.validation.Valid;
 
 import org.apache.commons.lang3.BooleanUtils;
@@ -18,7 +16,6 @@ import org.springframework.validation.Errors;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.SessionAttributes;
@@ -37,10 +34,10 @@ import br.com.javamoon.domain.cjm_user.CJMUser;
 import br.com.javamoon.domain.draw.AnnualQuarter;
 import br.com.javamoon.domain.draw.CouncilType;
 import br.com.javamoon.domain.draw.Draw;
+import br.com.javamoon.domain.draw.DrawList;
+import br.com.javamoon.domain.draw.DrawListRepositoryImpl;
 import br.com.javamoon.domain.draw.DrawRepository;
 import br.com.javamoon.domain.draw.JusticeCouncilRepository;
-import br.com.javamoon.domain.exception.InvalidAnnualQuarterException;
-import br.com.javamoon.domain.exception.InvalidMilitaryRankException;
 import br.com.javamoon.domain.soldier.ArmyRepository;
 import br.com.javamoon.domain.soldier.MilitaryRank;
 import br.com.javamoon.domain.soldier.MilitaryRankRepository;
@@ -52,7 +49,7 @@ import br.com.javamoon.util.SecurityUtils;
 
 @Controller
 @RequestMapping(path = "/mngmt/dw")
-@SessionAttributes("sessionDraw")
+@SessionAttributes("draw")
 public class ManagementDrawController {
 
 	@Autowired
@@ -91,10 +88,12 @@ public class ManagementDrawController {
 	@Autowired
 	private AuditorshipService auditorshipSvc;
 	
-	@ModelAttribute("sessionDraw")
+	@Autowired
+	private DrawListRepositoryImpl drawListRepoImpl;
+	
+	@ModelAttribute("draw")
 	public Draw initDrawnSoldiers() {
 		Draw draw = new Draw();
-		draw.setAnnualQuarter(new AnnualQuarter(LocalDate.now()));
 		draw.setArmy(ControllerHelper.getDefaultArmy(armyRepo));
 		draw.setJusticeCouncil(ControllerHelper.getDefaultCouncil(councilRepo));
 		draw.setCouncilType(CouncilType.fromAlias(draw.getJusticeCouncil().getAlias()));
@@ -102,19 +101,15 @@ public class ManagementDrawController {
 	}
 	
 	@GetMapping("/home")
-	public String drawPage(@ModelAttribute("sessionDraw") Draw draw,
+	public String drawPage(@ModelAttribute("draw") Draw draw,
 			@RequestParam(required = false) Boolean complete,
 			@RequestParam(required = false) String successMsg,
 			SessionStatus sessionStatus, Model model) {
 		
-		//Delete the sessionDraw object of the session
-		//Instantiate a new one after the redirect
 		if (BooleanUtils.isTrue(complete)) {
 			sessionStatus.setComplete();
 			return "redirect:/mngmt/dw/home";
 		}
-		
-		draw.clearSoldierList();
 		
 		model.addAttribute("successMsg", successMsg);
 		setDefaultPageAttributes(draw, model);
@@ -122,104 +117,95 @@ public class ManagementDrawController {
 	}
 	
 	@GetMapping("/sdrand/all")
-	public String drawAll(@Valid @ModelAttribute("sessionDraw") Draw draw, Errors errors, Model model,
-			HttpSession session) {
-		draw.clearSoldierList();
+	public String drawAll(@Valid @ModelAttribute("draw") Draw draw, Errors errors, Model model) {
 		
 		if (!errors.hasErrors()) {
 			try {
-				if (draw.getCouncilType() == CouncilType.CPJ) {
-					annualQuarterSvc.validate(draw.getAnnualQuarter());
-				}
+				if (draw.getDrawList().getId() == null)
+					throw new ValidationException("drawList.id", "Selecione uma lista para prosseguir.");
 				
+				CouncilType councilType = CouncilType.fromAlias(draw.getJusticeCouncil().getAlias());
+				if (councilType == CouncilType.CEJ) 
+					drawSvc.validateProcessNumber(draw.getProcessNumber(), draw.getId());
+				
+				String quarterYear = draw.getDrawList().getQuarterYear();
 				MilitaryRank[] ranks = draw.getRanks().toArray(new MilitaryRank[0]);
 				
-				if (!armySvc.isMilitaryRankBelongsToArmy( draw.getArmy(), ranks)) {
-					throw new InvalidMilitaryRankException("The rank does not belong to this army");
+				if (annualQuarterSvc.isValidAnnualQuarter(quarterYear)
+						&& armySvc.isMilitaryRankBelongsToArmy( draw.getArmy(), ranks)) {
+					
+					randomSoldierSvc.randomAllSoldiers(draw);
+					
+					randomSoldierSvc.setSoldierExclusionMessages(draw);
 				}
-				
-				randomSoldierSvc.randomAllSoldiers(
-						draw.getArmy(),
-						ranks,
-						(LinkedList<Soldier>) draw.getSoldiers());
-				
-				randomSoldierSvc.setSoldierExclusionMessages(draw);
-				
-			}catch(InvalidAnnualQuarterException e) {
-				errors.rejectValue("annualQuarter", null, e.getMessage());
-				draw.setAnnualQuarter(new AnnualQuarter(LocalDate.now()));
-			
-			}catch(InvalidMilitaryRankException e) {
-				errors.rejectValue("ranks", null, e.getMessage());
-				draw.clearRankList();
 			
 			}catch(NoAvaliableSoldierException e) {
 				errors.rejectValue(
-						"soldiers",
+						"ranks",
 						null,
 						String.format("Sem disponibilidade de militares para o posto: %s", e.getMessage()));
-				draw.clearSoldierList();
+				e.printStackTrace();
+			
+			}catch(ValidationException e) {
+				errors.rejectValue(e.getFieldName(), null, e.getMessage());
+				e.printStackTrace();
 			}
 		}
-
+		
 		setDefaultPageAttributes(draw, model);
 		return "management/draw-home";
 	}
 	
 	@GetMapping("/sdrand/replace/{replaceRankId}/{replaceSoldierId}")
-	public String replaceDrawSoldier(@PathVariable Integer replaceRankId,
+	public String replaceDrawSoldier(@Valid @ModelAttribute("draw") Draw draw, Errors errors,
+			@PathVariable Integer replaceRankId,
 			@PathVariable Integer replaceSoldierId,
-			Model model,
-			HttpSession session) {
+			Model model) {
 		
-		Draw sessionDraw = (Draw) session.getAttribute("sessionDraw");
-
 		try {
 			Soldier replaceSoldier = soldierRepo.findById(replaceSoldierId).orElseThrow();
 			MilitaryRank replaceRank = rankRepo.findById(replaceRankId).orElseThrow();
 			
-			Soldier newSoldier = 
-					randomSoldierSvc.replaceRandomSoldier(replaceSoldier, sessionDraw, replaceRank);
-			
-			randomSoldierSvc.setSoldierExclusionMessages(newSoldier, sessionDraw);
-			
+			if (armySvc.isMilitaryRankBelongsToArmy(draw.getArmy(), replaceRank)) {
+				
+				Soldier newSoldier = 
+						randomSoldierSvc.replaceRandomSoldier(replaceSoldier, draw, replaceRank);
+				
+				randomSoldierSvc.setSoldierExclusionMessages(newSoldier, draw);
+			}
 		}catch(NoAvaliableSoldierException e) {
-			model.addAttribute(
-					"soldierError", 
-					String.format("Sem disponibilidade de militares para o posto: %s", e.getMessage()) );
+			errors.rejectValue(
+					"ranks",
+					null,
+					String.format("Sem disponibilidade de militares para o posto: %s", e.getMessage()));
+			e.printStackTrace();
 		}
 	
-		setDefaultPageAttributes(sessionDraw, model);
+		setDefaultPageAttributes(draw, model);
 		
-		if (sessionDraw.getId() != null)
+		if (draw.getId() != null)
 			ControllerHelper.setEditMode(model, true);
+		
 		return "management/draw-home";
 	}
 	
-	@PostMapping("/save")
-	public String saveDraw(Model model, HttpSession session, SessionStatus sessionStatus) throws IOException {
-		Draw sessionDraw = (Draw) session.getAttribute("sessionDraw");
+	@GetMapping("/save")
+	public String saveDraw(@Valid @ModelAttribute("draw") Draw draw, Errors errors,
+			Model model, SessionStatus sessionStatus) throws IOException {
 		
 		try {
-			sessionDraw.setCjmUser(SecurityUtils.cjmUser());
-			drawSvc.save(sessionDraw);
+			draw.setCjmUser(SecurityUtils.cjmUser());
+			drawSvc.save(draw);
 			
 			sessionStatus.setComplete();
-			
 			return ControllerHelper.getRedirectURL(
 					"/mngmt/dw/home",
 					Collections.singletonMap("successMsg", "O sorteio foi salvo"));
-			
-		} catch (ValidationException e) {
-			model.addAttribute(
-					String.format("%sError", e.getMessage()),
-					String.format("Sem disponibilidade de militares para o posto: %s", e.getMessage()) );
-			
 		} catch(Exception e) {
 			e.printStackTrace();
 		}
 		
-		setDefaultPageAttributes(sessionDraw, model);
+		setDefaultPageAttributes(draw, model);
 		return "management/draw-home";
 	}
 	
@@ -232,15 +218,12 @@ public class ManagementDrawController {
 			draw.setSoldiers(soldierRepo.findAllByDraw(drawId));
 			draw.setCouncilType( CouncilType.fromAlias(draw.getJusticeCouncil().getAlias()) );
 			
-			if (draw.getCouncilType() == CouncilType.CPJ) {
-				AnnualQuarter annualQuarter = new AnnualQuarter(draw.getQuarter(), draw.getYear());
-				draw.setAnnualQuarter(annualQuarter);
-			}
-			
 			for (Soldier s : draw.getSoldiers())
 				draw.getRanks().add(s.getMilitaryRank());
 			
-			model.addAttribute("sessionDraw", draw);
+			randomSoldierSvc.setSoldierExclusionMessages(draw);
+			
+			model.addAttribute("draw", draw);
 			setDefaultPageAttributes(draw, model);
 			ControllerHelper.setEditMode(model, true);
 	
@@ -280,6 +263,22 @@ public class ManagementDrawController {
 	}
 	 
 	private void setDefaultPageAttributes(Draw draw, Model model) {
+		Auditorship loggedUser = SecurityUtils.cjmUser().getAuditorship();
+		
+		String selectedQuarterYear;
+		if (draw.getDrawList() == null)
+			selectedQuarterYear = new AnnualQuarter(LocalDate.now()).toShortFormat();
+		else
+			selectedQuarterYear = draw.getDrawList().getQuarterYear();
+		
+		List<DrawList> drawList = drawListRepoImpl.getDrawableLists(
+				draw.getArmy(),
+				loggedUser.getCjm(),
+				selectedQuarterYear);
+		
+		model.addAttribute("selectQuarter", selectedQuarterYear);
+		model.addAttribute("drawSoldierList", drawList); 
+		
 		ControllerHelper.addSelectableQuartersToRequest(annualQuarterSvc, model);
 		ControllerHelper.addCouncilsToRequest(councilRepo, model);
 		ControllerHelper.addArmiesToRequest(armyRepo, model);

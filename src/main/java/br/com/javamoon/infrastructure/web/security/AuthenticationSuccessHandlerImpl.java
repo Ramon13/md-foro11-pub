@@ -28,7 +28,7 @@ public class AuthenticationSuccessHandlerImpl implements AuthenticationSuccessHa
 		if (role == Role.CJM_USER)
 			response.sendRedirect("mngmt/home");
 		else if (role == Role.GROUP_USER)
-			response.sendRedirect("gp/home/0");
+			response.sendRedirect("gp/dw/list");
 		else
 			throw new IllegalStateException("Authentication error");
 		

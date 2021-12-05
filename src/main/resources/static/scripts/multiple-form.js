@@ -1,4 +1,8 @@
+let currentTab = 0;
+
 function showTab(n) {
+	currentTab = n;
+
   // This function will display the specified tab of the form...
 	var tabs = document.getElementsByClassName("tab");
   	tabs[n].style.display = "block";
@@ -9,8 +13,9 @@ function showTab(n) {
     	document.getElementById("prevBtn").style.display = "inline";
   	}
   	if (n == (tabs.length - 1)) {
-    	document.getElementById("nextBtn").innerHTML = finishFormBtnName;
+    	document.getElementById("nextBtn").style.display = "none";
   	} else {
+		document.getElementById("nextBtn").style.display = "inline";
     	document.getElementById("nextBtn").innerHTML = "Próximo";
   	}
 	//... and run a function that will display the correct step indicator:
@@ -25,13 +30,14 @@ function nextPrev(n) {
   	// Hide the current tab:
   	tab[currentTab].style.display = "none";
   	// Increase or decrease the current tab by 1:
-  	currentTab = currentTab + n;
+  	currentTab = +currentTab + n;
   	// if you have reached the end of the form...
   	if (currentTab >= tab.length) {
     	// ... the form gets submitted:
     	document.getElementsByClassName("multipleForm")[0].submit();
     	return false;
-  }
+  	}
+	
   	// Otherwise, display the correct tab:
   	showTab(currentTab);
 }

@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html
+  xmlns="http://www.w3.org/1999/xhtml"
+  xmlns:th="http://www.thymeleaf.org" layout:decorate="~{group/layout}">
+  
+  <style layout:fragment="style">
+    h1{
+      font-family: "Roboto", sans-serif;
+      color: #4e4848;
+      font-size: 20px;
+      font-weight: bold;
+    }
+    
+    div .list-header{
+      font-family: "Roboto", sans-serif;
+      color: #4e4848;
+      font-size: 20px;
+      font-weight: bold;
+      margin-bottom: 15px;
+    }
+    
+    div .list-info{
+      color: #606060;
+      font-size: 12px;
+    }
+    
+    div .draw-soldier-list{
+      margin: auto;
+      background-color: #eee;
+      padding: 15px;
+      margin-bottom: 15px;  
+      width: 92%;
+      transition: 0.3s;
+      box-shadow: 0px 3px 6px 3px #ddd;
+    }
+    
+    img.more{
+      float: right;
+      border: none;
+      transform: rotate(90deg);
+      padding: 5px;
+      border-radius: 20%;
+    }
+      
+    img.more:hover{
+      border: 1px solid black;
+    }
+  </style>
+  
+  <body>
+    <div layout:fragment="content">
+      <h1>Relações de militares para sorteio</h1>
+      <button id="newList">Nova Relação</button>
+      <hr />
+      
+      <div class="empty-list" th:if="${#lists.isEmpty(drawSoldierList)}">
+          <span>Não há listas cadastradas no sistema</span>
+        </div>    
+      <div th:each="drawSoldiers : ${drawSoldierList}">
+      
+        <div class="draw-soldier-list">
+          <div class="list-header">
+            <span th:text="'[' + ${drawSoldiers.quarterYear} + ']' + ' ' + ${drawSoldiers.description}"></span>
+            
+            <div class="dropdown">
+              <img class="more dropdown" th:src="@{/images/hmore.svg}"/>
+              <div class="dropdown-content" th:attr="data-listid=${drawSoldiers.id}">
+                <a class="removeList" href="#">Remover</a>
+                <a class="duplicateList" href="#">Duplicar</a>
+              </div>
+            </div>
+          </div>
+          
+          <div class="list-info">
+            <span>criado em:</span>
+            <span th:text="${drawSoldiers.creationDate}"></span> 
+            <span> | </span>
+            <span>ultima modificação:</span>
+            <span th:text="${drawSoldiers.updateDate}"></span>
+          </div>
+          <br/>
+          <a th:href="@{/gp/dw/list/} + '' + ${drawSoldiers.id}">exibir</a>
+        </div>
+      </div>
+      
+      <script type="text/javascript" th:src="@{/scripts/dropdown.js}"></script>
+    </div>
+    
+    <script layout:fragment="page-script" th:inline="javascript">
+    	const newListBtn = document.querySelector("button#newList");
+    	newListBtn.addEventListener("click", function(){
+    		location.href = '[(@{/gp/dw/list/new})]';
+    	});
+    	
+    	setRemoveListBtnListerner()
+    	
+    	function setRemoveListBtnListerner(){
+    		const dropdownMenu = document.querySelectorAll("div .dropdown-content");
+    		let form;
+    		
+    		form = document.createElement("form");
+    		form.method = "POST";
+    		form.style.display = "none";
+    		document.body.appendChild(form);
+    		
+    		let listId, removeList, duplicateList;
+    		for (let i = 0; i < dropdownMenu.length; i++){
+    			removeList = dropdownMenu[i].querySelector(".removeList");
+    			duplicateList = dropdownMenu[i].querySelector(".duplicateList");
+    			
+    			removeList.addEventListener("click", function(){
+    				listId = dropdownMenu[i].dataset.listid;	
+    				form.action = '[(@{/gp/dw/list/remove/})]' + listId;
+    				console.log(form.action);
+    				form.submit();
+    			});
+    			
+    			duplicateList.addEventListener("click", function(){
+    				listId = dropdownMenu[i].dataset.listid;
+    				form.action = '[(@{/gp/dw/list/duplicate/})]' + listId;
+    				console.log(form.action);
+    				form.submit();
+    			});
+    		}	
+    	}
+    </script>
+  </body>
+</html>

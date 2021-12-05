@@ -66,6 +66,10 @@
       float: right;
       margin: 0 5px;
     }
+    
+    div#controlBtns{
+      margin-top: 20px;
+    }
   </style>
   <body>
     <div layout:fragment="content">      
@@ -90,11 +94,16 @@
         <div th:if="${#fields.hasErrors('message')}">
           <span class="error" th:errors="*{message}"></span>
         </div>
-        <textarea rows="5" cols="50" placeholder="Adicionar novo impedimento..." th:field="*{message}"
-          th:classappend="${#fields.hasErrors('message') ? 'error' : ''}"></textarea><br/>
-        <button type="submit" class="add-impediments">
-          <span>Adicionar</span>
-        </button>
+        <div>
+          <textarea rows="5" cols="50" placeholder="Adicionar novo impedimento..." th:field="*{message}"
+            th:classappend="${#fields.hasErrors('message') ? 'error' : ''}"></textarea><br/>
+        </div>
+        
+        <div id="controlBtns">
+          <button type="submit" class="add-impediments">
+            <span>Adicionar</span>
+          </button>          
+        </div>
       </form>
       
       <br/><br/><br/>

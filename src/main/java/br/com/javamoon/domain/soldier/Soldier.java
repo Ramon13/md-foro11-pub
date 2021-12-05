@@ -22,6 +22,7 @@ import javax.validation.constraints.Size;
 
 import br.com.javamoon.domain.cjm_user.CJM;
 import br.com.javamoon.domain.draw.Draw;
+import br.com.javamoon.domain.draw.DrawList;
 import br.com.javamoon.domain.draw_exclusion.DrawExclusion;
 import br.com.javamoon.util.StringUtils;
 import lombok.EqualsAndHashCode;
@@ -35,7 +36,7 @@ import lombok.ToString;
 @EqualsAndHashCode(onlyExplicitlyIncluded = true)
 @Entity
 @Table(name = "SOLDIER")
-public class Soldier implements Serializable{
+public class Soldier implements Serializable, Comparable<Soldier>{
 
 	@EqualsAndHashCode.Include
 	@Id
@@ -57,10 +58,6 @@ public class Soldier implements Serializable{
 	@Email(message = "O e-mail é inválido")
 	@Column(length = 64, nullable = true, unique = true)
 	private String email;
-	
-	@NotNull(message = "É necessário especificar a disponibilidade.")
-	@Column(name="enabled_for_draw", nullable = false)
-	private Boolean enabledForDraw = true;
 	
 	@ManyToOne
 	@JoinColumn(name = "army_id", nullable = false)
@@ -91,7 +88,10 @@ public class Soldier implements Serializable{
 	private Set<DrawExclusion> exclusions = new HashSet<>(0);
 	
 	@ManyToMany(mappedBy = "soldiers")
-	private Set<Draw> drawList = new HashSet<>(0);
+	private Set<Draw> drawnSoldiers = new HashSet<>(0);
+	
+	@ManyToMany(mappedBy = "soldiers")
+	private Set<DrawList> drawList = new HashSet<DrawList>(0);
 	
 	private transient Set<DrawExclusion> customExclusions = new HashSet<>(0);
 	
@@ -100,6 +100,11 @@ public class Soldier implements Serializable{
 				phone,
 				militaryRank.getName(),
 				String.format("%s - %s", militaryOrganization.getAlias(), militaryOrganization.getName())));
+	}
+	
+	public String getIdInfoAsText() {
+		return String.format("%s <%s>", name, 
+				(email == null) ? "Não enviado" : email);
 	}
 	
 	public String getOmAliasAndName() {
@@ -117,5 +122,10 @@ public class Soldier implements Serializable{
 	
 	public boolean hasImpediment() {
 		return !customExclusions.isEmpty();
+	}
+
+	@Override
+	public int compareTo(Soldier soldier) {
+		return Integer.compare(this.id, soldier.getId());
 	}
 }
