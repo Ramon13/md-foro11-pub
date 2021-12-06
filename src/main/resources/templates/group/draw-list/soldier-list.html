@@ -204,33 +204,72 @@
      		}
      	}
      	
+     	function hideAllSoldiers(fromList){
+     		const soldiers = fromList.querySelectorAll(".soldier");
+     			
+     		for (let i = 0; i < soldiers.length; ++i)
+     			soldiers[i].style.display = "none";     		
+     	}
+     	
+     	function showAllSoldiers(fromList){
+     		const soldiers = fromList.querySelectorAll(".soldier");
+ 			
+     		for (let i = 0; i < soldiers.length; ++i){
+     			soldiers[i].style.display = "";
+     			removeNotFoundSoldier(soldiers[i]);		
+     		}
+     	}
+     	
+     	function removeNotFoundSoldier(soldier){
+     		if (soldier.classList.contains("notFound"))
+     			soldier.remove();			
+     	}
+     	
      	function searchOnList(fromList, searchKey){
    			let label, txtValue, soldiers, key;
    			
    			var keys = searchKey.split(",");
-   			var selSoldiers = [];
-   		
+   			
      		soldiers = fromList.querySelectorAll(".soldier");
+     		hideAllSoldiers(fromList);
      		
-     		for (let i = 0; i < soldiers.length; i++){
-     			label = soldiers[i].querySelector("label");
+     		let found = false;
+     		if (searchKey){
+     			for (let i = 0; i < keys.length; i++){
+     				found = false;
+         			key = keys[i].trim();
+         			
+         			for (let j = 0; j < soldiers.length; j++){
+         				label = soldiers[j].querySelector("label");
+         				if(label){
+             				txtValue = label.textContent;
+    	     				if (txtValue.indexOf(key) > -1){
+    	     					soldiers[j].style.display = "";
+    	     					found = true;
+    	     					break;
+    	     				}
+         				}
+         			}
+         			
+         			if (!found){
+         	            let sdDiv = document.createElement("div");
+         	            sdDiv.className = "soldier notFound";
+         	            
+         	            let sdName = document.createElement("label");
+         	            sdName.style.color = "red";
+         	            sdName.textContent = key;
+         	            
+         	            sdDiv.append(sdName);
+         	            fromList.append(sdDiv);
+         			}
+         				
+         		}	
+     		
+     		}else{
+     			showAllSoldiers(fromList);	
+     		}
      			
-     			if(label){
-     				txtValue = label.textContent;
-     				
-     				for (let j = 0; j < keys.length; j++){
-     				   key = keys[j].trim();
-     				   if (txtValue.indexOf(key) > -1)
-     					  selSoldiers.push(soldiers[i]);
-     				
-     				   soldiers[i].style.display = "none";
-     				}
-     			}
-   			}
      		
-     		console.log(selSoldiers.length);
-     		for (let i = 0; i < selSoldiers.length; i++)
-     			selSoldiers[i].style.display = "";
 	  	}
      	
      	function addListeners(){
