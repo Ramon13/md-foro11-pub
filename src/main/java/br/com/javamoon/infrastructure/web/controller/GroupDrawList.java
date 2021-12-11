@@ -3,7 +3,7 @@ package br.com.javamoon.infrastructure.web.controller;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
-
+import javax.servlet.http.HttpSession;
 import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -70,8 +70,10 @@ public class GroupDrawList {
 	@GetMapping("/list/{drawListId}")
 	public String loadDrawList(@PathVariable Integer drawListId,
 			PaginationSearchFilter filter,
+			HttpSession session,
 			Model model) {
 		
+	    putActiveListOnSession(session, drawListId);
 		//TODO: filter by army and cjm
 		Optional<DrawList> drawList = drawListRepo.findById(drawListId);
 		if (drawList.isPresent()) {
@@ -211,5 +213,9 @@ public class GroupDrawList {
 		}
 		
 		return new ModelAndView("redirect:/gp/dw/list");
+	}
+	
+	private void putActiveListOnSession(HttpSession session, Integer listId) {
+	    session.setAttribute("activeList", listId);
 	}
 }

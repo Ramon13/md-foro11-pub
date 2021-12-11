@@ -20,9 +20,10 @@ button{
   display: inline-flex;
 }
 
-button.app-green-btn {
+button.app-green-btn, input[type=submit].app-green-btn {
   color: #ffffff;
   background-color: #4CAF50;
+  font-family: "Roboto", sans-serif;
 }
 
 button.app-gray-btn {

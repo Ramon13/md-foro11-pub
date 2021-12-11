@@ -65,7 +65,7 @@ public class LoginController{
 				if (loggedUser instanceof GroupUser)
 					return ControllerHelper.getRedirectURL("/gp/home/0", Collections.emptyMap());
 				else if (loggedUser instanceof CJMUser)
-					return ControllerHelper.getRedirectURL("/mngmt/home", Collections.emptyMap());
+					return ControllerHelper.getRedirectURL("/mngmt/dw-list/list", Collections.emptyMap());
 				else
 					throw new IllegalStateException("Invalid Role");
 			} catch (ValidationException e) {

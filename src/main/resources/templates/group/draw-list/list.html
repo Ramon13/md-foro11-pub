@@ -27,6 +27,24 @@
     button img{
       width: 12px;
     }
+    
+    div#newSoldier{
+        float: right;
+    }
+    
+    div#search{
+        width: 400px;
+    }
+    
+    div#search #searchInput{
+        width: 83%;
+    }
+    
+    div#search #searchBtn{
+        padding: 6px;
+        border-radius: 10%;
+    }
+    
   </style>
   <body>
     <div layout:fragment="content">
@@ -49,13 +67,19 @@
 	        <div id="pages" class="pages">
 	        </div>  
 	        <div id="search">
-	          <input id="searchInput" name="key" th:value='${filter.key}' type="text" placeholder="Pesquisar...">
-	          <input id="searchBtn" type="submit" value="buscar">
+	          <input id="searchInput" class="app-txtinput" name="key" th:value='${filter.key}' type="text" placeholder="Pesquisar...">
+	          <input id="searchBtn" type="submit" value="buscar" class="app-green-btn">
 	        </div>
 	      </form>
         
         <script type="text/javascript" th:src="@{/scripts/pagination-search-list.js}"></script>
       </div>
+      <br/><br/>
+      
+      <div id="newSoldier">
+        <a th:href="@{/gp/sd/register}">Novo Militar</a>
+      </div>
+      <br/><br/>    
       
       <table id="soldiers">
         <thead>
@@ -96,7 +120,7 @@
     <script layout:fragment="page-script" th:inline="javascript">
       	const backBtn = document.querySelector("button#back");
   		backBtn.addEventListener("click", function(){
-    		window.history.back();
+    		location.href = "[(@{/gp/dw/list})]";
     	});
     </script>
   </body>

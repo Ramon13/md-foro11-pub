@@ -9,6 +9,7 @@ import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -71,7 +72,9 @@ public class GroupController {
 	
 	@GetMapping("/sd/register")
 	public String soldierRegisterPage(@RequestParam(value = "successMsg", required = false) String successMsg,
-			Model model) {
+			Model model,
+			HttpSession session) {
+	    
 		Army army = SecurityUtils.groupUser().getArmy();
 		ControllerHelper.setEditMode(model, false);
 		ControllerHelper.addMilitaryOrganizationsToRequest(omRepo, army, model);
@@ -99,19 +102,19 @@ public class GroupController {
 							Collections.singletonMap("successMsg", URLEncoder.encode("Edição realizada com sucesso", "UTF-8")));
 				}else {
 					return ControllerHelper.getRedirectURL(
-							String.format("/gp/sd/register/edit/%d", soldier.getId()),
+							"/gp/sd/register",
 							Collections.singletonMap("successMsg", URLEncoder.encode("Cadastro realizado com sucesso", "UTF-8")));
 				}
 				
 			}catch(ValidationException e) {
-				errors.rejectValue("email", null, e.getMessage());
+				errors.rejectValue(e.getFieldName(), null, e.getMessage());
 			}
 		}
 		
 		ControllerHelper.setEditMode(model, false);
 		ControllerHelper.addMilitaryOrganizationsToRequest(omRepo, loggedUser.getArmy(), model);
 		ControllerHelper.addMilitaryRanksToRequest(rankRepository, loggedUser.getArmy(), model);
-		return "soldier-register";
+		return "group/soldier-register";
 	}
 	
 	@GetMapping(path="/sd/register/edit/{soldierId}")

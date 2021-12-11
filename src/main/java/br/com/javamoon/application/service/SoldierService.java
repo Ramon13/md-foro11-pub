@@ -1,10 +1,5 @@
 package br.com.javamoon.application.service;
 
-import java.util.List;
-
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-
 import br.com.javamoon.domain.cjm_user.CJM;
 import br.com.javamoon.domain.draw.DrawList;
 import br.com.javamoon.domain.draw.DrawRepository;
@@ -18,6 +13,10 @@ import br.com.javamoon.domain.soldier.NoAvaliableSoldierException;
 import br.com.javamoon.domain.soldier.Soldier;
 import br.com.javamoon.domain.soldier.SoldierRepository;
 import br.com.javamoon.domain.soldier.SoldierRepositoryImpl;
+import br.com.javamoon.util.StringUtils;
+import java.util.List;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
 @Service
 public class SoldierService{
@@ -50,9 +49,13 @@ public class SoldierService{
 	public void saveSoldier(Soldier soldier, GroupUser loggedUser) throws ValidationException {
 		soldier.setArmy(loggedUser.getArmy());
 		soldier.setCjm(loggedUser.getCjm());
+		soldier.setName(soldier.getName().toUpperCase());
 		
 		if(!validateEmail(soldier.getEmail(), soldier.getId()))
-			throw new ValidationException("Email já cadastrado no sistema");
+			throw new ValidationException("email", "Email já cadastrado no sistema");
+		
+		if (!validateName(soldier.getName(), soldier.getId(), loggedUser.getCjm()))
+		    throw new ValidationException("name", "Militar já cadastrado no sistema");
 		
 		if(!validateMilitaryOrganization(soldier) || 
 				!armySvc.isMilitaryRankBelongsToArmy(soldier.getArmy(), soldier.getMilitaryRank()))
@@ -64,7 +67,6 @@ public class SoldierService{
 				throw new ApplicationServiceException("Impossível editar o registro");
 		}
 		
-		soldier.setName(soldier.getName().toUpperCase());
 		soldierRepository.save(soldier);
 	}
 	
@@ -95,19 +97,36 @@ public class SoldierService{
 	}
 	
 	private boolean validateEmail(String email, Integer id) {
-		Soldier soldier = soldierRepository.findByEmail(email);
+	    if (!StringUtils.isEmpty(email)) {
+	        
+    		Soldier soldier = soldierRepository.findByEmail(email);
+    		
+    		if (soldier != null) {
+    			if (id == null) //new soldier with existing email
+    				return false;
+    			
+    			if (!soldier.getId().equals(id)) //edit soldier with existing email 
+    				return false;
+    			
+    			return true; //email belongs to the same soldier
+    		}
+	    }
 		
-		if (soldier != null) {
-			if (id == null)
-				return false;
-			
-			if (!soldier.getId().equals(id))
-				return false;
-			
-			return true;
-		}
-		
-		return true;
+		return true;//empty email or new email
+	}
+	
+	private boolean validateName(String name, Integer id, CJM cjm) {
+	    Soldier soldier = soldierRepository.findByNameAndCjm(name, cjm);
+	    
+	    if (soldier != null) {
+	        if (id == null)
+	            return false;
+	        
+	        if (!soldier.getId().equals(id))
+	            return false;
+	    }
+	    
+	    return true;
 	}
 	
 	/**

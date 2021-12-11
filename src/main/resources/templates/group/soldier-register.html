@@ -97,9 +97,9 @@
     </div>
     <script layout:fragment="page-script" th:inline="javascript">	
     	const backBtn = document.querySelector("button#back");
-    	
+    	   
     	backBtn.addEventListener('click', function(){
-    		window.history.back();
+    		location.href = "[(@{'/gp/dw/list/' + '' + ${session.activeList}})]";
     	});
     	
     	showSuccessMsg();
