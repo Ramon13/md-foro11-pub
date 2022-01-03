@@ -1,11 +1,25 @@
-package br.com.javamoon.infrastructure.web.controller;
+package br.com.javamoon.infrastructure.web.controller.group;
 
+import br.com.javamoon.domain.draw.AnnualQuarter;
+import br.com.javamoon.domain.draw.DrawList;
+import br.com.javamoon.domain.draw.DrawListRepository;
+import br.com.javamoon.domain.group_user.GroupUser;
+import br.com.javamoon.domain.soldier.Army;
+import br.com.javamoon.domain.soldier.Soldier;
+import br.com.javamoon.domain.soldier.SoldierRepository;
+import br.com.javamoon.domain.soldier.SoldierRepositoryImpl;
+import br.com.javamoon.infrastructure.web.controller.ControllerHelper;
+import br.com.javamoon.infrastructure.web.model.PaginationSearchFilter;
+import br.com.javamoon.service.AnnualQuarterService;
+import br.com.javamoon.service.DrawListService;
+import br.com.javamoon.service.SoldierService;
+import br.com.javamoon.service.ValidationException;
+import br.com.javamoon.util.SecurityUtils;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 import javax.servlet.http.HttpSession;
 import javax.validation.Valid;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -19,24 +33,9 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.servlet.ModelAndView;
 
-import br.com.javamoon.application.service.AnnualQuarterService;
-import br.com.javamoon.application.service.DrawListService;
-import br.com.javamoon.application.service.SoldierService;
-import br.com.javamoon.application.service.ValidationException;
-import br.com.javamoon.domain.draw.AnnualQuarter;
-import br.com.javamoon.domain.draw.DrawList;
-import br.com.javamoon.domain.draw.DrawListRepository;
-import br.com.javamoon.domain.group_user.GroupUser;
-import br.com.javamoon.domain.soldier.Army;
-import br.com.javamoon.domain.soldier.Soldier;
-import br.com.javamoon.domain.soldier.SoldierRepository;
-import br.com.javamoon.domain.soldier.SoldierRepositoryImpl;
-import br.com.javamoon.infrastructure.web.model.PaginationSearchFilter;
-import br.com.javamoon.util.SecurityUtils;
-
 @Controller
 @RequestMapping(path="/gp/dw")
-public class GroupDrawList {
+public class DrawListController {
 
 	@Autowired
 	private DrawListRepository drawListRepo;

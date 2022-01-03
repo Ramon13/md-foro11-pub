@@ -1,4 +1,4 @@
-package br.com.javamoon.application.service;
+package br.com.javamoon.service;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;

@@ -1,9 +1,8 @@
-package br.com.javamoon.application.service;
+package br.com.javamoon.service;
 
 import br.com.javamoon.domain.cjm_user.CJM;
 import br.com.javamoon.domain.draw.DrawList;
 import br.com.javamoon.domain.draw.DrawRepository;
-import br.com.javamoon.domain.exception.DeleteSoldierException;
 import br.com.javamoon.domain.group_user.GroupUser;
 import br.com.javamoon.domain.soldier.Army;
 import br.com.javamoon.domain.soldier.MilitaryOrganization;
@@ -13,6 +12,7 @@ import br.com.javamoon.domain.soldier.NoAvaliableSoldierException;
 import br.com.javamoon.domain.soldier.Soldier;
 import br.com.javamoon.domain.soldier.SoldierRepository;
 import br.com.javamoon.domain.soldier.SoldierRepositoryImpl;
+import br.com.javamoon.exception.DeleteSoldierException;
 import br.com.javamoon.util.StringUtils;
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;

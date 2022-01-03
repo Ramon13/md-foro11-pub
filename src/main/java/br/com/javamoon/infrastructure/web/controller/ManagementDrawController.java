@@ -20,13 +20,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.SessionAttributes;
 import org.springframework.web.bind.support.SessionStatus;
-
-import br.com.javamoon.application.service.AnnualQuarterService;
-import br.com.javamoon.application.service.ArmyService;
-import br.com.javamoon.application.service.AuditorshipService;
-import br.com.javamoon.application.service.DrawService;
-import br.com.javamoon.application.service.RandomSoldierService;
-import br.com.javamoon.application.service.ValidationException;
 import br.com.javamoon.domain.cjm_user.Auditorship;
 import br.com.javamoon.domain.cjm_user.AuditorshipRepository;
 import br.com.javamoon.domain.cjm_user.CJM;
@@ -45,6 +38,12 @@ import br.com.javamoon.domain.soldier.NoAvaliableSoldierException;
 import br.com.javamoon.domain.soldier.Soldier;
 import br.com.javamoon.domain.soldier.SoldierRepository;
 import br.com.javamoon.infrastructure.web.repository.DrawRepositoryImpl;
+import br.com.javamoon.service.AnnualQuarterService;
+import br.com.javamoon.service.ArmyService;
+import br.com.javamoon.service.AuditorshipService;
+import br.com.javamoon.service.DrawService;
+import br.com.javamoon.service.RandomSoldierService;
+import br.com.javamoon.service.ValidationException;
 import br.com.javamoon.util.SecurityUtils;
 
 @Controller

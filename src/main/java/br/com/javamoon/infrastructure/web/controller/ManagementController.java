@@ -1,11 +1,25 @@
 package br.com.javamoon.infrastructure.web.controller;
 
+import br.com.javamoon.domain.cjm_user.AuditorshipRepository;
+import br.com.javamoon.domain.cjm_user.CJMRepository;
+import br.com.javamoon.domain.cjm_user.CJMUser;
+import br.com.javamoon.domain.cjm_user.CJMUserRepository;
+import br.com.javamoon.domain.draw.Draw;
+import br.com.javamoon.domain.draw.DrawRepository;
+import br.com.javamoon.domain.group_user.GroupUser;
+import br.com.javamoon.domain.group_user.GroupUserRepository;
+import br.com.javamoon.domain.soldier.ArmyRepository;
+import br.com.javamoon.domain.soldier.Soldier;
+import br.com.javamoon.domain.soldier.SoldierRepository;
+import br.com.javamoon.domain.user.User;
+import br.com.javamoon.service.CjmUserService;
+import br.com.javamoon.service.DrawService;
+import br.com.javamoon.service.ValidationException;
+import br.com.javamoon.util.SecurityUtils;
 import java.util.ArrayList;
 import java.util.List;
-
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.propertyeditors.StringTrimmerEditor;
 import org.springframework.http.MediaType;
@@ -23,32 +37,11 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import br.com.javamoon.application.service.CjmUserService;
-import br.com.javamoon.application.service.DrawService;
-import br.com.javamoon.application.service.GroupUserService;
-import br.com.javamoon.application.service.ValidationException;
-import br.com.javamoon.domain.cjm_user.AuditorshipRepository;
-import br.com.javamoon.domain.cjm_user.CJMRepository;
-import br.com.javamoon.domain.cjm_user.CJMUser;
-import br.com.javamoon.domain.cjm_user.CJMUserRepository;
-import br.com.javamoon.domain.draw.Draw;
-import br.com.javamoon.domain.draw.DrawRepository;
-import br.com.javamoon.domain.group_user.GroupUser;
-import br.com.javamoon.domain.group_user.GroupUserRepository;
-import br.com.javamoon.domain.soldier.ArmyRepository;
-import br.com.javamoon.domain.soldier.Soldier;
-import br.com.javamoon.domain.soldier.SoldierRepository;
-import br.com.javamoon.domain.user.User;
-import br.com.javamoon.util.SecurityUtils;
-
 @ControllerAdvice
 @Controller
 @RequestMapping(path = "/mngmt")
 public class ManagementController {
-
-	@Autowired
-	private GroupUserService groupUserService;
-	
+    
 	@Autowired
 	private CjmUserService cjmUserService;
 	
@@ -89,7 +82,7 @@ public class ManagementController {
 	@GetMapping("/home")
 	public String home(Model model) {
 		CJMUser loggedUser = SecurityUtils.cjmUser();
-		if (loggedUser.isCredentialsExpired()) {
+		if (loggedUser.getCredentialsExpired()) {
 			model.addAttribute("user", loggedUser);
 			return "auth/login-reset-credentials";
 		}
@@ -137,28 +130,6 @@ public class ManagementController {
 		
 		model.addAttribute("cjmList", cjmRepository.findAll());
 		model.addAttribute("gpUser", new GroupUser());
-		
-		return "management/register/gpuser-register";
-	}
-	
-	@PostMapping(path = "/gpuser/register/save")
-	public String saveGpUser(@ModelAttribute("gpUser") @Valid GroupUser gpUser,
-			Errors errors,
-			Model model) {
-		
-		if (!errors.hasErrors()) {
-			try {
-				groupUserService.saveUser(gpUser);
-				model.addAttribute("msg", "Cadastro realizado com sucesso");
-			} catch (ValidationException e) {
-				errors.rejectValue(e.getFieldName(), null, e.getMessage());
-			}
-		}
-		
-		ControllerHelper.addArmiesToRequest(armyRepository, model);
-		ControllerHelper.setEditMode(model, false);
-		
-		model.addAttribute("cjmList", cjmRepository.findAll());
 		
 		return "management/register/gpuser-register";
 	}

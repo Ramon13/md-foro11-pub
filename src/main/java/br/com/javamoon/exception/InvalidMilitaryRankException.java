@@ -1,4 +1,4 @@
-package br.com.javamoon.domain.exception;
+package br.com.javamoon.exception;
 
 public class InvalidMilitaryRankException extends RuntimeException{
 

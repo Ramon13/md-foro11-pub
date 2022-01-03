@@ -50,7 +50,9 @@
   <body>
     <div layout:fragment="content">
       <h1>Relações de militares para sorteio</h1>
-      <button id="newList">Nova Relação</button>
+      <div th:if="${session.listScope}">
+        <button id="newList">Nova Relação</button>
+      </div>
       <hr />
       
       <div class="empty-list" th:if="${#lists.isEmpty(drawSoldierList)}">
@@ -62,7 +64,7 @@
           <div class="list-header">
             <span th:text="'[' + ${drawSoldiers.quarterYear} + ']' + ' ' + ${drawSoldiers.description}"></span>
             
-            <div class="dropdown">
+            <div class="dropdown" th:if="${session.listScope}">
               <img class="more dropdown" th:src="@{/images/hmore.svg}"/>
               <div class="dropdown-content" th:attr="data-listid=${drawSoldiers.id}">
                 <a class="removeList" href="#">Remover</a>
@@ -88,9 +90,9 @@
     
     <script layout:fragment="page-script" th:inline="javascript">
     	const newListBtn = document.querySelector("button#newList");
-    	newListBtn.addEventListener("click", function(){
-    		location.href = '[(@{/gp/dw/list/new})]';
-    	});
+    	addListener(newListBtn, "click", function(){
+    	  location.href = '[(@{/gp/dw/list/new})]';
+		  }); 
     	
     	setRemoveListBtnListerner()
     	

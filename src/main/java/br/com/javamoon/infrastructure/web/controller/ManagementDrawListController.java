@@ -11,8 +11,6 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
-
-import br.com.javamoon.application.service.DrawListService;
 import br.com.javamoon.domain.cjm_user.CJM;
 import br.com.javamoon.domain.cjm_user.CJMUser;
 import br.com.javamoon.domain.draw.DrawList;
@@ -22,6 +20,7 @@ import br.com.javamoon.domain.soldier.ArmyRepository;
 import br.com.javamoon.domain.soldier.Soldier;
 import br.com.javamoon.domain.soldier.SoldierRepositoryImpl;
 import br.com.javamoon.infrastructure.web.model.PaginationSearchFilter;
+import br.com.javamoon.service.DrawListService;
 import br.com.javamoon.util.SecurityUtils;
 
 @Controller

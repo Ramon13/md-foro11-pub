@@ -1,13 +1,5 @@
 package br.com.javamoon.infrastructure.web.controller;
 
-import java.time.LocalDate;
-import java.util.List;
-import java.util.Map;
-
-import org.springframework.data.domain.Sort;
-import org.springframework.ui.Model;
-
-import br.com.javamoon.application.service.AnnualQuarterService;
 import br.com.javamoon.domain.cjm_user.AuditorshipRepository;
 import br.com.javamoon.domain.cjm_user.CJM;
 import br.com.javamoon.domain.draw.AnnualQuarter;
@@ -26,8 +18,14 @@ import br.com.javamoon.domain.soldier.Soldier;
 import br.com.javamoon.domain.soldier.SoldierRepository;
 import br.com.javamoon.domain.user.User;
 import br.com.javamoon.infrastructure.web.security.Role;
+import br.com.javamoon.service.AnnualQuarterService;
 import br.com.javamoon.util.SecurityUtils;
 import br.com.javamoon.util.StringUtils;
+import java.time.LocalDate;
+import java.util.List;
+import java.util.Map;
+import org.springframework.data.domain.Sort;
+import org.springframework.ui.Model;
 
 public class ControllerHelper {
 
@@ -86,10 +84,10 @@ public class ControllerHelper {
 		 return SecurityUtils.groupUser().getCjm();
 	 }
 	 
-	 public static Role getUserRole(User user) {
+	 public static String getUserRole(User user) {
 		 if (user instanceof GroupUser)
-			 return Role.GROUP_USER;
-		 return Role.CJM_USER;
+			 return Role.GroupRole.GROUP_USER.toString();
+		 return Role.CjmRole.CJM_USER.toString();
 	 }
 	 
 	 public static String getRedirectURL(String url, Map<String, String> params) {

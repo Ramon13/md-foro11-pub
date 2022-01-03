@@ -74,3 +74,12 @@ function includeJs(jsFilePath){
   
   document.body.appendChild(js);
 }
+
+function validatePass(pass0, pass1){
+  return pass0 === pass1;
+}
+
+function addListener(element, event, executor){
+  if (element != null)
+    element.addEventListener(event, executor);
+}

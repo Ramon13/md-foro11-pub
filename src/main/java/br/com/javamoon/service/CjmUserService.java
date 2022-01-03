@@ -1,5 +1,6 @@
-package br.com.javamoon.application.service;
+package br.com.javamoon.service;
 
+import java.util.List;
 import java.util.NoSuchElementException;
 
 import javax.transaction.Transactional;
@@ -8,36 +9,35 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import br.com.javamoon.domain.group_user.GroupUser;
-import br.com.javamoon.domain.group_user.GroupUserRepository;
+import br.com.javamoon.domain.cjm_user.CJMUser;
+import br.com.javamoon.domain.cjm_user.CJMUserRepository;
 import br.com.javamoon.domain.user.User;
 
 @Service
-public class GroupUserService {
+public class CjmUserService {
 
 	@Autowired
-	private GroupUserRepository groupUserRepository;
+	private CJMUserRepository cjmUserRepo;
 	
 	@Transactional
-	public void saveUser(GroupUser gpUser) throws ValidationException{
-		if (!validateUsername(gpUser.getUsername(), null))
+	public void saveUser(CJMUser user) throws ValidationException{
+		if (!validateUsername(user.getUsername(), null))
 			throw new ValidationException("username", "Nome de usuário já cadastrado no sistema.");
-		if (!validateEmail(gpUser.getEmail(), null))
+		if (!validateEmail(user.getEmail(), null))
 			throw new ValidationException("email", "Email já cadastrado no sistema");
 		
-		if (gpUser.getId() != null) {
-			User userDB = groupUserRepository.findById(gpUser.getId()).orElseThrow(NoSuchElementException::new);
-			gpUser.setPassword(userDB.getPassword());
+		if (user.getId() != null) {
+			User userDB = cjmUserRepo.findById(user.getId()).orElseThrow(NoSuchElementException::new);
+			user.setPassword(userDB.getPassword());
 		}else {
-			gpUser.setCredentialsExpired(true);
-			gpUser.encryptPassword();
+			user.encryptPassword();
 		}
 		
-		groupUserRepository.save(gpUser);
+		cjmUserRepo.save(user);
 	}
 	
 	private boolean validateUsername(String username, Integer id) {
-		User user = groupUserRepository.findByUsername(username);
+		User user = cjmUserRepo.findByUsername(username);
 		
 		if (user != null) {
 			if (id == null)
@@ -51,12 +51,12 @@ public class GroupUserService {
 	}
 	
 	private boolean validateEmail(String email, Integer id) {
-		User user = groupUserRepository.findByEmail(email);
+		List<CJMUser> users = cjmUserRepo.findByEmail(email);
 		
-		if (user != null && !StringUtils.isAllBlank(email)) {
+		if (users != null && !StringUtils.isAllBlank(email)) {
 			if (id == null)
 				return false;
-			if (!user.getId().equals(id))
+			if (!users.get(0).getId().equals(id))
 				return false;
 			return true;
 		}

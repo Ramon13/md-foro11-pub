@@ -29,6 +29,12 @@
     <!-- content -->
     <div id="vMenu">
       <ul>
+        <li class="vMenu-sub" th:if="${session.accountScope}">
+          <span>Gerenciamento de acesso</span>
+          <ul>
+            <li class="vMenu-link"><a th:href="@{/gp/account/register}">Novo usuário</a></li>
+          </ul>
+        </li>
         <li class="vMenu-sub">
           <span>Navegação</span>
           <ul>

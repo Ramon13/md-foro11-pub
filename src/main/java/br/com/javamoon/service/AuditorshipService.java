@@ -1,4 +1,4 @@
-package br.com.javamoon.application.service;
+package br.com.javamoon.service;
 
 import org.springframework.stereotype.Service;
 

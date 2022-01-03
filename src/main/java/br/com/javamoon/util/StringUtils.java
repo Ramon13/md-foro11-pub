@@ -21,6 +21,13 @@ public class StringUtils {
 		return false;
 	}
 	
+	public static boolean hasAnyLowerCase(String str) {
+        for (char c : str.toCharArray())
+            if (c >= 97 && c <= 122)
+                return true;
+        return false;
+    }
+	
 	public static boolean hasAnyNumber(String str) {
 		for (char c : str.toCharArray())
 			if (c >= 48 && c <= 57)

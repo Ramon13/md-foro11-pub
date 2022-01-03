@@ -1,4 +1,4 @@
-package br.com.javamoon.application.service;
+package br.com.javamoon.service;
 
 import java.time.LocalDate;
 import java.util.Arrays;
@@ -7,7 +7,7 @@ import java.util.List;
 import org.springframework.stereotype.Service;
 
 import br.com.javamoon.domain.draw.AnnualQuarter;
-import br.com.javamoon.domain.exception.InvalidAnnualQuarterException;
+import br.com.javamoon.exception.InvalidAnnualQuarterException;
 
 @Service
 public class AnnualQuarterService {

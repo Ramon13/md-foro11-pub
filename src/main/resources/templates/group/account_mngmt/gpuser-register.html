@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html
+  xmlns="http://www.w3.org/1999/xhtml"
+  xmlns:th="http://www.thymeleaf.org" layout:decorate="~{group/layout}">
+  
+  <style layout:fragment="style">
+    div#content{
+      text-align: center;
+    }
+    
+    h1{
+      font-family: "Roboto", sans-serif;
+      color: #4e4848;
+      font-size: 20px;
+      font-weight: bold;
+    }
+    
+    div.form-step{
+      margin-bottom: 20px;
+    }
+    
+    div.form-step .input-label{
+      font-weight: bold;
+    }
+    
+    div.form-step .label-desc{
+      font-style: italic;
+      font-size: 14px;
+      color: #57606a;
+    }
+    
+    div.form-step input[type="text"], div.form-step input[type="password"]{
+      width: 30%;
+    }
+    
+    div#scope-access div{
+      border: 1px solid #cecece;
+      padding: 15px;
+    }
+    
+    div#scope-access .label-desc{
+      float: right;
+      width: 70%;
+    }
+    
+    button#createUser{
+      float: right;
+    }
+    
+    button#createUser img{
+      width: 20px;
+    }
+    
+    div#scope-access, div#form-btns{
+      width: 65%;
+      margin: auto;
+    }
+    
+    div#form-btns #back{
+      float: left;
+    }
+    
+    div#scope-access input[type=checkbox]{
+      margin-right: 14px;
+    }
+  </style>
+  
+  <body>
+    <div layout:fragment="content">
+      <h1>Novo acesso pessoal de usuário</h1>
+      <hr />
+      
+      <div th:if="${successMsg}" class="successMsg">
+        <span th:text="${successMsg}"></span>
+      </div>
+      
+      <form id='newUserForm' method="post" th:action="@{/gp/account/register/save}" th:object="${user}">
+        <div> 
+          <div class="form-step">
+            <div class="input-label">
+              <label for="username-input">Nome de usuário</label>
+              <br/>
+              <span class="label-desc">ex: nomesobrenome, rafaelcunha, rodrigocosta</span>
+            </div>
+            <div th:if="${#fields.hasErrors('username')}">
+              <span class="error" th:errors="*{username}"></span>
+            </div>
+            <div>
+              <input id="username-input" type="text" th:field="*{username}" 
+                th:classappend="${#fields.hasErrors('username')} ? 'error' : ''"/>
+            </div>
+          </div>
+          
+          <div class="form-step">
+            <div class="input-label">
+              <label for="email-input">Email</label>
+            </div>
+            <div th:if="${#fields.hasErrors('email')}">
+              <span class="error" th:errors="*{email}"></span>
+            </div>
+            <div>
+              <input id="email-input" type="text" th:field="*{email}"/>
+            </div>
+          </div>
+          
+          <div class="form-step password-step0">
+            <div class="input-label">
+              <label for="password-input">Senha de acesso</label>
+              <br />
+              <span class="label-desc">Senha para o primeiro acesso</span>
+            </div>
+            <div th:if="${#fields.hasErrors('password')}">
+              <span class="error" th:errors="*{password}"></span>
+            </div>
+            <div>
+              <input id="password-input" type="password" th:field="*{password}"/>
+            </div>
+          </div>
+          
+          <div class="form-step password-step1">
+            <div class="input-label">
+              <label for="password-input-confirm">Confirmar senha</label>
+            </div>
+            <div>
+              <input id="password-input-confirm" type="password" />
+            </div>
+          </div>
+        </div>
+        
+        <div class="form-step">
+          <div class="input-label">
+            <label>Permissões de acesso</label>
+          </div>
+          <br/>
+          <div id="scope-access">
+            <div th:each="role : ${user.permissionRoles}">
+              <input type="checkbox" name="selectedRoles" th:value="${role.scopeName}" th:text="${role.name}">
+              <span class="label-desc" th:text="${role.description}"></span>
+            </div>
+          </div>
+              
+        </div>
+        
+        <div id="form-btns">
+          <button type="button" id="back" class="app-gray-btn" th:onclick="'location.href=\'' + @{/gp/dw/list} + '\';'">
+            <span>Voltar</span>
+          </button>
+          <button type="submit" id="createUser" class="app-green-btn">
+            <span>Salvar</span>
+          </button>
+        </div>
+      </form>
+    </div>
+    
+    <script layout:fragment="page-script" th:inline="javascript">
+      const saveBtn = document.querySelector("button#createUser");
+      const form = document.querySelector("form#newUserForm");
+      let password, passwordConfirm;
+      
+      password = document.querySelector("#password-input");
+      passwordConfirm = document.querySelector("#password-input-confirm");
+      
+      saveBtn.addEventListener("click", function(){
+    	  if (validatePass(password.value, passwordConfirm.value)){
+    		  form.submit(); 
+    	  
+    	  }else{
+    		  if (document.querySelector(".diff-pass") == null){
+      		  let span = document.createElement("span");
+      		  span.classList.add("error");
+      		  span.classList.add("diff-pass");
+      		  span.style.display="block";
+      		  span.textContent = "Senhas diferentes";
+      		  
+      		  document.querySelector("div.password-step0")
+      		    .firstElementChild.append(span);
+    		  }
+    	  }
+    		  
+      });
+    </script>
+  </body>
+</html>

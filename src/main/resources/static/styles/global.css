@@ -9,7 +9,7 @@ legend {
     padding: 3px 6px;
 }
 
-span, p, legend{
+span, p, legend, div{
   font-family: "Roboto", sans-serif;
 }
 
@@ -22,7 +22,7 @@ button{
 
 button.app-green-btn, input[type=submit].app-green-btn {
   color: #ffffff;
-  background-color: #4CAF50;
+  background-color: #2EA44F;
   font-family: "Roboto", sans-serif;
 }
 
@@ -130,7 +130,7 @@ div#content{
   padding: 10px;
 }
 
-input[type=text].app-txtinput, input[type=password].app-txtinput, input[type=date].app-dateinput, select.app-select {
+input[type=text], input[type=password], input[type=date], select.app-select {
   font-family: "Roboto", sans-serif;
   width: 100%;
   padding: 6px;

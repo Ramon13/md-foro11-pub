@@ -1,36 +1,49 @@
 package br.com.javamoon.infrastructure.web.security;
 
-import java.util.Collection;
-
-import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
-import org.springframework.security.core.userdetails.UserDetails;
-
 import br.com.javamoon.domain.cjm_user.CJMUser;
 import br.com.javamoon.domain.group_user.GroupUser;
 import br.com.javamoon.domain.user.User;
-import br.com.javamoon.util.CollectionUtils;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
+import org.apache.commons.lang3.StringUtils;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
 
 @SuppressWarnings("serial")
 public class LoggedUser implements UserDetails{
 
 	private User user;
-	private Role role;
+	private List<Role> permissionRoles;
 	private Collection<? extends GrantedAuthority> roles;
 	
 	public LoggedUser(User user) {
 		this.user = user;
-		Role role;
 		
 		if (this.user instanceof CJMUser)
-			role = Role.CJM_USER;
-		else if (this.user instanceof GroupUser)
-			role = Role.GROUP_USER;
+		    setPermissionRoles(user.getPermissionLevel(), Role.Roles.cjmRoles, user);
+		else if (this.user instanceof GroupUser) {
+		    setPermissionRoles(user.getPermissionLevel(), Role.Roles.groupRoles, user);
+		}
 		else
 			throw new IllegalStateException("The user type is invalid");
-		
-		this.role = role;
-		this.roles = CollectionUtils.listOf(new SimpleGrantedAuthority("ROLE_" + role));
+	}
+	
+	private void setPermissionRoles(Integer permissionLevel, List<Role> roles, User user){
+	    List<SimpleGrantedAuthority> authRoles = new ArrayList<SimpleGrantedAuthority>();
+	    permissionRoles = new ArrayList<Role>();
+	    
+	    String binString = StringUtils.reverse(Integer.toBinaryString(permissionLevel));
+	    for (int i = 0; i < binString.length(); i++) {
+	        if (binString.charAt(i) == '1') {
+	            authRoles.add(new SimpleGrantedAuthority("ROLE_" + roles.get(i).getName()));
+	            permissionRoles.add(roles.get(i));
+	            user.getPermissionRoles().add(roles.get(i).getName());
+	        }
+	    }
+	    
+	    this.roles = authRoles;
 	}
 	
 	@Override
@@ -67,12 +80,16 @@ public class LoggedUser implements UserDetails{
 	public boolean isEnabled() {
 		return true;
 	}
-
-	public Role getRole() {
-		return role;
-	}
 	
 	public User getUser() {
 		return user;
+	}
+	
+	public List<Role> getPermissionRoles() {
+        return permissionRoles;
+    }
+	
+	public Role getMainRole() {
+	    return permissionRoles.get(0);
 	}
 }

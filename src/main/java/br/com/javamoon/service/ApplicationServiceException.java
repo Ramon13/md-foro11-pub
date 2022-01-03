@@ -1,4 +1,4 @@
-package br.com.javamoon.application.service;
+package br.com.javamoon.service;
 
 @SuppressWarnings("serial")
 public class ApplicationServiceException extends RuntimeException{
