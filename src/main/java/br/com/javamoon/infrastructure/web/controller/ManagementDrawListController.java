@@ -42,8 +42,13 @@ public class ManagementDrawListController {
 	
 	@GetMapping("/list")
 	public String drawSoldierList(Model model) {
-		List<DrawList> drawLists = new ArrayList<DrawList>();
 		CJMUser loggedUser = SecurityUtils.cjmUser();
+		if (loggedUser.isCredentialsExpired()) {
+			model.addAttribute("user", loggedUser);
+			return "auth/login-reset-credentials";
+		}
+		
+		List<DrawList> drawLists = new ArrayList<DrawList>();
 		CJM cjm = loggedUser.getAuditorship().getCjm();
 		
 		for (Army army : armyRepo.findAll())

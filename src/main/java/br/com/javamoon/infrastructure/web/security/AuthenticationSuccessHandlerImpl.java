@@ -26,7 +26,7 @@ public class AuthenticationSuccessHandlerImpl implements AuthenticationSuccessHa
 		Role role = SecurityUtils.loggedUser().getRole();
 		
 		if (role == Role.CJM_USER)
-			response.sendRedirect("mngmt/home");
+			response.sendRedirect("mngmt/dw-list/list");
 		else if (role == Role.GROUP_USER)
 			response.sendRedirect("gp/dw/list");
 		else
