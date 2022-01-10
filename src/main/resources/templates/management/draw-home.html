@@ -92,7 +92,7 @@
         <div th:each="drawSoldiers : ${drawSoldierList}">
                 
           <div class="draw-soldier-list">
-            <input class="selDrawList" th:field="*{drawList.id}" th:value="${drawSoldiers.id}" type="radio"/>
+            <input class="selDrawList" name="selDrawList" th:field="*{drawList.id}" th:value="${drawSoldiers.id}" type="radio"/>
             
             <div class="list-header">
               <span th:text="'[' + ${drawSoldiers.quarterYear} + ']' + ' ' + ${drawSoldiers.description}"></span>
@@ -234,6 +234,8 @@
   	accordion(document.getElementsByClassName("accordion"));
   	
   	showSuccessMsgIfExists();
+  	
+  	document.querySelectorAll(".selDrawList")[0].checked = true;
   	
   	function setDefaultTab(){
   		const tabsDiv = document.getElementsByClassName("tab");

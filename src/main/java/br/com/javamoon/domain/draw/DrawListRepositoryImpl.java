@@ -21,7 +21,7 @@ public class DrawListRepositoryImpl {
 		String hql = "from DrawList dl where "
 				+ "dl.army = :army and "
 				+ "dl.creationUser.cjm = :cjm and "
-				+ "dl.quarterYear like :quarterYear";
+				+ "dl.quarterYear like :quarterYear order by dl.id desc";
 		
 		TypedQuery<DrawList> query = entityManager.createQuery(hql, DrawList.class);
 		query.setParameter("army", army);

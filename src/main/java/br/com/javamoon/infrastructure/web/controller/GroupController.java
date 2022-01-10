@@ -2,12 +2,14 @@ package br.com.javamoon.infrastructure.web.controller;
 
 import java.io.IOException;
 import java.net.URLEncoder;
+import java.time.LocalDate;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,6 +27,7 @@ import br.com.javamoon.application.service.DrawExclusionService;
 import br.com.javamoon.application.service.DrawService;
 import br.com.javamoon.application.service.SoldierService;
 import br.com.javamoon.application.service.ValidationException;
+import br.com.javamoon.domain.draw.AnnualQuarter;
 import br.com.javamoon.domain.draw.Draw;
 import br.com.javamoon.domain.draw.DrawRepository;
 import br.com.javamoon.domain.draw_exclusion.DrawExclusion;
@@ -69,7 +72,9 @@ public class GroupController {
 	
 	@GetMapping("/sd/register")
 	public String soldierRegisterPage(@RequestParam(value = "successMsg", required = false) String successMsg,
-			Model model) {
+			Model model,
+			HttpSession session) {
+	    
 		Army army = SecurityUtils.groupUser().getArmy();
 		ControllerHelper.setEditMode(model, false);
 		ControllerHelper.addMilitaryOrganizationsToRequest(omRepo, army, model);
@@ -97,19 +102,19 @@ public class GroupController {
 							Collections.singletonMap("successMsg", URLEncoder.encode("Edição realizada com sucesso", "UTF-8")));
 				}else {
 					return ControllerHelper.getRedirectURL(
-							String.format("/gp/sd/register/edit/%d", soldier.getId()),
+							"/gp/sd/register",
 							Collections.singletonMap("successMsg", URLEncoder.encode("Cadastro realizado com sucesso", "UTF-8")));
 				}
 				
 			}catch(ValidationException e) {
-				errors.rejectValue("email", null, e.getMessage());
+				errors.rejectValue(e.getFieldName(), null, e.getMessage());
 			}
 		}
 		
 		ControllerHelper.setEditMode(model, false);
 		ControllerHelper.addMilitaryOrganizationsToRequest(omRepo, loggedUser.getArmy(), model);
 		ControllerHelper.addMilitaryRanksToRequest(rankRepository, loggedUser.getArmy(), model);
-		return "soldier-register";
+		return "group/soldier-register";
 	}
 	
 	@GetMapping(path="/sd/register/edit/{soldierId}")
@@ -149,6 +154,10 @@ public class GroupController {
 		
 		DrawExclusion exclusion = new DrawExclusion();
 		exclusion.setSoldier(soldier);
+		
+		AnnualQuarter nextQuarter = new AnnualQuarter(LocalDate.now().plusMonths(3));
+		exclusion.setStartDate(nextQuarter.getStartQuarterDate());
+		exclusion.setEndDate(nextQuarter.getEndQuarterDate());
 		
 		model.addAttribute("exclusions", soldierRepository.findAllDrawExclusions(soldier));
 		model.addAttribute("drawExclusion", exclusion);

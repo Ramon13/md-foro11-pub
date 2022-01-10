@@ -19,6 +19,8 @@ public interface SoldierRepository extends JpaRepository<Soldier, Integer>{
 	
 	public List<Soldier> findByNameContaining(String name);
 	
+	public Soldier findByNameAndCjm(String name, CJM cjm);
+	
 	@Query("from Soldier s left join fetch s.militaryOrganization where s.army = :army and s.cjm = :cjm order by s.name")
 	public List<Soldier> findAllByArmyAndCjm(@Param("army") Army army, @Param("cjm") CJM cjm);
 	
