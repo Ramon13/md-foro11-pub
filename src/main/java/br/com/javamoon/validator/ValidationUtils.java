@@ -1,6 +1,7 @@
 package br.com.javamoon.validator;
 
 import br.com.javamoon.util.StringUtils;
+import java.util.Objects;
 import org.springframework.validation.Errors;
 
 public final class ValidationUtils {
@@ -11,6 +12,15 @@ public final class ValidationUtils {
         for (ValidationError validationError : validationErrors.getValidationErrors()) {
             errors.rejectValue(validationError.getFieldName(), null, validationError.getErrorMessage());
         }
+    }
+    
+    public static boolean validateRequired(String fieldValue, String fieldName, ValidationErrors validationErrors) {
+    	if (Objects.isNull(fieldValue)) {
+    		validationErrors.add(fieldName, ValidationConstants.REQUIRED_FIELD);
+    		return false;
+    	}
+    	
+    	return true;
     }
     
     public static boolean validateIfHasAnyUpperCase(String fieldValue, String fieldName, ValidationErrors validationErrors) {

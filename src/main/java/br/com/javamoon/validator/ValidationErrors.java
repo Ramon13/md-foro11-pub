@@ -27,4 +27,12 @@ public class ValidationErrors {
     public boolean hasErrors() {
         return !validationErrors.isEmpty();
     }
+    
+    public int getNumberOfErrors() {
+    	return validationErrors.size();
+    }
+    
+    public ValidationError getError(int index) {
+    	return validationErrors.get(index);
+    }
 }

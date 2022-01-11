@@ -1,5 +1,7 @@
 package br.com.javamoon.infrastructure.web.controller.auth;
 
+import static br.com.javamoon.infrastructure.web.controller.ControllerConstants.CREATE_USER_SUCCESS_MSG;
+import static br.com.javamoon.infrastructure.web.controller.ControllerConstants.SUCCESS_MSG_ATTRIBUTE_NAME;
 import br.com.javamoon.domain.group_user.GroupUser;
 import br.com.javamoon.exception.AccountValidationException;
 import br.com.javamoon.infrastructure.web.security.AuthenticationSuccessHandlerImpl;
@@ -38,21 +40,14 @@ public class UserAccountController {
     }
     
     @PostMapping("/gp/account/register/save")
-    public String save(@Valid @ModelAttribute("user") GroupUserDTO user,
-            Errors errors, Model model) {
-        
-        if (!errors.hasErrors()) {
+    public String save(@Valid @ModelAttribute("user") GroupUserDTO user, Errors errors, Model model) {
+    	if (!errors.hasErrors()) {
             try {                
                 GroupUser loggedUser = SecurityUtils.groupUser();
+                accountService.createGroupUserAccount(user, loggedUser.getArmy(), loggedUser.getCjm());
                 
-                user.setArmy(loggedUser.getArmy());
-                user.setCjm(loggedUser.getCjm());
-                accountService.createGroupUserAccount(user);
-                
-                model.addAttribute("successMsg", "Cadastro realizado com sucesso.");
-                model.addAttribute("user", new GroupUserDTO());
-                return "group/account_mngmt/gpuser-register";
-                
+                model.addAttribute(SUCCESS_MSG_ATTRIBUTE_NAME, CREATE_USER_SUCCESS_MSG);
+                user = new GroupUserDTO();
             } catch (AccountValidationException e) {
                 ValidationUtils.rejectValues(errors, e.getValidationErrors());
             }
@@ -64,8 +59,7 @@ public class UserAccountController {
     
     @GetMapping(path="/account/password/reset")
 	public String resetCredentials(Model model){
-		GroupUser loggedUser = SecurityUtils.groupUser();
-		model.addAttribute("user", loggedUser);
+		model.addAttribute("user", SecurityUtils.groupUser());
 		return "auth/login-reset-credentials";
 	}
     

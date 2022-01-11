@@ -4,7 +4,7 @@ import br.com.javamoon.validator.ValidationErrors;
 import lombok.Getter;
 
 @Getter
-public class AccountValidationException extends Exception{
+public class AccountValidationException extends RuntimeException{
 
     private static final long serialVersionUID = 1L;
     

@@ -42,7 +42,7 @@ public class ManagementDrawListController {
 	@GetMapping("/list")
 	public String drawSoldierList(Model model) {
 		CJMUser loggedUser = SecurityUtils.cjmUser();
-		if (loggedUser.isCredentialsExpired()) {
+		if (loggedUser.getCredentialsExpired()) {
 			model.addAttribute("user", loggedUser);
 			return "auth/login-reset-credentials";
 		}

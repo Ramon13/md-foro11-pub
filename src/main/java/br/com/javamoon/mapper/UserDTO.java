@@ -3,11 +3,15 @@ package br.com.javamoon.mapper;
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Size;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 @Getter
 @Setter
+@AllArgsConstructor
+@NoArgsConstructor
 public class UserDTO{
 	
 	@NotBlank(message = "O nome de usuário não pode ser vazio")
@@ -19,8 +23,7 @@ public class UserDTO{
 	@Email(message = "O e-mail é inválido")
 	private String email;
 	
-	//TODO: add regex validation
-//	@NotBlank(message = "A senha deve conter no mínimo 8 caracteres")
-//	@Size(min = 8, max = 32, message = "A senha deve conter entre 8 e 32 caracteres")
+	@NotBlank(message = "A senha deve conter no mínimo 8 caracteres")
+	@Size(min = 8, max = 32, message = "A senha deve conter entre 8 e 32 caracteres")
 	private String password;
 }

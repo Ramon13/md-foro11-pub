@@ -21,7 +21,7 @@ public class UserDetailsServiceImpl implements UserDetailsService{
 	
 	@Override
 	public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-		User user = groupUserRepository.findByUsername(username);
+		User user = groupUserRepository.findByUsername(username).orElseThrow();
 		
 		if (user == null) {
 			user = cjmUserRepository.findByUsername(username);

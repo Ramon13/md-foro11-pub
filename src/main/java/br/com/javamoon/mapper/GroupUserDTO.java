@@ -25,6 +25,8 @@ public class GroupUserDTO extends UserDTO{
     private List<String> selectedRoles;
     
     public GroupUserDTO() {
+    	super();
+    	
         permissionRoles = new ArrayList<RoleDTO>();
         selectedRoles = new ArrayList<String>();
         

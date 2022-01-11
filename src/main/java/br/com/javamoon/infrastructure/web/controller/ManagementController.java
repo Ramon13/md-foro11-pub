@@ -165,7 +165,7 @@ public class ManagementController {
 	
 	@GetMapping("/user/register/password/reset/home")
 	public String passwordResetHome(@RequestParam("username") String username, Model model) {
-		User user = (GroupUser) groupUserRepository.findByUsername(username);
+		User user = (GroupUser) groupUserRepository.findByUsername(username).orElseThrow();
 		if (user == null)
 			user = (CJMUser) cjmUserRepository.findByUsername(username);
 		

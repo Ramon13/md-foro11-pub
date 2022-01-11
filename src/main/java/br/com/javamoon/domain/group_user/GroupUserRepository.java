@@ -7,9 +7,7 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface GroupUserRepository extends JpaRepository<GroupUser, Integer>{
 
-	public GroupUser findByUsername(String username);
+	public Optional<GroupUser> findByUsername(String username);
 	
-	public Optional<GroupUser> findByUsernameAndCredentialsExpired(String username, Boolean credentialsExpired);
-	
-	public Optional<GroupUser> findByEmailAndCredentialsExpired(String email, Boolean credentialsExpired);
+	public Optional<GroupUser> findByEmail(String email);
 }
