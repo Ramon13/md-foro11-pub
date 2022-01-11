@@ -7,11 +7,15 @@ import br.com.javamoon.exception.AccountValidationException;
 import br.com.javamoon.infrastructure.web.security.AuthenticationSuccessHandlerImpl;
 import br.com.javamoon.infrastructure.web.security.LoggedUser;
 import br.com.javamoon.mapper.GroupUserDTO;
+import br.com.javamoon.mapper.GroupUserMapper;
 import br.com.javamoon.mapper.UserDTO;
 import br.com.javamoon.service.UserAccountService;
 import br.com.javamoon.util.SecurityUtils;
 import br.com.javamoon.validator.ValidationUtils;
 import java.io.IOException;
+import java.util.List;
+import java.util.stream.Collectors;
+
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
@@ -55,6 +59,19 @@ public class UserAccountController {
         
         model.addAttribute("user", user);
         return "group/account_mngmt/gpuser-register";
+    }
+    
+    @GetMapping(path="/gp/accounts/home")
+    public String listGroupAccounts(Model model) {
+    	GroupUser loggedUser = SecurityUtils.groupUser();
+    	List<GroupUser> accounts = accountService.listGroupUserAccounts(loggedUser.getArmy(), loggedUser.getCjm());
+    	
+    	List<GroupUserDTO> accountsDTO = accounts.stream()
+    			.map(a -> GroupUserMapper.fromEntityToDTO(a))
+    			.collect(Collectors.toList());
+    	
+    	model.addAttribute("accounts", accountsDTO);
+    	return "group/account_mngmt/list-accounts";
     }
     
     @GetMapping(path="/account/password/reset")

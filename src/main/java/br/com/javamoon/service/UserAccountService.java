@@ -1,5 +1,11 @@
 package br.com.javamoon.service;
 
+import java.util.List;
+
+import javax.transaction.Transactional;
+
+import org.springframework.stereotype.Service;
+
 import br.com.javamoon.domain.cjm_user.CJM;
 import br.com.javamoon.domain.group_user.GroupUser;
 import br.com.javamoon.domain.group_user.GroupUserRepository;
@@ -12,8 +18,6 @@ import br.com.javamoon.infrastructure.web.security.Role.GroupRole;
 import br.com.javamoon.mapper.GroupUserDTO;
 import br.com.javamoon.mapper.GroupUserMapper;
 import br.com.javamoon.validator.GroupUserAccountValidator;
-import javax.transaction.Transactional;
-import org.springframework.stereotype.Service;
 
 @Service
 public class UserAccountService {
@@ -47,6 +51,10 @@ public class UserAccountService {
         
         groupUserRepository.save(user);
         return GroupUserMapper.fromEntityToDTO(user);
+    }
+    
+    public List<GroupUser> listGroupUserAccounts(Army army, CJM cjm){
+    	return groupUserRepository.findActiveByArmyAndCjm(army, cjm);
     }
     
     @Transactional

@@ -47,12 +47,12 @@ public class AuthenticationSuccessHandlerImpl implements AuthenticationSuccessHa
 	}
 	
 	public void sendToHomePage(LoggedUser loggedUser, HttpServletResponse response, HttpSession session) throws IOException {
-		Role mainRole = loggedUser.getMainRole();
+		String mainRole = loggedUser.getMainRole();
 		
-		if (mainRole.getName().equals(Role.CjmRole.CJM_USER.toString())) {
+		if (mainRole.equals(Role.CjmRole.CJM_USER.toString())) {
 			response.sendRedirect(applicationContext + "/mngmt/dw-list/list");
 			
-		}else if (mainRole.getName().equals(Role.GroupRole.GROUP_USER.toString())) {
+		}else if (mainRole.equals(Role.GroupRole.GROUP_USER.toString())) {
 		    setSessionScopes(session);
 			response.sendRedirect(applicationContext + "/gp/dw/list");
 		

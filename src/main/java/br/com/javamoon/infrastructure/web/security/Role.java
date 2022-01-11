@@ -1,7 +1,14 @@
 package br.com.javamoon.infrastructure.web.security;
 
-import java.util.ArrayList;
+import static br.com.javamoon.infrastructure.web.security.SecurityConstants.CORE_LIST_SCOPE_DESCRIPTION;
+import static br.com.javamoon.infrastructure.web.security.SecurityConstants.EDIT_LIST_SCOPE_DESCRIPTION;
+import static br.com.javamoon.infrastructure.web.security.SecurityConstants.MANAGE_ACCOUNT_SCOPE_DESCRIPTION;
+
 import java.util.List;
+
+import org.apache.commons.lang3.StringUtils;
+
+import br.com.javamoon.domain.user.User;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
@@ -11,17 +18,37 @@ import lombok.Setter;
 @AllArgsConstructor
 public class Role {
 
-    private String name;
-    
     public enum GroupRole{
-        GROUP_USER,             //access to all basic functionalities   2^0
-        EDIT_LIST_SCOPE,        //                                      2^1
-        MANAGE_ACCOUNT_SCOPE    //                                      2^2
+    	GROUP_USER (SecurityConstants.CORE_SCOPE, CORE_LIST_SCOPE_DESCRIPTION),             				// 2^0
+    	EDIT_LIST_SCOPE (SecurityConstants.EDIT_LIST_SCOPE, EDIT_LIST_SCOPE_DESCRIPTION),        			// 2^1
+        MANAGE_ACCOUNT_SCOPE(SecurityConstants.MANAGE_ACCOUNT_SCOPE, MANAGE_ACCOUNT_SCOPE_DESCRIPTION);   // 2^2
+        
+    	public final String name;
+        public final String description;
+    	
+        private GroupRole(String name, String description) {
+        	this.name = name;
+        	this.description = description;
+        }
     }
     
     public enum CjmRole{
         CJM_USER
     }
+    
+    public static void setGroupPermissionRoles(User user){
+	    String binString = StringUtils.reverse(Integer.toBinaryString(user.getPermissionLevel()));
+	    for (int i = 0; i < binString.length(); i++)
+	        if (binString.charAt(i) == '1')
+	            user.getPermissionRoles().add(GroupRole.values()[i].toString());
+	}
+    
+    public static void setCjmPermissionRoles(User user){
+	    String binString = StringUtils.reverse(Integer.toBinaryString(user.getPermissionLevel()));
+	    for (int i = 0; i < binString.length(); i++)
+	        if (binString.charAt(i) == '1')
+	            user.getPermissionRoles().add(CjmRole.values()[i].toString());
+	}
     
     public static int calcPermissionLevel(List<String> selectedRoles) {
         int level = 0;
@@ -31,22 +58,5 @@ public class Role {
         }
         
         return level;
-    }
-    
-    public static class Roles{
-        
-        public static List<Role> groupRoles;
-        public static List<Role> cjmRoles;
-        
-        static {
-            groupRoles = new ArrayList<Role>();
-            cjmRoles = new ArrayList<Role>();
-            
-            for (GroupRole role : GroupRole.values())
-                groupRoles.add(new Role(role.toString()));
-            
-            for (CjmRole role : CjmRole.values())
-                cjmRoles.add(new Role(role.toString()));
-        }
     }
 }

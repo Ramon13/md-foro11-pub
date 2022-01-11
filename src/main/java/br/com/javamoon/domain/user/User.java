@@ -41,6 +41,9 @@ public class User implements Serializable{
 	@Column(name="credentials_expired", nullable = false)
 	private Boolean credentialsExpired;
 	
+	@Column(name="active", nullable = false)
+	private Boolean active;
+	
 	@Min(value = 1)
     @Max(value = 7)
     @Column(name="permission_level", nullable = false)
@@ -52,6 +55,8 @@ public class User implements Serializable{
 	public void prePersist() {
 	    if (Objects.isNull(credentialsExpired))
 	        credentialsExpired = true;
+	    if (Objects.isNull(active))
+	        active = true;
 	}
 	
 	public void encryptPassword() {

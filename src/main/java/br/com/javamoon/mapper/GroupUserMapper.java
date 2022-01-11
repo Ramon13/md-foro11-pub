@@ -1,6 +1,7 @@
 package br.com.javamoon.mapper;
 
 import br.com.javamoon.domain.group_user.GroupUser;
+import br.com.javamoon.infrastructure.web.security.Role;
 
 public final class GroupUserMapper {
 
@@ -24,6 +25,9 @@ public final class GroupUserMapper {
         groupUserDTO.setUsername(groupUser.getUsername());
         groupUserDTO.setCjm(groupUser.getCjm());
         groupUserDTO.setArmy(groupUser.getArmy());
+        
+        Role.setGroupPermissionRoles(groupUser);
+        groupUserDTO.setUserRoles(groupUser.getPermissionRoles());
         
         return groupUserDTO;
     }

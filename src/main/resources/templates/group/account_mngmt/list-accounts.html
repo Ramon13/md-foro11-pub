@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html
+  xmlns="http://www.w3.org/1999/xhtml"
+  xmlns:th="http://www.thymeleaf.org" layout:decorate="~{group/layout}">
+  
+  <style layout:fragment="style">
+    
+  </style>
+  
+  <body>
+    <div layout:fragment="content">
+      <h1>Usuários Ativos</h1>
+      <hr />
+      <div id="users">
+        <table class="default-app-table">
+          <thead>
+            <tr>
+              <th>usuario</th>
+              <th>permissões</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr th:each="account : ${accounts}">
+              <td><span th:text="${account.prettyPrintUsernameAndEmail()}"></span></td>
+              <td><span th:text="${account.prettyPrintEnabledAccessScopes()}"></span></td>
+              <td>
+                <div>
+                  <a href="#">delete this account</a>
+                </div>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>    
+    </div>
+    
+    <script layout:fragment="page-script" th:inline="javascript">
+     
+    </script>
+  </body>
+</html>

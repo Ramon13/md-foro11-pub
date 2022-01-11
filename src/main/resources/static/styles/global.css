@@ -46,6 +46,13 @@ label, h1, h2 {
   font-family: "Roboto", sans-serif;
 }
 
+h1{
+  font-family: "Roboto", sans-serif;
+  color: #4e4848;
+  font-size: 20px;
+  font-weight: bold;
+}
+
 table.searchableTb{
   font-family: Roboto, sans-serif;
   border-collapse: collapse;
@@ -269,22 +276,22 @@ div.draw-list .quarter span {
     padding: 0 25px;
 }
 
-table#soldiers {
+table#soldiers, table.default-app-table {
   font-family: Roboto, sans-serif;
   border-collapse: collapse;
   width: 100%;
 }
 
-table#soldiers td {
+table#soldiers td, table.default-app-table td {
   font-size: 14px;
 }
 
-table#soldiers td, table#soldiers th {
+table#soldiers td, table#soldiers th, table.default-app-table td, table.default-app-table th {
   border: 1px solid #ddd;
   padding: 8px;
 }
 
-table#soldiers th {
+table#soldiers th, table.default-app-table th {
   padding-top: 12px;
   padding-bottom: 12px;
   text-align: left;

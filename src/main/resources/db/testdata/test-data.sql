@@ -110,34 +110,34 @@ insert into SOLDIER (id, email, soldier_name, phone, army_id, cjm_id, military_b
 		(30, null, 'MARCO AURÉLIO LEITE DE PAULA', '61 98179-1248', 3, 2, 15, 5, null);
 
 #cjm_user 1aud1cjm
-insert into CJM_USER (id, username, email, user_password, credentials_expired, auditorship_id, permission_level)
+insert into CJM_USER (id, username, email, user_password, active, credentials_expired, auditorship_id, permission_level)
 	values
-		(1, 'admin1aud1', null, '{bcrypt}$2a$10$IgXSs3978BKQMSyrIRF/ROA8V7f/v.G.Zr0F2l1yLJGamjGbYBjXe', 0, 1, 1);
+		(1, 'admin1aud1', null, '{bcrypt}$2a$10$IgXSs3978BKQMSyrIRF/ROA8V7f/v.G.Zr0F2l1yLJGamjGbYBjXe', 1, 0, 1, 1);
 
 #cjm_user 2aud1cjm
-insert into CJM_USER (id, username, email, user_password, credentials_expired, auditorship_id, permission_level)
+insert into CJM_USER (id, username, email, user_password, active, credentials_expired, auditorship_id, permission_level)
 	values
-		(2, 'admin2aud1', null, '{bcrypt}$2a$10$IgXSs3978BKQMSyrIRF/ROA8V7f/v.G.Zr0F2l1yLJGamjGbYBjXe', 0, 2, 1);		
+		(2, 'admin2aud1', null, '{bcrypt}$2a$10$IgXSs3978BKQMSyrIRF/ROA8V7f/v.G.Zr0F2l1yLJGamjGbYBjXe', 1, 0, 2, 1);		
 		
 #cjm_user 1aud2cjm		
-insert into CJM_USER (id, username, email, user_password, credentials_expired, auditorship_id, permission_level)
+insert into CJM_USER (id, username, email, user_password, active, credentials_expired, auditorship_id, permission_level)
 	values
-		(3, 'admin1aud2', null, '{bcrypt}$2a$10$IgXSs3978BKQMSyrIRF/ROA8V7f/v.G.Zr0F2l1yLJGamjGbYBjXe', 0, 3, 1);		
+		(3, 'admin1aud2', null, '{bcrypt}$2a$10$IgXSs3978BKQMSyrIRF/ROA8V7f/v.G.Zr0F2l1yLJGamjGbYBjXe', 1, 0, 3, 1);		
 
 #group_user EB 1cjm		
-insert into GROUP_USER (id, username, email, user_password, credentials_expired, cjm_id, army_id, permission_level)
+insert into GROUP_USER (id, username, email, user_password, active, credentials_expired, cjm_id, army_id, permission_level)
 	values
-		(1, 'ebadmin', 'eb@eb.com', '{bcrypt}$2a$10$IgXSs3978BKQMSyrIRF/ROA8V7f/v.G.Zr0F2l1yLJGamjGbYBjXe', 0, 1, 1, 7);		
+		(1, 'ebadmin', 'eb@eb.com', '{bcrypt}$2a$10$IgXSs3978BKQMSyrIRF/ROA8V7f/v.G.Zr0F2l1yLJGamjGbYBjXe', 1, 0, 1, 1, 7);		
 
 #group_user MB 1cjm		
-insert into GROUP_USER (id, username, email, user_password, credentials_expired, cjm_id, army_id, permission_level)
+insert into GROUP_USER (id, username, email, user_password, active, credentials_expired, cjm_id, army_id, permission_level)
 	values
-		(2, 'mbadmin', 'mb@mb.com', '{bcrypt}$2a$10$IgXSs3978BKQMSyrIRF/ROA8V7f/v.G.Zr0F2l1yLJGamjGbYBjXe', 0, 1, 2, 1);
+		(2, 'mbadmin', 'mb@mb.com', '{bcrypt}$2a$10$IgXSs3978BKQMSyrIRF/ROA8V7f/v.G.Zr0F2l1yLJGamjGbYBjXe', 1, 0, 1, 2, 1);
 		
 #group_user FAB 2cjm		
-insert into GROUP_USER (id, username, email, user_password, credentials_expired, cjm_id, army_id, permission_level)
+insert into GROUP_USER (id, username, email, user_password, active, credentials_expired, cjm_id, army_id, permission_level)
 	values
-		(3, 'fabadmin', 'fab@fab.com', '{bcrypt}$2a$10$IgXSs3978BKQMSyrIRF/ROA8V7f/v.G.Zr0F2l1yLJGamjGbYBjXe', 0, 2, 3, 3);
+		(3, 'fabadmin', 'fab@fab.com', '{bcrypt}$2a$10$IgXSs3978BKQMSyrIRF/ROA8V7f/v.G.Zr0F2l1yLJGamjGbYBjXe', 1, 0, 2, 3, 3);
 
 		
 		
