@@ -1,5 +1,10 @@
 package br.com.javamoon.service;
 
+import java.util.List;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
 import br.com.javamoon.domain.cjm_user.CJM;
 import br.com.javamoon.domain.draw.DrawList;
 import br.com.javamoon.domain.draw.DrawRepository;
@@ -13,11 +18,11 @@ import br.com.javamoon.domain.soldier.Soldier;
 import br.com.javamoon.domain.soldier.SoldierRepository;
 import br.com.javamoon.domain.soldier.SoldierRepositoryImpl;
 import br.com.javamoon.exception.DeleteSoldierException;
+import br.com.javamoon.exception.SoldierValidationException;
+import br.com.javamoon.mapper.EntityMapper;
 import br.com.javamoon.mapper.SoldierDTO;
 import br.com.javamoon.util.StringUtils;
-import java.util.List;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
+import br.com.javamoon.validator.SoldierValidator;
 
 @Service
 public class SoldierService{
@@ -37,6 +42,12 @@ public class SoldierService{
 	@Autowired
 	private ArmyService armySvc;
 	
+	private SoldierValidator soldierValidator;
+	
+	public SoldierService(SoldierValidator soldierValidator) {
+		this.soldierValidator = soldierValidator;
+	}
+	
 	public void delete(Army gpUserArmy, Soldier soldier) {
 		if (!isValidArmy(gpUserArmy, soldier))
 			throw new ApplicationServiceException("Authorization denied. Different armies");
@@ -47,41 +58,26 @@ public class SoldierService{
 		soldierRepository.delete(soldier);
 	}
 	
-	public void save(SoldierDTO soldierDTO, Army army, CJM cjm) throws ValidationException {
+	
+	/**
+	 * @param army logged user army. Assumes that is not null
+	 * @param cjm logged user cjm. Assumes that is not null
+	 */
+	public SoldierDTO save(SoldierDTO soldierDTO, Army army, CJM cjm) throws SoldierValidationException {
 		soldierDTO.setArmy(army);
 		soldierDTO.setCjm(cjm);
 		soldierDTO.capitalizeName();
 		
-//		if(!validateEmail(soldier.getEmail(), soldier.getId()))
-//			throw new ValidationException("email", "Email já cadastrado no sistema");
-//		
-//		if (!validateName(soldier.getName(), soldier.getId(), loggedUser.getCjm()))
-//		    throw new ValidationException("name", "Militar já cadastrado no sistema");
-//		
-//		if(!validateMilitaryOrganization(soldier) || 
-//				!armySvc.isMilitaryRankBelongsToArmy(soldier.getArmy(), soldier.getMilitaryRank()))
-//			throw new ApplicationServiceException("Impossível editar o registro");
-//		
-//		if (soldier.getId() != null) {
-//			Soldier soldierDB = soldierRepository.findById(soldier.getId()).orElseThrow();
-//			if (!validateLoggedUserPermission(soldierDB, loggedUser))
-//				throw new ApplicationServiceException("Impossível editar o registro");
-//		}
+		soldierValidator.saveSoldierValidation(soldierDTO);
+		Soldier soldier = EntityMapper.fromDTOToEntity(soldierDTO);
 		
-//		soldierRepository.save(soldier);
+		soldierRepository.save(soldier);
+		
+		return EntityMapper.fromEntityToDTO(soldier);
 	}
 	
 	public Soldier getRandomSoldier(MilitaryRank rank, Army army, DrawList drawList, List<Integer> excludeSoldiers) throws NoAvaliableSoldierException{
 		return soldierRepositoryImpl.findByMilitaryRankAndArmy(rank, army, drawList, excludeSoldiers);
-	}
-	
-	private boolean validateMilitaryOrganization(Soldier soldier) {
-		MilitaryOrganization militaryOrganizationDB = militaryOrganizationRepo.findById(soldier.getMilitaryOrganization().getId()).orElseThrow();
-		
-		//Validates if the om belongs to the army
-		if (!soldier.getArmy().getId().equals(militaryOrganizationDB.getArmy().getId()))
-			return false;
-		return true;
 	}
 	
 	public boolean validateLoggedUserPermission(Soldier soldier, GroupUser groupUser) {

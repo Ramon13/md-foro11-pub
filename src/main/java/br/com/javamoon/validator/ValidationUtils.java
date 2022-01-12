@@ -49,4 +49,13 @@ public final class ValidationUtils {
         
         return true;
     }
+    
+    public static boolean validateMaxLength(String fieldValue, String fieldName, int max, ValidationErrors validationErrors) {
+    	if (!Objects.isNull(fieldValue) && fieldValue.length() > max) {
+    		validationErrors.add(fieldName, ValidationConstants.STRING_EXCEEDS_MAX_LEN);
+    		return false;
+    	}
+    	
+    	return true;
+    }
 }

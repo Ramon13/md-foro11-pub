@@ -1,5 +1,11 @@
 package br.com.javamoon.service;
 
+import java.util.List;
+
+import javax.transaction.Transactional;
+
+import org.springframework.stereotype.Service;
+
 import br.com.javamoon.domain.cjm_user.CJM;
 import br.com.javamoon.domain.group_user.GroupUser;
 import br.com.javamoon.domain.group_user.GroupUserRepository;
@@ -10,12 +16,9 @@ import br.com.javamoon.exception.AccountNotFoundException;
 import br.com.javamoon.exception.AccountValidationException;
 import br.com.javamoon.infrastructure.web.security.Role;
 import br.com.javamoon.infrastructure.web.security.Role.GroupRole;
+import br.com.javamoon.mapper.EntityMapper;
 import br.com.javamoon.mapper.GroupUserDTO;
-import br.com.javamoon.mapper.GroupUserMapper;
 import br.com.javamoon.validator.GroupUserAccountValidator;
-import java.util.List;
-import javax.transaction.Transactional;
-import org.springframework.stereotype.Service;
 
 @Service
 public class UserAccountService {
@@ -41,14 +44,14 @@ public class UserAccountService {
         
         userDTO.getSelectedRoles().add(GroupRole.GROUP_USER.toString());
         
-        GroupUser user = GroupUserMapper.fromDTOToEntity(userDTO);
+        GroupUser user = EntityMapper.fromDTOToEntity(userDTO);
         user.setPermissionLevel(Role.calcPermissionLevel(userDTO.getSelectedRoles()));
         user.setArmy(army);
         user.setCjm(cjm);
         user.encryptPassword();
         
         groupUserRepository.save(user);
-        return GroupUserMapper.fromEntityToDTO(user);
+        return EntityMapper.fromEntityToDTO(user);
     }
     
     public List<GroupUser> listGroupUserAccounts(Army army, CJM cjm){

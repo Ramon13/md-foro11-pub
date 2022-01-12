@@ -18,4 +18,12 @@ public final class Constants {
 	public static final String PASSWORD_NO_UPPERCASE = "qwe123qwe";
 	public static final String PASSWORD_NO_LOWER = "QWE123QWE";
 	public static final String PASSWORD_NO_NUMBER = "QWEqweQWE";
+	
+	public static final String DEFAULT_SOLDIER_NAME = "John Marston";
+	
+    public static final String DEFAULT_ORGANIZATION_NAME = "11ª Região Militar";
+    public static final String DEFAULT_ORGANIZATION_ALIAS = "11ª RM";
+    public static final String DEFAULT_RANK_NAME = "Coronel";
+    public static final String DEFAULT_RANK_ALIAS = "CEL";
+    public static final Integer DEFAULT_RANK_WEIGHT = 5;
 }

@@ -35,12 +35,28 @@ public final class EntityMapper {
     
     public static Soldier fromDTOToEntity(SoldierDTO soldierDTO) {
     	Soldier soldier = new Soldier();
-    	soldier.setName(soldierDTO.getName());
-    	soldier.setEmail(soldierDTO.getEmail());
-    	soldier.setPhone(soldierDTO.getPhone());
+    	soldier.setName(soldierDTO.getName() != null ? soldierDTO.getName().trim() : null);
+    	soldier.setEmail(soldierDTO.getEmail() != null ? soldierDTO.getEmail().trim() : null);
+    	soldier.setPhone(soldierDTO.getPhone() != null ? soldierDTO.getPhone().trim() : null);
+    	soldier.setArmy(soldierDTO.getArmy());
+    	soldier.setCjm(soldierDTO.getCjm());
     	soldier.setMilitaryOrganization(soldierDTO.getMilitaryOrganization());
     	soldier.setMilitaryRank(soldierDTO.getMilitaryRank());
     	
     	return soldier;
+    }
+    
+    public static SoldierDTO fromEntityToDTO(Soldier soldier) {
+    	SoldierDTO soldierDTO = new SoldierDTO();
+    	soldierDTO.setId(soldier.getId());
+    	soldierDTO.setName(soldier.getName());
+    	soldierDTO.setEmail(soldier.getEmail());
+    	soldierDTO.setPhone(soldier.getPhone());
+    	soldierDTO.setArmy(soldier.getArmy());
+    	soldierDTO.setCjm(soldier.getCjm());
+    	soldierDTO.setMilitaryOrganization(soldier.getMilitaryOrganization());
+    	soldierDTO.setMilitaryRank(soldier.getMilitaryRank());	
+    	
+    	return soldierDTO;
     }
 }

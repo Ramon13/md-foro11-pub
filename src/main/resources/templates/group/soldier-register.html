@@ -21,6 +21,11 @@
     <div layout:fragment="content" class="centered-page">
       <h1>Cadastrar novo militar</h1>
       <hr />
+      
+      <div th:if="${successMsg}" class="successMsg">
+        <span th:text="${successMsg}"></span>
+      </div>
+      
       <div> 
         <form method="post" th:object="${soldier}" th:action="@{/gp/sd/register/save}">
           <div>

@@ -1,6 +1,7 @@
 package br.com.javamoon.domain.soldier;
 
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -15,11 +16,19 @@ public interface SoldierRepository extends JpaRepository<Soldier, Integer>{
 
 	public Soldier findByEmail(String email);
 	
+	public Optional<List<Soldier>> findByEmailAndArmyAndCjm(String email, Army army, CJM cjm);
+	
+	
+	
 	public Soldier findByName(String name);
 	
 	public List<Soldier> findByNameContaining(String name);
 	
+	public Optional<List<Soldier>> findByNameAndArmyAndCjm(String name, Army army, CJM cjm);
+	
 	public Soldier findByNameAndCjm(String name, CJM cjm);
+	
+	
 	
 	@Query("from Soldier s left join fetch s.militaryOrganization where s.army = :army and s.cjm = :cjm order by s.name")
 	public List<Soldier> findAllByArmyAndCjm(@Param("army") Army army, @Param("cjm") CJM cjm);

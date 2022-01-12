@@ -21,6 +21,7 @@ public class SoldierDTO{
 	@Size(max = 64, min = 2, message = "O campo nome deve ter entre 2 e 64 caracteres")
 	private String name;
 	
+	// TODO: apply validation in validate layer too
 	//@Pattern(regexp = "[0-9]{0,11}{10,11}", message="O telefone possui o formato inválido")
 	private String phone;
 	
