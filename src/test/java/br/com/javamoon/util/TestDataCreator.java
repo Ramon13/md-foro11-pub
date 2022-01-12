@@ -8,6 +8,9 @@ import br.com.javamoon.domain.group_user.GroupUserRepository;
 import br.com.javamoon.domain.soldier.Army;
 import br.com.javamoon.mapper.UserDTO;
 import br.com.javamoon.validator.GroupUserAccountValidator;
+import java.util.ArrayList;
+import java.util.List;
+import org.apache.commons.lang3.StringUtils;
 
 public final class TestDataCreator {
 
@@ -21,18 +24,31 @@ public final class TestDataCreator {
 		return new UserDTO(DEFAULT_USER_USERNAME, DEFAULT_USER_EMAIL, DEFAULT_USER_PASSWORD); 
 	}
 	
-	public static GroupUser newGroupUser(Army army, CJM cjm) {
-		GroupUser user = new GroupUser();
-		user.setUsername(DEFAULT_USER_USERNAME);
-		user.setEmail(DEFAULT_USER_EMAIL);
-		user.setPassword(DEFAULT_USER_PASSWORD);
-		user.setActive(true);
-		user.setCredentialsExpired(false);
-		user.setArmy(army);
-		user.setCjm(cjm);
-		user.setPermissionLevel(7);
+	public static List<GroupUser> newGroupUserList(Army army, CJM cjm, int listSize) {
+		List<GroupUser> users = new ArrayList<>();
 		
-		return user;
+		GroupUser user;
+		while (listSize-- > 0) {
+			user = new GroupUser();
+			user.setUsername(StringUtils.rightPad(								// gen different username and email
+							DEFAULT_USER_USERNAME,
+							DEFAULT_USER_USERNAME.length() + listSize,
+							'x'));
+			user.setEmail(StringUtils.rightPad(
+							DEFAULT_USER_EMAIL,
+							DEFAULT_USER_EMAIL.length() + listSize,
+							'x'));
+			user.setPassword(DEFAULT_USER_PASSWORD);
+			user.setActive(true);
+			user.setCredentialsExpired(false);
+			user.setArmy(army);
+			user.setCjm(cjm);
+			user.setPermissionLevel(7);
+			
+			users.add(user);
+		}
+		
+		return users;
 	}
 	
 	public static Army newArmy() {

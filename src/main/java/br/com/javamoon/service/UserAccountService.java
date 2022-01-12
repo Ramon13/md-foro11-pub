@@ -1,23 +1,21 @@
 package br.com.javamoon.service;
 
-import java.util.List;
-
-import javax.transaction.Transactional;
-
-import org.springframework.stereotype.Service;
-
 import br.com.javamoon.domain.cjm_user.CJM;
 import br.com.javamoon.domain.group_user.GroupUser;
 import br.com.javamoon.domain.group_user.GroupUserRepository;
 import br.com.javamoon.domain.repository.UserRepository;
 import br.com.javamoon.domain.soldier.Army;
 import br.com.javamoon.domain.user.User;
+import br.com.javamoon.exception.AccountNotFoundException;
 import br.com.javamoon.exception.AccountValidationException;
 import br.com.javamoon.infrastructure.web.security.Role;
 import br.com.javamoon.infrastructure.web.security.Role.GroupRole;
 import br.com.javamoon.mapper.GroupUserDTO;
 import br.com.javamoon.mapper.GroupUserMapper;
 import br.com.javamoon.validator.GroupUserAccountValidator;
+import java.util.List;
+import javax.transaction.Transactional;
+import org.springframework.stereotype.Service;
 
 @Service
 public class UserAccountService {
@@ -55,6 +53,16 @@ public class UserAccountService {
     
     public List<GroupUser> listGroupUserAccounts(Army army, CJM cjm){
     	return groupUserRepository.findActiveByArmyAndCjm(army, cjm);
+    }
+    
+    @Transactional
+    public void deleteUserAccount(Integer accountID, Army army, CJM cjm) {
+    	if (groupUserRepository.findById(accountID).isEmpty())
+    		throw new AccountNotFoundException("account not found: " + accountID);
+    	
+    	accountValidator.deleteAccountValidate(accountID, army, cjm);
+    	
+    	groupUserRepository.delete(accountID);
     }
     
     @Transactional

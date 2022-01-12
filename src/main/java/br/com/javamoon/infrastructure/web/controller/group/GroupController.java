@@ -68,53 +68,6 @@ public class GroupController {
 	@Autowired
 	private DrawService drawSvc;
 	
-	@GetMapping("/sd/register")
-	public String soldierRegisterPage(@RequestParam(value = "successMsg", required = false) String successMsg,
-			Model model,
-			HttpSession session) {
-	    
-		Army army = SecurityUtils.groupUser().getArmy();
-		ControllerHelper.setEditMode(model, false);
-		ControllerHelper.addMilitaryOrganizationsToRequest(omRepo, army, model);
-		ControllerHelper.addMilitaryRanksToRequest(rankRepository, army, model);
-		model.addAttribute("soldier", new Soldier());
-		model.addAttribute("successMsg", successMsg);
-		
-		return "group/soldier-register";
-	}
-	
-	@PostMapping(path = "/sd/register/save")
-	public String soldierRegisterSave(@Valid @ModelAttribute("soldier") Soldier soldier,
-			Errors errors,
-			Model model,
-			HttpServletRequest request) throws IOException {
-		
-		GroupUser loggedUser = SecurityUtils.groupUser();
-		if (!errors.hasErrors()) {
-			try {
-				soldierService.saveSoldier(soldier, loggedUser);
-				
-				if (!StringUtils.isEmpty(request.getParameter("id"))) {
-					return ControllerHelper.getRedirectURL(
-							String.format("/gp/sd/register/edit/%d", soldier.getId()),
-							Collections.singletonMap("successMsg", URLEncoder.encode("Edição realizada com sucesso", "UTF-8")));
-				}else {
-					return ControllerHelper.getRedirectURL(
-							"/gp/sd/register",
-							Collections.singletonMap("successMsg", URLEncoder.encode("Cadastro realizado com sucesso", "UTF-8")));
-				}
-				
-			}catch(ValidationException e) {
-				errors.rejectValue(e.getFieldName(), null, e.getMessage());
-			}
-		}
-		
-		ControllerHelper.setEditMode(model, false);
-		ControllerHelper.addMilitaryOrganizationsToRequest(omRepo, loggedUser.getArmy(), model);
-		ControllerHelper.addMilitaryRanksToRequest(rankRepository, loggedUser.getArmy(), model);
-		return "group/soldier-register";
-	}
-	
 	@GetMapping(path="/sd/register/edit/{soldierId}")
 	public String editSoldier(@PathVariable Integer soldierId,
 			@RequestParam(value="successMsg", required=false) String successMsg,

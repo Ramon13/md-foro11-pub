@@ -8,7 +8,7 @@ import org.springframework.data.repository.query.Param;
 
 public interface MilitaryRankRepository extends JpaRepository<MilitaryRank, Integer>{
 
-	@Query("select mr from Army a join a.militaryRanks mr where a = :army order by mr.rankWeight asc")
+	@Query("SELECT mr FROM Army a JOIN a.militaryRanks mr WHERE a = :army ORDER BY mr.rankWeight ASC")
 	List<MilitaryRank> findAllByArmiesIn(@Param("army") Army army);
 	
 	MilitaryRank findByAlias(String alias);

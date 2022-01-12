@@ -35,6 +35,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter{
 			//
 			//account management
 			.antMatchers("/gp/account/**").hasRole(MANAGE_ACCOUNT_SCOPE.toString())
+			.antMatchers("/gp/accounts/**").hasRole(MANAGE_ACCOUNT_SCOPE.toString())
 			.antMatchers("/mngmt/**").hasRole(CJM_USER.toString())
 			.antMatchers("/lu/**").hasAnyRole(GROUP_USER.toString(), CJM_USER.toString())
 			.anyRequest().authenticated()

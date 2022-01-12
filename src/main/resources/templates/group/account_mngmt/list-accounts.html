@@ -25,7 +25,7 @@
               <td><span th:text="${account.prettyPrintEnabledAccessScopes()}"></span></td>
               <td>
                 <div>
-                  <a href="#">delete this account</a>
+                  <a href="#" th:attr="data-deleteurl=@{/gp/accounts/delete/} + ${account.id}" class="delete-account">delete this account</a>
                 </div>
               </td>
             </tr>
@@ -35,7 +35,29 @@
     </div>
     
     <script layout:fragment="page-script" th:inline="javascript">
-     
+      const deleteAccountBtns = document.querySelectorAll("a.delete-account");
+      
+      addDeleteAccountEventListeners();
+      
+      function addDeleteAccountEventListeners(){
+    	  let form;
+    	  
+    	  for (let i = 0; i < deleteAccountBtns.length; i++){
+    		  deleteAccountBtns[i].addEventListener('click', function(){
+    			  if (displayDeleteUserConfirmation()){
+      			  form = document.createElement("form");
+      			  form.method = "post";
+      			  form.action = this.dataset.deleteurl;
+      			  document.querySelector("div#users").append(form);
+      			  form.submit();
+    			  }
+    		  });
+    	  }  
+      }
+      
+      function displayDeleteUserConfirmation(){
+    	  return confirm("[Atenção] Após a exclusão o usuário não terá mais acesso ao sistema. Prosseguir com a exclusão da conta?");
+      }
     </script>
   </body>
 </html>

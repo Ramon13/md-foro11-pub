@@ -32,8 +32,14 @@
         <li class="vMenu-sub" th:if="${session.accountScope}">
           <span>Gerenciamento de acesso</span>
           <ul>
-            <li class="vMenu-link"><a th:href="@{/gp/accounts/home}">Usuários cadastrados</a></li>
-            <li class="vMenu-link"><a th:href="@{/gp/account/register}">Novo usuário</a></li>
+            <li class="vMenu-link"><a th:href="@{/gp/accounts/list/home}">Usuários cadastrados</a></li>
+            <li class="vMenu-link"><a th:href="@{/gp/accounts/register/home}">Novo usuário</a></li>
+          </ul>
+        </li>
+        <li class="vMenu-sub" th:if="${session.accountScope}">
+          <span>Militares Cadastrados</span>
+          <ul>
+            <li class="vMenu-link"><a th:href="@{/gp/sd/register/home}">Novo militar</a></li>
           </ul>
         </li>
         <li class="vMenu-sub">

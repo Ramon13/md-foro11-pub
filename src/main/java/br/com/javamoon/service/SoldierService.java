@@ -13,6 +13,7 @@ import br.com.javamoon.domain.soldier.Soldier;
 import br.com.javamoon.domain.soldier.SoldierRepository;
 import br.com.javamoon.domain.soldier.SoldierRepositoryImpl;
 import br.com.javamoon.exception.DeleteSoldierException;
+import br.com.javamoon.mapper.SoldierDTO;
 import br.com.javamoon.util.StringUtils;
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -46,28 +47,28 @@ public class SoldierService{
 		soldierRepository.delete(soldier);
 	}
 	
-	public void saveSoldier(Soldier soldier, GroupUser loggedUser) throws ValidationException {
-		soldier.setArmy(loggedUser.getArmy());
-		soldier.setCjm(loggedUser.getCjm());
-		soldier.setName(soldier.getName().toUpperCase());
+	public void save(SoldierDTO soldierDTO, Army army, CJM cjm) throws ValidationException {
+		soldierDTO.setArmy(army);
+		soldierDTO.setCjm(cjm);
+		soldierDTO.capitalizeName();
 		
-		if(!validateEmail(soldier.getEmail(), soldier.getId()))
-			throw new ValidationException("email", "Email já cadastrado no sistema");
+//		if(!validateEmail(soldier.getEmail(), soldier.getId()))
+//			throw new ValidationException("email", "Email já cadastrado no sistema");
+//		
+//		if (!validateName(soldier.getName(), soldier.getId(), loggedUser.getCjm()))
+//		    throw new ValidationException("name", "Militar já cadastrado no sistema");
+//		
+//		if(!validateMilitaryOrganization(soldier) || 
+//				!armySvc.isMilitaryRankBelongsToArmy(soldier.getArmy(), soldier.getMilitaryRank()))
+//			throw new ApplicationServiceException("Impossível editar o registro");
+//		
+//		if (soldier.getId() != null) {
+//			Soldier soldierDB = soldierRepository.findById(soldier.getId()).orElseThrow();
+//			if (!validateLoggedUserPermission(soldierDB, loggedUser))
+//				throw new ApplicationServiceException("Impossível editar o registro");
+//		}
 		
-		if (!validateName(soldier.getName(), soldier.getId(), loggedUser.getCjm()))
-		    throw new ValidationException("name", "Militar já cadastrado no sistema");
-		
-		if(!validateMilitaryOrganization(soldier) || 
-				!armySvc.isMilitaryRankBelongsToArmy(soldier.getArmy(), soldier.getMilitaryRank()))
-			throw new ApplicationServiceException("Impossível editar o registro");
-		
-		if (soldier.getId() != null) {
-			Soldier soldierDB = soldierRepository.findById(soldier.getId()).orElseThrow();
-			if (!validateLoggedUserPermission(soldierDB, loggedUser))
-				throw new ApplicationServiceException("Impossível editar o registro");
-		}
-		
-		soldierRepository.save(soldier);
+//		soldierRepository.save(soldier);
 	}
 	
 	public Soldier getRandomSoldier(MilitaryRank rank, Army army, DrawList drawList, List<Integer> excludeSoldiers) throws NoAvaliableSoldierException{

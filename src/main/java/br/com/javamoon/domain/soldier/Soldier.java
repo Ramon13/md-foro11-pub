@@ -43,8 +43,6 @@ public class Soldier implements Serializable, Comparable<Soldier>{
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Integer id;
 	
-	@NotBlank(message = "O campo nome deve ser preenchido")
-	@Size(max = 64, min = 2, message = "O campo nome deve ter entre 2 e 64 caracteres")
 	@Column(name="soldier_name", length = 64, nullable = false, unique = true)
 	private String name;
 	
@@ -54,8 +52,6 @@ public class Soldier implements Serializable, Comparable<Soldier>{
 	private String phone;
 	
 	//@NotBlank(message="O campo email deve ser preenchido")
-	@Size(max = 64, message = "O campo email deve conter no máximo 64 caracteres")
-	@Email(message = "O e-mail é inválido")
 	@Column(length = 64, nullable = true, unique = true)
 	private String email;
 	
@@ -64,7 +60,6 @@ public class Soldier implements Serializable, Comparable<Soldier>{
 	private Army army;
 	
 	@ToString.Exclude
-	@NotNull(message = "É necessário selecionar uma OM.")
 	@ManyToOne
 	@JoinColumn(name="military_base_id", nullable=false)
 	private MilitaryOrganization militaryOrganization;
@@ -75,7 +70,6 @@ public class Soldier implements Serializable, Comparable<Soldier>{
 	private MilitarySpecialization specialization;
 	
 	@ToString.Exclude
-	@NotNull(message = "É necessário selecionar um posto.")
 	@ManyToOne
 	@JoinColumn(name="military_rank_id", nullable=false)
 	private MilitaryRank militaryRank;

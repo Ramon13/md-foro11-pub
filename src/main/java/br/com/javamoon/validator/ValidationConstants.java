@@ -14,6 +14,6 @@ public final class ValidationConstants {
     public static final String PASSWORD_DOES_NOT_HAVE_LOWERCASE = "A senha deve conter letras minúsculas.";
     public static final String PASSWORD_DOES_NOT_HAVE_NUMBER = "A senha deve conter algum número.";
     
-    
+    public static final String NO_PERMISSION = "You do not have permision to edit this property.";
     private ValidationConstants() {}
 }

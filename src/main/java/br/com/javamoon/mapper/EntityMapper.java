@@ -1,11 +1,12 @@
 package br.com.javamoon.mapper;
 
 import br.com.javamoon.domain.group_user.GroupUser;
+import br.com.javamoon.domain.soldier.Soldier;
 import br.com.javamoon.infrastructure.web.security.Role;
 
-public final class GroupUserMapper {
+public final class EntityMapper {
 
-    public GroupUserMapper() {}
+    public EntityMapper() {}
     
     public static GroupUser fromDTOToEntity(GroupUserDTO userDTO) {
         GroupUser user = new GroupUser();
@@ -30,5 +31,16 @@ public final class GroupUserMapper {
         groupUserDTO.setUserRoles(groupUser.getPermissionRoles());
         
         return groupUserDTO;
+    }
+    
+    public static Soldier fromDTOToEntity(SoldierDTO soldierDTO) {
+    	Soldier soldier = new Soldier();
+    	soldier.setName(soldierDTO.getName());
+    	soldier.setEmail(soldierDTO.getEmail());
+    	soldier.setPhone(soldierDTO.getPhone());
+    	soldier.setMilitaryOrganization(soldierDTO.getMilitaryOrganization());
+    	soldier.setMilitaryRank(soldierDTO.getMilitaryRank());
+    	
+    	return soldier;
     }
 }
