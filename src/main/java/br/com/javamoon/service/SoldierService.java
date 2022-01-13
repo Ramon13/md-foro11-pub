@@ -1,28 +1,28 @@
 package br.com.javamoon.service;
 
-import java.util.List;
-
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-
 import br.com.javamoon.domain.cjm_user.CJM;
 import br.com.javamoon.domain.draw.DrawList;
 import br.com.javamoon.domain.draw.DrawRepository;
 import br.com.javamoon.domain.group_user.GroupUser;
 import br.com.javamoon.domain.soldier.Army;
-import br.com.javamoon.domain.soldier.MilitaryOrganization;
-import br.com.javamoon.domain.soldier.MilitaryOrganizationRepository;
 import br.com.javamoon.domain.soldier.MilitaryRank;
 import br.com.javamoon.domain.soldier.NoAvaliableSoldierException;
 import br.com.javamoon.domain.soldier.Soldier;
 import br.com.javamoon.domain.soldier.SoldierRepository;
 import br.com.javamoon.domain.soldier.SoldierRepositoryImpl;
 import br.com.javamoon.exception.DeleteSoldierException;
+import br.com.javamoon.exception.SoldierNotFoundException;
 import br.com.javamoon.exception.SoldierValidationException;
+import br.com.javamoon.infrastructure.web.model.PaginationSearchFilter;
+import br.com.javamoon.infrastructure.web.model.SoldiersPagination;
 import br.com.javamoon.mapper.EntityMapper;
 import br.com.javamoon.mapper.SoldierDTO;
 import br.com.javamoon.util.StringUtils;
 import br.com.javamoon.validator.SoldierValidator;
+import java.util.List;
+import java.util.Objects;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
 @Service
 public class SoldierService{
@@ -33,21 +33,14 @@ public class SoldierService{
 	@Autowired
 	private DrawRepository drawRepo;
 	
-	@Autowired
+	private SoldierValidator soldierValidator;
 	private SoldierRepositoryImpl soldierRepositoryImpl;
 	
-	@Autowired
-	private MilitaryOrganizationRepository militaryOrganizationRepo;
-	
-	@Autowired
-	private ArmyService armySvc;
-	
-	private SoldierValidator soldierValidator;
-	
-	public SoldierService(SoldierValidator soldierValidator) {
+	public SoldierService(SoldierValidator soldierValidator, SoldierRepositoryImpl soldierRepositoryImpl) {
 		this.soldierValidator = soldierValidator;
+		this.soldierRepositoryImpl = soldierRepositoryImpl;
 	}
-	
+
 	public void delete(Army gpUserArmy, Soldier soldier) {
 		if (!isValidArmy(gpUserArmy, soldier))
 			throw new ApplicationServiceException("Authorization denied. Different armies");
@@ -58,6 +51,9 @@ public class SoldierService{
 		soldierRepository.delete(soldier);
 	}
 	
+	public SoldierDTO getSoldier(Integer id) {
+		return EntityMapper.fromEntityToDTO(getSoldierOrElseThrow(id));
+	}
 	
 	/**
 	 * @param army logged user army. Assumes that is not null
@@ -74,6 +70,18 @@ public class SoldierService{
 		soldierRepository.save(soldier);
 		
 		return EntityMapper.fromEntityToDTO(soldier);
+	}
+	
+	private Soldier getSoldierOrElseThrow(Integer soldierId) {
+		Objects.requireNonNull(soldierId);
+		return soldierRepository.findById(soldierId).orElseThrow(() -> new SoldierNotFoundException("soldier not found: " + soldierId));
+	}
+	
+	public SoldiersPagination listPagination(Army army, CJM cjm, PaginationSearchFilter filter) {
+		return new SoldiersPagination(
+			soldierRepositoryImpl.findByArmyAndCJMPaginable(army, cjm, filter),
+			soldierRepositoryImpl.countByArmyAndCJMPaginable(army, cjm, filter)
+		);	
 	}
 	
 	public Soldier getRandomSoldier(MilitaryRank rank, Army army, DrawList drawList, List<Integer> excludeSoldiers) throws NoAvaliableSoldierException{

@@ -322,6 +322,24 @@ div#paginationSearchMenu #search{
   float: right;
 }
 
+div#paginationSearchMenu form{
+	text-align: justify;
+	width: auto;
+}
+
+div#paginationSearchMenu #searchBtn{
+  padding: 6px;
+  border-radius: 10%;
+}
+
+div#paginationSearchMenu div#search{
+  width: 400px;
+}
+    
+div#paginationSearchMenu #searchInput{
+  width: 83%;
+}
+
 div .list-header{
   font-family: "Roboto", sans-serif;
   color: #4e4848;

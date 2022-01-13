@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html
+  xmlns="http://www.w3.org/1999/xhtml"
+  xmlns:th="http://www.thymeleaf.org" layout:decorate="~{group/layout}">
+  <style layout:fragment="style">
+    div.label-content span{
+      font-size: 14px;
+      color: #5f6368;
+    }
+    
+    div.label-content{
+      margin-bottom: 10px;
+    }
+  </style>
+  <body>
+    <div layout:fragment="content">
+      <h1 th:text="${soldier.name}"></h1>
+      <hr />
+      
+      <div>
+        <div class="input-label">        
+          <label>OM</label>
+        </div>
+        <div class="label-content">        
+          <span th:text="${soldier.militaryOrganization.name}"></span>
+        </div>
+        <div class="input-label">        
+          <label>Posto</label>
+        </div>
+        <div class="label-content">        
+          <span th:text="${soldier.militaryRank.name}"></span>
+        </div>
+        <div class="input-label">        
+          <label>Telefone</label>
+        </div>
+        <div class="label-content">        
+          <span th:text="${soldier.phone}"></span>
+        </div>
+        <div class="input-label">        
+          <label>Email</label>
+        </div>
+        <div class="label-content">        
+          <span th:text="${soldier.email}"></span>
+        </div>
+        <div>
+          <a href="#">alterar</a>
+          <span>|</span>
+          <a href="#">excluir</a>
+        </div>
+      </div>
+      
+      <hr />
+      
+      <div>
+        <form method="post" th:action="@{/gp/sd/exclusion/save}" th:object="${drawExclusion}">
+          <input type="hidden" th:field="*{soldier}">
+          
+          <div th:if="${#fields.hasErrors('startDate')}">
+            <span class="error" th:errors="*{startDate}"></span>
+          </div>
+          <div th:if="${#fields.hasErrors('endDate')}">
+            <span class="error" th:errors="*{endDate}"></span>
+          </div>
+          <span>De: </span>
+          <input type="date" class="app-dateinput" th:field="*{startDate}"
+            th:classappend="${#fields.hasErrors('startDate') ? 'error' : ''}"/>
+          
+          <span>Até: </span>
+          <input type="date" class="app-dateinput" th:field="*{endDate}"
+            th:classappend="${#fields.hasErrors('endDate') ? 'error' : ''}"/><br/>
+          
+          <div th:if="${#fields.hasErrors('message')}">
+            <span class="error" th:errors="*{message}"></span>
+          </div>
+          <div>
+            <textarea rows="5" cols="50" placeholder="Adicionar novo impedimento..." th:field="*{message}"
+              th:classappend="${#fields.hasErrors('message') ? 'error' : ''}"></textarea><br/>
+          </div>
+          
+          <div id="controlBtns">
+            <button type="submit" class="add-impediments">
+              <span>Adicionar</span>
+            </button>          
+          </div>
+        </form>
+      </div>
+    </div>
+  </body>
+  <script layout:fragment="page-script" th:inline="javascript">
+  	
+  </script>
+</html>

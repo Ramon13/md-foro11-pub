@@ -83,3 +83,11 @@ function addListener(element, event, executor){
   if (element != null)
     element.addEventListener(event, executor);
 }
+
+function historyPush(){
+  window.localStorage.setItem("lastPage", window.location.href);
+}
+
+function historyPop(){
+  return window.localStorage.getItem("lastPage");  
+}

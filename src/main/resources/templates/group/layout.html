@@ -36,17 +36,12 @@
             <li class="vMenu-link"><a th:href="@{/gp/accounts/register/home}">Novo usuário</a></li>
           </ul>
         </li>
-        <li class="vMenu-sub" th:if="${session.accountScope}">
-          <span>Militares Cadastrados</span>
-          <ul>
-            <li class="vMenu-link"><a th:href="@{/gp/sd/register/home}">Novo militar</a></li>
-          </ul>
-        </li>
         <li class="vMenu-sub">
-          <span>Navegação</span>
+          <span>Sorteios</span>
           <ul>
             <li class="vMenu-link"><a th:href="@{/gp/dw/list}">Listas</a></li>
-            <li class="vMenu-link"><a th:href="@{/gp/cjm/dw}">Sorteios</a></li>
+            <li class="vMenu-link"><a th:href="@{/gp/sd/list/home}">Militares Cadastrados</a></li>
+            <li class="vMenu-link"><a th:href="@{/gp/cjm/dw}">Sorteios Realizados</a></li>
             <li class="vMenu-link"><a th:href="@{/logout}">Sair</a></li>
           </ul> 
           <!--

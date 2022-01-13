@@ -1,10 +1,14 @@
 package br.com.javamoon.domain.soldier;
 
+import br.com.javamoon.domain.cjm_user.CJM;
+import br.com.javamoon.domain.draw.Draw;
+import br.com.javamoon.domain.draw.DrawList;
+import br.com.javamoon.domain.draw_exclusion.DrawExclusion;
+import br.com.javamoon.util.StringUtils;
 import java.io.Serializable;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
-
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -15,16 +19,6 @@ import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
-import javax.validation.constraints.Email;
-import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Size;
-
-import br.com.javamoon.domain.cjm_user.CJM;
-import br.com.javamoon.domain.draw.Draw;
-import br.com.javamoon.domain.draw.DrawList;
-import br.com.javamoon.domain.draw_exclusion.DrawExclusion;
-import br.com.javamoon.util.StringUtils;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;

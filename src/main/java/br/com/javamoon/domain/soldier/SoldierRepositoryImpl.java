@@ -2,7 +2,7 @@ package br.com.javamoon.domain.soldier;
 
 import java.util.ArrayList;
 import java.util.List;
-
+import java.util.Objects;
 import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
 import javax.persistence.PersistenceContext;
@@ -10,7 +10,7 @@ import javax.persistence.Query;
 import javax.persistence.TypedQuery;
 
 import org.springframework.stereotype.Repository;
-
+import br.com.javamoon.domain.cjm_user.CJM;
 import br.com.javamoon.domain.draw.DrawList;
 import br.com.javamoon.infrastructure.web.model.PaginationSearchFilter;
 
@@ -41,6 +41,39 @@ public class SoldierRepositoryImpl {
 		}
 	}
 	
+	public List<Soldier> findByArmyAndCJMPaginable(Army army, CJM cjm, PaginationSearchFilter filter){
+		StringBuilder hql = new StringBuilder();
+		hql.append("SELECT s FROM Soldier s LEFT JOIN FETCH s.militaryOrganization where 0 = 0");
+		
+		if (!Objects.isNull(filter.getKey()))
+			hql.append(" and s.name like :soldierName");
+		
+		hql.append(" order by s.name");
+		
+		TypedQuery<Soldier> query = entityManager.createQuery(hql.toString(), Soldier.class);
+		if (filter.getKey() != null)
+			query.setParameter("soldierName", "%" + filter.getKey() + "%");
+		
+		query.setFirstResult(filter.getFirstResult() - 1);
+		query.setMaxResults(PaginationSearchFilter.ELEMENTS_BY_PAGE);
+		
+		return query.getResultList();
+	}
+	
+	public Long countByArmyAndCJMPaginable(Army army, CJM cjm, PaginationSearchFilter filter){
+		StringBuilder hql = new StringBuilder();
+		hql.append("SELECT COUNT(s) FROM Soldier s where 0 = 0");
+		
+		if (!Objects.isNull(filter.getKey()))
+			hql.append(" and s.name like :soldierName");
+		
+		TypedQuery<Long> query = entityManager.createQuery(hql.toString(), Long.class);
+		if (filter.getKey() != null)
+			query.setParameter("soldierName", "%" + filter.getKey() + "%");
+		
+		return query.getSingleResult();
+	}
+	
 	public <T> Object findByDrawListPaginable(Class<T> type, DrawList drawList, PaginationSearchFilter filter) {
 		List<String> hql = new ArrayList<String>();
 		hql.add("select s ");
@@ -62,7 +95,6 @@ public class SoldierRepositoryImpl {
 		for (String s : hql)
 			hqlBuilder.append(s);
 		
-		System.out.println(hqlBuilder.toString());
 		TypedQuery<T> query = entityManager.createQuery(hqlBuilder.toString(), type);
 		query.setParameter("drawListId", drawList.getId());
 		if (filter.getKey() != null)

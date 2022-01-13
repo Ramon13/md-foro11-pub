@@ -8,19 +8,24 @@ import org.springframework.ui.Model;
 import org.springframework.validation.Errors;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
-
+import br.com.javamoon.domain.draw.AnnualQuarter;
+import br.com.javamoon.domain.draw_exclusion.DrawExclusion;
 import br.com.javamoon.domain.group_user.GroupUser;
 import br.com.javamoon.domain.soldier.Army;
 import br.com.javamoon.exception.SoldierValidationException;
 import br.com.javamoon.infrastructure.web.controller.ControllerHelper;
+import br.com.javamoon.infrastructure.web.model.PaginationSearchFilter;
+import br.com.javamoon.infrastructure.web.model.SoldiersPagination;
 import br.com.javamoon.mapper.SoldierDTO;
 import br.com.javamoon.service.MilitaryOrganizationService;
 import br.com.javamoon.service.MilitaryRankService;
 import br.com.javamoon.service.SoldierService;
 import br.com.javamoon.util.SecurityUtils;
 import br.com.javamoon.validator.ValidationUtils;
+import java.time.LocalDate;
 
 @Controller
 @RequestMapping("/gp/sd")
@@ -69,5 +74,25 @@ public class SoldierController {
 		model.addAttribute("oms", militaryOrganizationService.listOrganizationsByArmy(loggedUser.getArmy()));
 		model.addAttribute("ranks", militaryRankService.listRanksByArmy(loggedUser.getArmy()));
 		return "group/soldier-register";
+	}
+	
+	@GetMapping("/list/home")
+	public String list(Model model, PaginationSearchFilter filter) {
+		GroupUser loggedUser = SecurityUtils.groupUser();
+		
+		SoldiersPagination soldiersPagination = soldierService.listPagination(loggedUser.getArmy(), loggedUser.getCjm(), filter);
+		filter.setTotal(soldiersPagination.getTotal().intValue());
+		
+		model.addAttribute("soldiersPagination", soldiersPagination);
+		model.addAttribute("filter", filter);
+		return "group/soldier/list";
+	}
+	
+	@GetMapping("/profile/home/{soldierId}")
+	public String profile(@PathVariable("soldierId") Integer soldierId, Model model) {
+		AnnualQuarter nextQuarter = new AnnualQuarter(LocalDate.now().plusMonths(3));
+		
+		model.addAttribute("soldier", soldierService.getSoldier(soldierId));
+		return "group/soldier/profile";
 	}
 }

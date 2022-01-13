@@ -125,11 +125,11 @@
         </div>
       </fieldset>
     </div>
-    <script layout:fragment="page-script" th:inline="javascript">	
+    <script layout:fragment="page-script" th:inline="javascript">
     	const backBtn = document.querySelector("button#back");
     	   
     	backBtn.addEventListener('click', function(){
-    		location.href = "[(@{'/gp/dw/list/' + '' + ${session.activeList}})]";
+    		location.href = historyPop();
     	});
     	
     	showSuccessMsg();
