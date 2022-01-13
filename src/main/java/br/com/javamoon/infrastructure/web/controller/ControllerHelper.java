@@ -110,7 +110,7 @@ public class ControllerHelper {
 			 GroupUser groupUser, Integer soldierId) throws NoAvaliableSoldierException {
 		 
 		 Soldier soldier = soldierRepository.findByIdAndArmyAndCjm(
-				 			soldierId, groupUser.getArmy(), groupUser.getCjm());
+				 			soldierId, groupUser.getArmy(), groupUser.getCjm()).get();
 		 
 		 if (soldier == null)
 			 throw new NoAvaliableSoldierException("Militar não encontrado ou não acessível");

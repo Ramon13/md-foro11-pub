@@ -11,6 +11,29 @@
     div.label-content{
       margin-bottom: 10px;
     }
+    
+    form{
+      text-align: unset;
+      margin: unset;
+      width: 100%;
+    }
+    
+    input[type=date].app-dateinput {
+      width: 20% !important;
+      padding: 2px !important;
+    }
+    
+     div#content textarea {
+      font-family: "Roboto", sans-serif;
+      width: 99%;
+      height: 70px;
+      border-color: #c5c7cb;
+      font-size: 18px;
+    }
+    
+     button.add-impediments {
+      float: right;
+    }
   </style>
   <body>
     <div layout:fragment="content">
@@ -52,9 +75,8 @@
       <hr />
       
       <div>
-        <form method="post" th:action="@{/gp/sd/exclusion/save}" th:object="${drawExclusion}">
-          <input type="hidden" th:field="*{soldier}">
-          
+        <form method="post" th:action="@{/gp/sd/exclusion/save}" th:object="${exclusion}">
+        
           <div th:if="${#fields.hasErrors('startDate')}">
             <span class="error" th:errors="*{startDate}"></span>
           </div>
@@ -78,7 +100,7 @@
           </div>
           
           <div id="controlBtns">
-            <button type="submit" class="add-impediments">
+            <button type="submit" class="add-impediments app-green-btn">
               <span>Adicionar</span>
             </button>          
           </div>

@@ -16,6 +16,7 @@ import br.com.javamoon.domain.soldier.MilitaryRank;
 import br.com.javamoon.domain.soldier.MilitaryRankRepository;
 import br.com.javamoon.domain.soldier.Soldier;
 import br.com.javamoon.domain.soldier.SoldierRepository;
+import br.com.javamoon.infrastructure.web.model.PaginationSearchFilter;
 import br.com.javamoon.mapper.SoldierDTO;
 import br.com.javamoon.mapper.UserDTO;
 import br.com.javamoon.validator.GroupUserAccountValidator;
@@ -111,5 +112,9 @@ public final class TestDataCreator {
 		soldier.setName(DEFAULT_SOLDIER_NAME);
 		soldier.setEmail(DEFAULT_USER_EMAIL);
 		return soldier;
+	}
+	
+	public static PaginationSearchFilter newPaginationFilter() {
+		return new PaginationSearchFilter(null, null, null);
 	}
 }

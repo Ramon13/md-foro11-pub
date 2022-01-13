@@ -47,8 +47,8 @@ public interface SoldierRepository extends JpaRepository<Soldier, Integer>{
 			+ "left join fetch s.militaryOrganization where dl.id = :drawListId order by s.name")
 	public List<Soldier> findAllByDrawList(@Param("drawListId") Integer drawListId);
 	
-	@Query("from Soldier s where s.army = :army and s.id = :soldierId and s.cjm = :cjm")
-	public Soldier findByIdAndArmyAndCjm(@Param("soldierId") Integer soldierId, @Param("army") Army army, @Param("cjm") CJM cjm);
+	@Query("FROM Soldier s WHERE s.army = :army AND s.id = :soldierId AND s.cjm = :cjm")
+	public Optional<Soldier> findByIdAndArmyAndCjm(@Param("soldierId") Integer soldierId, @Param("army") Army army, @Param("cjm") CJM cjm);
 	
 	
 	@Query("from DrawExclusion dex where dex.soldier = :soldier order by dex.id desc")

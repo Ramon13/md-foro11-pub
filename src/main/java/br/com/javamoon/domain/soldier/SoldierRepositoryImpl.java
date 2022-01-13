@@ -43,16 +43,19 @@ public class SoldierRepositoryImpl {
 	
 	public List<Soldier> findByArmyAndCJMPaginable(Army army, CJM cjm, PaginationSearchFilter filter){
 		StringBuilder hql = new StringBuilder();
-		hql.append("SELECT s FROM Soldier s LEFT JOIN FETCH s.militaryOrganization where 0 = 0");
+		hql.append("SELECT s FROM Soldier s LEFT JOIN FETCH s.militaryOrganization WHERE 0 = 0");
 		
 		if (!Objects.isNull(filter.getKey()))
-			hql.append(" and s.name like :soldierName");
+			hql.append(" AND s.name LIKE :soldierName");
 		
-		hql.append(" order by s.name");
+		hql.append(" AND s.army = :army AND s.cjm = :cjm");
+		hql.append(" ORDER BY s.name");
 		
 		TypedQuery<Soldier> query = entityManager.createQuery(hql.toString(), Soldier.class);
 		if (filter.getKey() != null)
 			query.setParameter("soldierName", "%" + filter.getKey() + "%");
+		query.setParameter("army", army);
+		query.setParameter("cjm", cjm);
 		
 		query.setFirstResult(filter.getFirstResult() - 1);
 		query.setMaxResults(PaginationSearchFilter.ELEMENTS_BY_PAGE);
@@ -62,14 +65,18 @@ public class SoldierRepositoryImpl {
 	
 	public Long countByArmyAndCJMPaginable(Army army, CJM cjm, PaginationSearchFilter filter){
 		StringBuilder hql = new StringBuilder();
-		hql.append("SELECT COUNT(s) FROM Soldier s where 0 = 0");
+		hql.append("SELECT COUNT(s) FROM Soldier s WHERE 0 = 0");
 		
 		if (!Objects.isNull(filter.getKey()))
-			hql.append(" and s.name like :soldierName");
+			hql.append(" AND s.name LIKE :soldierName");
+		
+		hql.append(" AND s.army = :army AND s.cjm = :cjm");
 		
 		TypedQuery<Long> query = entityManager.createQuery(hql.toString(), Long.class);
 		if (filter.getKey() != null)
 			query.setParameter("soldierName", "%" + filter.getKey() + "%");
+		query.setParameter("army", army);
+		query.setParameter("cjm", cjm);
 		
 		return query.getSingleResult();
 	}
