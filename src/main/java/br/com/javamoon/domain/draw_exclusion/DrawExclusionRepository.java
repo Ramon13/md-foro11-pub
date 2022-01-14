@@ -3,6 +3,7 @@ package br.com.javamoon.domain.draw_exclusion;
 import br.com.javamoon.domain.soldier.Soldier;
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -14,5 +15,7 @@ public interface DrawExclusionRepository extends JpaRepository<DrawExclusion, In
 	Set<DrawExclusion> findBySoldierBetweenDates(@Param("soldierId") Integer soldierId,
 			@Param("startDate") LocalDate startDate, @Param("endDate") LocalDate endDate);
 
-	List<DrawExclusion> findAllBySoldier(Soldier soldier);
+	List<DrawExclusion> findAllBySoldierOrderByIdDesc(Soldier soldier);
+	
+	Optional<DrawExclusion> findByIdAndSoldier(Integer id, Soldier soldier);
 }

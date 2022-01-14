@@ -67,6 +67,18 @@ public final class EntityMapper {
     	drawExclusionDTO.setStartDate(drawExclusion.getStartDate());
     	drawExclusionDTO.setEndDate(drawExclusion.getEndDate());
     	drawExclusionDTO.setMessage(drawExclusion.getMessage());
+    	drawExclusionDTO.setSoldier(drawExclusion.getSoldier());
+    	drawExclusionDTO.setGroupUser(drawExclusion.getGroupUser());
     	return drawExclusionDTO;
+    }
+    
+    public static DrawExclusion fromDTOToEntity(DrawExclusionDTO drawExclusionDTO) {
+    	DrawExclusion drawExclusion = new DrawExclusion();
+    	drawExclusion.setMessage(drawExclusionDTO.getMessage());
+    	drawExclusion.setStartDate(drawExclusionDTO.getStartDate());
+    	drawExclusion.setEndDate(drawExclusionDTO.getEndDate());
+    	drawExclusion.setSoldier(drawExclusionDTO.getSoldier());
+    	drawExclusion.setGroupUser(drawExclusionDTO.getGroupUser());
+    	return drawExclusion;
     }
 }

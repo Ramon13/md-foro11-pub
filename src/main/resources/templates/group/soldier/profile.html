@@ -8,6 +8,10 @@
       color: #5f6368;
     }
     
+    div#sdProfile{
+      margin-bottom: 45px;
+    }
+    
     div.label-content{
       margin-bottom: 10px;
     }
@@ -82,7 +86,7 @@
       <h1 th:text="${soldier.name}"></h1>
       <hr />
       
-      <div>
+      <div id="sdProfile">
         <div class="input-label">        
           <label>OM</label>
         </div>
@@ -115,7 +119,7 @@
       </div>
       
       <hr />
-      
+      <h1>Adicionar impedimentos </h1>
       <div>
         <form method="post" th:action="@{/gp/sd/exclusion/save}" th:object="${exclusion}">
           <input type="hidden" name="soldier.id" th:value="${soldier.id}"/>
@@ -152,6 +156,7 @@
       
       
       <div id="exclusions">
+        <h2>Impedimentos</h2>
         <div class="no-exclusions" th:if="${#lists.isEmpty(exclusions)}">
           <span>
             Este usuário não possui impedimentos registrados
@@ -162,8 +167,9 @@
           <div class="impediment-header">
             <span th:text="'De:' + ${#temporals.format(exclusion.startDate, 'dd/MM/yyyy')} + ';   Até:' + ${#temporals.format(exclusion.endDate, 'dd/MM/yyyy')}"></span>
             
-            <img class="remove-exclusion" th:src="@{/images/delete.svg}" 
-              th:attr="data-exclusionId=${exclusion.id}"/>
+            <form method="post" th:action="@{/gp/sd/exclusion/delete/} + ${exclusion.id}">
+              <img class="remove-exclusion" th:src="@{/images/delete.svg}" />
+            </form>
           </div>
           
           <p th:text="${exclusion.message}"></p><br/>
@@ -172,6 +178,12 @@
     </div>
   </body>
   <script layout:fragment="page-script" th:inline="javascript">
-  	
+  	 const removeExclusions = document.querySelectorAll("img.remove-exclusion");
+  	 
+  	 for (let i = 0; i < removeExclusions.length; i++){
+  		 removeExclusions[i].addEventListener('click', function(){
+  			 this.parentElement.submit();
+  		 });
+  	 }
   </script>
 </html>

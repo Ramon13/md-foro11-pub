@@ -1,5 +1,16 @@
 package br.com.javamoon.service;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
+
+import javax.transaction.Transactional;
+
+import org.springframework.stereotype.Service;
+
 import br.com.javamoon.domain.draw.AnnualQuarter;
 import br.com.javamoon.domain.draw.CouncilType;
 import br.com.javamoon.domain.draw.Draw;
@@ -9,53 +20,74 @@ import br.com.javamoon.domain.draw_exclusion.DrawExclusionRepository;
 import br.com.javamoon.domain.group_user.GroupUser;
 import br.com.javamoon.domain.soldier.Army;
 import br.com.javamoon.domain.soldier.Soldier;
+import br.com.javamoon.exception.DrawExclusionNotFoundException;
 import br.com.javamoon.mapper.DrawExclusionDTO;
 import br.com.javamoon.mapper.EntityMapper;
 import br.com.javamoon.util.DateTimeUtils;
 import br.com.javamoon.util.SecurityUtils;
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
-import java.util.stream.Collectors;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
+import br.com.javamoon.validator.DrawExclusionValidator;
 
 @Service
 public class DrawExclusionService {
 
-	@Autowired
 	private DrawRepository drawRepo;
 	
-	@Autowired
 	private AnnualQuarterService annualQuarterSvc;
 	
 	private SoldierService soldierService;
 	
 	private DrawExclusionRepository drawExclusionRepository;
 	
-	public DrawExclusionService(SoldierService soldierService, DrawExclusionRepository drawExclusionRepository) {
+	private DrawExclusionValidator drawExclusionValidator;
+
+	public DrawExclusionService(
+			DrawRepository drawRepo,
+			AnnualQuarterService annualQuarterSvc,
+			SoldierService soldierService, DrawExclusionRepository drawExclusionRepository,
+			DrawExclusionValidator drawExclusionValidator) {
+		this.drawRepo = drawRepo;
+		this.annualQuarterSvc = annualQuarterSvc;
 		this.soldierService = soldierService;
 		this.drawExclusionRepository = drawExclusionRepository;
+		this.drawExclusionValidator = drawExclusionValidator;
 	}
 
 	public List<DrawExclusionDTO> listBySoldier(Soldier soldier){
-		return drawExclusionRepository.findAllBySoldier(soldier)
+		return drawExclusionRepository.findAllBySoldierOrderByIdDesc(soldier)
 				.stream()
 				.map(x -> EntityMapper.fromEntityToDTO(x))
 				.collect(Collectors.toList());
 	}
 	
+	@Transactional
 	public DrawExclusionDTO save(DrawExclusionDTO drawExclusionDTO, GroupUser groupUser, Soldier soldier) {
+		drawExclusionValidator.saveExclusionValidation(drawExclusionDTO, groupUser);
 		
+		DrawExclusion drawExclusion = EntityMapper.fromDTOToEntity(drawExclusionDTO);
+		drawExclusion.setSoldier(soldier);
+		drawExclusion.setGroupUser(groupUser);
+		
+		drawExclusionRepository.save(drawExclusion);
+		return EntityMapper.fromEntityToDTO(drawExclusion);
 	}
 	
-	public void delete(DrawExclusion exclusion, Army loggedUserArmy) {
-		if (!validateArmySoldier(exclusion.getSoldier(), loggedUserArmy) ||
-				!soldierService.validateLoggedUserPermission(exclusion.getSoldier(), SecurityUtils.groupUser()))
-			throw new IllegalStateException("Impossível editar o registro. Permissão negada.");
+	@Transactional
+	public void delete(Integer exclusionId, GroupUser groupUser) {
+		DrawExclusion exclusion = drawExclusionRepository
+				.findById(exclusionId).orElseThrow(() -> new DrawExclusionNotFoundException());
+		
+		drawExclusionValidator.deleteExclusionValidation(EntityMapper.fromEntityToDTO(exclusion), groupUser);
 		drawExclusionRepository.delete(exclusion);
+	}
+	
+	public DrawExclusionDTO getById(Integer exclusionId, GroupUser groupUser) {
+		DrawExclusion exclusion = drawExclusionRepository
+				.findById(exclusionId).orElseThrow(() -> new DrawExclusionNotFoundException());
+		
+		DrawExclusionDTO exclusionDTO = EntityMapper.fromEntityToDTO(exclusion);
+		drawExclusionValidator.getExclusionValidation(exclusionDTO, groupUser);
+		
+		return exclusionDTO;
 	}
 	
 	public void saveDrawExclusion(DrawExclusion exclusion, Army loggedUserArmy) throws ValidationException {

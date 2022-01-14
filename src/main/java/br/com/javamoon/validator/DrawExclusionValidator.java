@@ -1,6 +1,10 @@
 package br.com.javamoon.validator;
 
 import static br.com.javamoon.validator.ValidationConstants.*;
+
+import br.com.javamoon.domain.group_user.GroupUser;
+import br.com.javamoon.domain.soldier.Army;
+import br.com.javamoon.domain.soldier.Soldier;
 import br.com.javamoon.exception.DrawExclusionValidationException;
 import br.com.javamoon.mapper.DrawExclusionDTO;
 import java.time.LocalDate;
@@ -9,17 +13,30 @@ import org.springframework.stereotype.Component;
 @Component
 public class DrawExclusionValidator {
 	
-	
-	
-	public void saveExclusionValidation(DrawExclusionDTO exclusionDTO) {
+	public void saveExclusionValidation(DrawExclusionDTO exclusionDTO, GroupUser groupUser) {
 		ValidationErrors validationErrors = new ValidationErrors();
+		
 		if (
 			validateMessage(exclusionDTO.getMessage(), validationErrors) &
 			validateDates(exclusionDTO.getStartDate(), exclusionDTO.getEndDate(), validationErrors)
 		) {
-			
+			validateSoldierArmy(exclusionDTO.getSoldier(), groupUser.getArmy(), validationErrors);
 		}
 		
+		ValidationUtils.throwOnErrors(DrawExclusionValidationException.class, validationErrors);
+	}
+	
+	public void deleteExclusionValidation(DrawExclusionDTO exclusionDTO, GroupUser groupUser) {
+		ValidationErrors validationErrors = new ValidationErrors();
+		
+		validateSoldierArmy(exclusionDTO.getSoldier(), groupUser.getArmy(), validationErrors);
+		ValidationUtils.throwOnErrors(DrawExclusionValidationException.class, validationErrors);
+	}
+	
+	public void getExclusionValidation(DrawExclusionDTO exclusionDTO, GroupUser groupUser) {
+		ValidationErrors validationErrors = new ValidationErrors();
+		
+		validateSoldierArmy(exclusionDTO.getSoldier(), groupUser.getArmy(), validationErrors);
 		ValidationUtils.throwOnErrors(DrawExclusionValidationException.class, validationErrors);
 	}
 	
@@ -28,6 +45,11 @@ public class DrawExclusionValidator {
 			ValidationUtils.validateRequired(message, DRAW_EXCLUSION_MESSAGE, validationErrors) &&
 			ValidationUtils.validateMaxLength(message, DRAW_EXCLUSION_MESSAGE, DRAW_EXCLUSION_MAX_LEN, validationErrors)	
 		);
+	}
+	
+	private void validateSoldierArmy(Soldier soldier, Army army, ValidationErrors validationErrors) {
+		if (!soldier.getArmy().equals(army))
+			throw new IllegalStateException(INCONSISTENT_DATA);
 	}
 	
 	private boolean validateDates(LocalDate startDate, LocalDate endDate, ValidationErrors validationErrors) {

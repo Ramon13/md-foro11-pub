@@ -1,12 +1,16 @@
 package br.com.javamoon.mapper;
 
-import br.com.javamoon.domain.soldier.Soldier;
-import br.com.javamoon.util.DateTimeUtils;
 import java.time.LocalDate;
+
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
+
 import org.hibernate.validator.constraints.Length;
 import org.springframework.format.annotation.DateTimeFormat;
+
+import br.com.javamoon.domain.group_user.GroupUser;
+import br.com.javamoon.domain.soldier.Soldier;
+import br.com.javamoon.util.DateTimeUtils;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -32,8 +36,9 @@ public class DrawExclusionDTO {
 	@Length(min = 3, max = 1024, message = "O campo deve conter entre 3 e 1024 caracteres")
 	private String message;
 	
-	@NotNull
 	private Soldier soldier;
+	
+	private GroupUser groupUser;
 	
 	public String getPeriodAsText() {
 		String format = "dd/MM/yyyy";

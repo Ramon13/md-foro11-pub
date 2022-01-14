@@ -115,40 +115,6 @@ public class GroupController {
 		return "group/soldier-exclusion";
 	}
 	
-	@Deprecated
-	@PostMapping("/sd/exclusion/save/deprecated")
-	public String saveDrawExclusion(@Valid @ModelAttribute("drawExclusion") DrawExclusion exclusion,
-			Errors errors,
-			Model model) throws IOException {
-		if (!errors.hasErrors()) {
-			try {
-				exclusion.setGroupUser(SecurityUtils.groupUser());
-				exclusionService.saveDrawExclusion(exclusion, ControllerHelper.getGpUserArmy());
-				
-				return ControllerHelper.getRedirectURL(
-						String.format("/gp/sd/exclusion/%d", exclusion.getSoldier().getId()),
-						Collections.singletonMap("sid", exclusion.getSoldier().getId().toString()));
-			} catch (ValidationException e) {
-				errors.rejectValue(e.getFieldName(), null, e.getMessage());
-			}
-		}
-		
-		model.addAttribute("exclusions", soldierRepository.findAllDrawExclusions(exclusion.getSoldier()));
-		return "group/soldier-exclusion";
-	}
-	
-	@PostMapping("/sd/exclusion/delete/{exclusionId}")
-	public String deleteDrawExclusion(@PathVariable Integer exclusionId){
-		
-		DrawExclusion exclusion = exclusionRepository.findById(exclusionId).orElseThrow();
-		
-		exclusionService.delete(exclusion, ControllerHelper.getGpUserArmy());
-		
-		return ControllerHelper.getRedirectURL(
-				String.format("/gp/sd/exclusion/%d", exclusion.getSoldier().getId()), 
-				Collections.singletonMap("sid", exclusion.getSoldier().getId().toString()));
-	}
-	
 	@GetMapping("/cjm/dw")
 	public String listCJMCompletedDraw(Model model) {
 		GroupUser loggedUser = SecurityUtils.groupUser();
