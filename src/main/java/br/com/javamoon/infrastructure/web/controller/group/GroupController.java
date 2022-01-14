@@ -115,7 +115,8 @@ public class GroupController {
 		return "group/soldier-exclusion";
 	}
 	
-	@PostMapping("/sd/exclusion/save")
+	@Deprecated
+	@PostMapping("/sd/exclusion/save/deprecated")
 	public String saveDrawExclusion(@Valid @ModelAttribute("drawExclusion") DrawExclusion exclusion,
 			Errors errors,
 			Model model) throws IOException {

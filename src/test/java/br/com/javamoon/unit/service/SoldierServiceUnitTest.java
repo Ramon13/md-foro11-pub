@@ -1,25 +1,26 @@
 package br.com.javamoon.unit.service;
 
-import static br.com.javamoon.util.Constants.*;
-import static br.com.javamoon.validator.ValidationConstants.*;
+import static br.com.javamoon.util.Constants.DEFAULT_ARMY_ALIAS;
+import static br.com.javamoon.util.Constants.DEFAULT_ARMY_NAME;
+import static br.com.javamoon.util.Constants.DEFAULT_ORGANIZATION_ALIAS;
+import static br.com.javamoon.util.Constants.DEFAULT_ORGANIZATION_NAME;
+import static br.com.javamoon.util.Constants.DEFAULT_RANK_ALIAS;
+import static br.com.javamoon.util.Constants.DEFAULT_RANK_NAME;
+import static br.com.javamoon.util.Constants.DEFAULT_SOLDIER_NAME;
+import static br.com.javamoon.util.Constants.DEFAULT_USER_EMAIL;
+import static br.com.javamoon.util.TestDataCreator.getPersistedArmy;
+import static br.com.javamoon.util.TestDataCreator.getPersistedCJM;
+import static br.com.javamoon.util.TestDataCreator.getPersistedMilitaryOrganization;
+import static br.com.javamoon.util.TestDataCreator.getPersistedMilitaryRank;
+import static br.com.javamoon.util.TestDataCreator.newSoldierList;
+import static br.com.javamoon.validator.ValidationConstants.ACCOUNT_EMAIL_ALREADY_EXISTS;
+import static br.com.javamoon.validator.ValidationConstants.SOLDIER_EMAIL;
+import static br.com.javamoon.validator.ValidationConstants.SOLDIER_NAME;
+import static br.com.javamoon.validator.ValidationConstants.SOLDIER_NAME_ALREADY_EXISTS;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
-
-import org.apache.commons.lang3.StringUtils;
-import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.annotation.DirtiesContext;
-import org.springframework.test.annotation.DirtiesContext.ClassMode;
-import org.springframework.test.context.ActiveProfiles;
-
 import br.com.javamoon.domain.cjm_user.CJM;
 import br.com.javamoon.domain.cjm_user.CJMRepository;
 import br.com.javamoon.domain.soldier.Army;
@@ -39,6 +40,15 @@ import br.com.javamoon.service.SoldierService;
 import br.com.javamoon.service.ValidationException;
 import br.com.javamoon.util.TestDataCreator;
 import br.com.javamoon.validator.ValidationError;
+import java.util.List;
+import java.util.Optional;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.annotation.DirtiesContext;
+import org.springframework.test.annotation.DirtiesContext.ClassMode;
+import org.springframework.test.context.ActiveProfiles;
 
 @SpringBootTest
 @ActiveProfiles("test")
@@ -65,35 +75,39 @@ public class SoldierServiceUnitTest {
 	
 	@Test
 	void testSaveSoldierSuccessfully() throws ValidationException {
-		Army army = armyRepository.saveAndFlush(TestDataCreator.newArmy());
-		CJM cjm = cjmRepository.saveAndFlush(TestDataCreator.newCjm());
+		Army army = getPersistedArmy(armyRepository);
+		CJM cjm = getPersistedCJM(cjmRepository);
 		
-		MilitaryOrganization organization = getPersistedMilitaryOrganization(army);
-		MilitaryRank rank = getPersistedMilitaryRank(army);
-		SoldierDTO soldierDTO = createPersistenceReadySoldierDTO(army, cjm, organization, rank);
+		MilitaryOrganization organization = getPersistedMilitaryOrganization(army, organizationRepository);
+		MilitaryRank rank = getPersistedMilitaryRank(army, rankRepository, armyRepository);
+		SoldierDTO soldierDTO = newSoldierList(army, cjm, organization, rank, 1).get(0);
 		
 		soldierDTO = victim.save(soldierDTO, army, cjm);
 		
 		Optional<Soldier> soldier = soldierRepository.findById(soldierDTO.getId());
 		assertTrue(soldier.isPresent());
-		assertEquals(DEFAULT_SOLDIER_NAME.toUpperCase(), soldier.get().getName());
-		assertEquals(DEFAULT_USER_EMAIL, soldier.get().getEmail());
+		assertEquals(soldierDTO.getName().toUpperCase(), soldier.get().getName());
+		assertEquals(soldierDTO.getEmail(), soldier.get().getEmail());
 	}
 	
 	@Test
 	void testSaveSoldierWithDuplicatedNameAndEmail() throws ValidationException {
-		Army army = armyRepository.saveAndFlush(TestDataCreator.newArmy());
-		CJM cjm = cjmRepository.saveAndFlush(TestDataCreator.newCjm());
+		Army army = getPersistedArmy(armyRepository);
+		CJM cjm = getPersistedCJM(cjmRepository);
 		
-		MilitaryOrganization organization = getPersistedMilitaryOrganization(army);
-		MilitaryRank rank = getPersistedMilitaryRank(army);
-		SoldierDTO soldierDTO1 = createPersistenceReadySoldierDTO(army, cjm, organization, rank);
-		SoldierDTO soldierDTO2 = createPersistenceReadySoldierDTO(army, cjm, organization, rank);
+		MilitaryOrganization organization = getPersistedMilitaryOrganization(army, organizationRepository);
+		MilitaryRank rank = getPersistedMilitaryRank(army, rankRepository, armyRepository);
 		
-		victim.save(soldierDTO1, army, cjm);
+		List<SoldierDTO> soldiers = newSoldierList(army, cjm, organization, rank, 2);
+		soldiers.get(0).setName(DEFAULT_SOLDIER_NAME);
+		soldiers.get(1).setName(DEFAULT_SOLDIER_NAME);
+		soldiers.get(0).setEmail(DEFAULT_USER_EMAIL);
+		soldiers.get(1).setEmail(DEFAULT_USER_EMAIL);
+		
+		victim.save(soldiers.get(0), army, cjm);
 		
 		SoldierValidationException exception = Assertions.assertThrows(SoldierValidationException.class, 
-				() -> victim.save(soldierDTO2, army, cjm));
+				() -> victim.save(soldiers.get(1), army, cjm));
 		assertEquals(2, exception.getValidationErrors().getNumberOfErrors());
 		assertEquals(new ValidationError(SOLDIER_NAME, SOLDIER_NAME_ALREADY_EXISTS), exception.getValidationErrors().getError(0));
 		assertEquals(new ValidationError(SOLDIER_EMAIL, ACCOUNT_EMAIL_ALREADY_EXISTS), exception.getValidationErrors().getError(1));
@@ -101,11 +115,11 @@ public class SoldierServiceUnitTest {
 	
 	@Test
 	void testSaveSoldierWithInvalidOrganization() throws ValidationException {
-		Army army = armyRepository.saveAndFlush(TestDataCreator.newArmy());
-		CJM cjm = cjmRepository.saveAndFlush(TestDataCreator.newCjm());
+		Army army = getPersistedArmy(armyRepository);
+		CJM cjm = getPersistedCJM(cjmRepository);
 		
-		getPersistedMilitaryOrganization(army);
-		MilitaryRank rank = getPersistedMilitaryRank(army);
+		getPersistedMilitaryOrganization(army, organizationRepository);
+		MilitaryRank rank = getPersistedMilitaryRank(army, rankRepository, armyRepository);
 		
 		Army army2 = TestDataCreator.newArmy();
 		army2.setAlias(DEFAULT_ARMY_ALIAS + "x");
@@ -118,7 +132,7 @@ public class SoldierServiceUnitTest {
 		organization2.setArmy(army2);
 		organizationRepository.saveAndFlush(organization2);
 		
-		SoldierDTO soldierDTO = createPersistenceReadySoldierDTO(army, cjm, organization2, rank);
+		SoldierDTO soldierDTO = newSoldierList(army2, cjm, organization2, rank, 1).get(0);
 		
 		assertThrows(IllegalStateException.class, 
 				() -> victim.save(soldierDTO, army, cjm));
@@ -126,11 +140,11 @@ public class SoldierServiceUnitTest {
 	
 	@Test
 	void testSaveSoldierWithInvalidRank() throws ValidationException {
-		Army army = armyRepository.saveAndFlush(TestDataCreator.newArmy());
-		CJM cjm = cjmRepository.saveAndFlush(TestDataCreator.newCjm());
+		Army army = getPersistedArmy(armyRepository);
+		CJM cjm = getPersistedCJM(cjmRepository);
 		
-		MilitaryOrganization organization = getPersistedMilitaryOrganization(army);
-		getPersistedMilitaryRank(army);
+		MilitaryOrganization organization = getPersistedMilitaryOrganization(army, organizationRepository);
+		getPersistedMilitaryRank(army, rankRepository, armyRepository);
 		
 		Army army2 = TestDataCreator.newArmy();
 		army2.setAlias(DEFAULT_ARMY_ALIAS + "x");
@@ -144,7 +158,7 @@ public class SoldierServiceUnitTest {
 		rankRepository.saveAndFlush(rank2);
 		armyRepository.saveAndFlush(army2);
 		
-		SoldierDTO soldierDTO = createPersistenceReadySoldierDTO(army, cjm, organization, rank2);
+		SoldierDTO soldierDTO = newSoldierList(army2, cjm, organization, rank2, 1).get(0);
 		
 		assertThrows(IllegalStateException.class, 
 				() -> victim.save(soldierDTO, army, cjm));	
@@ -152,15 +166,18 @@ public class SoldierServiceUnitTest {
 	
 	@Test
 	void testListPaginationSuccessfully() {
-		Army army = armyRepository.saveAndFlush(TestDataCreator.newArmy());
-		CJM cjm = cjmRepository.saveAndFlush(TestDataCreator.newCjm());
+		Army army = getPersistedArmy(armyRepository);
+		CJM cjm = getPersistedCJM(cjmRepository);
+		
+		MilitaryOrganization organization = getPersistedMilitaryOrganization(army, organizationRepository);
+		MilitaryRank rank = getPersistedMilitaryRank(army, rankRepository, armyRepository);
 		
 		Army army2 = TestDataCreator.newArmy();
 		army2.setAlias(DEFAULT_ARMY_ALIAS + "x");
 		army2.setName(DEFAULT_ARMY_NAME + "x");
 		armyRepository.saveAndFlush(army2);
 		
-		List<SoldierDTO> soldiers = newSoldierList(army, cjm, 3);
+		List<SoldierDTO> soldiers = newSoldierList(army, cjm, organization, rank, 3);
 		soldiers.get(0).setArmy(army2);									// setup one soldier with another army
 		
 		for (SoldierDTO soldierDTO : soldiers)
@@ -177,21 +194,24 @@ public class SoldierServiceUnitTest {
 	
 	@Test
 	void testGetSoldierSuccessfully() {
-		Army army = armyRepository.saveAndFlush(TestDataCreator.newArmy());
-		CJM cjm = cjmRepository.saveAndFlush(TestDataCreator.newCjm());
+		Army army = getPersistedArmy(armyRepository);
+		CJM cjm = getPersistedCJM(cjmRepository);
+		
+		MilitaryOrganization organization = getPersistedMilitaryOrganization(army, organizationRepository);
+		MilitaryRank rank = getPersistedMilitaryRank(army, rankRepository, armyRepository);
 		
 		Army army2 = TestDataCreator.newArmy();
 		army2.setAlias(DEFAULT_ARMY_ALIAS + "x");
 		army2.setName(DEFAULT_ARMY_NAME + "x");
 		armyRepository.saveAndFlush(army2);
 		
-		List<SoldierDTO> soldiers = newSoldierList(army, cjm, 3);
+		List<SoldierDTO> soldiers = newSoldierList(army, cjm, organization, rank, 3);
 		soldiers.get(0).setArmy(army2);									// setup one soldier with another army
 		
 		for (SoldierDTO soldierDTO : soldiers)
 			soldierRepository.saveAndFlush(EntityMapper.fromDTOToEntity(soldierDTO));
 		
-		SoldierDTO soldier = victim.getSoldier(2, army, cjm);
+		SoldierDTO soldier = victim.getSoldierDTO(2, army, cjm);
 		assertNotNull(soldier);
 		assertEquals(army, soldier.getArmy());
 		assertEquals(cjm, soldier.getCjm());
@@ -199,15 +219,18 @@ public class SoldierServiceUnitTest {
 	
 	@Test
 	void testGetSoldierWhenIdDoesNotBelongsToArmy() {
-		Army army = armyRepository.saveAndFlush(TestDataCreator.newArmy());
-		CJM cjm = cjmRepository.saveAndFlush(TestDataCreator.newCjm());
+		Army army = getPersistedArmy(armyRepository);
+		CJM cjm = getPersistedCJM(cjmRepository);
+		
+		MilitaryOrganization organization = getPersistedMilitaryOrganization(army, organizationRepository);
+		MilitaryRank rank = getPersistedMilitaryRank(army, rankRepository, armyRepository);
 		
 		Army army2 = TestDataCreator.newArmy();
 		army2.setAlias(DEFAULT_ARMY_ALIAS + "x");
 		army2.setName(DEFAULT_ARMY_NAME + "x");
 		armyRepository.saveAndFlush(army2);
 		
-		List<SoldierDTO> soldiers = newSoldierList(army, cjm, 3);
+		List<SoldierDTO> soldiers = newSoldierList(army2, cjm, organization, rank, 3);
 		soldiers.get(0).setArmy(army2);									// setup one soldier with another army
 		
 		for (SoldierDTO soldierDTO : soldiers)
@@ -217,49 +240,6 @@ public class SoldierServiceUnitTest {
 				() -> victim.getSoldier(1, army, cjm));
 		
 		assertEquals("soldier not found: " + 1, exception.getMessage());
-	}
-	
-	private MilitaryOrganization getPersistedMilitaryOrganization(Army army) {
-		MilitaryOrganization organization = TestDataCreator.newMilitaryOrganization();
-		organization.setArmy(army);
-		return organizationRepository.saveAndFlush(organization);	
-	}
-	
-	private MilitaryRank getPersistedMilitaryRank(Army army) {
-		MilitaryRank rank = TestDataCreator.newMilitaryRank();
-		army.getMilitaryRanks().add(rank);
-		rankRepository.saveAndFlush(rank);
-		armyRepository.saveAndFlush(army);
-		
-		return rank;
-	}
-	
-	private SoldierDTO createPersistenceReadySoldierDTO(Army army, CJM cjm, MilitaryOrganization organization, MilitaryRank rank) {
-		SoldierDTO soldierDTO = TestDataCreator.newSoldierDTO();
-		soldierDTO.setMilitaryRank(rank);
-		soldierDTO.setMilitaryOrganization(organization);
-		
-		return soldierDTO;
-	}
-	
-	private List<SoldierDTO> newSoldierList(Army army, CJM cjm, int listSize) {
-		MilitaryOrganization organization = getPersistedMilitaryOrganization(army);
-		MilitaryRank rank = getPersistedMilitaryRank(army);
-		
-		List<SoldierDTO> soldiers = new ArrayList<SoldierDTO>();
-		SoldierDTO soldierDTO;
-		while (listSize-- > 0) {
-			soldierDTO = TestDataCreator.newSoldierDTO();
-			soldierDTO.setName(StringUtils.rightPad(DEFAULT_SOLDIER_NAME, SOLDIER_NAME_MAX_LEN - listSize, 'x'));
-			soldierDTO.setEmail(StringUtils.rightPad(DEFAULT_USER_EMAIL, SOLDIER_EMAIL_MAX_LEN - listSize, 'x'));
-			soldierDTO.setMilitaryRank(rank);
-			soldierDTO.setMilitaryOrganization(organization);
-			soldierDTO.setArmy(army);
-			soldierDTO.setCjm(cjm);
-			soldiers.add(soldierDTO);
-		}
-		
-		return soldiers;
 	}
 }
 

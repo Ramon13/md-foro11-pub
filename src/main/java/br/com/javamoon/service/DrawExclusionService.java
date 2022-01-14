@@ -1,61 +1,77 @@
 package br.com.javamoon.service;
 
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
-
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-
 import br.com.javamoon.domain.draw.AnnualQuarter;
 import br.com.javamoon.domain.draw.CouncilType;
 import br.com.javamoon.domain.draw.Draw;
 import br.com.javamoon.domain.draw.DrawRepository;
 import br.com.javamoon.domain.draw_exclusion.DrawExclusion;
 import br.com.javamoon.domain.draw_exclusion.DrawExclusionRepository;
+import br.com.javamoon.domain.group_user.GroupUser;
 import br.com.javamoon.domain.soldier.Army;
 import br.com.javamoon.domain.soldier.Soldier;
+import br.com.javamoon.mapper.DrawExclusionDTO;
+import br.com.javamoon.mapper.EntityMapper;
 import br.com.javamoon.util.DateTimeUtils;
 import br.com.javamoon.util.SecurityUtils;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
 @Service
 public class DrawExclusionService {
 
-	@Autowired
-	private DrawExclusionRepository exclusionRepo;
-	
 	@Autowired
 	private DrawRepository drawRepo;
 	
 	@Autowired
 	private AnnualQuarterService annualQuarterSvc;
 	
-	@Autowired
-	private SoldierService soldierSvc;
+	private SoldierService soldierService;
+	
+	private DrawExclusionRepository drawExclusionRepository;
+	
+	public DrawExclusionService(SoldierService soldierService, DrawExclusionRepository drawExclusionRepository) {
+		this.soldierService = soldierService;
+		this.drawExclusionRepository = drawExclusionRepository;
+	}
+
+	public List<DrawExclusionDTO> listBySoldier(Soldier soldier){
+		return drawExclusionRepository.findAllBySoldier(soldier)
+				.stream()
+				.map(x -> EntityMapper.fromEntityToDTO(x))
+				.collect(Collectors.toList());
+	}
+	
+	public DrawExclusionDTO save(DrawExclusionDTO drawExclusionDTO, GroupUser groupUser, Soldier soldier) {
+		
+	}
 	
 	public void delete(DrawExclusion exclusion, Army loggedUserArmy) {
 		if (!validateArmySoldier(exclusion.getSoldier(), loggedUserArmy) ||
-				!soldierSvc.validateLoggedUserPermission(exclusion.getSoldier(), SecurityUtils.groupUser()))
+				!soldierService.validateLoggedUserPermission(exclusion.getSoldier(), SecurityUtils.groupUser()))
 			throw new IllegalStateException("Impossível editar o registro. Permissão negada.");
-		exclusionRepo.delete(exclusion);
+		drawExclusionRepository.delete(exclusion);
 	}
 	
 	public void saveDrawExclusion(DrawExclusion exclusion, Army loggedUserArmy) throws ValidationException {
 		if (!validateArmySoldier(exclusion.getSoldier(), loggedUserArmy) ||
-				!soldierSvc.validateLoggedUserPermission(exclusion.getSoldier(), SecurityUtils.groupUser()))
+				!soldierService.validateLoggedUserPermission(exclusion.getSoldier(), SecurityUtils.groupUser()))
 			throw new ValidationException("army", "Impossível editar o registro. Permissão negada.");
 		
 		if (!validateExclusionDates(exclusion))
 			throw new ValidationException("startDate", "Periodo inválido. A data inicial não pode ser após a data final");
 		
 		exclusion.setCreationDate(LocalDateTime.now());
-		exclusionRepo.save(exclusion);
+		drawExclusionRepository.save(exclusion);
 	}
 	
 	public Set<DrawExclusion> findByAnnualQuarter(AnnualQuarter annualQuarter, Soldier soldier) {
-		return exclusionRepo.findBySoldierBetweenDates(
+		return drawExclusionRepository.findBySoldierBetweenDates(
 					soldier.getId(), 
 					annualQuarter.getStartQuarterDate(), 
 					annualQuarter.getEndQuarterDate());

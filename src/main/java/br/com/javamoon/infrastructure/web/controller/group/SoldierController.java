@@ -17,12 +17,15 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import br.com.javamoon.domain.draw.AnnualQuarter;
 import br.com.javamoon.domain.group_user.GroupUser;
 import br.com.javamoon.domain.soldier.Army;
+import br.com.javamoon.domain.soldier.Soldier;
 import br.com.javamoon.exception.SoldierValidationException;
 import br.com.javamoon.infrastructure.web.controller.ControllerHelper;
 import br.com.javamoon.infrastructure.web.model.PaginationSearchFilter;
 import br.com.javamoon.infrastructure.web.model.SoldiersPagination;
 import br.com.javamoon.mapper.DrawExclusionDTO;
+import br.com.javamoon.mapper.EntityMapper;
 import br.com.javamoon.mapper.SoldierDTO;
+import br.com.javamoon.service.DrawExclusionService;
 import br.com.javamoon.service.MilitaryOrganizationService;
 import br.com.javamoon.service.MilitaryRankService;
 import br.com.javamoon.service.SoldierService;
@@ -36,13 +39,15 @@ public class SoldierController {
 	private MilitaryOrganizationService militaryOrganizationService;
 	private MilitaryRankService militaryRankService;
 	private SoldierService soldierService;
+	private DrawExclusionService drawExclusionService;
 
 	public SoldierController(MilitaryOrganizationService militaryOrganizationService,
-	        MilitaryRankService militaryRankService,
-	        SoldierService soldierService) {
+	        MilitaryRankService militaryRankService, SoldierService soldierService,
+	        DrawExclusionService drawExclusionService) {
 		this.militaryOrganizationService = militaryOrganizationService;
 		this.militaryRankService = militaryRankService;
 		this.soldierService = soldierService;
+		this.drawExclusionService = drawExclusionService;
 	}
 
 	@GetMapping("/register/home")
@@ -93,14 +98,16 @@ public class SoldierController {
 	@GetMapping("/profile/home/{soldierId}")
 	public String profile(@PathVariable("soldierId") Integer soldierId, Model model) {
 		GroupUser loggedUser = SecurityUtils.groupUser();
+		Soldier soldier = soldierService.getSoldier(soldierId, loggedUser.getArmy(), loggedUser.getCjm());
 		
 		DrawExclusionDTO exclusionDTO = new DrawExclusionDTO();
 		AnnualQuarter nextQuarter = new AnnualQuarter(LocalDate.now().plusMonths(3));
 		exclusionDTO.setStartDate(nextQuarter.getStartQuarterDate());
 		exclusionDTO.setEndDate(nextQuarter.getEndQuarterDate());
 		
+		model.addAttribute("exclusions", drawExclusionService.listBySoldier(soldier));
 		model.addAttribute("exclusion", exclusionDTO);
-		model.addAttribute("soldier", soldierService.getSoldier(soldierId, loggedUser.getArmy(), loggedUser.getCjm()));
+		model.addAttribute("soldier", EntityMapper.fromEntityToDTO(soldier));
 		return "group/soldier/profile";
 	}
 }

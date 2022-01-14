@@ -1,5 +1,6 @@
 package br.com.javamoon.mapper;
 
+import br.com.javamoon.domain.draw_exclusion.DrawExclusion;
 import br.com.javamoon.domain.group_user.GroupUser;
 import br.com.javamoon.domain.soldier.Soldier;
 import br.com.javamoon.infrastructure.web.security.Role;
@@ -58,5 +59,14 @@ public final class EntityMapper {
     	soldierDTO.setMilitaryRank(soldier.getMilitaryRank());	
     	
     	return soldierDTO;
+    }
+    
+    public static DrawExclusionDTO fromEntityToDTO(DrawExclusion drawExclusion) {
+    	DrawExclusionDTO drawExclusionDTO = new DrawExclusionDTO();
+    	drawExclusionDTO.setId(drawExclusion.getId());
+    	drawExclusionDTO.setStartDate(drawExclusion.getStartDate());
+    	drawExclusionDTO.setEndDate(drawExclusion.getEndDate());
+    	drawExclusionDTO.setMessage(drawExclusion.getMessage());
+    	return drawExclusionDTO;
     }
 }

@@ -1,12 +1,26 @@
 package br.com.javamoon.validator;
 
 import br.com.javamoon.util.StringUtils;
+import java.lang.reflect.Constructor;
+import java.lang.reflect.InvocationTargetException;
 import java.util.Objects;
 import org.springframework.validation.Errors;
 
 public final class ValidationUtils {
 
     private ValidationUtils() {}
+    
+    public static <T extends RuntimeException> void throwOnErrors(Class<T> clazz, ValidationErrors validationErrors){
+    	try {
+			Constructor<T> constructor = clazz.getConstructor(ValidationErrors.class);
+			if (validationErrors.hasErrors())
+				throw constructor.newInstance(validationErrors);
+		} catch (NoSuchMethodException | SecurityException | InstantiationException | IllegalAccessException
+		        | IllegalArgumentException | InvocationTargetException e) {
+			e.printStackTrace();
+		}
+		
+	}
     
     public static void rejectValues(Errors errors, ValidationErrors validationErrors) {
         for (ValidationError validationError : validationErrors.getValidationErrors()) {

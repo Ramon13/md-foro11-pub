@@ -26,6 +26,15 @@ public final class ValidationConstants {
     public static final String REQUIRED_FIELD = "O campo não pode ser vazio.";
     public static final String STRING_EXCEEDS_MAX_LEN = "O campo excedeu o valor máximo de caracteres permitidos.";
     
+    public static final String DRAW_EXCLUSION_MESSAGE = "message";
+    public static final String DRAW_EXCLUSION_START_DATE = "startDate";
+    public static final String DRAW_EXCLUSION_END_DATE = "endDate";
+    public static final Integer DRAW_EXCLUSION_MAX_LEN = 1024;
+    
+    public static final String EQUALS_DATES = "Datas iguais";
+    public static final String IN_THE_PAST = "A data deve ser posterior a data atual";
+    public static final String INCONSISTENT_DATE_PERIOD = "Período inválido";
+    
     
     
     public static final String NO_PERMISSION = "You do not have permision to edit this property.";

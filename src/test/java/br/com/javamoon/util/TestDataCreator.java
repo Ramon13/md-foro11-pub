@@ -1,15 +1,21 @@
 package br.com.javamoon.util;
 
 import static br.com.javamoon.util.Constants.*;
+import static br.com.javamoon.validator.ValidationConstants.SOLDIER_EMAIL_MAX_LEN;
+import static br.com.javamoon.validator.ValidationConstants.SOLDIER_NAME_MAX_LEN;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.commons.lang3.StringUtils;
 
 import br.com.javamoon.domain.cjm_user.CJM;
+import br.com.javamoon.domain.cjm_user.CJMRepository;
+import br.com.javamoon.domain.draw_exclusion.DrawExclusion;
 import br.com.javamoon.domain.group_user.GroupUser;
 import br.com.javamoon.domain.group_user.GroupUserRepository;
 import br.com.javamoon.domain.soldier.Army;
+import br.com.javamoon.domain.soldier.ArmyRepository;
 import br.com.javamoon.domain.soldier.MilitaryOrganization;
 import br.com.javamoon.domain.soldier.MilitaryOrganizationRepository;
 import br.com.javamoon.domain.soldier.MilitaryRank;
@@ -19,6 +25,7 @@ import br.com.javamoon.domain.soldier.SoldierRepository;
 import br.com.javamoon.infrastructure.web.model.PaginationSearchFilter;
 import br.com.javamoon.mapper.SoldierDTO;
 import br.com.javamoon.mapper.UserDTO;
+import br.com.javamoon.validator.DrawExclusionValidator;
 import br.com.javamoon.validator.GroupUserAccountValidator;
 import br.com.javamoon.validator.SoldierValidator;
 
@@ -35,6 +42,10 @@ public final class TestDataCreator {
 			MilitaryOrganizationRepository organizationRepository,
 			MilitaryRankRepository militaryRankRepository) {
 		return new SoldierValidator(soldierRepository, organizationRepository, militaryRankRepository);
+	}
+	
+	public static DrawExclusionValidator newExclusionValidator() {
+		return new DrawExclusionValidator();
 	}
 	
 	public static UserDTO newUserDTO() {
@@ -116,5 +127,66 @@ public final class TestDataCreator {
 	
 	public static PaginationSearchFilter newPaginationFilter() {
 		return new PaginationSearchFilter(null, null, null);
+	}
+	
+	public static Army getPersistedArmy(ArmyRepository armyRepository) {
+		return armyRepository.saveAndFlush(newArmy());
+	}
+	
+	public static CJM getPersistedCJM(CJMRepository cjmRepository) {
+		return cjmRepository.saveAndFlush(newCjm());
+	}
+	
+	public static MilitaryOrganization getPersistedMilitaryOrganization(Army army, MilitaryOrganizationRepository organizationRepository) {
+		MilitaryOrganization organization = TestDataCreator.newMilitaryOrganization();
+		organization.setArmy(army);
+		return organizationRepository.saveAndFlush(organization);	
+	}
+	
+	public static MilitaryRank getPersistedMilitaryRank(Army army, MilitaryRankRepository rankRepository, ArmyRepository armyRepository) {
+		MilitaryRank rank = TestDataCreator.newMilitaryRank();
+		army.getMilitaryRanks().add(rank);
+		rankRepository.saveAndFlush(rank);
+		armyRepository.saveAndFlush(army);
+		
+		return rank;
+	}
+	
+	public static List<SoldierDTO> newSoldierList(
+			Army army,
+			CJM cjm,
+			MilitaryOrganization organization,
+			MilitaryRank rank,
+			int listSize) {
+		List<SoldierDTO> soldiers = new ArrayList<SoldierDTO>();
+		SoldierDTO soldierDTO;
+		while (listSize-- > 0) {
+			soldierDTO = TestDataCreator.newSoldierDTO();
+			soldierDTO.setName(StringUtils.rightPad(DEFAULT_SOLDIER_NAME, SOLDIER_NAME_MAX_LEN - listSize, 'x'));
+			soldierDTO.setEmail(StringUtils.rightPad(DEFAULT_USER_EMAIL, SOLDIER_EMAIL_MAX_LEN - listSize, 'x'));
+			soldierDTO.setMilitaryRank(rank);
+			soldierDTO.setMilitaryOrganization(organization);
+			soldierDTO.setArmy(army);
+			soldierDTO.setCjm(cjm);
+			soldiers.add(soldierDTO);
+		}
+		
+		return soldiers;
+	}
+	
+	public static List<DrawExclusion> newDrawExclusionList(Soldier soldier, GroupUser groupUser, int listSize){
+		List<DrawExclusion> exclusions = new ArrayList<>();
+		DrawExclusion exclusion;
+		while (listSize-- > 0) {
+			exclusion = new DrawExclusion();
+			exclusion.setMessage(StringUtils.rightPad(DEFAULT_EXCLUSION_MESSAGE, 64 - listSize, 'x'));
+			exclusion.setStartDate(LocalDate.now());
+			exclusion.setEndDate(LocalDate.now().plusDays(2));
+			exclusion.setSoldier(soldier);
+			exclusion.setGroupUser(groupUser);
+			exclusions.add(exclusion);
+		}
+		
+		return exclusions;
 	}
 }

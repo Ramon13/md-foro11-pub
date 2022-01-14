@@ -1,11 +1,5 @@
 package br.com.javamoon.service;
 
-import java.util.List;
-import java.util.Objects;
-
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-
 import br.com.javamoon.domain.cjm_user.CJM;
 import br.com.javamoon.domain.draw.DrawList;
 import br.com.javamoon.domain.draw.DrawRepository;
@@ -25,6 +19,10 @@ import br.com.javamoon.mapper.EntityMapper;
 import br.com.javamoon.mapper.SoldierDTO;
 import br.com.javamoon.util.StringUtils;
 import br.com.javamoon.validator.SoldierValidator;
+import java.util.List;
+import java.util.Objects;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
 @Service
 public class SoldierService{
@@ -53,8 +51,12 @@ public class SoldierService{
 		soldierRepository.delete(soldier);
 	}
 	
-	public SoldierDTO getSoldier(Integer id, Army army, CJM cjm) {
+	public SoldierDTO getSoldierDTO(Integer id, Army army, CJM cjm) {
 		return EntityMapper.fromEntityToDTO(getSoldierOrElseThrow(id, army , cjm));
+	}
+	
+	public Soldier getSoldier(Integer id, Army army, CJM cjm) {
+		return getSoldierOrElseThrow(id, army , cjm);
 	}
 	
 	/**
@@ -74,7 +76,7 @@ public class SoldierService{
 		return EntityMapper.fromEntityToDTO(soldier);
 	}
 	
-	private Soldier getSoldierOrElseThrow(Integer soldierId, Army army, CJM cjm) {
+	public Soldier getSoldierOrElseThrow(Integer soldierId, Army army, CJM cjm) {
 		Objects.requireNonNull(soldierId);
 		return soldierRepository.findByIdAndArmyAndCjm(soldierId, army, cjm)
 				.orElseThrow(() -> new SoldierNotFoundException("soldier not found: " + soldierId));

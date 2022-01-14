@@ -7,12 +7,6 @@ import static br.com.javamoon.validator.ValidationConstants.SOLDIER_EMAIL_MAX_LE
 import static br.com.javamoon.validator.ValidationConstants.SOLDIER_NAME;
 import static br.com.javamoon.validator.ValidationConstants.SOLDIER_NAME_ALREADY_EXISTS;
 import static br.com.javamoon.validator.ValidationConstants.SOLDIER_NAME_MAX_LEN;
-
-import java.util.List;
-import java.util.Optional;
-
-import org.springframework.stereotype.Component;
-
 import br.com.javamoon.domain.cjm_user.CJM;
 import br.com.javamoon.domain.soldier.Army;
 import br.com.javamoon.domain.soldier.MilitaryOrganization;
@@ -23,6 +17,9 @@ import br.com.javamoon.domain.soldier.Soldier;
 import br.com.javamoon.domain.soldier.SoldierRepository;
 import br.com.javamoon.exception.SoldierValidationException;
 import br.com.javamoon.mapper.SoldierDTO;
+import java.util.List;
+import java.util.Optional;
+import org.springframework.stereotype.Component;
 
 @Component
 public class SoldierValidator {
@@ -52,7 +49,7 @@ public class SoldierValidator {
 			validateDuplicatedEmail(soldierDTO.getEmail(), soldierDTO.getArmy(), soldierDTO.getCjm(), validationErrors);
 		}
 		
-		throwOnErrors(validationErrors);
+		ValidationUtils.throwOnErrors(SoldierValidationException.class, validationErrors);
 		
 		validateIfOrganizationBelongsToArmy(soldierDTO.getMilitaryOrganization(), soldierDTO.getArmy(), validationErrors);
 		validateIfRankBelongsToArmy(soldierDTO.getMilitaryRank(), soldierDTO.getArmy(), validationErrors);
@@ -94,10 +91,5 @@ public class SoldierValidator {
 		List<MilitaryRank> ranks = militaryRankRepository.findAllByArmiesIn(army);
 		if (ranks.isEmpty() || !ranks.contains(rank))
 			throw new IllegalStateException(INCONSISTENT_DATA);		
-	}
-	
-	private void throwOnErrors(ValidationErrors validationErrors) {
-		if (validationErrors.hasErrors())
-            throw new SoldierValidationException(validationErrors);
 	}
 }

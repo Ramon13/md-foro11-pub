@@ -26,4 +26,7 @@ public final class Constants {
     public static final String DEFAULT_RANK_NAME = "Coronel";
     public static final String DEFAULT_RANK_ALIAS = "CEL";
     public static final Integer DEFAULT_RANK_WEIGHT = 5;
+    
+    public static final String DEFAULT_EXCLUSION_MESSAGE = "Férias em acapulco";
+    
 }
