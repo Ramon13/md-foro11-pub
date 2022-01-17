@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.Optional;
 
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
@@ -16,7 +17,8 @@ public interface SoldierRepository extends JpaRepository<Soldier, Integer>{
 
 	public Soldier findByEmail(String email);
 	
-	public Optional<List<Soldier>> findByEmailAndArmyAndCjm(String email, Army army, CJM cjm);
+	@Query("FROM Soldier s WHERE s.email = :email AND s.army = :army AND s.cjm = :cjm AND active = true")
+	public Optional<Soldier> findActiveByEmailAndArmyAndCjm(@Param("email") String email, @Param("army") Army army, @Param("cjm") CJM cjm);
 	
 	
 	
@@ -24,17 +26,27 @@ public interface SoldierRepository extends JpaRepository<Soldier, Integer>{
 	
 	public List<Soldier> findByNameContaining(String name);
 	
-	public Optional<List<Soldier>> findByNameAndArmyAndCjm(String name, Army army, CJM cjm);
+	@Query("FROM Soldier s WHERE s.name = :name AND s.army = :army AND s.cjm = :cjm AND active = true")
+	public Optional<Soldier> findActiveByNameAndArmyAndCjm(@Param("name") String name, @Param("army") Army army, @Param("cjm") CJM cjm);
 	
 	public Soldier findByNameAndCjm(String name, CJM cjm);
 	
 	
 	
-	@Query("from Soldier s left join fetch s.militaryOrganization where s.army = :army and s.cjm = :cjm order by s.name")
-	public List<Soldier> findAllByArmyAndCjm(@Param("army") Army army, @Param("cjm") CJM cjm);
-	
 	@Query("select s.id from Soldier s where s.id = :id and s.army = :army")
 	public Integer findByIdAndArmy(@Param("id") Integer soldierId, @Param("army") Army army);
+	
+	@Query("FROM Soldier s WHERE s.id = :id AND s.army = :army AND s.cjm = :cjm AND active = true")
+	public Optional<Soldier> findByIdAndArmyAndCjmAndActive(@Param("id") Integer id, @Param("army") Army army, @Param("cjm") CJM cjm);
+	
+	
+	@Modifying(flushAutomatically = true, clearAutomatically = true)
+	@Query("UPDATE Soldier s SET s.active = false WHERE s.id = :id")
+	public void delete(@Param("id") Integer soldierId);
+	
+	
+	@Query("from Soldier s left join fetch s.militaryOrganization where s.army = :army and s.cjm = :cjm and s.active = true order by s.name")
+	public List<Soldier> findAllActiveByArmyAndCjm(@Param("army") Army army, @Param("cjm") CJM cjm);
 	
 	@Query("select s from Draw d join d.soldiers s where d.id = :drawId order by s.militaryRank.rankWeight asc")
 	public List<Soldier> findAllByDrawOrderByRank(@Param("drawId") Integer drawId);
@@ -46,9 +58,6 @@ public interface SoldierRepository extends JpaRepository<Soldier, Integer>{
 			+ "join dl.soldiers s "
 			+ "left join fetch s.militaryOrganization where dl.id = :drawListId order by s.name")
 	public List<Soldier> findAllByDrawList(@Param("drawListId") Integer drawListId);
-	
-	@Query("FROM Soldier s WHERE s.army = :army AND s.id = :soldierId AND s.cjm = :cjm")
-	public Optional<Soldier> findByIdAndArmyAndCjm(@Param("soldierId") Integer soldierId, @Param("army") Army army, @Param("cjm") CJM cjm);
 	
 	
 	@Query("from DrawExclusion dex where dex.soldier = :soldier order by dex.id desc")

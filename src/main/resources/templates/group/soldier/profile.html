@@ -112,9 +112,15 @@
           <span th:text="${soldier.email}"></span>
         </div>
         <div>
-          <a href="#">alterar</a>
+          <a th:href="@{/gp/sd/register/home/} + ${soldier.id}">alterar</a>
           <span>|</span>
-          <a href="#">excluir</a>
+          <a id="deleteSoldier" href="#" th:attr="data-url=@{/gp/sd/register/delete/} + ${soldier.id}">excluir</a>
+        </div>
+        <br />
+        <div>
+          <button type="button" id="back" class="app-gray-btn">
+            <span>Voltar</span>
+          </button>     
         </div>
       </div>
       
@@ -178,12 +184,29 @@
     </div>
   </body>
   <script layout:fragment="page-script" th:inline="javascript">
+     const backBtn = document.querySelector("button#back");
   	 const removeExclusions = document.querySelectorAll("img.remove-exclusion");
+  	 const deleteSoldier = document.querySelector("a#deleteSoldier");
   	 
   	 for (let i = 0; i < removeExclusions.length; i++){
   		 removeExclusions[i].addEventListener('click', function(){
   			 this.parentElement.submit();
   		 });
   	 }
+  	 
+  	 deleteSoldier.addEventListener('click', function(){
+  		  if (window.confirm("Após deletar um militar esta operação não poderá mais ser desfeita. Deseja prosseguir com a deleção?")){
+    		  let form = document.createElement("form");
+    		  form.method = "POST";
+    		  form.action = this.dataset.url;
+    		  
+    		  document.querySelector("body").append(form);
+    		  form.submit();
+  		  }
+  	 });
+  	 
+     backBtn.addEventListener('click', function(){
+       location.href = historyPop();
+     });
   </script>
 </html>

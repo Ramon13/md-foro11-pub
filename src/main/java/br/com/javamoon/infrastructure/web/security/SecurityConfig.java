@@ -27,6 +27,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter{
 			//low level access
 			.antMatchers("/gp/dw/list").hasRole(GROUP_USER.toString())
 			.antMatchers("/gp/dw/list/{listid:\\d+}").hasRole(GROUP_USER.toString())
+			.antMatchers("/gp/sd/list/home").hasRole(GROUP_USER.toString())
 			.antMatchers("/gp/cjm/**").hasRole(GROUP_USER.toString())
 			//
 			//edit and creates lists

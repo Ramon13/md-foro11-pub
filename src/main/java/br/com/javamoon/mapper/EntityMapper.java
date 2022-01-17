@@ -36,11 +36,10 @@ public final class EntityMapper {
     
     public static Soldier fromDTOToEntity(SoldierDTO soldierDTO) {
     	Soldier soldier = new Soldier();
+    	soldier.setId(soldierDTO.getId());
     	soldier.setName(soldierDTO.getName() != null ? soldierDTO.getName().trim() : null);
     	soldier.setEmail(soldierDTO.getEmail() != null ? soldierDTO.getEmail().trim() : null);
     	soldier.setPhone(soldierDTO.getPhone() != null ? soldierDTO.getPhone().trim() : null);
-    	soldier.setArmy(soldierDTO.getArmy());
-    	soldier.setCjm(soldierDTO.getCjm());
     	soldier.setMilitaryOrganization(soldierDTO.getMilitaryOrganization());
     	soldier.setMilitaryRank(soldierDTO.getMilitaryRank());
     	
@@ -53,8 +52,7 @@ public final class EntityMapper {
     	soldierDTO.setName(soldier.getName());
     	soldierDTO.setEmail(soldier.getEmail());
     	soldierDTO.setPhone(soldier.getPhone());
-    	soldierDTO.setArmy(soldier.getArmy());
-    	soldierDTO.setCjm(soldier.getCjm());
+    	soldierDTO.setActive(soldier.getActive());
     	soldierDTO.setMilitaryOrganization(soldier.getMilitaryOrganization());
     	soldierDTO.setMilitaryRank(soldier.getMilitaryRank());	
     	

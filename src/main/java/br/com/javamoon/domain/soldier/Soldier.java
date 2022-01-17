@@ -8,6 +8,7 @@ import br.com.javamoon.util.StringUtils;
 import java.io.Serializable;
 import java.util.Arrays;
 import java.util.HashSet;
+import java.util.Objects;
 import java.util.Set;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -18,6 +19,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
+import javax.persistence.PrePersist;
 import javax.persistence.Table;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
@@ -80,6 +82,15 @@ public class Soldier implements Serializable, Comparable<Soldier>{
 	
 	@ManyToMany(mappedBy = "soldiers")
 	private Set<DrawList> drawList = new HashSet<DrawList>(0);
+	
+	@Column(name = "active", nullable = false)
+	private Boolean active;
+	
+	@PrePersist
+	private void prePersist() {
+		if (Objects.isNull(active))
+			active = true;
+	}
 	
 	private transient Set<DrawExclusion> customExclusions = new HashSet<>(0);
 	

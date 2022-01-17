@@ -1,7 +1,7 @@
 package br.com.javamoon.infrastructure.web.controller.group;
 
 import java.time.LocalDate;
-
+import java.util.Objects;
 import javax.servlet.http.HttpSession;
 import javax.validation.Valid;
 
@@ -13,7 +13,7 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
-
+import br.com.javamoon.domain.cjm_user.CJM;
 import br.com.javamoon.domain.draw.AnnualQuarter;
 import br.com.javamoon.domain.group_user.GroupUser;
 import br.com.javamoon.domain.soldier.Army;
@@ -50,15 +50,20 @@ public class SoldierController {
 		this.drawExclusionService = drawExclusionService;
 	}
 
-	@GetMapping("/register/home")
-	public String registerHome(Model model, HttpSession session) {
+	@GetMapping(value = {"/register/home", "/register/home/{soldierId}"})
+	public String registerHome(
+			@PathVariable(name = "soldierId", required = false) Integer soldierId,
+			Model model,
+			HttpSession session) {
 		Army army = SecurityUtils.groupUser().getArmy();
+		CJM cjm = SecurityUtils.groupUser().getCjm();
 		
 		model.addAttribute("oms", militaryOrganizationService.listOrganizationsByArmy(army));
 		model.addAttribute("ranks", militaryRankService.listRanksByArmy(army));
-		model.addAttribute("soldier", new SoldierDTO());
+		model.addAttribute("soldier", 
+				Objects.isNull(soldierId) ? new Soldier() : soldierService.getSoldier(soldierId, army, cjm));
 		
-		ControllerHelper.setEditMode(model, false);
+		ControllerHelper.setEditMode(model, Objects.nonNull(soldierId));
 		return "group/soldier-register";
 	}
 	
@@ -67,10 +72,14 @@ public class SoldierController {
 		GroupUser loggedUser = SecurityUtils.groupUser();
 		if (!errors.hasErrors()) {
 			try {
-				soldierService.save(soldierDTO, loggedUser.getArmy(), loggedUser.getCjm());
+				if (Objects.isNull(soldierDTO.getId()))
+					soldierDTO = soldierService.save(soldierDTO, loggedUser.getArmy(), loggedUser.getCjm());
+				else
+					soldierDTO = soldierService.edit(soldierDTO, loggedUser.getArmy(), loggedUser.getCjm());
+			
+				model.addAttribute("successMsg", "Informações salvas com sucesso");
 				
-				model.addAttribute("successMsg", "Cadastro realizado com sucesso");
-				soldierDTO = new SoldierDTO();
+				return "redirect:/gp/sd/profile/home/" + soldierDTO.getId();
 			}catch(SoldierValidationException e) {
 				 ValidationUtils.rejectValues(errors, e.getValidationErrors());
 			}
@@ -93,6 +102,16 @@ public class SoldierController {
 		model.addAttribute("soldiersPagination", soldiersPagination);
 		model.addAttribute("filter", filter);
 		return "group/soldier/list";
+	}
+	
+	@PostMapping("/register/delete/{soldierId}")
+	public String delete(
+			@PathVariable("soldierId") Integer soldierId,
+			Model model) {
+		GroupUser loggedUser = SecurityUtils.groupUser();	
+		soldierService.delete(soldierId, loggedUser.getArmy(), loggedUser.getCjm());
+		
+		return "redirect:/gp/sd/list/home";
 	}
 	
 	@GetMapping("/profile/home/{soldierId}")

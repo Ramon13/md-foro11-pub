@@ -1,22 +1,21 @@
 package br.com.javamoon.unit.service;
 
-import static br.com.javamoon.util.Constants.*;
-import static br.com.javamoon.util.TestDataCreator.*;
+import static br.com.javamoon.util.Constants.DEFAULT_ARMY_ALIAS;
+import static br.com.javamoon.util.Constants.DEFAULT_ARMY_NAME;
+import static br.com.javamoon.util.TestDataCreator.getPersistedArmy;
+import static br.com.javamoon.util.TestDataCreator.getPersistedCJM;
+import static br.com.javamoon.util.TestDataCreator.getPersistedMilitaryOrganization;
+import static br.com.javamoon.util.TestDataCreator.getPersistedMilitaryRank;
+import static br.com.javamoon.util.TestDataCreator.newDrawExclusionList;
+import static br.com.javamoon.util.TestDataCreator.newGroupUserList;
+import static br.com.javamoon.util.TestDataCreator.newSoldierList;
+import static br.com.javamoon.validator.ValidationConstants.DRAW_EXCLUSION_MESSAGE;
 import static br.com.javamoon.validator.ValidationConstants.INCONSISTENT_DATA;
+import static br.com.javamoon.validator.ValidationConstants.REQUIRED_FIELD;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
-
-import java.util.List;
-import java.util.stream.Collectors;
-
-import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.annotation.DirtiesContext;
-import org.springframework.test.annotation.DirtiesContext.ClassMode;
-import org.springframework.test.context.ActiveProfiles;
-
 import br.com.javamoon.domain.cjm_user.CJM;
 import br.com.javamoon.domain.cjm_user.CJMRepository;
 import br.com.javamoon.domain.draw_exclusion.DrawExclusion;
@@ -32,10 +31,19 @@ import br.com.javamoon.domain.soldier.MilitaryRankRepository;
 import br.com.javamoon.domain.soldier.Soldier;
 import br.com.javamoon.domain.soldier.SoldierRepository;
 import br.com.javamoon.exception.DrawExclusionNotFoundException;
+import br.com.javamoon.exception.DrawExclusionValidationException;
 import br.com.javamoon.mapper.DrawExclusionDTO;
 import br.com.javamoon.mapper.EntityMapper;
 import br.com.javamoon.service.DrawExclusionService;
 import br.com.javamoon.util.TestDataCreator;
+import br.com.javamoon.validator.ValidationError;
+import java.util.List;
+import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.annotation.DirtiesContext;
+import org.springframework.test.annotation.DirtiesContext.ClassMode;
+import org.springframework.test.context.ActiveProfiles;
 
 @SpringBootTest
 @ActiveProfiles("test")
@@ -73,10 +81,7 @@ public class DrawExclusionServiceUnitTest {
 		MilitaryOrganization organization = getPersistedMilitaryOrganization(army, organizationRepository);
 		MilitaryRank rank = getPersistedMilitaryRank(army, rankRepository, armyRepository);
 		
-		List<Soldier> soldiers = newSoldierList(army, cjm, organization, rank, 2)
-			.stream()
-			.map(r -> EntityMapper.fromDTOToEntity(r))
-			.collect(Collectors.toList());
+		List<Soldier> soldiers = newSoldierList(army, cjm, organization, rank, 2);
 		soldierRepository.saveAllAndFlush(soldiers);
 		
 		GroupUser groupUser = newGroupUserList(army, cjm, 1).get(0);
@@ -92,6 +97,72 @@ public class DrawExclusionServiceUnitTest {
 		assertEquals(exclusions.get(2).getMessage(), exclusionsDTO.get(0).getMessage());
 		assertEquals(exclusions.get(1).getMessage(), exclusionsDTO.get(1).getMessage());
 	}
+	
+	@Test
+	void testSaveExclusionSuccessfully() {
+		Army army = getPersistedArmy(armyRepository);
+		CJM cjm = getPersistedCJM(cjmRepository);
+		MilitaryOrganization organization = getPersistedMilitaryOrganization(army, organizationRepository);
+		MilitaryRank rank = getPersistedMilitaryRank(army, rankRepository, armyRepository);
+		GroupUser groupUser = groupUserRepository.saveAndFlush(TestDataCreator.newGroupUserList(army, cjm, 1).get(0));
+		
+		List<Soldier> soldiers = newSoldierList(army, cjm, organization, rank, 1);
+		soldierRepository.saveAllAndFlush(soldiers);
+		
+		DrawExclusion exclusion = TestDataCreator.newDrawExclusionList(soldiers.get(0), groupUser, 1).get(0);
+		exclusion.setSoldier(null);
+		exclusion.setGroupUser(null);
+		
+		DrawExclusionDTO exclusionDTO = victim.save(EntityMapper.fromEntityToDTO(exclusion), groupUser, soldiers.get(0));
+		assertNotNull(exclusionDTO.getId());
+		assertEquals(exclusion.getMessage(), exclusionDTO.getMessage());
+	}
+	
+	void testSaveExclusionWhenMessageIsMissing() {
+		Army army = getPersistedArmy(armyRepository);
+		CJM cjm = getPersistedCJM(cjmRepository);
+		MilitaryOrganization organization = getPersistedMilitaryOrganization(army, organizationRepository);
+		MilitaryRank rank = getPersistedMilitaryRank(army, rankRepository, armyRepository);
+		GroupUser groupUser = groupUserRepository.saveAndFlush(TestDataCreator.newGroupUserList(army, cjm, 1).get(0));
+		
+		List<Soldier> soldiers = newSoldierList(army, cjm, organization, rank, 1);
+		soldierRepository.saveAllAndFlush(soldiers);
+		
+		DrawExclusion exclusion = TestDataCreator.newDrawExclusionList(soldiers.get(0), groupUser, 1).get(0);
+		exclusion.setMessage(null);
+		
+		DrawExclusionValidationException exception = assertThrows(DrawExclusionValidationException.class,
+				() -> victim.save(EntityMapper.fromEntityToDTO(exclusion), groupUser, soldiers.get(0)));
+		
+		assertEquals(1, exception.getValidationErrors().getNumberOfErrors());
+		assertEquals(new ValidationError(DRAW_EXCLUSION_MESSAGE, REQUIRED_FIELD),
+				exception.getValidationErrors().getError(0));
+	}
+	
+	@Test
+	void testSaveExclusionWhenSoldierIsFromDifferentArmy() {
+		Army army1 = getPersistedArmy(armyRepository);
+		Army army2 = TestDataCreator.newArmy();
+		army2.setName(DEFAULT_ARMY_NAME + "x");
+		army2.setAlias(DEFAULT_ARMY_ALIAS + "x");
+		armyRepository.saveAndFlush(army2);
+		
+		CJM cjm = getPersistedCJM(cjmRepository);
+		MilitaryOrganization organization = getPersistedMilitaryOrganization(army1, organizationRepository);
+		MilitaryRank rank = getPersistedMilitaryRank(army1, rankRepository, armyRepository);
+		
+		List<Soldier> soldiers = newSoldierList(army1, cjm, organization, rank, 2);
+		soldierRepository.saveAllAndFlush(soldiers);
+		
+		GroupUser groupUser = newGroupUserList(army2, cjm, 1).get(0);
+		groupUserRepository.saveAndFlush(groupUser);
+		
+		DrawExclusion exclusion = TestDataCreator.newDrawExclusionList(soldiers.get(0), groupUser, 1).get(0);
+		
+		IllegalStateException exception = assertThrows(IllegalStateException.class, 
+				() -> victim.save(EntityMapper.fromEntityToDTO(exclusion), groupUser, soldiers.get(0)));
+		assertEquals(INCONSISTENT_DATA, exception.getMessage());
+	}
 
 	@Test
 	void testDeleteExclusionSuccessfully() {
@@ -100,10 +171,7 @@ public class DrawExclusionServiceUnitTest {
 		MilitaryOrganization organization = getPersistedMilitaryOrganization(army, organizationRepository);
 		MilitaryRank rank = getPersistedMilitaryRank(army, rankRepository, armyRepository);
 		
-		List<Soldier> soldiers = newSoldierList(army, cjm, organization, rank, 2)
-			.stream()
-			.map(r -> EntityMapper.fromDTOToEntity(r))
-			.collect(Collectors.toList());
+		List<Soldier> soldiers = newSoldierList(army, cjm, organization, rank, 2);
 		soldierRepository.saveAllAndFlush(soldiers);
 		
 		GroupUser groupUser = newGroupUserList(army, cjm, 1).get(0);
@@ -139,10 +207,7 @@ public class DrawExclusionServiceUnitTest {
 		MilitaryOrganization organization = getPersistedMilitaryOrganization(army1, organizationRepository);
 		MilitaryRank rank = getPersistedMilitaryRank(army1, rankRepository, armyRepository);
 		
-		List<Soldier> soldiers = newSoldierList(army1, cjm, organization, rank, 2)
-			.stream()
-			.map(r -> EntityMapper.fromDTOToEntity(r))
-			.collect(Collectors.toList());
+		List<Soldier> soldiers = newSoldierList(army1, cjm, organization, rank, 2);
 		soldierRepository.saveAllAndFlush(soldiers);
 		
 		GroupUser groupUser = newGroupUserList(army2, cjm, 1).get(0);

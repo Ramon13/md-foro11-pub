@@ -19,7 +19,7 @@
   </style>
   <body>
     <div layout:fragment="content" class="centered-page">
-      <h1>Cadastrar novo militar</h1>
+      <h1 th:text="${editMode} ? 'Editar informações do militar' : 'Cadastrar novo militar'"></h1>
       <hr />
       
       <div th:if="${successMsg}" class="successMsg">

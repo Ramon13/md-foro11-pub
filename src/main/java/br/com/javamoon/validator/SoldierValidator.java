@@ -37,7 +37,7 @@ public class SoldierValidator {
 		this.militaryRankRepository = rankRepository;
 	}
 
-	public void saveSoldierValidation(SoldierDTO soldierDTO) throws SoldierValidationException {
+	public void saveSoldierValidation(SoldierDTO soldierDTO, Army army, CJM cjm) throws SoldierValidationException {
 		ValidationErrors validationErrors = new ValidationErrors();
 		
 		if (
@@ -45,14 +45,14 @@ public class SoldierValidator {
 				validateEmail(soldierDTO.getEmail(), validationErrors)
 		   ) {
 			
-			validateDuplicatedName(soldierDTO.getName(), soldierDTO.getArmy(), soldierDTO.getCjm(), validationErrors);
-			validateDuplicatedEmail(soldierDTO.getEmail(), soldierDTO.getArmy(), soldierDTO.getCjm(), validationErrors);
+			validateDuplicatedName(soldierDTO.getId(), soldierDTO.getName(), army, cjm, validationErrors);
+			validateDuplicatedEmail(soldierDTO.getId(), soldierDTO.getEmail(), army, cjm, validationErrors);
 		}
 		
 		ValidationUtils.throwOnErrors(SoldierValidationException.class, validationErrors);
 		
-		validateIfOrganizationBelongsToArmy(soldierDTO.getMilitaryOrganization(), soldierDTO.getArmy(), validationErrors);
-		validateIfRankBelongsToArmy(soldierDTO.getMilitaryRank(), soldierDTO.getArmy(), validationErrors);
+		validateIfOrganizationBelongsToArmy(soldierDTO.getMilitaryOrganization(), army, validationErrors);
+		validateIfRankBelongsToArmy(soldierDTO.getMilitaryRank(), army, validationErrors);
 	}
 	
 	private boolean validateName(String name, ValidationErrors validationErrors) {
@@ -69,15 +69,16 @@ public class SoldierValidator {
 		);
 	}
 	
-	private void validateDuplicatedName(String name, Army army, CJM cjm, ValidationErrors validationErrors) {
-		Optional<List<Soldier>> soldiers = soldierRepository.findByNameAndArmyAndCjm(name, army, cjm);
-		if (soldiers.isPresent() && !soldiers.get().isEmpty())
+	private void validateDuplicatedName(Integer id, String name, Army army, CJM cjm, ValidationErrors validationErrors) {
+		Optional<Soldier> soldier = soldierRepository.findActiveByNameAndArmyAndCjm(name, army, cjm);
+		if (soldier.isPresent() && !soldier.get().getId().equals(id))
 			validationErrors.add(SOLDIER_NAME, SOLDIER_NAME_ALREADY_EXISTS);
+		
 	}
 	
-	private void validateDuplicatedEmail(String email, Army army, CJM cjm, ValidationErrors validationErrors) {
-		Optional<List<Soldier>> soldiers = soldierRepository.findByEmailAndArmyAndCjm(email, army, cjm);
-		if (soldiers.isPresent() && !soldiers.get().isEmpty())
+	private void validateDuplicatedEmail(Integer id, String email, Army army, CJM cjm, ValidationErrors validationErrors) {
+		Optional<Soldier> soldier = soldierRepository.findActiveByEmailAndArmyAndCjm(email, army, cjm);
+		if (soldier.isPresent() && !soldier.get().getId().equals(id))
 			validationErrors.add(SOLDIER_EMAIL, ACCOUNT_EMAIL_ALREADY_EXISTS);
 	}
 	

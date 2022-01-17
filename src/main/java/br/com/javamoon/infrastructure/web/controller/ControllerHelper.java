@@ -13,9 +13,6 @@ import br.com.javamoon.domain.soldier.Army;
 import br.com.javamoon.domain.soldier.ArmyRepository;
 import br.com.javamoon.domain.soldier.MilitaryOrganizationRepository;
 import br.com.javamoon.domain.soldier.MilitaryRankRepository;
-import br.com.javamoon.domain.soldier.NoAvaliableSoldierException;
-import br.com.javamoon.domain.soldier.Soldier;
-import br.com.javamoon.domain.soldier.SoldierRepository;
 import br.com.javamoon.domain.user.User;
 import br.com.javamoon.infrastructure.web.security.Role;
 import br.com.javamoon.service.AnnualQuarterService;
@@ -104,18 +101,6 @@ public class ControllerHelper {
 		 }
 		 
 		 return sb.toString();
-	 }
-	 
-	 public static Soldier getSoldierById(SoldierRepository soldierRepository, 
-			 GroupUser groupUser, Integer soldierId) throws NoAvaliableSoldierException {
-		 
-		 Soldier soldier = soldierRepository.findByIdAndArmyAndCjm(
-				 			soldierId, groupUser.getArmy(), groupUser.getCjm()).get();
-		 
-		 if (soldier == null)
-			 throw new NoAvaliableSoldierException("Militar não encontrado ou não acessível");
-		 
-		 return soldier;
 	 }
 	 
 	 public static JusticeCouncil getDefaultCouncil(JusticeCouncilRepository councilRepo) {

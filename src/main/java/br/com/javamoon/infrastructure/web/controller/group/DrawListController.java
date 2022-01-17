@@ -100,7 +100,7 @@ public class DrawListController {
 	@GetMapping("/list/new")
 	public String createList(Model model) {
 		List<Soldier> soldiers = soldierRepo
-				.findAllByArmyAndCjm(ControllerHelper.getGpUserArmy(), ControllerHelper.getGpUserCjm());
+				.findAllActiveByArmyAndCjm(ControllerHelper.getGpUserArmy(), ControllerHelper.getGpUserCjm());
 		
 		DrawList drawList = new DrawList();
 		drawList.setQuarterYear(new AnnualQuarter(LocalDate.now()).toShortFormat());
@@ -120,7 +120,7 @@ public class DrawListController {
 		if (drawList.isPresent()) {
 			List<Soldier> drawListSoldiers = soldierRepo.findAllByDrawList(drawListId);
 			List<Soldier> soldiersByArmy = soldierRepo
-					.findAllByArmyAndCjm(ControllerHelper.getGpUserArmy(), ControllerHelper.getGpUserCjm());
+					.findAllActiveByArmyAndCjm(ControllerHelper.getGpUserArmy(), ControllerHelper.getGpUserCjm());
 			
 			soldiersByArmy.removeAll(drawListSoldiers);
 				

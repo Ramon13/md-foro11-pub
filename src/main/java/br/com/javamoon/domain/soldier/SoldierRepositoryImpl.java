@@ -41,9 +41,9 @@ public class SoldierRepositoryImpl {
 		}
 	}
 	
-	public List<Soldier> findByArmyAndCJMPaginable(Army army, CJM cjm, PaginationSearchFilter filter){
+	public List<Soldier> findActiveByArmyAndCJMPaginable(Army army, CJM cjm, PaginationSearchFilter filter){
 		StringBuilder hql = new StringBuilder();
-		hql.append("SELECT s FROM Soldier s LEFT JOIN FETCH s.militaryOrganization WHERE 0 = 0");
+		hql.append("SELECT s FROM Soldier s LEFT JOIN FETCH s.militaryOrganization WHERE s.active = true");
 		
 		if (!Objects.isNull(filter.getKey()))
 			hql.append(" AND s.name LIKE :soldierName");
@@ -63,9 +63,9 @@ public class SoldierRepositoryImpl {
 		return query.getResultList();
 	}
 	
-	public Long countByArmyAndCJMPaginable(Army army, CJM cjm, PaginationSearchFilter filter){
+	public Long countActiveByArmyAndCJMPaginable(Army army, CJM cjm, PaginationSearchFilter filter){
 		StringBuilder hql = new StringBuilder();
-		hql.append("SELECT COUNT(s) FROM Soldier s WHERE 0 = 0");
+		hql.append("SELECT COUNT(s) FROM Soldier s WHERE s.active = true");
 		
 		if (!Objects.isNull(filter.getKey()))
 			hql.append(" AND s.name LIKE :soldierName");

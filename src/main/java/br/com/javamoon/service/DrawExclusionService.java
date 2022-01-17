@@ -1,16 +1,5 @@
 package br.com.javamoon.service;
 
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
-import java.util.stream.Collectors;
-
-import javax.transaction.Transactional;
-
-import org.springframework.stereotype.Service;
-
 import br.com.javamoon.domain.draw.AnnualQuarter;
 import br.com.javamoon.domain.draw.CouncilType;
 import br.com.javamoon.domain.draw.Draw;
@@ -18,14 +7,19 @@ import br.com.javamoon.domain.draw.DrawRepository;
 import br.com.javamoon.domain.draw_exclusion.DrawExclusion;
 import br.com.javamoon.domain.draw_exclusion.DrawExclusionRepository;
 import br.com.javamoon.domain.group_user.GroupUser;
-import br.com.javamoon.domain.soldier.Army;
 import br.com.javamoon.domain.soldier.Soldier;
 import br.com.javamoon.exception.DrawExclusionNotFoundException;
 import br.com.javamoon.mapper.DrawExclusionDTO;
 import br.com.javamoon.mapper.EntityMapper;
 import br.com.javamoon.util.DateTimeUtils;
-import br.com.javamoon.util.SecurityUtils;
 import br.com.javamoon.validator.DrawExclusionValidator;
+import java.time.LocalDate;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
+import javax.transaction.Transactional;
+import org.springframework.stereotype.Service;
 
 @Service
 public class DrawExclusionService {
@@ -33,9 +27,7 @@ public class DrawExclusionService {
 	private DrawRepository drawRepo;
 	
 	private AnnualQuarterService annualQuarterSvc;
-	
-	private SoldierService soldierService;
-	
+
 	private DrawExclusionRepository drawExclusionRepository;
 	
 	private DrawExclusionValidator drawExclusionValidator;
@@ -43,11 +35,10 @@ public class DrawExclusionService {
 	public DrawExclusionService(
 			DrawRepository drawRepo,
 			AnnualQuarterService annualQuarterSvc,
-			SoldierService soldierService, DrawExclusionRepository drawExclusionRepository,
+			DrawExclusionRepository drawExclusionRepository,
 			DrawExclusionValidator drawExclusionValidator) {
 		this.drawRepo = drawRepo;
 		this.annualQuarterSvc = annualQuarterSvc;
-		this.soldierService = soldierService;
 		this.drawExclusionRepository = drawExclusionRepository;
 		this.drawExclusionValidator = drawExclusionValidator;
 	}
@@ -61,11 +52,12 @@ public class DrawExclusionService {
 	
 	@Transactional
 	public DrawExclusionDTO save(DrawExclusionDTO drawExclusionDTO, GroupUser groupUser, Soldier soldier) {
+		drawExclusionDTO.setSoldier(soldier);
+		drawExclusionDTO.setGroupUser(groupUser);
+		
 		drawExclusionValidator.saveExclusionValidation(drawExclusionDTO, groupUser);
 		
 		DrawExclusion drawExclusion = EntityMapper.fromDTOToEntity(drawExclusionDTO);
-		drawExclusion.setSoldier(soldier);
-		drawExclusion.setGroupUser(groupUser);
 		
 		drawExclusionRepository.save(drawExclusion);
 		return EntityMapper.fromEntityToDTO(drawExclusion);
@@ -88,18 +80,6 @@ public class DrawExclusionService {
 		drawExclusionValidator.getExclusionValidation(exclusionDTO, groupUser);
 		
 		return exclusionDTO;
-	}
-	
-	public void saveDrawExclusion(DrawExclusion exclusion, Army loggedUserArmy) throws ValidationException {
-		if (!validateArmySoldier(exclusion.getSoldier(), loggedUserArmy) ||
-				!soldierService.validateLoggedUserPermission(exclusion.getSoldier(), SecurityUtils.groupUser()))
-			throw new ValidationException("army", "Impossível editar o registro. Permissão negada.");
-		
-		if (!validateExclusionDates(exclusion))
-			throw new ValidationException("startDate", "Periodo inválido. A data inicial não pode ser após a data final");
-		
-		exclusion.setCreationDate(LocalDateTime.now());
-		drawExclusionRepository.save(exclusion);
 	}
 	
 	public Set<DrawExclusion> findByAnnualQuarter(AnnualQuarter annualQuarter, Soldier soldier) {
@@ -140,20 +120,5 @@ public class DrawExclusionService {
 		}
 		
 		return exclusions;
-	}
-	
-	private boolean validateExclusionDates(DrawExclusion exclusion) {
-		if (exclusion.getEndDate().isAfter(exclusion.getStartDate()))
-			return true;
-		return false;
-	}
-	
-	/**
-	 * Valid if the soldier belongs to the army
-	 */
-	private boolean validateArmySoldier(Soldier soldier, Army army) {
-		if (soldier.getArmy().equals(army))
-			return true;
-		return false;
 	}
 }

@@ -181,6 +181,7 @@ div.error input, input.error, select.error, textarea.error{
   text-align: center;
   font-family: "Roboto", sans-serif;
   border-radius: 4px;
+  margin-bottom: 20px;
 }
 
 .accordion{

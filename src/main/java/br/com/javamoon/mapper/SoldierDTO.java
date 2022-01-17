@@ -1,7 +1,5 @@
 package br.com.javamoon.mapper;
 
-import br.com.javamoon.domain.cjm_user.CJM;
-import br.com.javamoon.domain.soldier.Army;
 import br.com.javamoon.domain.soldier.MilitaryOrganization;
 import br.com.javamoon.domain.soldier.MilitaryRank;
 import javax.validation.constraints.Email;
@@ -30,15 +28,13 @@ public class SoldierDTO{
 	@Email(message = "O e-mail é inválido")
 	private String email;
 	
-	private Army army;
-	
 	@NotNull(message = "É necessário selecionar uma OM.")
 	private MilitaryOrganization militaryOrganization;
 	
 	@NotNull(message = "É necessário selecionar um posto.")
 	private MilitaryRank militaryRank;
 	
-	private CJM cjm;
+	private Boolean active;
 	
 	public void capitalizeName() {
 		name = name.toUpperCase();

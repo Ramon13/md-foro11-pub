@@ -1,119 +1,28 @@
 package br.com.javamoon.infrastructure.web.controller.group;
 
-import br.com.javamoon.domain.draw.AnnualQuarter;
 import br.com.javamoon.domain.draw.Draw;
 import br.com.javamoon.domain.draw.DrawRepository;
-import br.com.javamoon.domain.draw_exclusion.DrawExclusion;
-import br.com.javamoon.domain.draw_exclusion.DrawExclusionRepository;
 import br.com.javamoon.domain.group_user.GroupUser;
-import br.com.javamoon.domain.soldier.Army;
-import br.com.javamoon.domain.soldier.MilitaryOrganizationRepository;
-import br.com.javamoon.domain.soldier.MilitaryRankRepository;
-import br.com.javamoon.domain.soldier.NoAvaliableSoldierException;
-import br.com.javamoon.domain.soldier.Soldier;
-import br.com.javamoon.domain.soldier.SoldierRepository;
 import br.com.javamoon.infrastructure.web.controller.ControllerHelper;
-import br.com.javamoon.service.DrawExclusionService;
 import br.com.javamoon.service.DrawService;
-import br.com.javamoon.service.SoldierService;
-import br.com.javamoon.service.ValidationException;
 import br.com.javamoon.util.SecurityUtils;
-import br.com.javamoon.util.StringUtils;
-import java.io.IOException;
-import java.net.URLEncoder;
-import java.time.LocalDate;
-import java.util.Collections;
 import java.util.List;
 import java.util.Map;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpSession;
-import javax.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.validation.Errors;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 
 @Controller
 @RequestMapping(path = "/gp")
 public class GroupController {
-
-	@Autowired
-	private SoldierService soldierService;
-	
-	@Autowired
-	private DrawExclusionRepository exclusionRepository;
-	
-	@Autowired
-	private DrawExclusionService exclusionService;
-	
-	@Autowired
-	private MilitaryOrganizationRepository omRepo;
-	
-	@Autowired
-	private MilitaryRankRepository rankRepository;
-	
-	@Autowired
-	private SoldierRepository soldierRepository;
 	
 	@Autowired
 	private DrawRepository drawRepo;
 	
 	@Autowired
 	private DrawService drawSvc;
-	
-	@GetMapping(path="/sd/register/edit/{soldierId}")
-	public String editSoldier(@PathVariable Integer soldierId,
-			@RequestParam(value="successMsg", required=false) String successMsg,
-			Model model) throws NoAvaliableSoldierException {
-		
-		Soldier soldier = ControllerHelper.getSoldierById(soldierRepository, SecurityUtils.groupUser(), soldierId);
-		
-		Army army = ControllerHelper.getGpUserArmy();
-
-		ControllerHelper.setEditMode(model, false);
-		ControllerHelper.addMilitaryOrganizationsToRequest(omRepo, army, model);
-		ControllerHelper.addMilitaryRanksToRequest(rankRepository, army, model);
-		
-		model.addAttribute("soldier", soldier);
-		model.addAttribute("successMsg", successMsg);
-		model.addAttribute("soldierDrawCount", soldierService.countDrawBySoldier(soldier));
-		
-		ControllerHelper.setEditMode(model, true);
-		return "group/soldier-register";
-	}
-	
-	@PostMapping("/sd/delete/{soldierId}")
-	public String deleteSoldier(@PathVariable Integer soldierId,
-			HttpServletResponse response) throws NoAvaliableSoldierException{
-		
-		Soldier soldier = ControllerHelper.getSoldierById(soldierRepository, SecurityUtils.groupUser(), soldierId);
-		soldierService.delete(ControllerHelper.getGpUserArmy(), soldier);
-		
-		return ControllerHelper.getRedirectURL("/gp/home/0", Collections.emptyMap());
-	}
-	
-	@GetMapping("/sd/exclusion/{soldierId}")
-	public String drawExclusion(@PathVariable Integer soldierId, Model model) throws NoAvaliableSoldierException {
-		Soldier soldier = ControllerHelper.getSoldierById(soldierRepository, SecurityUtils.groupUser(), soldierId);
-		
-		DrawExclusion exclusion = new DrawExclusion();
-		exclusion.setSoldier(soldier);
-		
-		AnnualQuarter nextQuarter = new AnnualQuarter(LocalDate.now().plusMonths(3));
-		exclusion.setStartDate(nextQuarter.getStartQuarterDate());
-		exclusion.setEndDate(nextQuarter.getEndQuarterDate());
-		
-		model.addAttribute("exclusions", soldierRepository.findAllDrawExclusions(soldier));
-		model.addAttribute("drawExclusion", exclusion);
-		return "group/soldier-exclusion";
-	}
 	
 	@GetMapping("/cjm/dw")
 	public String listCJMCompletedDraw(Model model) {

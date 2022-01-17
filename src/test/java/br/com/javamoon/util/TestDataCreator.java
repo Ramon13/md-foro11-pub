@@ -99,6 +99,8 @@ public final class TestDataCreator {
 		SoldierDTO soldierDTO = new SoldierDTO();
 		soldierDTO.setName(DEFAULT_SOLDIER_NAME);
 		soldierDTO.setEmail(DEFAULT_USER_EMAIL);
+		soldierDTO.setMilitaryOrganization(newMilitaryOrganization());
+		soldierDTO.setMilitaryRank(newMilitaryRank());
 		return soldierDTO;
 	}
 	
@@ -152,23 +154,23 @@ public final class TestDataCreator {
 		return rank;
 	}
 	
-	public static List<SoldierDTO> newSoldierList(
+	public static List<Soldier> newSoldierList(
 			Army army,
 			CJM cjm,
 			MilitaryOrganization organization,
 			MilitaryRank rank,
 			int listSize) {
-		List<SoldierDTO> soldiers = new ArrayList<SoldierDTO>();
-		SoldierDTO soldierDTO;
+		List<Soldier> soldiers = new ArrayList<Soldier>();
+		Soldier soldier;
 		while (listSize-- > 0) {
-			soldierDTO = TestDataCreator.newSoldierDTO();
-			soldierDTO.setName(StringUtils.rightPad(DEFAULT_SOLDIER_NAME, SOLDIER_NAME_MAX_LEN - listSize, 'x'));
-			soldierDTO.setEmail(StringUtils.rightPad(DEFAULT_USER_EMAIL, SOLDIER_EMAIL_MAX_LEN - listSize, 'x'));
-			soldierDTO.setMilitaryRank(rank);
-			soldierDTO.setMilitaryOrganization(organization);
-			soldierDTO.setArmy(army);
-			soldierDTO.setCjm(cjm);
-			soldiers.add(soldierDTO);
+			soldier = TestDataCreator.newSoldier();
+			soldier.setName(StringUtils.rightPad(DEFAULT_SOLDIER_NAME, SOLDIER_NAME_MAX_LEN - listSize, 'x'));
+			soldier.setEmail(StringUtils.rightPad(DEFAULT_USER_EMAIL, SOLDIER_EMAIL_MAX_LEN - listSize, 'x'));
+			soldier.setArmy(army);
+			soldier.setMilitaryRank(rank);
+			soldier.setMilitaryOrganization(organization);
+			soldier.setCjm(cjm);
+			soldiers.add(soldier);
 		}
 		
 		return soldiers;
