@@ -45,7 +45,7 @@ public interface SoldierRepository extends JpaRepository<Soldier, Integer>{
 	public void delete(@Param("id") Integer soldierId);
 	
 	
-	@Query("from Soldier s left join fetch s.militaryOrganization where s.army = :army and s.cjm = :cjm and s.active = true order by s.name")
+	@Query("FROM Soldier s LEFT JOIN FETCH s.militaryOrganization WHERE s.active = true AND s.army = :army AND s.cjm = :cjm ORDER BY s.name")
 	public List<Soldier> findAllActiveByArmyAndCjm(@Param("army") Army army, @Param("cjm") CJM cjm);
 	
 	@Query("select s from Draw d join d.soldiers s where d.id = :drawId order by s.militaryRank.rankWeight asc")

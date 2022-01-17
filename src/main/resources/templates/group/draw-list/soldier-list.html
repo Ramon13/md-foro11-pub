@@ -4,6 +4,12 @@
   xmlns:th="http://www.thymeleaf.org" layout:decorate="~{group/layout}">
   
   <style layout:fragment="style">
+    form{
+      text-align: inherit;
+      width: 100%;
+      margin: auto;
+    }
+    
     input#listDescription{
       font-size: 20px;
     }
@@ -29,7 +35,9 @@
     
     div#pickOptions{
       display: inline-block;
-      margin: 5px
+      margin: 5px;
+      width: 8%;
+      text-align: center;
     }
     
     div#pickOptions button{
@@ -39,7 +47,7 @@
     div#pickList .left{
       width: 45%;
       float: left;
-      height: 350px;
+      height: 550px;
       border: 1px solid #eee;
       overflow: auto;
     }
@@ -54,7 +62,7 @@
     div#pickList .right{
       width: 45%;
       float: right;
-      height: 350px;
+      height: 550px;
       border: 1px solid #eee;
       overflow: auto;
     }
@@ -161,25 +169,21 @@
     </div>
     
     <script layout:fragment="page-script" th:inline="javascript">
-	    const saveListBtn = document.querySelector("button#saveList");
-	    saveListBtn.addEventListener("click", saveList);
-	    saveListBtn.querySelector('#loadCircle').style.display = 'none';
+	    setSoldierCheckboxListeners();
+	    setPickListArrowsListeners();
+	    setInputListFilterListeners();
 	    
+	    const backBtn = document.querySelector("button#back");
+      backBtn.addEventListener("click", function(){
+        window.history.back();
+      });
+	    
+      const saveListBtn = document.querySelector("button#saveList");
+      saveListBtn.addEventListener("click", saveList);
+      saveListBtn.querySelector('#loadCircle').style.display = 'none';
+      
      	listDescription.focus(); 	
      	addListeners();
-     	
-     	function saveList(){
-     		const form = document.querySelector("#formList");
-     		showLoadStatus();
-     		
-     		sendAjaxRequest(
-     				'POST', 
-     				form.action, 
-     				new FormData(form), 
-     				runSavedListSuccessTasks,
-     				runSavedListFailedTasks);
-     	}
-     	
      	
      	function sendToList(fromList, toList){
      		let soldiers = fromList.querySelectorAll(".soldier");
@@ -241,21 +245,21 @@
     	     				if (txtValue.indexOf(key) > -1){
     	     					soldiers[j].style.display = "";
     	     					found = true;
-    	     					break;
+    	     					//break;
     	     				}
          				}
          			}
          			
          			if (!found){
-         	            let sdDiv = document.createElement("div");
-         	            sdDiv.className = "soldier notFound";
-         	            
-         	            let sdName = document.createElement("label");
-         	            sdName.style.color = "red";
-         	            sdName.textContent = key;
-         	            
-         	            sdDiv.append(sdName);
-         	            fromList.append(sdDiv);
+	 	            let sdDiv = document.createElement("div");
+	 	            sdDiv.className = "soldier notFound";
+	 	            
+	 	            let sdName = document.createElement("label");
+	 	            sdName.style.color = "red";
+	 	            sdName.textContent = key;
+	 	            
+	 	            sdDiv.append(sdName);
+	 	            fromList.append(sdDiv);
          			}
          				
          		}	
@@ -263,40 +267,67 @@
      		}else{
      			showAllSoldiers(fromList);	
      		}
-     			
-     		
 	  	}
      	
-     	function addListeners(){
-     		const listDescription = document.querySelector("input#listDescription");
-        	const rightDiv = document.querySelector(".right");
-        	const leftDiv = document.querySelector(".left");
-  
-         	const btnToRight = document.querySelector("#toRight");
-         	btnToRight.addEventListener('click', function(){
-         		sendToList(leftDiv, rightDiv);
-         	});
-         	
-         	const btnToLeft = document.querySelector("#toLeft");
-         	btnToLeft.addEventListener('click', function(){
-         		sendToList(rightDiv, leftDiv);
-         	});
-         	
-         	const leftFilter = document.querySelector("#searchInputs #left");
-         	leftFilter.addEventListener("keyup", function(){
-         		searchOnList(leftDiv, leftFilter.value.toUpperCase());
-         	});
-         	
-         	const rightFilter = document.querySelector("#searchInputs #right");
-         	rightFilter.addEventListener("keyup", function(){
-         		searchOnList(rightDiv, rightFilter.value.toUpperCase());
-         	});
-         	
-					const backBtn = document.querySelector("button#back");
-					backBtn.addEventListener("click", function(){
-						window.history.back();
-					});
+     	function setSoldierCheckboxListeners(){
+     	   const soldiers = document.querySelectorAll("div.soldier");
+          let checkbox;
+          for (let i = 0; i < soldiers.length; i++){
+            soldiers[i].addEventListener('click', function(){
+              checkbox = this.querySelector("input[type=checkbox]");
+              checkbox.checked = !checkbox.checked;
+            });
+          }
+          
+          const checkboxes = document.querySelectorAll("div.soldier input[type=checkbox]");
+          for (let i = 0; i < checkboxes.length; i++){
+            checkboxes[i].addEventListener('click', function(event){
+              event.stopPropagation();
+            })
+          }	
      	}
+     	
+     	function setInputListFilterListeners(){
+   		  const rightDiv = document.querySelector(".right");
+        const leftDiv = document.querySelector(".left");
+        
+     		const leftFilter = document.querySelector("#searchInputs #left");
+        leftFilter.addEventListener("keyup", function(){
+          searchOnList(leftDiv, leftFilter.value.toUpperCase());
+        });
+        
+        const rightFilter = document.querySelector("#searchInputs #right");
+        rightFilter.addEventListener("keyup", function(){
+          searchOnList(rightDiv, rightFilter.value.toUpperCase());
+        });
+     	}
+     	
+     	function setPickListArrowsListeners(){
+     		const rightDiv = document.querySelector(".right");
+        const leftDiv = document.querySelector(".left");
+        
+     		const btnToRight = document.querySelector("#toRight");
+        btnToRight.addEventListener('click', function(){
+          sendToList(leftDiv, rightDiv);
+        });
+        
+        const btnToLeft = document.querySelector("#toLeft");
+        btnToLeft.addEventListener('click', function(){
+          sendToList(rightDiv, leftDiv);
+        });
+     	}
+     	
+     	function saveList(){
+        const form = document.querySelector("#formList");
+        showLoadStatus();
+        
+        sendAjaxRequest(
+            'POST', 
+            form.action, 
+            new FormData(form), 
+            runSavedListSuccessTasks,
+            runSavedListFailedTasks);
+      }
      	
      	function showLoadStatus(){
      		saveListBtn.querySelector('#loadCircle').style.display = '';

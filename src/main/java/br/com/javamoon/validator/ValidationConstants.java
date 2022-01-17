@@ -35,7 +35,7 @@ public final class ValidationConstants {
     public static final String IN_THE_PAST = "A data deve ser posterior a data atual";
     public static final String INCONSISTENT_DATE_PERIOD = "Período inválido";
     
-    
+    public static final Integer DRAW_LIST_DESCRIPTION_MAX_LEN = 2048; 
     
     public static final String NO_PERMISSION = "You do not have permision to edit this property.";
     private ValidationConstants() {}

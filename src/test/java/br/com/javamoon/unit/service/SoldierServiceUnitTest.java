@@ -9,8 +9,10 @@ import static br.com.javamoon.util.Constants.DEFAULT_RANK_NAME;
 import static br.com.javamoon.util.Constants.DEFAULT_SOLDIER_NAME;
 import static br.com.javamoon.util.TestDataCreator.getPersistedArmy;
 import static br.com.javamoon.util.TestDataCreator.getPersistedCJM;
+import static br.com.javamoon.util.TestDataCreator.getPersistedGroupUser;
 import static br.com.javamoon.util.TestDataCreator.getPersistedMilitaryOrganization;
 import static br.com.javamoon.util.TestDataCreator.getPersistedMilitaryRank;
+import static br.com.javamoon.util.TestDataCreator.newDrawList;
 import static br.com.javamoon.util.TestDataCreator.newSoldierList;
 import static br.com.javamoon.validator.ValidationConstants.ACCOUNT_EMAIL_ALREADY_EXISTS;
 import static br.com.javamoon.validator.ValidationConstants.SOLDIER_EMAIL;
@@ -20,8 +22,25 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+
+import java.util.List;
+import java.util.Optional;
+import java.util.stream.Collectors;
+
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.annotation.DirtiesContext;
+import org.springframework.test.annotation.DirtiesContext.ClassMode;
+import org.springframework.test.context.ActiveProfiles;
+
 import br.com.javamoon.domain.cjm_user.CJM;
 import br.com.javamoon.domain.cjm_user.CJMRepository;
+import br.com.javamoon.domain.entity.DrawList;
+import br.com.javamoon.domain.group_user.GroupUser;
+import br.com.javamoon.domain.group_user.GroupUserRepository;
+import br.com.javamoon.domain.repository.DrawListRepository;
 import br.com.javamoon.domain.soldier.Army;
 import br.com.javamoon.domain.soldier.ArmyRepository;
 import br.com.javamoon.domain.soldier.MilitaryOrganization;
@@ -38,15 +57,6 @@ import br.com.javamoon.service.SoldierService;
 import br.com.javamoon.service.ValidationException;
 import br.com.javamoon.util.TestDataCreator;
 import br.com.javamoon.validator.ValidationError;
-import java.util.List;
-import java.util.Optional;
-import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.annotation.DirtiesContext;
-import org.springframework.test.annotation.DirtiesContext.ClassMode;
-import org.springframework.test.context.ActiveProfiles;
 
 @SpringBootTest
 @ActiveProfiles("test")
@@ -70,6 +80,12 @@ public class SoldierServiceUnitTest {
 	
 	@Autowired
 	private SoldierRepository soldierRepository;
+	
+	@Autowired
+	private GroupUserRepository groupUserRepository;
+	
+	@Autowired
+	private DrawListRepository drawListRepository;
 	
 	@Test
 	void testSaveSoldierSuccessfully() throws ValidationException {
@@ -228,6 +244,35 @@ public class SoldierServiceUnitTest {
 		assertEquals(2, listPagination.getTotal());
 		assertEquals(soldiers.get(1).getName(), listPagination.getSoldiers().get(0).getName());
 		assertEquals(soldiers.get(2).getName(), listPagination.getSoldiers().get(1).getName());
+	}
+	
+	@Test
+	void testListPaginationByDrawListSuccessfully() {
+		Army army = getPersistedArmy(armyRepository);
+		CJM cjm = getPersistedCJM(cjmRepository);
+		
+		MilitaryOrganization organization = getPersistedMilitaryOrganization(army, organizationRepository);
+		MilitaryRank rank = getPersistedMilitaryRank(army, rankRepository, armyRepository);
+		
+		List<Soldier> soldiers = newSoldierList(army, cjm, organization, rank, 3);
+		soldierRepository.saveAllAndFlush(soldiers);
+		
+		GroupUser creationUser = getPersistedGroupUser(groupUserRepository, army, cjm);
+		
+		List<DrawList> drawLists = newDrawList(army, creationUser, 3);
+		drawLists.get(0).setSoldiers(soldiers.stream().collect(Collectors.toSet()));
+		drawListRepository.saveAllAndFlush(drawLists);
+		
+		SoldiersPagination soldiersPagination = victim.listPagination(drawLists.get(0).getId(), TestDataCreator.newPaginationFilter());
+		assertEquals(3, soldiersPagination.getSoldiers().size());
+		
+		soldiersPagination = victim.listPagination(drawLists.get(1).getId(), TestDataCreator.newPaginationFilter());
+		assertTrue(soldiersPagination.getSoldiers().isEmpty());
+		
+		soldiers.get(0).setActive(false);
+		soldierRepository.saveAndFlush(soldiers.get(0));
+		soldiersPagination = victim.listPagination(drawLists.get(0).getId(), TestDataCreator.newPaginationFilter());
+		assertEquals(2, soldiersPagination.getSoldiers().size());
 	}
 	
 	@Test

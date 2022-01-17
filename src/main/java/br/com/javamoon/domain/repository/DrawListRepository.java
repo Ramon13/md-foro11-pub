@@ -1,20 +1,25 @@
-package br.com.javamoon.domain.draw;
+package br.com.javamoon.domain.repository;
 
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
 import br.com.javamoon.domain.cjm_user.CJM;
+import br.com.javamoon.domain.entity.DrawList;
 import br.com.javamoon.domain.soldier.Army;
 
 public interface DrawListRepository extends JpaRepository<DrawList, Integer>{
 
+	@Query("FROM DrawList dl WHERE dl.active = true AND dl.id = :id AND dl.army = :army and dl.creationUser.cjm = :cjm")
+	Optional<DrawList> findActiveByIdAndArmyAndCjm(@Param("id") Integer id, @Param("army") Army army, @Param("cjm") CJM cjm);
+	
 	List<DrawList> findByArmyOrderByIdDesc(Army army);
 	
-	@Query("from DrawList dl where dl.army = :army and dl.creationUser.cjm = :cjm order by dl.id desc")
-	List<DrawList> findByArmyAndCjm(@Param("army") Army army, @Param("cjm") CJM cjm);
+	@Query("FROM DrawList dl WHERE dl.active = true AND dl.army = :army AND dl.creationUser.cjm = :cjm ORDER BY dl.id DESC")
+	Optional<List<DrawList>> findAllActiveByArmyAndCjm(@Param("army") Army army, @Param("cjm") CJM cjm);
 	
 	@Query("from DrawList dl where upper(dl.description) like :description and dl.army = :army")
 	DrawList findByDescriptionIgnoreCase(@Param("description") String description, @Param("army") Army army);

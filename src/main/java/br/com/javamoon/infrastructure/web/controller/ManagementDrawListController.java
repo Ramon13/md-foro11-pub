@@ -11,10 +11,11 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
+
 import br.com.javamoon.domain.cjm_user.CJM;
 import br.com.javamoon.domain.cjm_user.CJMUser;
-import br.com.javamoon.domain.draw.DrawList;
-import br.com.javamoon.domain.draw.DrawListRepository;
+import br.com.javamoon.domain.entity.DrawList;
+import br.com.javamoon.domain.repository.DrawListRepository;
 import br.com.javamoon.domain.soldier.Army;
 import br.com.javamoon.domain.soldier.ArmyRepository;
 import br.com.javamoon.domain.soldier.Soldier;
@@ -51,14 +52,13 @@ public class ManagementDrawListController {
 		CJM cjm = loggedUser.getAuditorship().getCjm();
 		
 		for (Army army : armyRepo.findAll())
-			drawLists.addAll(drawListRepo.findByArmyAndCjm(army, cjm));
+			drawLists.addAll(drawListRepo.findAllActiveByArmyAndCjm(army, cjm).get());
 		
 		Map<String, List<DrawList>> drawListsMap = drawListSvc.getMapAnnualQuarterDrawList(drawLists);
 		model.addAttribute("drawListsMap", drawListsMap);
 		return "management/draw-list/home";
 	}
 	
-	@SuppressWarnings("unchecked")
 	@GetMapping("/list/{drawListId}")
 	public String loadDrawList(@PathVariable Integer drawListId,
 			PaginationSearchFilter filter,
@@ -73,10 +73,10 @@ public class ManagementDrawListController {
 			model.addAttribute("drawList", drawList.get());
 			
 			soldiers = (List<Soldier>) soldierRepoImpl
-					.findByDrawListPaginable(Soldier.class, drawList.get(), filter);
+					.findAllByDrawListPaginable(drawList.get().getId(), filter);
 			
 			total = (Long) soldierRepoImpl
-					.findByDrawListPaginable(Long.class, drawList.get(), filter);
+					.countAllByDrawListPaginable(drawList.get().getId(), filter);
 			
 			filter.setTotal(total.intValue());
 			

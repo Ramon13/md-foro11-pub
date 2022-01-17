@@ -1,8 +1,8 @@
 package br.com.javamoon.domain.soldier;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+
 import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
 import javax.persistence.PersistenceContext;
@@ -10,8 +10,9 @@ import javax.persistence.Query;
 import javax.persistence.TypedQuery;
 
 import org.springframework.stereotype.Repository;
+
 import br.com.javamoon.domain.cjm_user.CJM;
-import br.com.javamoon.domain.draw.DrawList;
+import br.com.javamoon.domain.entity.DrawList;
 import br.com.javamoon.infrastructure.web.model.PaginationSearchFilter;
 
 @Repository
@@ -81,37 +82,42 @@ public class SoldierRepositoryImpl {
 		return query.getSingleResult();
 	}
 	
-	public <T> Object findByDrawListPaginable(Class<T> type, DrawList drawList, PaginationSearchFilter filter) {
-		List<String> hql = new ArrayList<String>();
-		hql.add("select s ");
-		hql.add("from DrawList dl join dl.soldiers s ");
-		hql.add("left join fetch s.militaryOrganization ");
-		hql.add("where dl.id = :drawListId ");
-		
-		if (type == Long.class) {
-			hql.set(0, "select count(s) ");
-			hql.set(2, " ");
-		}
+	public List<Soldier> findAllByDrawListPaginable(Integer listId, PaginationSearchFilter filter) {
+		StringBuilder hql = new StringBuilder();
+		hql.append("SELECT s FROM DrawList dl JOIN dl.soldiers s");
+		hql.append(" LEFT JOIN FETCH s.militaryOrganization");
+		hql.append(" WHERE dl.id = :listId AND s.active = true");
 		
 		if (filter.getKey() != null)
-			hql.add("and s.name like :soldierName ");
+			hql.append(" AND s.name LIKE :soldierName");
 		
-		hql.add("order by s.name");
+		hql.append(" ORDER BY s.name");
 		
-		StringBuilder hqlBuilder = new StringBuilder();
-		for (String s : hql)
-			hqlBuilder.append(s);
+		TypedQuery<Soldier> query = entityManager.createQuery(hql.toString(), Soldier.class);
+		query.setParameter("listId", listId);
 		
-		TypedQuery<T> query = entityManager.createQuery(hqlBuilder.toString(), type);
-		query.setParameter("drawListId", drawList.getId());
 		if (filter.getKey() != null)
 			query.setParameter("soldierName", "%" + filter.getKey() + "%");
-		
-		if (type == Long.class)
-			return query.getSingleResult();
-		
+				
 		query.setFirstResult(filter.getFirstResult() - 1);
 		query.setMaxResults(PaginationSearchFilter.ELEMENTS_BY_PAGE);
 		return query.getResultList();
+	}
+	
+	public Long countAllByDrawListPaginable(Integer listId, PaginationSearchFilter filter) {
+		StringBuilder hql = new StringBuilder();
+		hql.append("SELECT COUNT(s) FROM DrawList dl JOIN dl.soldiers s");
+		hql.append(" WHERE dl.id = :listId AND s.active = true");
+		
+		if (filter.getKey() != null)
+			hql.append(" AND s.name LIKE :soldierName");
+		
+		TypedQuery<Long> query = entityManager.createQuery(hql.toString(), Long.class);
+		query.setParameter("listId", listId);
+		
+		if (filter.getKey() != null)
+			query.setParameter("soldierName", "%" + filter.getKey() + "%");
+				
+		return query.getSingleResult();
 	}
 }

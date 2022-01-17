@@ -2,6 +2,10 @@ package br.com.javamoon.mapper;
 
 import br.com.javamoon.domain.soldier.MilitaryOrganization;
 import br.com.javamoon.domain.soldier.MilitaryRank;
+import br.com.javamoon.util.StringUtils;
+
+import java.util.Arrays;
+
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
@@ -38,5 +42,17 @@ public class SoldierDTO{
 	
 	public void capitalizeName() {
 		name = name.toUpperCase();
+	}
+	
+	public String getInfoAsText() {
+		return StringUtils.concatenate("\n", Arrays.asList(email, 
+				phone,
+				militaryRank.getName(),
+				String.format("%s - %s", militaryOrganization.getAlias(), militaryOrganization.getName())));
+	}
+	
+	public String getIdInfoAsText() {
+		return String.format("%s <%s>", name, 
+				(email == null) ? "Não enviado" : email);
 	}
 }

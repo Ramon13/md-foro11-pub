@@ -24,7 +24,7 @@
       font-size: 12px;
     }
     
-    div .draw-soldier-list{
+    div .draw-list{
       margin: auto;
       background-color: #eee;
       padding: 15px;
@@ -55,18 +55,18 @@
       </div>
       <hr />
       
-      <div class="empty-list" th:if="${#lists.isEmpty(drawSoldierList)}">
+      <div class="empty-list" th:if="${#lists.isEmpty(drawLists)}">
           <span>Não há listas cadastradas no sistema</span>
         </div>    
-      <div th:each="drawSoldiers : ${drawSoldierList}">
+      <div th:each="drawList : ${drawLists}">
       
-        <div class="draw-soldier-list">
+        <div class="draw-list">
           <div class="list-header">
-            <span th:text="'[' + ${drawSoldiers.quarterYear} + ']' + ' ' + ${drawSoldiers.description}"></span>
+            <span th:text="'[' + ${drawList.quarterYear} + ']' + ' ' + ${drawList.description}"></span>
             
             <div class="dropdown" th:if="${session.listScope}">
               <img class="more dropdown" th:src="@{/images/hmore.svg}"/>
-              <div class="dropdown-content" th:attr="data-listid=${drawSoldiers.id}">
+              <div class="dropdown-content" th:attr="data-listid=${drawList.id}">
                 <a class="removeList" href="#">Remover</a>
                 <a class="duplicateList" href="#">Duplicar</a>
               </div>
@@ -75,13 +75,13 @@
           
           <div class="list-info">
             <span>criado em:</span>
-            <span th:text="${drawSoldiers.creationDate}"></span> 
+            <span th:text="${drawList.creationDate}"></span> 
             <span> | </span>
             <span>ultima modificação:</span>
-            <span th:text="${drawSoldiers.updateDate}"></span>
+            <span th:text="${drawList.updateDate}"></span>
           </div>
           <br/>
-          <a th:href="@{/gp/dw/list/} + '' + ${drawSoldiers.id}">exibir</a>
+          <a th:href="@{/gp/dw/list/} + '' + ${drawList.id}">exibir</a>
         </div>
       </div>
       
@@ -91,7 +91,7 @@
     <script layout:fragment="page-script" th:inline="javascript">
     	const newListBtn = document.querySelector("button#newList");
     	addListener(newListBtn, "click", function(){
-    	  location.href = '[(@{/gp/dw/list/new})]';
+    	  location.href = '[(@{/gp/dw/list/new/home})]';
 		  }); 
     	
     	setRemoveListBtnListerner()

@@ -1,8 +1,24 @@
 package br.com.javamoon.util;
 
-import static br.com.javamoon.util.Constants.*;
+import static br.com.javamoon.util.Constants.DEFAULT_ARMY_ALIAS;
+import static br.com.javamoon.util.Constants.DEFAULT_ARMY_NAME;
+import static br.com.javamoon.util.Constants.DEFAULT_CJM_ALIAS;
+import static br.com.javamoon.util.Constants.DEFAULT_CJM_NAME;
+import static br.com.javamoon.util.Constants.DEFAULT_CJM_REGIONS;
+import static br.com.javamoon.util.Constants.DEFAULT_DRAW_LIST_QUARTER_YEAR;
+import static br.com.javamoon.util.Constants.DEFAULT_EXCLUSION_MESSAGE;
+import static br.com.javamoon.util.Constants.DEFAULT_ORGANIZATION_ALIAS;
+import static br.com.javamoon.util.Constants.DEFAULT_ORGANIZATION_NAME;
+import static br.com.javamoon.util.Constants.DEFAULT_RANK_ALIAS;
+import static br.com.javamoon.util.Constants.DEFAULT_RANK_NAME;
+import static br.com.javamoon.util.Constants.DEFAULT_RANK_WEIGHT;
+import static br.com.javamoon.util.Constants.DEFAULT_SOLDIER_NAME;
+import static br.com.javamoon.util.Constants.DEFAULT_USER_EMAIL;
+import static br.com.javamoon.util.Constants.DEFAULT_USER_PASSWORD;
+import static br.com.javamoon.util.Constants.DEFAULT_USER_USERNAME;
 import static br.com.javamoon.validator.ValidationConstants.SOLDIER_EMAIL_MAX_LEN;
 import static br.com.javamoon.validator.ValidationConstants.SOLDIER_NAME_MAX_LEN;
+
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
@@ -12,6 +28,7 @@ import org.apache.commons.lang3.StringUtils;
 import br.com.javamoon.domain.cjm_user.CJM;
 import br.com.javamoon.domain.cjm_user.CJMRepository;
 import br.com.javamoon.domain.draw_exclusion.DrawExclusion;
+import br.com.javamoon.domain.entity.DrawList;
 import br.com.javamoon.domain.group_user.GroupUser;
 import br.com.javamoon.domain.group_user.GroupUserRepository;
 import br.com.javamoon.domain.soldier.Army;
@@ -154,6 +171,12 @@ public final class TestDataCreator {
 		return rank;
 	}
 	
+	public static GroupUser getPersistedGroupUser(GroupUserRepository groupUserRepository, Army army, CJM cjm) {
+		GroupUser user = newGroupUserList(army, cjm, 1).get(0);
+		groupUserRepository.saveAndFlush(user);
+		return user;
+	}
+	
 	public static List<Soldier> newSoldierList(
 			Army army,
 			CJM cjm,
@@ -190,5 +213,20 @@ public final class TestDataCreator {
 		}
 		
 		return exclusions;
+	}
+	
+	public static List<DrawList> newDrawList(Army army, GroupUser creationUser, int numOfLists){
+		List<DrawList> lists = new ArrayList<DrawList>();
+		DrawList list;
+		while (numOfLists-- > 0) {
+			list = new DrawList();
+			list.setDescription(StringUtils.rightPad(Constants.DEFAULT_DRAW_LIST_DESCRIPTION, 64 - numOfLists, 'x'));
+			list.setQuarterYear(DEFAULT_DRAW_LIST_QUARTER_YEAR);
+			list.setArmy(army);
+			list.setCreationUser(creationUser);
+			lists.add(list);	
+		}
+		
+		return lists; 
 	}
 }

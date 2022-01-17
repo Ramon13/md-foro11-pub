@@ -1,7 +1,8 @@
-package br.com.javamoon.domain.draw;
+package br.com.javamoon.domain.entity;
 
 import java.time.LocalDate;
 import java.util.HashSet;
+import java.util.Objects;
 import java.util.Set;
 
 import javax.persistence.Column;
@@ -13,9 +14,8 @@ import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
+import javax.persistence.PrePersist;
 import javax.persistence.Table;
-import javax.validation.constraints.NotEmpty;
-import javax.validation.constraints.Size;
 
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
@@ -42,8 +42,6 @@ public class DrawList {
 	private Integer id;
 
 	@Column(nullable = false, unique = true)
-	@NotEmpty(message = "A descrição deve conter no mínimo 16 caracteres")
-	@Size(min = 16, max = 2048, message = "A descrição deve conter entre 16 e 2048 caracteres")
 	private String description;
 	
 	@CreationTimestamp
@@ -72,6 +70,12 @@ public class DrawList {
 			inverseJoinColumns = @JoinColumn(name = "soldier_id"))
 	private Set<Soldier> soldiers = new HashSet<Soldier>(0);
 	
-	private transient Set<Soldier> selectedSoldiers = new HashSet<Soldier>(0);
-	private transient Set<Soldier> deselectedSoldiers = new HashSet<Soldier>(0);
+	@Column(name = "active", nullable = false)
+	private Boolean active;
+	
+	@PrePersist
+	private void prePersist() {
+		if (Objects.isNull(active))
+			active = true;
+	}
 }

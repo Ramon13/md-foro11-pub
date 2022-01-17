@@ -76,7 +76,7 @@
           </tr>
         </thead>
         <tbody>
-          <tr th:each="soldier : ${soldiers}">
+          <tr th:each="soldier : ${soldiersPagination.soldiers}">
             <td><span th:text="${soldier.getIdInfoAsText()}"></span></td>
             
             <td><span th:text="${soldier.militaryOrganization.alias}"></span></td>

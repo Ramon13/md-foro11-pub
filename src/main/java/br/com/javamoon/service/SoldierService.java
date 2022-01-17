@@ -1,8 +1,17 @@
 package br.com.javamoon.service;
 
+import java.util.List;
+import java.util.Objects;
+import java.util.stream.Collectors;
+
+import javax.transaction.Transactional;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
 import br.com.javamoon.domain.cjm_user.CJM;
-import br.com.javamoon.domain.draw.DrawList;
 import br.com.javamoon.domain.draw.DrawRepository;
+import br.com.javamoon.domain.entity.DrawList;
 import br.com.javamoon.domain.group_user.GroupUser;
 import br.com.javamoon.domain.soldier.Army;
 import br.com.javamoon.domain.soldier.MilitaryRank;
@@ -17,11 +26,6 @@ import br.com.javamoon.infrastructure.web.model.SoldiersPagination;
 import br.com.javamoon.mapper.EntityMapper;
 import br.com.javamoon.mapper.SoldierDTO;
 import br.com.javamoon.validator.SoldierValidator;
-import java.util.List;
-import java.util.Objects;
-import javax.transaction.Transactional;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
 
 @Service
 public class SoldierService{
@@ -99,6 +103,20 @@ public class SoldierService{
 			soldierRepositoryImpl.findActiveByArmyAndCJMPaginable(army, cjm, filter),
 			soldierRepositoryImpl.countActiveByArmyAndCJMPaginable(army, cjm, filter)
 		);	
+	}
+	
+	public SoldiersPagination listPagination(Integer drawListId, PaginationSearchFilter filter) {
+		return new SoldiersPagination(
+			soldierRepositoryImpl.findAllByDrawListPaginable(drawListId, filter),
+			soldierRepositoryImpl.countAllByDrawListPaginable(drawListId, filter)
+		);
+	}
+	
+	public List<SoldierDTO> listAll(Army army, CJM cjm){
+		return soldierRepository.findAllActiveByArmyAndCjm(army, cjm)
+				.stream()
+				.map(r -> EntityMapper.fromEntityToDTO(r))
+				.collect(Collectors.toList());
 	}
 	
 	public Soldier getRandomSoldier(MilitaryRank rank, Army army, DrawList drawList, List<Integer> excludeSoldiers) throws NoAvaliableSoldierException{

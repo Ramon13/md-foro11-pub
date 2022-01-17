@@ -1,15 +1,10 @@
 package br.com.javamoon.domain.soldier;
 
-import br.com.javamoon.domain.cjm_user.CJM;
-import br.com.javamoon.domain.draw.Draw;
-import br.com.javamoon.domain.draw.DrawList;
-import br.com.javamoon.domain.draw_exclusion.DrawExclusion;
-import br.com.javamoon.util.StringUtils;
 import java.io.Serializable;
-import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Objects;
 import java.util.Set;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -21,6 +16,11 @@ import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.PrePersist;
 import javax.persistence.Table;
+
+import br.com.javamoon.domain.cjm_user.CJM;
+import br.com.javamoon.domain.draw.Draw;
+import br.com.javamoon.domain.draw_exclusion.DrawExclusion;
+import br.com.javamoon.domain.entity.DrawList;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
@@ -93,18 +93,6 @@ public class Soldier implements Serializable, Comparable<Soldier>{
 	}
 	
 	private transient Set<DrawExclusion> customExclusions = new HashSet<>(0);
-	
-	public String getInfoAsText() {
-		return StringUtils.concatenate("\n", Arrays.asList(email, 
-				phone,
-				militaryRank.getName(),
-				String.format("%s - %s", militaryOrganization.getAlias(), militaryOrganization.getName())));
-	}
-	
-	public String getIdInfoAsText() {
-		return String.format("%s <%s>", name, 
-				(email == null) ? "Não enviado" : email);
-	}
 	
 	public String getOmAliasAndName() {
 		return militaryOrganization != null

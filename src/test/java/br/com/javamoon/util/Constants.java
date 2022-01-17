@@ -28,5 +28,7 @@ public final class Constants {
     public static final Integer DEFAULT_RANK_WEIGHT = 5;
     
     public static final String DEFAULT_EXCLUSION_MESSAGE = "Férias em acapulco";
-    
+
+    public static final String DEFAULT_DRAW_LIST_DESCRIPTION = "Primeira lista exército 4º trimestre de 2021";
+    public static final String DEFAULT_DRAW_LIST_QUARTER_YEAR = "4/2021";
 }

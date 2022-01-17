@@ -1,4 +1,4 @@
-package br.com.javamoon.domain.draw;
+package br.com.javamoon.domain.repository;
 
 import java.util.List;
 
@@ -9,6 +9,7 @@ import javax.persistence.TypedQuery;
 import org.springframework.stereotype.Repository;
 
 import br.com.javamoon.domain.cjm_user.CJM;
+import br.com.javamoon.domain.entity.DrawList;
 import br.com.javamoon.domain.soldier.Army;
 
 @Repository
