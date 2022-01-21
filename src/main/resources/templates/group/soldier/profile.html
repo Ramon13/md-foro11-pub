@@ -112,7 +112,7 @@
           <span th:text="${soldier.email}"></span>
         </div>
         <div>
-          <a th:href="@{/gp/sd/register/home/} + ${soldier.id}">alterar</a>
+          <a id="editSoldier" href="#" th:attr="data-url=@{/gp/sd/register/home/} + ${soldier.id}">alterar</a>
           <span>|</span>
           <a id="deleteSoldier" href="#" th:attr="data-url=@{/gp/sd/register/delete/} + ${soldier.id}">excluir</a>
         </div>
@@ -184,15 +184,15 @@
     </div>
   </body>
   <script layout:fragment="page-script" th:inline="javascript">
-     const backBtn = document.querySelector("button#back");
-  	 const removeExclusions = document.querySelectorAll("img.remove-exclusion");
-  	 const deleteSoldier = document.querySelector("a#deleteSoldier");
+    const backBtn = document.querySelector("button#back");
+    const removeExclusions = document.querySelectorAll("img.remove-exclusion");
+    const deleteSoldier = document.querySelector("a#deleteSoldier");
   	 
-  	 for (let i = 0; i < removeExclusions.length; i++){
-  		 removeExclusions[i].addEventListener('click', function(){
-  			 this.parentElement.submit();
-  		 });
-  	 }
+    for (let i = 0; i < removeExclusions.length; i++){
+      removeExclusions[i].addEventListener('click', function(){
+    	  this.parentElement.submit();
+      });
+    }
   	 
   	 deleteSoldier.addEventListener('click', function(){
   		  if (window.confirm("Após deletar um militar esta operação não poderá mais ser desfeita. Deseja prosseguir com a deleção?")){
@@ -207,6 +207,12 @@
   	 
      backBtn.addEventListener('click', function(){
        location.href = historyPop();
+     });
+     
+     const editSoldierBtn = document.querySelector("a#editSoldier");
+     editSoldierBtn.addEventListener('click', function(){
+    	 historyPush();
+    	 location.href = this.dataset.url;
      });
   </script>
 </html>

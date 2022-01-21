@@ -85,13 +85,13 @@ public class GroupUserAccountController {
     	return new ModelAndView("redirect:/gp/accounts/list/home");
     }
     
-    @GetMapping(path="/account/password/reset")
+    @GetMapping(path="/password/reset")
 	public String resetCredentials(Model model){
 		model.addAttribute("user", SecurityUtils.groupUser());
 		return "auth/login-reset-credentials";
 	}
     
-    @PostMapping("/account/password/reset/save")
+    @PostMapping("/password/reset/save")
 	public String editUserPassword(@Valid @ModelAttribute("user") UserDTO userDTO, Errors errors, Model model,
 			HttpServletResponse response, HttpServletRequest request) throws IOException {
 		

@@ -1,12 +1,21 @@
 package br.com.javamoon.infrastructure.web.controller.group;
 
+import br.com.javamoon.domain.cjm_user.CJM;
+import br.com.javamoon.domain.draw.AnnualQuarter;
+import br.com.javamoon.domain.group_user.GroupUser;
+import br.com.javamoon.domain.soldier.Army;
+import br.com.javamoon.exception.DrawListValidationException;
+import br.com.javamoon.infrastructure.web.model.PaginationSearchFilter;
+import br.com.javamoon.infrastructure.web.model.SoldiersPagination;
+import br.com.javamoon.mapper.DrawListDTO;
+import br.com.javamoon.mapper.SoldierDTO;
+import br.com.javamoon.service.AnnualQuarterService;
+import br.com.javamoon.service.DrawListService;
+import br.com.javamoon.service.SoldierService;
+import br.com.javamoon.util.SecurityUtils;
 import java.time.LocalDate;
 import java.util.List;
-import java.util.Optional;
-
 import javax.validation.Valid;
-
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
@@ -19,52 +28,39 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.servlet.ModelAndView;
 
-import br.com.javamoon.domain.draw.AnnualQuarter;
-import br.com.javamoon.domain.entity.DrawList;
-import br.com.javamoon.domain.group_user.GroupUser;
-import br.com.javamoon.domain.soldier.Soldier;
-import br.com.javamoon.domain.soldier.SoldierRepository;
-import br.com.javamoon.infrastructure.web.controller.ControllerHelper;
-import br.com.javamoon.infrastructure.web.model.PaginationSearchFilter;
-import br.com.javamoon.infrastructure.web.model.SoldiersPagination;
-import br.com.javamoon.mapper.DrawListDTO;
-import br.com.javamoon.service.AnnualQuarterService;
-import br.com.javamoon.service.DrawListService;
-import br.com.javamoon.service.SoldierService;
-import br.com.javamoon.service.ValidationException;
-import br.com.javamoon.util.SecurityUtils;
-
 @Controller
 @RequestMapping(path="/gp/dw")
 public class DrawListController {
+	
+	private DrawListService drawListService;
+	
+	private SoldierService soldierService;
+	
+	private AnnualQuarterService annualQuarterService;
+		
+	public DrawListController(
+		DrawListService drawListService,
+		SoldierService soldierService,
+        AnnualQuarterService annualQuarterService) {
+		this.drawListService = drawListService;
+		this.soldierService = soldierService;
+		this.annualQuarterService = annualQuarterService;
+	}
 
-	@Autowired
-	private SoldierRepository soldierRepo;
-	
-	@Autowired
-	private DrawListService drawListSvc;
-	
-	@Autowired
-	private SoldierService soldierSvc;
-	
-	@Autowired
-	private AnnualQuarterService annualQuarterSvc;
-	
 	@GetMapping("/list")
-	public String drawSoldierList(Model model) {
+	public String listAll(Model model) {
 		GroupUser loggedUser = SecurityUtils.groupUser();
-		model.addAttribute("drawLists", drawListSvc.list(loggedUser.getArmy(), loggedUser.getCjm()));
+		model.addAttribute("drawLists", drawListService.list(loggedUser.getArmy(), loggedUser.getCjm()));
 		
 		return "group/draw-list/home";
 	}
 	
-	@SuppressWarnings("unchecked")
 	@GetMapping("/list/{listId}")
-	public String loadDrawList(@PathVariable Integer listId, PaginationSearchFilter filter, Model model) {
+	public String getDrawList(@PathVariable Integer listId, PaginationSearchFilter filter, Model model) {
 		GroupUser loggedUser = SecurityUtils.groupUser();
-		DrawListDTO drawList = drawListSvc.getList(listId, loggedUser.getArmy(), loggedUser.getCjm());
+		DrawListDTO drawList = drawListService.getList(listId, loggedUser.getArmy(), loggedUser.getCjm());
 		
-		SoldiersPagination soldiersPagination = soldierSvc.listPagination(drawList.getId(), filter);
+		SoldiersPagination soldiersPagination = soldierService.listPagination(drawList.getId(), filter);
 		filter.setTotal(soldiersPagination.getTotal().intValue());
 		
 		model.addAttribute("drawList", drawList);
@@ -74,52 +70,33 @@ public class DrawListController {
 	}
 	
 	@GetMapping("/list/new/home")
-	public String createList(Model model) {
+	public String createHome(Model model) {
 		GroupUser loggedUser = SecurityUtils.groupUser();
 		
 		DrawListDTO drawList = new DrawListDTO();
 		drawList.setQuarterYear(new AnnualQuarter(LocalDate.now()).toShortFormat());
 		
-		ControllerHelper.addSelectableQuartersToRequest(annualQuarterSvc, model);
+		model.addAttribute("quarters", annualQuarterService.getSelectableQuarters());
 		model.addAttribute("drawList", drawList);
-		model.addAttribute("soldiers", soldierSvc.listAll(loggedUser.getArmy(), loggedUser.getCjm()));
+		model.addAttribute("soldiers", soldierService.listAll(loggedUser.getArmy(), loggedUser.getCjm()));
 		
 		return "group/draw-list/soldier-list";
 	}
 	
 	@PostMapping("/list/new/save")
-	public ResponseEntity<String> saveList(@Valid @ModelAttribute("drawList") DrawList drawList,
+	public ResponseEntity<String> saveDrawList(@Valid @ModelAttribute("drawList") DrawListDTO drawListDTO,
 			Errors errors) throws IllegalStateException, InterruptedException{
 		String errorMsg;
-		
-		if (errors.hasErrors() == Boolean.FALSE) {
-			GroupUser loggedUser = SecurityUtils.groupUser();
-			
-			try {
-				Soldier[] soldiers = drawList.getSoldiers().toArray(new Soldier[0]);
-				
-				if (!soldierSvc.isValidArmy(loggedUser.getArmy(), soldiers))
-					throw new IllegalStateException();
 
-				if (!drawListSvc.isValidDescription(drawList.getDescription(), drawList.getId(), drawList.getArmy()))
-					throw new ValidationException("Nome de relação já cadastrado.");
+		if (!errors.hasErrors()) {
+			try {
+				GroupUser loggedUser = SecurityUtils.groupUser();
+				drawListService.save(drawListDTO, loggedUser.getArmy(), loggedUser.getCjm(), loggedUser);
 				
-				if (!annualQuarterSvc.isSelectableQuarter(drawList.getQuarterYear()))
-					throw new ValidationException("Trimestre inválido.");
-								
-				if (!soldierSvc.isValidCjm(loggedUser.getCjm(), soldiers))
-					throw new ValidationException("O militar selecionado não pertence a outra região militar");
-			
-			}catch(ValidationException e) {
-				errorMsg = e.getMessage();
+				return new ResponseEntity<String>("A lista foi salva", HttpStatus.OK);
+			} catch (DrawListValidationException e) {
+				errorMsg = e.getValidationErrors().getError(0).getErrorMessage();
 			}
-			
-			drawList.setArmy(loggedUser.getArmy());
-			drawList.setCreationUser(loggedUser);
-			
-			drawListSvc.save(drawList);
-			
-			return new ResponseEntity<String>("A lista foi salva", HttpStatus.OK);
 		}else {
 			errorMsg = errors.getFieldError().getDefaultMessage();
 		}
@@ -127,65 +104,37 @@ public class DrawListController {
 		return new ResponseEntity<String>(errorMsg, HttpStatus.BAD_REQUEST);
 	}
 	
-	@GetMapping("/list/edit/{drawListId}")
-	public String editDrawList(@PathVariable Integer drawListId,
-			Model model) {
-		Optional<DrawList> drawList = drawListRepo.findById(drawListId);
+	@GetMapping("/list/edit/{listId}")
+	public String editHome(@PathVariable Integer listId,Model model) {
+		Army army = SecurityUtils.groupUser().getArmy();
+		CJM cjm = SecurityUtils.groupUser().getCjm();
 		
-		if (drawList.isPresent()) {
-			List<Soldier> drawListSoldiers = soldierRepo.findAllByDrawList(drawListId);
-			List<Soldier> soldiersByArmy = soldierRepo
-					.findAllActiveByArmyAndCjm(ControllerHelper.getGpUserArmy(), ControllerHelper.getGpUserCjm());
-			
-			soldiersByArmy.removeAll(drawListSoldiers);
-				
-			model.addAttribute("drawList", drawList.get());
-			model.addAttribute("drawListSoldiers", drawListSoldiers);
-			model.addAttribute("soldiers", soldiersByArmy);
-			
-			if (annualQuarterSvc.isSelectableQuarter(drawList.get().getQuarterYear()))
-				ControllerHelper.addSelectableQuartersToRequest(annualQuarterSvc, model);
-			
-			return "group/draw-list/soldier-list";
-		}
+		DrawListDTO drawList = drawListService.getList(listId, army, cjm);
 		
-		throw new IllegalStateException("Lista não encontrada!");
+		List<SoldierDTO> drawListSoldiers = soldierService.listByDrawList(drawList.getId());
+		List<SoldierDTO> allSoldiers = soldierService.listAll(army, cjm);
+		
+		allSoldiers.removeAll(drawListSoldiers);
+			
+		model.addAttribute("drawList", drawList);
+		model.addAttribute("drawListSoldiers", drawListSoldiers);
+		model.addAttribute("soldiers", allSoldiers);
+		model.addAttribute("quarters", annualQuarterService.getSelectableQuarters());
+			
+		return "group/draw-list/soldier-list";
 	}
 		
-	@PostMapping("/list/remove/{drawListId}")
-	public ModelAndView removeList(@PathVariable Integer drawListId) {
-		Optional<DrawList> drawList = drawListRepo.findById(drawListId);
+	@PostMapping("/list/remove/{listId}")
+	public ModelAndView removeList(@PathVariable Integer listId) {
 		GroupUser loggedUser = SecurityUtils.groupUser();
-		
-		if (drawList.isPresent()) {
-			GroupUser creationUser = drawList.get().getCreationUser();
-			
-			if (loggedUser.getArmy().equals(creationUser.getArmy()) &&
-					loggedUser.getCjm().equals(creationUser.getCjm())) {
-				
-				drawListSvc.delete(drawList.get());
-			}
-		}
-		
+		drawListService.delete(listId, loggedUser.getArmy(), loggedUser.getCjm());
 		return new ModelAndView("redirect:/gp/dw/list");
 	}
 	
-	@PostMapping("/list/duplicate/{drawListId}")
-	public ModelAndView duplicateList(@PathVariable Integer drawListId) {
-		Optional<DrawList> drawList = drawListRepo.findById(drawListId);
+	@PostMapping("/list/duplicate/{listId}")
+	public ModelAndView duplicateList(@PathVariable Integer listId) {
 		GroupUser loggedUser = SecurityUtils.groupUser();
-		
-		if (drawList.isPresent()) {
-			GroupUser creationUser = drawList.get().getCreationUser();
-			
-			if (drawList.get().getId() != null &&
-					loggedUser.getArmy().equals(creationUser.getArmy()) &&
-					loggedUser.getCjm().equals(creationUser.getCjm())) {
-				
-				drawListSvc.duplicate(drawList.get());
-			}
-		}
-		
+		drawListService.duplicate(listId, loggedUser.getArmy(), loggedUser.getCjm(), loggedUser);
 		return new ModelAndView("redirect:/gp/dw/list");
 	}
 }

@@ -73,9 +73,14 @@ public class DrawList {
 	@Column(name = "active", nullable = false)
 	private Boolean active;
 	
+	@Column(name = "enable_for_draw", nullable = false)
+	private Boolean enableForDraw;
+	
 	@PrePersist
 	private void prePersist() {
 		if (Objects.isNull(active))
 			active = true;
+		if (Objects.isNull(enableForDraw))
+			enableForDraw = false;
 	}
 }

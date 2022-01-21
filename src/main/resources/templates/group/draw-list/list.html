@@ -4,9 +4,9 @@
   xmlns:th="http://www.thymeleaf.org" layout:decorate="~{group/layout}">
   
   <style layout:fragment="style">    
-	span#listDescription{
-	  font-size: 20px;
-	}
+  	span#listDescription{
+  	  font-size: 20px;
+  	}
     
     fieldset#saveEditSoldierFieldset {
       margin: 32px auto;
@@ -28,8 +28,8 @@
       width: 12px;
     }
     
-    div#newSoldier{
-        float: right;
+    tbody.soldier:hover{
+      cursor: pointer;
     }
   </style>
   <body>
@@ -62,11 +62,6 @@
       </div>
       <br/><br/>
       
-      <div th:if="${session.listScope}" id="newSoldier">
-        <a th:href="@{/gp/sd/register}">Novo Militar</a>
-      </div>
-      <br/><br/>    
-      
       <table id="soldiers">
         <thead>
           <tr>
@@ -75,24 +70,15 @@
             <th>Posto</th>
           </tr>
         </thead>
-        <tbody>
-          <tr th:each="soldier : ${soldiersPagination.soldiers}">
+        <tbody th:each="soldier : ${soldiersPagination.soldiers}"
+          th:classappend="${session.listScope} ? 'soldier' : ''" 
+          th:attr="data-sdprofile = ${session.listScope} ? @{/gp/sd/profile/home/} + ${soldier.id} : ''">
+          <tr>
             <td><span th:text="${soldier.getIdInfoAsText()}"></span></td>
             
             <td><span th:text="${soldier.militaryOrganization.alias}"></span></td>
             
-            <td><span th:text="${soldier.militaryRank.alias}"></span></td>
-            
-            <td th:if="${session.listScope}">
-              <div>
-  	            <a style="float:left" th:href="@{/gp/sd/register/edit/} + ${soldier.id}">
-  	              <img th:src="@{/images/edit-pencil.svg}"
-  	                title="Editar informações do militar" /></a>
-  	              
-  	            <a style="float:right" th:href="@{/gp/sd/exclusion/} + ${soldier.id}">
-  	              <img th:src="@{/images/new-plus.svg}" title="Gerenciar impedimentos"/></a>
-              </div>
-            </td>            
+            <td><span th:text="${soldier.militaryRank.alias}"></span></td>            
           </tr>
           
         </tbody>
@@ -106,10 +92,18 @@
     </div>
     
     <script layout:fragment="page-script" th:inline="javascript">
-      	const backBtn = document.querySelector("button#back");
+      const backBtn = document.querySelector("button#back");
   		backBtn.addEventListener("click", function(){
-    		location.href = "[(@{/gp/dw/list})]";
+  			location.href = historyPop();
     	});
+  		
+  		const soldiers = document.querySelectorAll("tbody.soldier");
+  		for (let i = 0; i < soldiers.length; i++){
+        soldiers[i].addEventListener('click', function(){
+        	historyPush();
+          location.href = this.dataset.sdprofile;
+        }); 
+      }
     </script>
   </body>
 </html>

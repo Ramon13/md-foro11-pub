@@ -1,8 +1,9 @@
 use md_foro11;
+
 #CJM
 insert into CJM (id, cjm_name, alias, regions) 
-	values
-		(1, '1ª Circunscrição Judiciária Militar', '1ª CJM', 'RJ e ES'), 
+  values
+		(1, '1ª Circunscrição Judiciária Militar', '1ª CJM', 'RJ e ES'),
 		(2, '2ª Circunscrição Judiciária Militar', '2ª CJM', 'SP');
 	
 #Auditorship
@@ -143,26 +144,26 @@ insert into GROUP_USER (id, username, email, user_password, active, credentials_
 		
 		
 #Draw List------------------------------------------------------------------------------------------------------		
-insert into DRAW_LIST (id, creation_date, update_date, army_id, quarter_year, description, creation_user_id, active)
+insert into DRAW_LIST (id, creation_date, update_date, army_id, quarter_year, description, creation_user_id, active, enable_for_draw)
 	values
-		(1, '2021-10-13', '2021-10-13', 1, '4/2021', 'Primeira lista exército 4º trimestre de 2021', 1, 1);
+		(1, '2021-10-13', '2021-10-13', 1, '4/2021', 'Primeira lista exército 4º trimestre de 2021', 1, 1, 0);
 		
 insert into DRAW_LIST_HAS_SOLDIER (draw_list_id, soldier_id)
 	values
 		(1, 1), (1, 2), (1, 3), (1, 4), (1, 5);			
 
 
-insert into DRAW_LIST (id, creation_date, update_date, army_id, quarter_year, description, creation_user_id, active)
+insert into DRAW_LIST (id, creation_date, update_date, army_id, quarter_year, description, creation_user_id, active, enable_for_draw)
 	values
-		(2, '2021-10-13', '2021-10-13', 2, '3/2021', 'Primeira lista exército 4º trimestre de 2021', 1, 1);
+		(2, '2021-10-13', '2021-10-13', 2, '3/2021', 'Primeira lista marinha 4º trimestre de 2021', 1, 1, 0);
 		
 insert into DRAW_LIST_HAS_SOLDIER (draw_list_id, soldier_id)
 	values
 		(2, 11), (2, 12), (2, 13), (2, 14), (2, 15), (2, 16), (2, 18);		
 
-insert into DRAW_LIST (id, creation_date, update_date, army_id, quarter_year, description, creation_user_id, active)
+insert into DRAW_LIST (id, creation_date, update_date, army_id, quarter_year, description, creation_user_id, active, enable_for_draw)
 	values
-		(3, '2021-10-13', '2021-10-13', 3, '3/2021', 'Primeira lista exército 4º trimestre de 2021', 3, 1);
+		(3, '2021-10-13', '2021-10-13', 3, '3/2021', 'Primeira lista aeronáutica 4º trimestre de 2021', 3, 1, 0);
 		
 insert into DRAW_LIST_HAS_SOLDIER (draw_list_id, soldier_id)
 	values

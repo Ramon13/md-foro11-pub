@@ -18,19 +18,13 @@ import static br.com.javamoon.util.Constants.DEFAULT_USER_PASSWORD;
 import static br.com.javamoon.util.Constants.DEFAULT_USER_USERNAME;
 import static br.com.javamoon.validator.ValidationConstants.SOLDIER_EMAIL_MAX_LEN;
 import static br.com.javamoon.validator.ValidationConstants.SOLDIER_NAME_MAX_LEN;
-
-import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.List;
-
-import org.apache.commons.lang3.StringUtils;
-
 import br.com.javamoon.domain.cjm_user.CJM;
 import br.com.javamoon.domain.cjm_user.CJMRepository;
 import br.com.javamoon.domain.draw_exclusion.DrawExclusion;
 import br.com.javamoon.domain.entity.DrawList;
 import br.com.javamoon.domain.group_user.GroupUser;
 import br.com.javamoon.domain.group_user.GroupUserRepository;
+import br.com.javamoon.domain.repository.DrawListRepository;
 import br.com.javamoon.domain.soldier.Army;
 import br.com.javamoon.domain.soldier.ArmyRepository;
 import br.com.javamoon.domain.soldier.MilitaryOrganization;
@@ -40,11 +34,20 @@ import br.com.javamoon.domain.soldier.MilitaryRankRepository;
 import br.com.javamoon.domain.soldier.Soldier;
 import br.com.javamoon.domain.soldier.SoldierRepository;
 import br.com.javamoon.infrastructure.web.model.PaginationSearchFilter;
+import br.com.javamoon.mapper.DrawListDTO;
+import br.com.javamoon.mapper.EntityMapper;
 import br.com.javamoon.mapper.SoldierDTO;
 import br.com.javamoon.mapper.UserDTO;
+import br.com.javamoon.service.AnnualQuarterService;
 import br.com.javamoon.validator.DrawExclusionValidator;
+import br.com.javamoon.validator.DrawListValidator;
 import br.com.javamoon.validator.GroupUserAccountValidator;
 import br.com.javamoon.validator.SoldierValidator;
+import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.stream.Collectors;
+import org.apache.commons.lang3.StringUtils;
 
 public final class TestDataCreator {
 
@@ -63,6 +66,11 @@ public final class TestDataCreator {
 	
 	public static DrawExclusionValidator newExclusionValidator() {
 		return new DrawExclusionValidator();
+	}
+	
+	public static DrawListValidator newDrawListValidator(
+			DrawListRepository drawListRepository, AnnualQuarterService annualQuarterService) {
+		return new DrawListValidator(drawListRepository, annualQuarterService);
 	}
 	
 	public static UserDTO newUserDTO() {
@@ -228,5 +236,18 @@ public final class TestDataCreator {
 		}
 		
 		return lists; 
+	}
+	
+	public static List<DrawListDTO> newDrawListDTO(Army army, GroupUser creGroupUser, int numOfLists) {
+		List<DrawListDTO> listDTO = newDrawList(army, creGroupUser, numOfLists)
+		.stream()
+		.map(r -> EntityMapper.fromEntityToDTO(r))
+		.collect(Collectors.toList());
+		
+		listDTO.stream()
+			.forEach(r -> {
+				r.setSelectedSoldiers(List.of(1, 2, 3, 4, 5));
+			});
+		return listDTO;
 	}
 }

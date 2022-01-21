@@ -279,7 +279,7 @@ public class ManagementDrawController {
 		model.addAttribute("selectQuarter", selectedQuarterYear);
 		model.addAttribute("drawSoldierList", drawList); 
 		
-		ControllerHelper.addSelectableQuartersToRequest(annualQuarterSvc, model);
+		model.addAttribute("quarters", annualQuarterSvc.getSelectableQuarters());
 		ControllerHelper.addCouncilsToRequest(councilRepo, model);
 		ControllerHelper.addArmiesToRequest(armyRepo, model);
 		

@@ -25,6 +25,7 @@ public final class ValidationConstants {
     
     public static final String REQUIRED_FIELD = "O campo não pode ser vazio.";
     public static final String STRING_EXCEEDS_MAX_LEN = "O campo excedeu o valor máximo de caracteres permitidos.";
+    public static final String STRING_BELOW_MIN_LEN = "O campo não atingiu o valor mínimo de caracteres necessários.";
     
     public static final String DRAW_EXCLUSION_MESSAGE = "message";
     public static final String DRAW_EXCLUSION_START_DATE = "startDate";
@@ -35,7 +36,15 @@ public final class ValidationConstants {
     public static final String IN_THE_PAST = "A data deve ser posterior a data atual";
     public static final String INCONSISTENT_DATE_PERIOD = "Período inválido";
     
-    public static final Integer DRAW_LIST_DESCRIPTION_MAX_LEN = 2048; 
+    public static final String DRAW_LIST_DESCRIPTION = "description";
+    public static final String DRAW_LIST_DESCRIPTION_ALREADY_EXISTS = "Descrição já cadastrada no sistema.";
+    public static final String DRAW_LIST_QUARTER_YEAR = "quarterYear";
+    public static final String DRAW_LIST_QUARTER_YEAR_OUT_OF_BOUNDS = "Trimestre inválido. O trimestre não pode ser selecionado.";
+    public static final String DRAW_LIST_SELECTED_SOLDIERS = "selectedSoldiers";
+    public static final Integer DRAW_LIST_DESCRIPTION_MAX_LEN = 2048;
+    public static final Integer DRAW_LIST_QUARTER_YEAR_MAX_LEN = 7;
+    public static final Integer DRAW_LIST_SELECTED_SOLDIERS_MIN_LEN = 5;
+    public static final String DRAW_LIST_SELECTED_SOLDIERS_BELOW_MIN_LEN = "A lista deve ser composta por no mínimo 5 militares";
     
     public static final String NO_PERMISSION = "You do not have permision to edit this property.";
     private ValidationConstants() {}

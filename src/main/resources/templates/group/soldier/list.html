@@ -46,7 +46,8 @@
           </tr>
         </thead>
         <tbody th:each="soldier : ${soldiersPagination.soldiers}"
-          class="soldier" th:attr="data-sdprofile=@{/gp/sd/profile/home/} + ${soldier.id}">
+          th:classappend="${session.listScope} ? 'soldier' : ''"
+          th:attr="data-sdprofile=${session.listScope} ? @{/gp/sd/profile/home/} + ${soldier.id} : ''">
           <tr>
             <td><span th:text="${soldier.getIdInfoAsText()}"></span></td>
             
@@ -57,28 +58,18 @@
           
         </tbody>
       </table>
-      
-      <br/><br/>
-      
-      <button type="button" id="back" class="app-gray-btn">
-        <span>Voltar</span>
-      </button>
     </div>
     
     <script layout:fragment="page-script" th:inline="javascript">
-        historyPush();
-      	const backBtn = document.querySelector("button#back");
-      	const soldiers = document.querySelectorAll("tbody.soldier");
-      	
-    		backBtn.addEventListener("click", function(){
-    			  location.href = "[(@{/gp/dw/list})]";
-			  });
-    		
-    		for (let i = 0; i < soldiers.length; i++){
-    			  soldiers[i].addEventListener('click', function(){
-    				  location.href = this.dataset.sdprofile;
-    			  });	
-    		}
+      historyPush();
+      const soldiers = document.querySelectorAll("tbody.soldier");
+      
+      for (let i = 0; i < soldiers.length; i++){
+        soldiers[i].addEventListener('click', function(){
+          historyPush();
+          location.href = this.dataset.sdprofile;
+        });	
+      }
     </script>
   </body>
 </html>

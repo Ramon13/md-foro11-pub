@@ -69,10 +69,6 @@ public class ControllerHelper {
 		 model.addAttribute("ranksByArmy", rankRepository.findAllByArmiesIn(army));
 	 }
 	 
-	 public static void addSelectableQuartersToRequest(AnnualQuarterService svc, Model model) {
-		 model.addAttribute("quarters", svc.getSelectableQuarters());
-	 }
-	 
 	 public static Army getGpUserArmy() {
 		 return SecurityUtils.groupUser().getArmy();
 	 }

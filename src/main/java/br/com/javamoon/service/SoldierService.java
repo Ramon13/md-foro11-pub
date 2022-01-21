@@ -119,6 +119,17 @@ public class SoldierService{
 				.collect(Collectors.toList());
 	}
 	
+	public List<Soldier> listById(Army army, CJM cjm, List<Integer> soldierIds){
+		return soldierRepository.findByArmyAndCjmAndIdIn(army, cjm, soldierIds);
+	}
+	
+	public List<SoldierDTO> listByDrawList(Integer listId){
+		return soldierRepository.findAllActiveByDrawList(listId)
+				.stream()
+				.map(r -> EntityMapper.fromEntityToDTO(r))
+				.collect(Collectors.toList());
+	}
+	
 	public Soldier getRandomSoldier(MilitaryRank rank, Army army, DrawList drawList, List<Integer> excludeSoldiers) throws NoAvaliableSoldierException{
 		return soldierRepositoryImpl.findByMilitaryRankAndArmy(rank, army, drawList, excludeSoldiers);
 	}

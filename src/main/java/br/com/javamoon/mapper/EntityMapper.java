@@ -88,6 +88,15 @@ public final class EntityMapper {
     	drawListDTO.setQuarterYear(drawList.getQuarterYear());
     	drawListDTO.setCreationDate(drawList.getCreationDate());
     	drawListDTO.setUpdateDate(drawList.getUpdateDate());
+    	drawListDTO.setEnableForDraw(drawList.getEnableForDraw());
     	return drawListDTO;
+    }
+    
+    public static DrawList fromDTOToEntity(DrawListDTO drawListDTO) {
+    	DrawList drawList = new DrawList();
+    	drawList.setDescription(drawListDTO.getDescription());
+    	drawList.setQuarterYear(drawListDTO.getQuarterYear());
+    	drawList.setEnableForDraw(drawListDTO.getEnableForDraw());
+    	return drawList;
     }
 }

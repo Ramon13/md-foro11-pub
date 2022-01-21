@@ -1,5 +1,17 @@
 package br.com.javamoon.service;
 
+import br.com.javamoon.domain.cjm_user.CJM;
+import br.com.javamoon.domain.draw.AnnualQuarter;
+import br.com.javamoon.domain.entity.DrawList;
+import br.com.javamoon.domain.group_user.GroupUser;
+import br.com.javamoon.domain.repository.DrawListRepository;
+import br.com.javamoon.domain.soldier.Army;
+import br.com.javamoon.domain.soldier.Soldier;
+import br.com.javamoon.exception.DrawListNotFoundException;
+import br.com.javamoon.mapper.DrawListDTO;
+import br.com.javamoon.mapper.EntityMapper;
+import br.com.javamoon.validator.DrawListValidator;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
@@ -7,37 +19,26 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.TreeMap;
 import java.util.stream.Collectors;
-
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
 import javax.transaction.Transactional;
-
-import org.springframework.beans.BeanUtils;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.hibernate.Hibernate;
 import org.springframework.stereotype.Service;
-
-import br.com.javamoon.domain.cjm_user.CJM;
-import br.com.javamoon.domain.entity.DrawList;
-import br.com.javamoon.domain.repository.DrawListRepository;
-import br.com.javamoon.domain.soldier.Army;
-import br.com.javamoon.domain.soldier.Soldier;
-import br.com.javamoon.domain.soldier.SoldierRepository;
-import br.com.javamoon.exception.DrawListNotFoundException;
-import br.com.javamoon.mapper.DrawListDTO;
-import br.com.javamoon.mapper.EntityMapper;
 
 @Service
 public class DrawListService {
 	
-	@Autowired
 	private DrawListRepository drawListRepo;
 	
-	@Autowired
-	private SoldierRepository soldierRepo;
+	private SoldierService soldierService;
 	
-	@PersistenceContext
-	private EntityManager entityManager;
+	private DrawListValidator drawListValidator;
 	
+	public DrawListService(DrawListRepository drawListRepo, SoldierService soldierService,
+	        DrawListValidator drawListValidator) {
+		this.drawListRepo = drawListRepo;
+		this.soldierService = soldierService;
+		this.drawListValidator = drawListValidator;
+	}
+
 	public DrawListDTO getList(Integer id, Army army, CJM cjm) {
 		return EntityMapper.fromEntityToDTO(getListOrElseThrow(id, army, cjm));
 	}
@@ -50,47 +51,59 @@ public class DrawListService {
 	}
 	
 	@Transactional
-	public DrawList save(DrawList drawList){
-//		DrawList drawListDb = drawList;
-//		
-//		if (drawList.getId() != null) {
-//			drawListDb = drawListRepo.findById(drawList.getId()).orElseThrow();
-//			drawListDb.setDescription(drawList.getDescription());
-//			drawListDb.setQuarterYear(drawList.getQuarterYear());	
-//		}
-//		
-//		Hibernate.initialize(drawListDb);
-//		for(Soldier s : drawList.getSelectedSoldiers())
-//			drawListDb.getSoldiers().add(s);
-//		
-//		for(Soldier s : drawList.getDeselectedSoldiers())
-//			drawListDb.getSoldiers().remove(s);
-//		
-//		return drawListRepo.save(drawListDb);
+	public DrawList save(DrawListDTO drawListDTO, Army army, CJM cjm, GroupUser creationUser){
+		drawListValidator.saveListValidation(drawListDTO, army, cjm);
 		
-		return null;
+		List<Soldier> selectedSoldiers = soldierService.listById(army, cjm, drawListDTO.getSelectedSoldiers());
+		
+		DrawList drawList;
+		if (Objects.nonNull(drawListDTO.getId())) {
+			drawList = getListOrElseThrow(drawListDTO.getId(), army, cjm);
+			drawList.setDescription(drawListDTO.getDescription());
+			drawList.setQuarterYear(drawListDTO.getQuarterYear());
+			
+			if (Objects.nonNull(drawListDTO.getEnableForDraw()))
+				drawList.setEnableForDraw(drawListDTO.getEnableForDraw());
+			
+			Hibernate.initialize(drawList);
+			soldierService.listById(army, cjm, drawListDTO.getSelectedSoldiers())
+				.stream()
+				.forEach(s -> drawList.getSoldiers().add(s));
+			
+			soldierService.listById(army, cjm, drawListDTO.getDeselectedSoldiers())
+				.stream()
+				.forEach(s -> drawList.getSoldiers().remove(s));
+			
+		}else {
+			drawList = EntityMapper.fromDTOToEntity(drawListDTO);
+    		drawList.getSoldiers().addAll(selectedSoldiers);
+    		drawList.setArmy(army);
+    		drawList.setCreationUser(creationUser);
+		}
+		
+		return drawListRepo.save(drawList);
 	}
 	
 	@Transactional
-	public void delete(DrawList drawList) {
-		drawListRepo.delete(drawList);
+	public void delete(Integer listId, Army army, CJM cjm) {
+		getListOrElseThrow(listId, army, cjm);
+		drawListRepo.disable(listId);
 	}
 	
-	public void duplicate(DrawList drawList) {
-		List<Soldier> soldiers = soldierRepo.findAllByDrawList(drawList.getId());
+	public DrawList duplicate(Integer listId, Army army, CJM cjm, GroupUser creationUser) {
+		DrawList drawList = getListOrElseThrow(listId, army, cjm);
 		
-		entityManager.detach(drawList);
-		DrawList newDrawList = new DrawList();
+		DrawListDTO copyOfDrawList = new DrawListDTO();
+		copyOfDrawList.getSelectedSoldiers().addAll(
+			soldierService.listByDrawList(listId)
+				.stream()
+				.map(s -> s.getId())
+				.collect(Collectors.toList())
+		);
 		
-		for (Soldier s : soldiers)
-			newDrawList.getSoldiers().add(s);
-		
-		String newDescription = String.format("%s - Cópia", drawList.getDescription());
-		drawList.setDescription(newDescription);
-		
-		BeanUtils.copyProperties(drawList, newDrawList, "id", "soldiers");
-		
-		save(newDrawList);
+		copyOfDrawList.setDescription("Cópia de " + drawList.getDescription());
+		copyOfDrawList.setQuarterYear(new AnnualQuarter(LocalDate.now()).toShortFormat());
+		return save(copyOfDrawList, army, cjm, creationUser);
 	}
 	
 	public Map<String, List<DrawList>> getMapAnnualQuarterDrawList(List<DrawList> drawLists){
@@ -118,17 +131,6 @@ public class DrawListService {
 		}
 		
 		return quarterDrawListMap;
-	}
-	
-	public boolean isValidDescription(String description, Integer id, Army army) {
-		DrawList drawListDb = drawListRepo
-				.findByDescriptionIgnoreCase(description, army);
-		
-		if(drawListDb != null)
-			if (id == null || drawListDb.getId().equals(id) == Boolean.FALSE)
-				return false;
-			
-		return true;
 	}
 	
 	private DrawList getListOrElseThrow(Integer listId, Army army, CJM cjm) {

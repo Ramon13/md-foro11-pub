@@ -19,12 +19,12 @@
     }
     
     #searchInputs #left{
-      width: 40%;
+      width: 43%;
       float: left;
     }
     
      #searchInputs #right{
-      width: 40%;
+      width: 43%;
       float: right;
     }
   
@@ -38,16 +38,20 @@
       margin: 5px;
       width: 8%;
       text-align: center;
+      font-family: "NanumGothic", sans-serif;
     }
     
     div#pickOptions button{
       padding: 5px 25px;
+      background-color: #1A88FF;
+      color: #FFF;
+      
     }
     
     div#pickList .left{
       width: 45%;
       float: left;
-      height: 550px;
+      height: 500px;
       border: 1px solid #eee;
       overflow: auto;
     }
@@ -62,7 +66,7 @@
     div#pickList .right{
       width: 45%;
       float: right;
-      height: 550px;
+      height: 500px;
       border: 1px solid #eee;
       overflow: auto;
     }
@@ -96,6 +100,17 @@
     select.app-select{
       width: 30%;
     }
+    
+    div#quarter{
+      display: inline;
+      float: left;
+      width: 50%;
+    }
+    
+    div#enableForDraw{
+      display: inline;
+      float: right; 
+    }
   </style>
   
   <body>
@@ -113,15 +128,21 @@
           
           <br /> <br />
   	      
-          <div th:if="${quarters != null}">
-      	      <label>Trimestre:</label><br/>
-      	      <select class="app-select" th:field="*{quarterYear}">
-      	        <option th:each="quarter : ${quarters}" th:value="${quarter.toShortFormat()}"
-      	           th:text="${quarter.description}"></option>
-      	      </select>
+          <div style="margin-bottom: 100px">
+            <div id="quarter" th:if="${quarters != null}">
+        	      <label>Trimestre:</label><br/>
+        	      <select class="app-select" th:field="*{quarterYear}">
+        	        <option th:each="quarter : ${quarters}" th:value="${quarter.toShortFormat()}"
+        	           th:text="${quarter.description}"></option>
+        	      </select>
+            </div>
+            
+            <div id="enableForDraw">
+                <input type="checkbox" th:field="*{enableForDraw}"/> <span>Habilitar para sorteio</span>
+            </div>
           </div>
         </div>
-  	    
+        
         <hr />
       
 	      <div id="pickList">
@@ -133,9 +154,9 @@
 	        <div class="left">
 	          <p>Disponível</p>
 	          <div class="soldier" th:each="soldier : ${soldiers}">
-	            <input class="sid" type="hidden" disabled="disabled" name="deselectedSoldiers" th:value="${soldier.id}"/>
+	            <input class="sid" type="hidden" th:value="${soldier.id}"/>
 	            <input type="checkbox"/>
-	  		    <label th:text="${soldier.getIdInfoAsText()}"></label>
+	  		      <label class="soldierInfo" th:text="${soldier.getIdInfoAsText()}"></label>
 	          </div>
 	        </div>
 	        
@@ -148,7 +169,7 @@
 	        <div id="rightList" class="right">
 	          <p>Selecionado</p>
 	           <div class="soldier" th:each="soldier : ${drawListSoldiers}">
-	            <input class="sid" type="hidden" disabled="disabled" name="selectedSoldiers" th:value="${soldier.id}"/>
+	            <input class="sid" type="hidden" th:value="${soldier.id}"/>
 	            <input type="checkbox"/> 
 	            <label th:text="${soldier.getIdInfoAsText()}"></label>
 	          </div>
@@ -180,10 +201,9 @@
 	    
       const saveListBtn = document.querySelector("button#saveList");
       saveListBtn.addEventListener("click", saveList);
-      saveListBtn.querySelector('#loadCircle').style.display = 'none';
+      hideLoadStatus();
       
-     	listDescription.focus(); 	
-     	addListeners();
+     	listDescription.focus();
      	
      	function sendToList(fromList, toList){
      		let soldiers = fromList.querySelectorAll(".soldier");
@@ -198,7 +218,7 @@
    					soldierId = soldiers[i].querySelector(".sid");
    					soldierId.disabled = false
    					
-   					soldierId.name = (fromList.id === 'rightList') ? 'deselectedSoldiers' : 'selectedSoldiers' ;
+   					fromList.id === 'rightList' ? toggleName(soldierId, 'deselectedSoldiers') : toggleName(soldierId, 'selectedSoldiers');
    				}	
      		}
      	}
@@ -225,44 +245,42 @@
      	}
      	
      	function searchOnList(fromList, searchKey){
-   			let label, txtValue, soldiers, key;
-   			
-   			var keys = searchKey.split(",");
+   			let label, soldiers, key;
    			
      		soldiers = fromList.querySelectorAll(".soldier");
      		hideAllSoldiers(fromList);
      		
      		let found = false;
+     		var keys = searchKey.split(",");
+     		
      		if (searchKey){
      			for (let i = 0; i < keys.length; i++){
      				found = false;
-         			key = keys[i].trim();
+       			key = keys[i].trim();
          			
-         			for (let j = 0; j < soldiers.length; j++){
-         				label = soldiers[j].querySelector("label");
-         				if(label){
-             				txtValue = label.textContent;
-    	     				if (txtValue.indexOf(key) > -1){
-    	     					soldiers[j].style.display = "";
-    	     					found = true;
-    	     					//break;
-    	     				}
-         				}
-         			}
+       			for (let j = 0; j < soldiers.length; j++){
+       				label = soldiers[j].querySelector(".soldierInfo");
+       				if(label){
+       					if (label.textContent.indexOf(key) > -1){
+  	     					soldiers[j].style.display = "";
+  	     					found = true;
+  	     				}
+       				}
+       			}
          			
-         			if (!found){
-	 	            let sdDiv = document.createElement("div");
-	 	            sdDiv.className = "soldier notFound";
-	 	            
-	 	            let sdName = document.createElement("label");
-	 	            sdName.style.color = "red";
-	 	            sdName.textContent = key;
-	 	            
-	 	            sdDiv.append(sdName);
-	 	            fromList.append(sdDiv);
-         			}
+       			if (!found){
+ 	            let sdDiv = document.createElement("div");
+ 	            sdDiv.className = "soldier notFound";
+ 	            
+ 	            let sdName = document.createElement("label");
+ 	            sdName.style.color = "red";
+ 	            sdName.textContent = key;
+ 	            
+ 	            sdDiv.append(sdName);
+ 	            fromList.append(sdDiv);
+       			}
          				
-         		}	
+       		}	
      		
      		}else{
      			showAllSoldiers(fromList);	
@@ -334,6 +352,10 @@
      		saveListBtn.disabled = true;
      	}
      	
+     	function hideLoadStatus(){
+     		saveListBtn.querySelector('#loadCircle').style.display = 'none';
+     	}
+     	
    	  function runSavedListSuccessTasks(responseText){
    		  alert(responseText);
         window.location = '[(@{/gp/dw/list})]';
@@ -343,6 +365,8 @@
 	      let spanError = document.querySelector(".error");
 	      spanError.textContent = responseText;
 	      spanError.style.display = "";
+	      saveListBtn.disabled = false;
+	      hideLoadStatus();
 	    }
     </script>
   </body>

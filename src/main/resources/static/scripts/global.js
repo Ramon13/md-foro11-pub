@@ -58,6 +58,7 @@ function sendAjaxRequest(
 				errorFunction(httpRequest.responseText);
 			}else{
 				alert("There was an internal server error. Please try again later");
+        errorFunction("There was an internal server error. Please try again later");
 			}
 		}	
 	}
@@ -85,9 +86,34 @@ function addListener(element, event, executor){
 }
 
 function historyPush(){
-  window.localStorage.setItem("lastPage", window.location.href);
+  let history = JSON.parse(window.localStorage.getItem("appHistory"));
+  
+  if (history == null)
+    history = [];
+
+  let url = window.location.href;
+  let historySize = history.length;
+  
+  if (historySize > 0 && history[historySize - 1] == url)
+    return;    
+  
+  history.push(url);
+  window.localStorage.setItem("appHistory", JSON.stringify(history));  
 }
 
 function historyPop(){
-  return window.localStorage.getItem("lastPage");  
+  let history = JSON.parse(window.localStorage.getItem("appHistory"));
+  let popped = history.pop();
+  
+  window.localStorage.setItem("appHistory", JSON.stringify(history));
+  return popped;
+}
+
+function toggleName(element, value){
+  if (!element.hasAttribute("name")){
+    element.toggleAttribute("name");
+    element.name = value;
+    return;
+  } 
+  element.toggleAttribute("name");
 }

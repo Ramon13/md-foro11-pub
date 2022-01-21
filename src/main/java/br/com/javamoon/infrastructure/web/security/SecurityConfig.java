@@ -29,13 +29,13 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter{
 			.antMatchers("/gp/dw/list/{listid:\\d+}").hasRole(GROUP_USER.toString())
 			.antMatchers("/gp/sd/list/home").hasRole(GROUP_USER.toString())
 			.antMatchers("/gp/cjm/**").hasRole(GROUP_USER.toString())
+			.antMatchers("/gp/accounts/password/reset/**").hasRole(GROUP_USER.toString())
 			//
 			//edit and creates lists
 			.antMatchers("/gp/dw/**").hasRole(EDIT_LIST_SCOPE.toString())
 			.antMatchers("/gp/sd/**").hasRole(EDIT_LIST_SCOPE.toString())
 			//
 			//account management
-			.antMatchers("/gp/account/**").hasRole(MANAGE_ACCOUNT_SCOPE.toString())
 			.antMatchers("/gp/accounts/**").hasRole(MANAGE_ACCOUNT_SCOPE.toString())
 			.antMatchers("/mngmt/**").hasRole(CJM_USER.toString())
 			.antMatchers("/lu/**").hasAnyRole(GROUP_USER.toString(), CJM_USER.toString())

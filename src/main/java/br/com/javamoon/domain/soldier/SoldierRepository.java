@@ -54,10 +54,20 @@ public interface SoldierRepository extends JpaRepository<Soldier, Integer>{
 	@Query("select s from Draw d join d.soldiers s where d.id = :drawId")
 	public List<Soldier> findAllByDraw(@Param("drawId") Integer drawId);
 	
-	@Query("select s from DrawList dl "
-			+ "join dl.soldiers s "
-			+ "left join fetch s.militaryOrganization where dl.id = :drawListId order by s.name")
-	public List<Soldier> findAllByDrawList(@Param("drawListId") Integer drawListId);
+	@Query("SELECT s FROM DrawList dl JOIN dl.soldiers s"
+			+ " LEFT JOIN FETCH s.militaryOrganization"
+			+ " WHERE dl.id = :drawListId AND s.active = true ORDER BY s.name")
+	public List<Soldier> findAllActiveByDrawList(@Param("drawListId") Integer drawListId);
+	
+	@Query(
+		"FROM Soldier s LEFT JOIN FETCH s.militaryOrganization " + 
+	    "WHERE s.active = true AND s.army = :army AND s.cjm = :cjm AND s.id IN :ids"
+	)
+	public List<Soldier> findByArmyAndCjmAndIdIn(
+		@Param("army") Army army,
+		@Param("cjm") CJM cjm,
+		@Param("ids") List<Integer> ids
+	);
 	
 	
 	@Query("from DrawExclusion dex where dex.soldier = :soldier order by dex.id desc")

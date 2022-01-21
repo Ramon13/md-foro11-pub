@@ -3,6 +3,11 @@
   src: url('Roboto-Regular.ttf') format('truetype');
 }
 
+@font-face {
+	font-family: NanumGothic;
+  src: url('NanumGothic-Regular.ttf') format('truetype');
+}
+
 legend {
     background-color: #fff;
     color: #000;

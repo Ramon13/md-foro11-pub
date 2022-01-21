@@ -43,7 +43,7 @@ public class AuthenticationSuccessHandlerImpl implements AuthenticationSuccessHa
 	}
 		
 	private void sendToPasswordRedefinition(HttpServletResponse response) throws IOException {
-		response.sendRedirect("account/password/reset");
+		response.sendRedirect("gp/accounts/password/reset");
 	}
 	
 	public void sendToHomePage(LoggedUser loggedUser, HttpServletResponse response, HttpSession session) throws IOException {
