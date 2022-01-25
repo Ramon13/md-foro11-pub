@@ -1,9 +1,10 @@
 package br.com.javamoon.domain.soldier;
 
+import br.com.javamoon.domain.draw.Draw;
+import br.com.javamoon.domain.entity.GroupUser;
 import java.io.Serializable;
 import java.util.HashSet;
 import java.util.Set;
-
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -16,9 +17,6 @@ import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Size;
-
-import br.com.javamoon.domain.draw.Draw;
-import br.com.javamoon.domain.group_user.GroupUser;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;

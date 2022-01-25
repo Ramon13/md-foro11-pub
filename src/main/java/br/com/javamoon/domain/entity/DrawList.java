@@ -1,10 +1,11 @@
 package br.com.javamoon.domain.entity;
 
+import br.com.javamoon.domain.soldier.Army;
+import br.com.javamoon.domain.soldier.Soldier;
 import java.time.LocalDate;
 import java.util.HashSet;
 import java.util.Objects;
 import java.util.Set;
-
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -16,13 +17,8 @@ import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.PrePersist;
 import javax.persistence.Table;
-
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
-
-import br.com.javamoon.domain.group_user.GroupUser;
-import br.com.javamoon.domain.soldier.Army;
-import br.com.javamoon.domain.soldier.Soldier;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;

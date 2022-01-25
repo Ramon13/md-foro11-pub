@@ -1,4 +1,4 @@
-package br.com.javamoon.domain.group_user;
+package br.com.javamoon.domain.repository;
 
 import java.util.List;
 import java.util.Optional;
@@ -9,12 +9,15 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import br.com.javamoon.domain.cjm_user.CJM;
+import br.com.javamoon.domain.entity.GroupUser;
+import br.com.javamoon.domain.entity.User;
 import br.com.javamoon.domain.soldier.Army;
 
 @Repository
 public interface GroupUserRepository extends JpaRepository<GroupUser, Integer>{
 
-	public Optional<GroupUser> findByUsername(String username);
+	@Query("FROM GroupUser gu WHERE gu.active = true AND gu.username = :username")
+	public Optional<User> findActiveByUsername(@Param("username") String username);
 
 	public Optional<GroupUser> findByEmail(String email);
 

@@ -2,7 +2,7 @@ package br.com.javamoon.infrastructure.web.controller.group;
 
 import br.com.javamoon.domain.cjm_user.CJM;
 import br.com.javamoon.domain.draw.AnnualQuarter;
-import br.com.javamoon.domain.group_user.GroupUser;
+import br.com.javamoon.domain.entity.GroupUser;
 import br.com.javamoon.domain.soldier.Army;
 import br.com.javamoon.exception.DrawListValidationException;
 import br.com.javamoon.infrastructure.web.model.PaginationSearchFilter;

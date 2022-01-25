@@ -1,19 +1,7 @@
 package br.com.javamoon.infrastructure.web.controller;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-
 import br.com.javamoon.domain.cjm_user.CJM;
-import br.com.javamoon.domain.cjm_user.CJMUser;
+import br.com.javamoon.domain.entity.CJMUser;
 import br.com.javamoon.domain.entity.DrawList;
 import br.com.javamoon.domain.repository.DrawListRepository;
 import br.com.javamoon.domain.soldier.Army;
@@ -23,6 +11,16 @@ import br.com.javamoon.domain.soldier.SoldierRepositoryImpl;
 import br.com.javamoon.infrastructure.web.model.PaginationSearchFilter;
 import br.com.javamoon.service.DrawListService;
 import br.com.javamoon.util.SecurityUtils;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestMapping;
 
 @Controller
 @RequestMapping("/mngmt/dw-list")

@@ -1,14 +1,11 @@
 package br.com.javamoon.infrastructure.web.security;
 
-import static br.com.javamoon.infrastructure.web.security.SecurityConstants.CORE_LIST_SCOPE_DESCRIPTION;
 import static br.com.javamoon.infrastructure.web.security.SecurityConstants.EDIT_LIST_SCOPE_DESCRIPTION;
+import static br.com.javamoon.infrastructure.web.security.SecurityConstants.GROUP_USER_CORE_SCOPE_DESCRIPTION;
 import static br.com.javamoon.infrastructure.web.security.SecurityConstants.MANAGE_ACCOUNT_SCOPE_DESCRIPTION;
-
+import br.com.javamoon.domain.entity.User;
 import java.util.List;
-
 import org.apache.commons.lang3.StringUtils;
-
-import br.com.javamoon.domain.user.User;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
@@ -19,9 +16,9 @@ import lombok.Setter;
 public class Role {
 
     public enum GroupRole{
-    	GROUP_USER (SecurityConstants.CORE_SCOPE, CORE_LIST_SCOPE_DESCRIPTION),             				// 2^0
-    	EDIT_LIST_SCOPE (SecurityConstants.EDIT_LIST_SCOPE, EDIT_LIST_SCOPE_DESCRIPTION),        			// 2^1
-        MANAGE_ACCOUNT_SCOPE(SecurityConstants.MANAGE_ACCOUNT_SCOPE, MANAGE_ACCOUNT_SCOPE_DESCRIPTION);   // 2^2
+    	GROUP_USER (SecurityConstants.GROUP_USER_CORE_SCOPE, GROUP_USER_CORE_SCOPE_DESCRIPTION),             	// 2^0
+    	GROUP_EDIT_LIST_SCOPE (SecurityConstants.EDIT_LIST_SCOPE, EDIT_LIST_SCOPE_DESCRIPTION),        			// 2^1
+    	GROUP_MANAGE_ACCOUNT_SCOPE(SecurityConstants.MANAGE_ACCOUNT_SCOPE, MANAGE_ACCOUNT_SCOPE_DESCRIPTION); 	// 2^2
         
     	public final String name;
         public final String description;
@@ -33,7 +30,16 @@ public class Role {
     }
     
     public enum CjmRole{
-        CJM_USER
+        CJM_USER (SecurityConstants.CJM_USER_CORE_SCOPE, SecurityConstants.CJM_USER_CORE_SCOPE_DESCRIPTION),	//2 ^ 0					
+        CJM_MANAGE_ACCOUNT_SCOPE(SecurityConstants.MANAGE_ACCOUNT_SCOPE, MANAGE_ACCOUNT_SCOPE_DESCRIPTION);   		// 2 ^ 1    
+         
+    	public final String name;
+        public final String description;
+    	
+        private CjmRole(String name, String description) {
+        	this.name = name;
+        	this.description = description;
+        }    
     }
     
     public static void setGroupPermissionRoles(User user){

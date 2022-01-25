@@ -3,7 +3,7 @@ package br.com.javamoon.service;
 import br.com.javamoon.domain.cjm_user.CJM;
 import br.com.javamoon.domain.draw.AnnualQuarter;
 import br.com.javamoon.domain.entity.DrawList;
-import br.com.javamoon.domain.group_user.GroupUser;
+import br.com.javamoon.domain.entity.GroupUser;
 import br.com.javamoon.domain.repository.DrawListRepository;
 import br.com.javamoon.domain.soldier.Army;
 import br.com.javamoon.domain.soldier.Soldier;

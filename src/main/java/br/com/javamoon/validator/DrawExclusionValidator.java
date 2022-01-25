@@ -1,8 +1,14 @@
 package br.com.javamoon.validator;
 
-import static br.com.javamoon.validator.ValidationConstants.*;
-
-import br.com.javamoon.domain.group_user.GroupUser;
+import static br.com.javamoon.validator.ValidationConstants.DRAW_EXCLUSION_END_DATE;
+import static br.com.javamoon.validator.ValidationConstants.DRAW_EXCLUSION_MAX_LEN;
+import static br.com.javamoon.validator.ValidationConstants.DRAW_EXCLUSION_MESSAGE;
+import static br.com.javamoon.validator.ValidationConstants.DRAW_EXCLUSION_START_DATE;
+import static br.com.javamoon.validator.ValidationConstants.EQUALS_DATES;
+import static br.com.javamoon.validator.ValidationConstants.INCONSISTENT_DATA;
+import static br.com.javamoon.validator.ValidationConstants.INCONSISTENT_DATE_PERIOD;
+import static br.com.javamoon.validator.ValidationConstants.IN_THE_PAST;
+import br.com.javamoon.domain.entity.GroupUser;
 import br.com.javamoon.domain.soldier.Army;
 import br.com.javamoon.domain.soldier.Soldier;
 import br.com.javamoon.exception.DrawExclusionValidationException;

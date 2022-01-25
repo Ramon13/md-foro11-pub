@@ -1,0 +1,37 @@
+{"properties": [
+  {
+    "name": "google.recaptchav3.verify.endpoint",
+    "type": "java.lang.String",
+    "description": "A description for 'google.recaptchav3.verify.endpoint'"
+  },
+  {
+    "name": "google.recaptchav3.verify.secret",
+    "type": "java.lang.String",
+    "description": "A description for 'google.recaptchav3.verify.secret'"
+  },
+  {
+    "name": "md-foro11.resources.jasper-reports.compiled-template",
+    "type": "java.lang.String",
+    "description": "A description for 'md-foro11.resources.jasper-reports.compiled-template'"
+  },
+  {
+    "name": "md-foro11.resources.jasper-reports.images",
+    "type": "java.lang.String",
+    "description": "A description for 'md-foro11.resources.jasper-reports.images'"
+  },
+  {
+    "name": "md-foro11.endpoint.cjm.index",
+    "type": "java.lang.String",
+    "description": "A description for 'md-foro11.endpoint.cjm.index'"
+  },
+  {
+    "name": "md-foro11.endpoint.group.index",
+    "type": "java.lang.String",
+    "description": "A description for 'md-foro11.endpoint.group.index'"
+  },
+  {
+    "name": "md-foro11.endpoint.auth.reset.index",
+    "type": "java.lang.String",
+    "description": "A description for 'md-foro11.endpoint.auth.reset.index'"
+  }
+]}

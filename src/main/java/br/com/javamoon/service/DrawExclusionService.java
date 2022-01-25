@@ -6,7 +6,7 @@ import br.com.javamoon.domain.draw.Draw;
 import br.com.javamoon.domain.draw.DrawRepository;
 import br.com.javamoon.domain.draw_exclusion.DrawExclusion;
 import br.com.javamoon.domain.draw_exclusion.DrawExclusionRepository;
-import br.com.javamoon.domain.group_user.GroupUser;
+import br.com.javamoon.domain.entity.GroupUser;
 import br.com.javamoon.domain.soldier.Soldier;
 import br.com.javamoon.exception.DrawExclusionNotFoundException;
 import br.com.javamoon.mapper.DrawExclusionDTO;

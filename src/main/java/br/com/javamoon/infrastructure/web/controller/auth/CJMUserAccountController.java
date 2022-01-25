@@ -6,6 +6,7 @@ import br.com.javamoon.domain.entity.GroupUser;
 import br.com.javamoon.exception.AccountValidationException;
 import br.com.javamoon.infrastructure.web.security.AuthenticationSuccessHandlerImpl;
 import br.com.javamoon.infrastructure.web.security.LoggedUser;
+import br.com.javamoon.mapper.CJMUserDTO;
 import br.com.javamoon.mapper.EntityMapper;
 import br.com.javamoon.mapper.GroupUserDTO;
 import br.com.javamoon.mapper.UserDTO;
@@ -29,39 +30,38 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.servlet.ModelAndView;
 
 @Controller
-@RequestMapping(path = "/gp/accounts")
-public class GroupUserAccountController {
+@RequestMapping(path = "/cjm/accounts")
+public class CJMUserAccountController {
 
     private UserAccountService accountService;
     private AuthenticationSuccessHandlerImpl authenticationHandler;
     
-    public GroupUserAccountController(UserAccountService accountService, AuthenticationSuccessHandlerImpl authenticationHandler) {
+    public CJMUserAccountController(UserAccountService accountService, AuthenticationSuccessHandlerImpl authenticationHandler) {
         this.accountService = accountService;
         this.authenticationHandler = authenticationHandler;
     }
     
     @GetMapping("/register/home")
     public String registerHome(Model model) {
-        model.addAttribute("user", new GroupUserDTO());
-        return "group/account_mngmt/gpuser-register";
+        model.addAttribute("user", new CJMUserDTO());
+        return "management/account/register";
     }
     
     @PostMapping("/register/save")
-    public String save(@Valid @ModelAttribute("user") GroupUserDTO user, Errors errors, Model model) {
+    public String save(@Valid @ModelAttribute("user") CJMUserDTO user, Errors errors, Model model) {
     	if (!errors.hasErrors()) {
-            try {                
-                GroupUser loggedUser = SecurityUtils.groupUser();
-                accountService.createGroupUserAccount(user, loggedUser.getArmy(), loggedUser.getCjm());
+            try {
+                accountService.createCJMUserAccount(user, SecurityUtils.cjmUser().getAuditorship());
                 
                 model.addAttribute(SUCCESS_MSG_ATTRIBUTE_NAME, CREATE_USER_SUCCESS_MSG);
-                user = new GroupUserDTO();
+                user = new CJMUserDTO();
             } catch (AccountValidationException e) {
                 ValidationUtils.rejectValues(errors, e.getValidationErrors());
             }
         }
         
         model.addAttribute("user", user);
-        return "group/account_mngmt/gpuser-register";
+        return "management/account/register";
     }
     
     @GetMapping(path="/list/home")

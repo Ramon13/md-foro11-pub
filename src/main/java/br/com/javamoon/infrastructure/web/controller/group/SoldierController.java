@@ -1,21 +1,8 @@
 package br.com.javamoon.infrastructure.web.controller.group;
 
-import java.time.LocalDate;
-import java.util.Objects;
-import javax.servlet.http.HttpSession;
-import javax.validation.Valid;
-
-import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
-import org.springframework.validation.Errors;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
 import br.com.javamoon.domain.cjm_user.CJM;
 import br.com.javamoon.domain.draw.AnnualQuarter;
-import br.com.javamoon.domain.group_user.GroupUser;
+import br.com.javamoon.domain.entity.GroupUser;
 import br.com.javamoon.domain.soldier.Army;
 import br.com.javamoon.domain.soldier.Soldier;
 import br.com.javamoon.exception.SoldierValidationException;
@@ -31,6 +18,18 @@ import br.com.javamoon.service.MilitaryRankService;
 import br.com.javamoon.service.SoldierService;
 import br.com.javamoon.util.SecurityUtils;
 import br.com.javamoon.validator.ValidationUtils;
+import java.time.LocalDate;
+import java.util.Objects;
+import javax.servlet.http.HttpSession;
+import javax.validation.Valid;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.validation.Errors;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
 
 @Controller
 @RequestMapping("/gp/sd")

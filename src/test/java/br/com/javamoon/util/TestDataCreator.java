@@ -2,6 +2,7 @@ package br.com.javamoon.util;
 
 import static br.com.javamoon.util.Constants.DEFAULT_ARMY_ALIAS;
 import static br.com.javamoon.util.Constants.DEFAULT_ARMY_NAME;
+import static br.com.javamoon.util.Constants.DEFAULT_AUDITORSHIP_NAME;
 import static br.com.javamoon.util.Constants.DEFAULT_CJM_ALIAS;
 import static br.com.javamoon.util.Constants.DEFAULT_CJM_NAME;
 import static br.com.javamoon.util.Constants.DEFAULT_CJM_REGIONS;
@@ -18,13 +19,14 @@ import static br.com.javamoon.util.Constants.DEFAULT_USER_PASSWORD;
 import static br.com.javamoon.util.Constants.DEFAULT_USER_USERNAME;
 import static br.com.javamoon.validator.ValidationConstants.SOLDIER_EMAIL_MAX_LEN;
 import static br.com.javamoon.validator.ValidationConstants.SOLDIER_NAME_MAX_LEN;
+import br.com.javamoon.domain.cjm_user.Auditorship;
 import br.com.javamoon.domain.cjm_user.CJM;
 import br.com.javamoon.domain.cjm_user.CJMRepository;
 import br.com.javamoon.domain.draw_exclusion.DrawExclusion;
 import br.com.javamoon.domain.entity.DrawList;
-import br.com.javamoon.domain.group_user.GroupUser;
-import br.com.javamoon.domain.group_user.GroupUserRepository;
+import br.com.javamoon.domain.entity.GroupUser;
 import br.com.javamoon.domain.repository.DrawListRepository;
+import br.com.javamoon.domain.repository.GroupUserRepository;
 import br.com.javamoon.domain.soldier.Army;
 import br.com.javamoon.domain.soldier.ArmyRepository;
 import br.com.javamoon.domain.soldier.MilitaryOrganization;
@@ -34,6 +36,7 @@ import br.com.javamoon.domain.soldier.MilitaryRankRepository;
 import br.com.javamoon.domain.soldier.Soldier;
 import br.com.javamoon.domain.soldier.SoldierRepository;
 import br.com.javamoon.infrastructure.web.model.PaginationSearchFilter;
+import br.com.javamoon.mapper.CJMUserDTO;
 import br.com.javamoon.mapper.DrawListDTO;
 import br.com.javamoon.mapper.EntityMapper;
 import br.com.javamoon.mapper.SoldierDTO;
@@ -77,6 +80,10 @@ public final class TestDataCreator {
 		return new UserDTO(DEFAULT_USER_USERNAME, DEFAULT_USER_EMAIL, DEFAULT_USER_PASSWORD); 
 	}
 	
+	public static CJMUserDTO newCJMUserDTO() {
+		return new CJMUserDTO(DEFAULT_USER_USERNAME, DEFAULT_USER_EMAIL, DEFAULT_USER_PASSWORD, null, null);
+	}
+	
 	public static List<GroupUser> newGroupUserList(Army army, CJM cjm, int listSize) {
 		List<GroupUser> users = new ArrayList<>();
 		
@@ -118,6 +125,12 @@ public final class TestDataCreator {
 		cjm.setAlias(DEFAULT_CJM_ALIAS);
 		cjm.setRegions(DEFAULT_CJM_REGIONS);
 		return cjm;
+	}
+	
+	public static Auditorship newAuditorship() {
+		Auditorship auditorship = new Auditorship();
+		auditorship.setName(DEFAULT_AUDITORSHIP_NAME);
+		return auditorship;
 	}
 	
 	public static SoldierDTO newSoldierDTO() {

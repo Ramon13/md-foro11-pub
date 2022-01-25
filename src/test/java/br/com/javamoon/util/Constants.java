@@ -18,6 +18,8 @@ public final class Constants {
 	public static final String DEFAULT_CJM_ALIAS = "11CJM";
 	public static final String DEFAULT_CJM_REGIONS = "DF e TO";
 	
+	public static final String DEFAULT_AUDITORSHIP_NAME = "1ª Auditoria da 1ª CJM";
+	
 	public static final String PASSWORD_NO_UPPERCASE = "qwe123qwe";
 	public static final String PASSWORD_NO_LOWER = "QWE123QWE";
 	public static final String PASSWORD_NO_NUMBER = "QWEqweQWE";

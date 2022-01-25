@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html
   xmlns="http://www.w3.org/1999/xhtml"
-  xmlns:th="http://www.thymeleaf.org" layout:decorate="~{group/layout}">
+  xmlns:th="http://www.thymeleaf.org" layout:decorate="~{management/layout}">
   
   <style layout:fragment="style">
     form{
@@ -12,16 +12,6 @@
       width: 30%;
     }
     
-    div#scope-access div{
-      border: 1px solid #cecece;
-      padding: 15px;
-    }
-    
-    div#scope-access .label-desc{
-      float: right;
-      width: 70%;
-    }
-    
     button#createUser{
       float: right;
     }
@@ -30,17 +20,13 @@
       width: 20px;
     }
     
-    div#scope-access, div#form-btns{
-      width: 75%;
-      margin: auto;
-    }
-    
     div#form-btns #back{
       float: left;
     }
     
-    div#scope-access input[type=checkbox]{
-      margin-right: 14px;
+    div#form-btns{
+      display: inline-block;
+      width: 300px;
     }
   </style>
   
@@ -53,7 +39,7 @@
         <span th:text="${successMsg}"></span>
       </div>
       
-      <form id='newUserForm' method="post" th:action="@{/gp/accounts/register/save}" th:object="${user}">
+      <form id='newUserForm' method="post" th:action="@{/cjm/accounts/register/save}" th:object="${user}">
         <div> 
           <div class="form-step">
             <div class="input-label">
@@ -104,29 +90,14 @@
               <input id="password-input-confirm" type="password" />
             </div>
           </div>
-        </div>
-        
-        <div class="form-step">
-          <div class="input-label">
-            <label>Permissões de acesso</label>
+          <div id="form-btns">
+            <button type="button" id="back" class="app-gray-btn">
+              <span>Voltar</span>
+            </button>
+            <button type="button" id="createUser" class="app-green-btn">
+              <span>Salvar</span>
+            </button>
           </div>
-          <br/>
-          <div id="scope-access">
-            <div th:each="role : ${user.permissionRoles}">
-              <input type="checkbox" name="selectedRoles" th:value="${role.scopeName}" th:text="${role.name}">
-              <span class="label-desc" th:text="${role.description}"></span>
-            </div>
-          </div>
-              
-        </div>
-        
-        <div id="form-btns">
-          <button type="button" id="back" class="app-gray-btn">
-            <span>Voltar</span>
-          </button>
-          <button type="button" id="createUser" class="app-green-btn">
-            <span>Salvar</span>
-          </button>
         </div>
       </form>
     </div>

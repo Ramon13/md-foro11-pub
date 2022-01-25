@@ -1,12 +1,11 @@
 package br.com.javamoon.util;
 
+import br.com.javamoon.domain.entity.CJMUser;
+import br.com.javamoon.domain.entity.GroupUser;
+import br.com.javamoon.infrastructure.web.security.LoggedUser;
 import org.springframework.security.authentication.AnonymousAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
-
-import br.com.javamoon.domain.cjm_user.CJMUser;
-import br.com.javamoon.domain.group_user.GroupUser;
-import br.com.javamoon.infrastructure.web.security.LoggedUser;
 
 public class SecurityUtils {
 

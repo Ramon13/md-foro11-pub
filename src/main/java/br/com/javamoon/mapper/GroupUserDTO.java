@@ -35,8 +35,8 @@ public class GroupUserDTO extends UserDTO{
         permissionRoles = new ArrayList<RoleDTO>();
         selectedRoles = new ArrayList<String>();
         
-        permissionRoles.add(new RoleDTO(Role.GroupRole.EDIT_LIST_SCOPE));
-        permissionRoles.add(new RoleDTO(Role.GroupRole.MANAGE_ACCOUNT_SCOPE));
+        permissionRoles.add(new RoleDTO(Role.GroupRole.GROUP_EDIT_LIST_SCOPE));
+        permissionRoles.add(new RoleDTO(Role.GroupRole.GROUP_MANAGE_ACCOUNT_SCOPE));
     }
     
     public String prettyPrintUsernameAndEmail() {

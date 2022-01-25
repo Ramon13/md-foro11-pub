@@ -1,4 +1,4 @@
-package br.com.javamoon.domain.user;
+package br.com.javamoon.domain.entity;
 
 import br.com.javamoon.util.StringUtils;
 import java.io.Serializable;

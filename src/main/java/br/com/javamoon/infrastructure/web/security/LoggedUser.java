@@ -1,16 +1,14 @@
 package br.com.javamoon.infrastructure.web.security;
 
+import br.com.javamoon.domain.entity.CJMUser;
+import br.com.javamoon.domain.entity.GroupUser;
+import br.com.javamoon.domain.entity.User;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
-
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
-
-import br.com.javamoon.domain.cjm_user.CJMUser;
-import br.com.javamoon.domain.group_user.GroupUser;
-import br.com.javamoon.domain.user.User;
 
 @SuppressWarnings("serial")
 public class LoggedUser implements UserDetails{

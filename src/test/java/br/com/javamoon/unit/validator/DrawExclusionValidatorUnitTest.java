@@ -13,16 +13,7 @@ import static br.com.javamoon.validator.ValidationConstants.REQUIRED_FIELD;
 import static br.com.javamoon.validator.ValidationConstants.STRING_EXCEEDS_MAX_LEN;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
-
-import java.time.LocalDate;
-
-import org.apache.commons.lang3.StringUtils;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.junit.jupiter.MockitoExtension;
-
-import br.com.javamoon.domain.group_user.GroupUser;
+import br.com.javamoon.domain.entity.GroupUser;
 import br.com.javamoon.domain.soldier.Army;
 import br.com.javamoon.domain.soldier.Soldier;
 import br.com.javamoon.exception.DrawExclusionValidationException;
@@ -31,6 +22,12 @@ import br.com.javamoon.mapper.EntityMapper;
 import br.com.javamoon.util.TestDataCreator;
 import br.com.javamoon.validator.DrawExclusionValidator;
 import br.com.javamoon.validator.ValidationError;
+import java.time.LocalDate;
+import org.apache.commons.lang3.StringUtils;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.junit.jupiter.MockitoExtension;
 
 @ExtendWith(MockitoExtension.class)
 public class DrawExclusionValidatorUnitTest {

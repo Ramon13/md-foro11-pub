@@ -10,8 +10,8 @@ import static br.com.javamoon.validator.ValidationConstants.PASSWORD_DOES_NOT_HA
 import static br.com.javamoon.validator.ValidationConstants.PASSWORD_DOES_NOT_HAVE_UPPERCASE;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
-import br.com.javamoon.domain.group_user.GroupUser;
-import br.com.javamoon.domain.group_user.GroupUserRepository;
+import br.com.javamoon.domain.entity.GroupUser;
+import br.com.javamoon.domain.repository.GroupUserRepository;
 import br.com.javamoon.exception.AccountValidationException;
 import br.com.javamoon.mapper.UserDTO;
 import br.com.javamoon.util.Constants;
@@ -43,7 +43,7 @@ public class GroupUserAccountValidatorUnitTest {
 	void testCreateAccountSuccessfully() {
 		UserDTO userDTO = TestDataCreator.newUserDTO();
 		
-		Mockito.when(groupUserRepository.findByUsername(userDTO.getUsername())).thenReturn(Optional.empty());
+		Mockito.when(groupUserRepository.findActiveByUsername(userDTO.getUsername())).thenReturn(Optional.empty());
 		Mockito.when(groupUserRepository.findByEmail(userDTO.getEmail())).thenReturn(Optional.empty());
 		victim.createAccountValidate(userDTO);
 	}
@@ -94,7 +94,7 @@ public class GroupUserAccountValidatorUnitTest {
 	void testCreateAccountWhenUsernameAlreadyExists() {
 		UserDTO userDTO = TestDataCreator.newUserDTO();
 		
-		Mockito.when(groupUserRepository.findByUsername(userDTO.getUsername())).thenReturn(Optional.of(new GroupUser()));
+		Mockito.when(groupUserRepository.findActiveByUsername(userDTO.getUsername())).thenReturn(Optional.of(new GroupUser()));
 		Mockito.when(groupUserRepository.findByEmail(userDTO.getEmail())).thenReturn(Optional.empty());
 		
 		AccountValidationException exception = 
@@ -109,7 +109,7 @@ public class GroupUserAccountValidatorUnitTest {
 	void testCreateAccountWhenEmailAlreadyExists() {
 		UserDTO userDTO = TestDataCreator.newUserDTO();
 		
-		Mockito.when(groupUserRepository.findByUsername(userDTO.getUsername())).thenReturn(Optional.empty());
+		Mockito.when(groupUserRepository.findActiveByUsername(userDTO.getUsername())).thenReturn(Optional.empty());
 		Mockito.when(groupUserRepository.findByEmail(userDTO.getEmail())).thenReturn(Optional.of(new GroupUser()));
 		
 		AccountValidationException exception = 

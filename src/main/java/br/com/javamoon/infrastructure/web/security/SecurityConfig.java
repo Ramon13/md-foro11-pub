@@ -1,9 +1,10 @@
 package br.com.javamoon.infrastructure.web.security;
 
+import static br.com.javamoon.infrastructure.web.security.Role.CjmRole.CJM_MANAGE_ACCOUNT_SCOPE;
 import static br.com.javamoon.infrastructure.web.security.Role.CjmRole.CJM_USER;
-import static br.com.javamoon.infrastructure.web.security.Role.GroupRole.EDIT_LIST_SCOPE;
+import static br.com.javamoon.infrastructure.web.security.Role.GroupRole.GROUP_EDIT_LIST_SCOPE;
+import static br.com.javamoon.infrastructure.web.security.Role.GroupRole.GROUP_MANAGE_ACCOUNT_SCOPE;
 import static br.com.javamoon.infrastructure.web.security.Role.GroupRole.GROUP_USER;
-import static br.com.javamoon.infrastructure.web.security.Role.GroupRole.MANAGE_ACCOUNT_SCOPE;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -24,20 +25,29 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter{
 			.authorizeRequests()
 			.antMatchers("/images/**", "/styles/**", "/scripts/**", "/public/**").permitAll()
 			//
-			//low level access
-			.antMatchers("/gp/dw/list").hasRole(GROUP_USER.toString())
-			.antMatchers("/gp/dw/list/{listid:\\d+}").hasRole(GROUP_USER.toString())
-			.antMatchers("/gp/sd/list/home").hasRole(GROUP_USER.toString())
-			.antMatchers("/gp/cjm/**").hasRole(GROUP_USER.toString())
-			.antMatchers("/gp/accounts/password/reset/**").hasRole(GROUP_USER.toString())
+			// Group user core role
+			.antMatchers(
+				"/gp/dw/list",
+				"/gp/dw/list/{listid:\\d+}",
+				"/gp/sd/list/home",
+				"/gp/cjm/**",
+				"/gp/accounts/password/reset/**"
+			).hasRole(GROUP_USER.toString())
 			//
-			//edit and creates lists
-			.antMatchers("/gp/dw/**").hasRole(EDIT_LIST_SCOPE.toString())
-			.antMatchers("/gp/sd/**").hasRole(EDIT_LIST_SCOPE.toString())
-			//
-			//account management
-			.antMatchers("/gp/accounts/**").hasRole(MANAGE_ACCOUNT_SCOPE.toString())
+			// CJM user core role
 			.antMatchers("/mngmt/**").hasRole(CJM_USER.toString())
+			//
+			// Edit and creates lists
+			.antMatchers(
+				"/gp/dw/**",
+				"/gp/sd/**"
+			).hasRole(GROUP_EDIT_LIST_SCOPE.toString())
+			//
+			// Account management
+			.antMatchers("/gp/accounts/**").hasRole(GROUP_MANAGE_ACCOUNT_SCOPE.toString())
+			.antMatchers("/cjm/accounts/**").hasRole(CJM_MANAGE_ACCOUNT_SCOPE.toString())
+			//
+			//
 			.antMatchers("/lu/**").hasAnyRole(GROUP_USER.toString(), CJM_USER.toString())
 			.anyRequest().authenticated()
 			.and()

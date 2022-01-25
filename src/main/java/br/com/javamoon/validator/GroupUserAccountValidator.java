@@ -1,9 +1,14 @@
 package br.com.javamoon.validator;
 
-import static br.com.javamoon.validator.ValidationConstants.*;
+import static br.com.javamoon.validator.ValidationConstants.ACCOUNT_EMAIL;
+import static br.com.javamoon.validator.ValidationConstants.ACCOUNT_EMAIL_ALREADY_EXISTS;
+import static br.com.javamoon.validator.ValidationConstants.ACCOUNT_PASSWORD;
+import static br.com.javamoon.validator.ValidationConstants.ACCOUNT_USERNAME;
+import static br.com.javamoon.validator.ValidationConstants.ACCOUNT_USERNAME_ALREADY_EXISTS;
+import static br.com.javamoon.validator.ValidationConstants.NO_PERMISSION;
 import br.com.javamoon.domain.cjm_user.CJM;
-import br.com.javamoon.domain.group_user.GroupUser;
-import br.com.javamoon.domain.group_user.GroupUserRepository;
+import br.com.javamoon.domain.entity.GroupUser;
+import br.com.javamoon.domain.repository.GroupUserRepository;
 import br.com.javamoon.domain.soldier.Army;
 import br.com.javamoon.exception.AccountValidationException;
 import br.com.javamoon.mapper.UserDTO;
@@ -46,7 +51,7 @@ public class GroupUserAccountValidator {
     }
     
     private void validateUsername(String username, ValidationErrors validationErrors) {
-        if (groupUserRepository.findByUsername(username).isPresent())
+        if (groupUserRepository.findActiveByUsername(username).isPresent())
             validationErrors.add(ACCOUNT_USERNAME, ACCOUNT_USERNAME_ALREADY_EXISTS);
     }
     

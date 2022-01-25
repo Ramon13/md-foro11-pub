@@ -1,17 +1,14 @@
 package br.com.javamoon.service;
 
+import br.com.javamoon.domain.entity.CJMUser;
+import br.com.javamoon.domain.entity.User;
+import br.com.javamoon.domain.repository.CJMUserRepository;
 import java.util.List;
 import java.util.NoSuchElementException;
-
 import javax.transaction.Transactional;
-
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
-import br.com.javamoon.domain.cjm_user.CJMUser;
-import br.com.javamoon.domain.cjm_user.CJMUserRepository;
-import br.com.javamoon.domain.user.User;
 
 @Service
 public class CjmUserService {
@@ -37,7 +34,7 @@ public class CjmUserService {
 	}
 	
 	private boolean validateUsername(String username, Integer id) {
-		User user = cjmUserRepo.findByUsername(username);
+		User user = cjmUserRepo.findActiveByUsername(username).get();
 		
 		if (user != null) {
 			if (id == null)

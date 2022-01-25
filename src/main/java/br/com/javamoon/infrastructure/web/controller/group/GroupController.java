@@ -2,7 +2,7 @@ package br.com.javamoon.infrastructure.web.controller.group;
 
 import br.com.javamoon.domain.draw.Draw;
 import br.com.javamoon.domain.draw.DrawRepository;
-import br.com.javamoon.domain.group_user.GroupUser;
+import br.com.javamoon.domain.entity.GroupUser;
 import br.com.javamoon.infrastructure.web.controller.ControllerHelper;
 import br.com.javamoon.service.DrawService;
 import br.com.javamoon.util.SecurityUtils;

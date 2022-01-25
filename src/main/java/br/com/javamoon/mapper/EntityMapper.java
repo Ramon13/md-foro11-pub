@@ -1,8 +1,9 @@
 package br.com.javamoon.mapper;
 
 import br.com.javamoon.domain.draw_exclusion.DrawExclusion;
+import br.com.javamoon.domain.entity.CJMUser;
 import br.com.javamoon.domain.entity.DrawList;
-import br.com.javamoon.domain.group_user.GroupUser;
+import br.com.javamoon.domain.entity.GroupUser;
 import br.com.javamoon.domain.soldier.Soldier;
 import br.com.javamoon.infrastructure.web.security.Role;
 
@@ -20,19 +21,36 @@ public final class EntityMapper {
         return user;
     }
     
-    public static GroupUserDTO fromEntityToDTO(GroupUser groupUser) {
-        GroupUserDTO groupUserDTO = new GroupUserDTO();
-        groupUserDTO.setId(groupUser.getId());
-        groupUserDTO.setUsername(groupUser.getUsername());
-        groupUserDTO.setEmail(groupUser.getEmail());
-        groupUserDTO.setUsername(groupUser.getUsername());
-        groupUserDTO.setCjm(groupUser.getCjm());
-        groupUserDTO.setArmy(groupUser.getArmy());
+    public static CJMUser fromDTOToEntity(CJMUserDTO userDTO) {
+    	CJMUser user = new CJMUser();
+        user.setUsername(userDTO.getUsername());
+        user.setEmail(userDTO.getEmail());
+        user.setPassword(userDTO.getPassword());
+        user.setAuditorship(userDTO.getAuditorship());
+        return user;
+    }
+    
+    public static GroupUserDTO fromEntityToDTO(GroupUser user) {
+        GroupUserDTO userDTO = new GroupUserDTO();
+        userDTO.setId(user.getId());
+        userDTO.setUsername(user.getUsername());
+        userDTO.setEmail(user.getEmail());
+        userDTO.setCjm(user.getCjm());
+        userDTO.setArmy(user.getArmy());
         
-        Role.setGroupPermissionRoles(groupUser);
-        groupUserDTO.setUserRoles(groupUser.getPermissionRoles());
+        Role.setGroupPermissionRoles(user);
+        userDTO.setUserRoles(user.getPermissionRoles());
         
-        return groupUserDTO;
+        return userDTO;
+    }
+    
+    public static CJMUserDTO fromEntityToDTO(CJMUser user) {
+        CJMUserDTO userDTO = new CJMUserDTO();
+        userDTO.setId(user.getId());
+        userDTO.setUsername(user.getUsername());
+        userDTO.setEmail(user.getEmail());
+        userDTO.setAuditorship(user.getAuditorship());        
+        return userDTO;
     }
     
     public static Soldier fromDTOToEntity(SoldierDTO soldierDTO) {

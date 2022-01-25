@@ -1,11 +1,15 @@
 package br.com.javamoon.domain.draw;
 
+import br.com.javamoon.domain.entity.CJMUser;
+import br.com.javamoon.domain.entity.DrawList;
+import br.com.javamoon.domain.soldier.Army;
+import br.com.javamoon.domain.soldier.MilitaryRank;
+import br.com.javamoon.domain.soldier.Soldier;
 import java.io.Serializable;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
-
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -18,15 +22,8 @@ import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.validation.constraints.Size;
-
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
-
-import br.com.javamoon.domain.cjm_user.CJMUser;
-import br.com.javamoon.domain.entity.DrawList;
-import br.com.javamoon.domain.soldier.Army;
-import br.com.javamoon.domain.soldier.MilitaryRank;
-import br.com.javamoon.domain.soldier.Soldier;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;

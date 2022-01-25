@@ -1,17 +1,15 @@
-package br.com.javamoon.infrastructure.web.controller;
+package br.com.javamoon.domain.entity;
 
 import br.com.javamoon.domain.cjm_user.AuditorshipRepository;
 import br.com.javamoon.domain.cjm_user.CJMRepository;
-import br.com.javamoon.domain.cjm_user.CJMUser;
-import br.com.javamoon.domain.cjm_user.CJMUserRepository;
 import br.com.javamoon.domain.draw.Draw;
 import br.com.javamoon.domain.draw.DrawRepository;
-import br.com.javamoon.domain.group_user.GroupUser;
-import br.com.javamoon.domain.group_user.GroupUserRepository;
+import br.com.javamoon.domain.repository.CJMUserRepository;
+import br.com.javamoon.domain.repository.GroupUserRepository;
 import br.com.javamoon.domain.soldier.ArmyRepository;
 import br.com.javamoon.domain.soldier.Soldier;
 import br.com.javamoon.domain.soldier.SoldierRepository;
-import br.com.javamoon.domain.user.User;
+import br.com.javamoon.infrastructure.web.controller.ControllerHelper;
 import br.com.javamoon.service.CjmUserService;
 import br.com.javamoon.service.DrawService;
 import br.com.javamoon.service.ValidationException;
@@ -165,9 +163,9 @@ public class ManagementController {
 	
 	@GetMapping("/user/register/password/reset/home")
 	public String passwordResetHome(@RequestParam("username") String username, Model model) {
-		User user = (GroupUser) groupUserRepository.findByUsername(username).orElseThrow();
+		User user = (GroupUser) groupUserRepository.findActiveByUsername(username).orElseThrow();
 		if (user == null)
-			user = (CJMUser) cjmUserRepository.findByUsername(username);
+			user = (CJMUser) cjmUserRepository.findActiveByUsername(username).get();
 		
 		model.addAttribute("userRole", ControllerHelper.getUserRole(user));
 		model.addAttribute("user", user);

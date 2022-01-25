@@ -1,6 +1,6 @@
 package br.com.javamoon.infrastructure.web.controller.group;
 
-import br.com.javamoon.domain.group_user.GroupUser;
+import br.com.javamoon.domain.entity.GroupUser;
 import br.com.javamoon.domain.soldier.Soldier;
 import br.com.javamoon.exception.DrawExclusionValidationException;
 import br.com.javamoon.mapper.DrawExclusionDTO;

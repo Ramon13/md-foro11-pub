@@ -1,28 +1,30 @@
 package br.com.javamoon.service;
 
-import java.util.List;
-
-import javax.transaction.Transactional;
-
-import org.springframework.stereotype.Service;
-
+import static br.com.javamoon.infrastructure.web.security.Role.GroupRole.GROUP_USER;
+import br.com.javamoon.domain.cjm_user.Auditorship;
 import br.com.javamoon.domain.cjm_user.CJM;
-import br.com.javamoon.domain.group_user.GroupUser;
-import br.com.javamoon.domain.group_user.GroupUserRepository;
+import br.com.javamoon.domain.entity.CJMUser;
+import br.com.javamoon.domain.entity.GroupUser;
+import br.com.javamoon.domain.entity.User;
+import br.com.javamoon.domain.repository.GroupUserRepository;
 import br.com.javamoon.domain.repository.UserRepository;
 import br.com.javamoon.domain.soldier.Army;
-import br.com.javamoon.domain.user.User;
 import br.com.javamoon.exception.AccountNotFoundException;
 import br.com.javamoon.exception.AccountValidationException;
 import br.com.javamoon.infrastructure.web.security.Role;
-import br.com.javamoon.infrastructure.web.security.Role.GroupRole;
+import br.com.javamoon.mapper.CJMUserDTO;
 import br.com.javamoon.mapper.EntityMapper;
 import br.com.javamoon.mapper.GroupUserDTO;
 import br.com.javamoon.validator.GroupUserAccountValidator;
+import java.util.List;
+import javax.transaction.Transactional;
+import org.springframework.stereotype.Service;
 
 @Service
 public class UserAccountService {
 
+	public static final Integer DEFAULT_CJM_USER_PERMISSION_LEVEL = 1;
+	
     private GroupUserAccountValidator accountValidator;
     private GroupUserRepository groupUserRepository;
     private UserRepository userRepository;
@@ -42,7 +44,7 @@ public class UserAccountService {
     public GroupUserDTO createGroupUserAccount(GroupUserDTO userDTO, Army army, CJM cjm) throws AccountValidationException {
         accountValidator.createAccountValidate(userDTO);
         
-        userDTO.getSelectedRoles().add(GroupRole.GROUP_USER.toString());
+        userDTO.getSelectedRoles().add(GROUP_USER.toString());
         
         GroupUser user = EntityMapper.fromDTOToEntity(userDTO);
         user.setPermissionLevel(Role.calcPermissionLevel(userDTO.getSelectedRoles()));
@@ -50,8 +52,20 @@ public class UserAccountService {
         user.setCjm(cjm);
         user.encryptPassword();
         
-        groupUserRepository.save(user);
+        userRepository.save(user);
         return EntityMapper.fromEntityToDTO(user);
+    }
+    
+    public CJMUserDTO createCJMUserAccount(CJMUserDTO userDTO, Auditorship auditorship) throws AccountValidationException {
+    	accountValidator.createAccountValidate(userDTO);
+    	CJMUser user = EntityMapper.fromDTOToEntity(userDTO);
+    	
+    	user.setAuditorship(auditorship);
+    	user.setPermissionLevel(DEFAULT_CJM_USER_PERMISSION_LEVEL);
+    	user.encryptPassword();
+    	
+    	userRepository.save(user);
+    	return EntityMapper.fromEntityToDTO(user);
     }
     
     public List<GroupUser> listGroupUserAccounts(Army army, CJM cjm){

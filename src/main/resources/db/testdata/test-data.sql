@@ -5,7 +5,7 @@ insert into CJM (id, cjm_name, alias, regions)
   values
 		(1, '1ª Circunscrição Judiciária Militar', '1ª CJM', 'RJ e ES'),
 		(2, '2ª Circunscrição Judiciária Militar', '2ª CJM', 'SP');
-	
+
 #Auditorship
 insert into AUDITORSHIP (id, auditorship_name, cjm_id)
 	values 
@@ -113,7 +113,7 @@ insert into SOLDIER (id, email, soldier_name, phone, army_id, cjm_id, military_b
 #cjm_user 1aud1cjm
 insert into CJM_USER (id, username, email, user_password, active, credentials_expired, auditorship_id, permission_level)
 	values
-		(1, 'admin1aud1', null, '{bcrypt}$2a$10$IgXSs3978BKQMSyrIRF/ROA8V7f/v.G.Zr0F2l1yLJGamjGbYBjXe', 1, 0, 1, 1);
+		(1, 'admin1aud1', null, '{bcrypt}$2a$10$IgXSs3978BKQMSyrIRF/ROA8V7f/v.G.Zr0F2l1yLJGamjGbYBjXe', 1, 0, 1, 3);
 
 #cjm_user 2aud1cjm
 insert into CJM_USER (id, username, email, user_password, active, credentials_expired, auditorship_id, permission_level)
@@ -218,4 +218,3 @@ insert into DRAW_EXCLUSION (id, start_date, end_date, creation_date, message, gr
     (5, '2022-01-01', '2022-04-01', '2022-01-01', 'Férias 01/01 a 20/01', 2, 12),
     (6, '2022-01-01', '2022-04-01', '2022-01-01', 'Férias 01/01 a 20/01', 3, 21),
     (7, '2022-01-01', '2022-04-01', '2022-01-01', 'Férias 01/01 a 20/01', 3, 21);
-    
