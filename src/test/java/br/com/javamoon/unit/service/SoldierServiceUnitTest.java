@@ -9,7 +9,7 @@ import static br.com.javamoon.util.Constants.DEFAULT_RANK_NAME;
 import static br.com.javamoon.util.Constants.DEFAULT_SOLDIER_NAME;
 import static br.com.javamoon.util.TestDataCreator.getPersistedArmy;
 import static br.com.javamoon.util.TestDataCreator.getPersistedCJM;
-import static br.com.javamoon.util.TestDataCreator.getPersistedGroupUser;
+import static br.com.javamoon.util.TestDataCreator.getPersistedGroupUserList;
 import static br.com.javamoon.util.TestDataCreator.getPersistedMilitaryOrganization;
 import static br.com.javamoon.util.TestDataCreator.getPersistedMilitaryRank;
 import static br.com.javamoon.util.TestDataCreator.newDrawList;
@@ -254,7 +254,7 @@ public class SoldierServiceUnitTest {
 		List<Soldier> soldiers = newSoldierList(army, cjm, organization, rank, 3);
 		soldierRepository.saveAllAndFlush(soldiers);
 		
-		GroupUser creationUser = getPersistedGroupUser(groupUserRepository, army, cjm);
+		GroupUser creationUser = getPersistedGroupUserList(groupUserRepository, army, cjm, 1).get(0);
 		
 		List<DrawList> drawLists = newDrawList(army, creationUser, 3);
 		drawLists.get(0).setSoldiers(soldiers.stream().collect(Collectors.toSet()));

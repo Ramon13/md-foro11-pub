@@ -6,6 +6,7 @@ import br.com.javamoon.domain.cjm_user.CJM;
 import br.com.javamoon.domain.entity.CJMUser;
 import br.com.javamoon.domain.entity.GroupUser;
 import br.com.javamoon.domain.entity.User;
+import br.com.javamoon.domain.repository.CJMUserRepository;
 import br.com.javamoon.domain.repository.GroupUserRepository;
 import br.com.javamoon.domain.repository.UserRepository;
 import br.com.javamoon.domain.soldier.Army;
@@ -27,12 +28,14 @@ public class UserAccountService {
 	
     private UserAccountValidator userAccountValidator;
     private GroupUserRepository groupUserRepository;
+    private CJMUserRepository cjmUserRepository;
     private UserRepository userRepository;
-    
+
 	public UserAccountService(UserAccountValidator userAccountValidator, GroupUserRepository groupUserRepository,
-		UserRepository userRepository) {
+	        CJMUserRepository cjmUserRepository, UserRepository userRepository) {
 		this.userAccountValidator = userAccountValidator;
 		this.groupUserRepository = groupUserRepository;
+		this.cjmUserRepository = cjmUserRepository;
 		this.userRepository = userRepository;
 	}
 
@@ -52,6 +55,7 @@ public class UserAccountService {
         return EntityMapper.fromEntityToDTO(user);
     }
     
+	@Transactional
     public CJMUserDTO createCJMUserAccount(CJMUserDTO userDTO, Auditorship auditorship) throws AccountValidationException {
     	userAccountValidator.validateCreateCJMUserAccount(userDTO);
     	CJMUser user = EntityMapper.fromDTOToEntity(userDTO);
@@ -67,14 +71,26 @@ public class UserAccountService {
     	return groupUserRepository.findActiveByArmyAndCjm(army, cjm);
     }
     
+    public List<CJMUser> listCjmUserAccounts(Auditorship auditorship){
+    	return cjmUserRepository.findActiveByAuditorship(auditorship.getId()).orElseThrow(); 
+    }
+    
     @Transactional
-    public void deleteUserAccount(Integer accountID, Army army, CJM cjm) {
+    public void deleteGroupUserAccount(Integer accountID, Army army, CJM cjm) {
     	if (groupUserRepository.findById(accountID).isEmpty())
     		throw new AccountNotFoundException("account not found: " + accountID);
     	
     	userAccountValidator.validateDeleteGroupAccount(accountID, army, cjm);
     	
     	groupUserRepository.delete(accountID);
+    }
+    
+    @Transactional
+    public void deleteCjmUserAccount(Integer accountID, Auditorship auditorship) {
+    	if (cjmUserRepository.findActiveByIdAndAuditorship(accountID, auditorship.getId()).isEmpty())
+    		throw new AccountNotFoundException("account not found: " + accountID);
+    	
+    	cjmUserRepository.disableAccount(accountID);
     }
     
     @Transactional

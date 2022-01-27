@@ -50,6 +50,10 @@ public class DrawListService {
 			.collect(Collectors.toList());
 	}
 	
+	public List<DrawList> listByCjm(CJM cjm){
+		return drawListRepo.findAllActiveByCjm(cjm.getId()).get();
+	}
+	
 	@Transactional
 	public DrawList save(DrawListDTO drawListDTO, Army army, CJM cjm, GroupUser creationUser){
 		drawListValidator.saveListValidation(drawListDTO, army, cjm);

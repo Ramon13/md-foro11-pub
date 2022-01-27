@@ -5,7 +5,7 @@ import static br.com.javamoon.util.Constants.DEFAULT_SOLDIER_NAME;
 import static br.com.javamoon.util.Constants.DEFAULT_USER_EMAIL;
 import static br.com.javamoon.util.TestDataCreator.getPersistedArmy;
 import static br.com.javamoon.util.TestDataCreator.getPersistedCJM;
-import static br.com.javamoon.util.TestDataCreator.getPersistedGroupUser;
+import static br.com.javamoon.util.TestDataCreator.getPersistedGroupUserList;
 import static br.com.javamoon.util.TestDataCreator.getPersistedMilitaryOrganization;
 import static br.com.javamoon.util.TestDataCreator.getPersistedMilitaryRank;
 import static br.com.javamoon.util.TestDataCreator.newArmy;
@@ -89,7 +89,7 @@ public class DrawListServiceUnitTest {
 		Army army = getPersistedArmy(armyRepository);
 		CJM cjm = getPersistedCJM(cjmRepository);
 	
-		GroupUser creationUser = getPersistedGroupUser(groupUserRepository, army, cjm);
+		GroupUser creationUser = getPersistedGroupUserList(groupUserRepository, army, cjm, 1).get(0);
 		
 		List<DrawList> drawLists = newDrawList(army, creationUser, 3);
 		drawListRepository.saveAllAndFlush(drawLists);
@@ -118,11 +118,48 @@ public class DrawListServiceUnitTest {
 	}
 	
 	@Test
+	void testListByCjmSuccessfully() {
+		Army army = getPersistedArmy(armyRepository);
+		CJM cjm = getPersistedCJM(cjmRepository);
+	
+		List<GroupUser> users = getPersistedGroupUserList(groupUserRepository, army, cjm, 2);
+		
+		List<DrawList> drawLists = newDrawList(army, users.get(0), 3);
+		drawListRepository.saveAllAndFlush(drawLists);
+		
+		assertEquals(3, victim.listByCjm(cjm).size());
+		
+		// deleted list
+		drawLists.get(0).setActive(false);
+		drawListRepository.saveAndFlush(drawLists.get(0));
+		
+		List<DrawListDTO> drawListsDB = victim.list(army, cjm);
+		assertEquals(2, drawListsDB.size());
+		assertEquals(drawLists.get(2).getDescription(), drawListsDB.get(0).getDescription());
+		assertEquals(drawLists.get(1).getDescription(), drawListsDB.get(1).getDescription());
+		
+		// different cjm
+		CJM newCjm = TestDataCreator.newCjm();
+		newCjm.setAlias("new");
+		newCjm.setName("new cjm");
+		newCjm.setRegions("r1 r2");
+		cjmRepository.saveAndFlush(newCjm);
+		users.get(1).setCjm(newCjm);
+		groupUserRepository.saveAndFlush(users.get(1));
+		
+		drawLists.get(0).setActive(true);
+		drawLists.get(0).setCreationUser(users.get(1));
+		drawListRepository.saveAndFlush(drawLists.get(0));
+		
+		assertEquals(1, victim.listByCjm(newCjm).size());
+	}
+	
+	@Test
 	void testGetListSuccessfully() {
 		Army army = getPersistedArmy(armyRepository);
 		CJM cjm = getPersistedCJM(cjmRepository);
 	
-		GroupUser creationUser = getPersistedGroupUser(groupUserRepository, army, cjm);
+		GroupUser creationUser = getPersistedGroupUserList(groupUserRepository, army, cjm, 1).get(0);
 		
 		List<DrawList> drawLists = newDrawList(army, creationUser, 3);
 		drawListRepository.saveAllAndFlush(drawLists);
@@ -142,7 +179,7 @@ public class DrawListServiceUnitTest {
 		assertThrows(NullPointerException.class, () -> victim.getList(null, army, cjm));
 		assertThrows(DrawListNotFoundException.class, () -> victim.getList(1, army, cjm));
 		
-		GroupUser creationUser = getPersistedGroupUser(groupUserRepository, army, cjm);
+		GroupUser creationUser = getPersistedGroupUserList(groupUserRepository, army, cjm, 1).get(0);
 		List<DrawList> drawLists = newDrawList(army, creationUser, 1);
 		drawListRepository.saveAllAndFlush(drawLists);
 		
@@ -163,7 +200,7 @@ public class DrawListServiceUnitTest {
 	void testSaveListWhenDescriptionIsMissing() {
 		Army army = getPersistedArmy(armyRepository);
 		CJM cjm = getPersistedCJM(cjmRepository);
-		GroupUser creationUser = getPersistedGroupUser(groupUserRepository, army, cjm);
+		GroupUser creationUser = getPersistedGroupUserList(groupUserRepository, army, cjm, 1).get(0);
 		
 		DrawListDTO drawListDTO = TestDataCreator.newDrawListDTO(army, creationUser, 1).get(0);
 		drawListDTO.setDescription(null);
@@ -180,7 +217,7 @@ public class DrawListServiceUnitTest {
 	void testSaveListWhenDescriptionIsDuplicated() {
 		Army army = getPersistedArmy(armyRepository);
 		CJM cjm = getPersistedCJM(cjmRepository);
-		GroupUser creationUser = getPersistedGroupUser(groupUserRepository, army, cjm);
+		GroupUser creationUser = getPersistedGroupUserList(groupUserRepository, army, cjm, 1).get(0);
 		
 		DrawList drawList = TestDataCreator.newDrawList(army, creationUser, 1).get(0);
 		drawListRepository.save(drawList);
@@ -198,7 +235,7 @@ public class DrawListServiceUnitTest {
 	void testSaveListWhenQuarterYearIsInvalid() {
 		Army army = getPersistedArmy(armyRepository);
 		CJM cjm = getPersistedCJM(cjmRepository);
-		GroupUser creationUser = getPersistedGroupUser(groupUserRepository, army, cjm);
+		GroupUser creationUser = getPersistedGroupUserList(groupUserRepository, army, cjm, 1).get(0);
 		
 		DrawListDTO drawListDTO = TestDataCreator.newDrawListDTO(army, creationUser, 1).get(0);
 		drawListDTO.setQuarterYear(new AnnualQuarter(LocalDate.now().plusMonths(6).plusDays(1)).toShortFormat());
@@ -217,7 +254,7 @@ public class DrawListServiceUnitTest {
 	void testSaveListWhenSoldierListIsBelowMinRequired() {
 		Army army = getPersistedArmy(armyRepository);
 		CJM cjm = getPersistedCJM(cjmRepository);
-		GroupUser creationUser = getPersistedGroupUser(groupUserRepository, army, cjm);
+		GroupUser creationUser = getPersistedGroupUserList(groupUserRepository, army, cjm, 1).get(0);
 		
 		DrawListDTO drawListDTO = TestDataCreator.newDrawListDTO(army, creationUser, 1).get(0);
 		drawListDTO.setSelectedSoldiers(List.of(1, 2, 3, 4));
@@ -348,7 +385,7 @@ public class DrawListServiceUnitTest {
 		CJM cjm = getPersistedCJM(cjmRepository);
 		MilitaryOrganization organization = getPersistedMilitaryOrganization(army, militaryOrganizationRepository);
 		MilitaryRank rank = getPersistedMilitaryRank(army, militaryRankRepository, armyRepository);
-		GroupUser creationUser = getPersistedGroupUser(groupUserRepository, army, cjm);
+		GroupUser creationUser = getPersistedGroupUserList(groupUserRepository, army, cjm, 1).get(0);
 		
 		List<Soldier> soldiers = TestDataCreator.newSoldierList(army, cjm, organization, rank, 6);
 		soldierRepository.saveAllAndFlush(soldiers);

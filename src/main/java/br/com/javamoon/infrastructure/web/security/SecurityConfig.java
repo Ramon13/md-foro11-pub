@@ -35,7 +35,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter{
 			).hasRole(GROUP_USER.toString())
 			//
 			// CJM user core role
-			.antMatchers("/mngmt/**").hasRole(CJM_USER.toString())
+			.antMatchers("/cjm/**").hasRole(CJM_USER.toString())
 			//
 			// Edit and creates lists
 			.antMatchers(

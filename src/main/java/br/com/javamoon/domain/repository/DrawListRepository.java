@@ -22,6 +22,8 @@ public interface DrawListRepository extends JpaRepository<DrawList, Integer>{
 	@Query("FROM DrawList dl WHERE dl.active = true AND dl.army = :army AND dl.creationUser.cjm = :cjm ORDER BY dl.id DESC")
 	Optional<List<DrawList>> findAllActiveByArmyAndCjm(@Param("army") Army army, @Param("cjm") CJM cjm);
 	
+	@Query("FROM DrawList dl WHERE dl.active = true AND dl.creationUser.cjm.id = :cjmId ORDER BY dl.id DESC")
+	Optional<List<DrawList>> findAllActiveByCjm(@Param("cjmId") Integer cjmId);
 	
 	
 	@Query("from DrawList dl where upper(dl.description) like :description and dl.army = :army")

@@ -195,10 +195,8 @@ public final class TestDataCreator {
 		return rank;
 	}
 	
-	public static GroupUser getPersistedGroupUser(GroupUserRepository groupUserRepository, Army army, CJM cjm) {
-		GroupUser user = newGroupUserList(army, cjm, 1).get(0);
-		groupUserRepository.saveAndFlush(user);
-		return user;
+	public static List<GroupUser> getPersistedGroupUserList(GroupUserRepository groupUserRepository, Army army, CJM cjm, int listSize) {
+		return groupUserRepository.saveAllAndFlush(newGroupUserList(army, cjm, listSize));
 	}
 	
 	public static List<Soldier> newSoldierList(

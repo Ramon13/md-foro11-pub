@@ -4,18 +4,14 @@ import static br.com.javamoon.infrastructure.web.controller.ControllerConstants.
 import static br.com.javamoon.infrastructure.web.controller.ControllerConstants.SUCCESS_MSG_ATTRIBUTE_NAME;
 import br.com.javamoon.domain.entity.GroupUser;
 import br.com.javamoon.exception.AccountValidationException;
-import br.com.javamoon.infrastructure.web.security.AuthenticationSuccessHandlerImpl;
-import br.com.javamoon.infrastructure.web.security.LoggedUser;
 import br.com.javamoon.mapper.EntityMapper;
 import br.com.javamoon.mapper.GroupUserDTO;
-import br.com.javamoon.mapper.UserDTO;
 import br.com.javamoon.service.UserAccountService;
 import br.com.javamoon.util.SecurityUtils;
 import br.com.javamoon.validator.ValidationUtils;
 import java.io.IOException;
 import java.util.List;
 import java.util.stream.Collectors;
-import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 import org.springframework.stereotype.Controller;
@@ -33,11 +29,9 @@ import org.springframework.web.servlet.ModelAndView;
 public class GroupUserAccountController {
 
     private UserAccountService accountService;
-    private AuthenticationSuccessHandlerImpl authenticationHandler;
     
-    public GroupUserAccountController(UserAccountService accountService, AuthenticationSuccessHandlerImpl authenticationHandler) {
+    public GroupUserAccountController(UserAccountService accountService) {
         this.accountService = accountService;
-        this.authenticationHandler = authenticationHandler;
     }
     
     @GetMapping("/register/home")
@@ -81,32 +75,7 @@ public class GroupUserAccountController {
     public ModelAndView delete(@PathVariable(name = "accountID", required = true) Integer accountID,
     		HttpServletResponse response) throws IOException {
     	GroupUser loggedUser = SecurityUtils.groupUser();
-    	accountService.deleteUserAccount(accountID, loggedUser.getArmy(), loggedUser.getCjm());
+    	accountService.deleteGroupUserAccount(accountID, loggedUser.getArmy(), loggedUser.getCjm());
     	return new ModelAndView("redirect:/gp/accounts/list/home");
     }
-    
-    @GetMapping(path="/password/reset")
-	public String resetCredentials(Model model){
-		model.addAttribute("user", SecurityUtils.groupUser());
-		return "auth/login-reset-credentials";
-	}
-    
-    @PostMapping("/password/reset/save")
-	public String editUserPassword(@Valid @ModelAttribute("user") UserDTO userDTO, Errors errors, Model model,
-			HttpServletResponse response, HttpServletRequest request) throws IOException {
-		
-		if (!errors.hasFieldErrors("password")) {
-			try {
-				LoggedUser loggedUser = SecurityUtils.loggedUser();
-				accountService.editPassword(loggedUser.getUser(), userDTO.getPassword());
-				
-				authenticationHandler.sendToHomePage(loggedUser, response, request.getSession());
-			} catch (AccountValidationException e) {
-				ValidationUtils.rejectValues(errors, e.getValidationErrors());
-			}
-		}
-		
-		model.addAttribute("user", userDTO);
-		return "auth/login-reset-credentials";
-	}
 }

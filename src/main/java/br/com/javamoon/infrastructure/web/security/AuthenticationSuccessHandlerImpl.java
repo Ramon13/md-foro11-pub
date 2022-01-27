@@ -55,7 +55,7 @@ public class AuthenticationSuccessHandlerImpl implements AuthenticationSuccessHa
 	}
 		
 	private void sendToPasswordRedefinition(HttpServletResponse response) throws IOException {
-		response.sendRedirect(resetPasswordIndexPage);
+		response.sendRedirect(applicationContext + resetPasswordIndexPage);
 	}
 	
 	public void sendToHomePage(LoggedUser loggedUser, HttpServletResponse response, HttpSession session) throws IOException {

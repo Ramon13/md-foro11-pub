@@ -11,7 +11,7 @@ public class CJMUserDTO extends UserDTO{
     private Integer id;
 
     private Auditorship auditorship;
-
+    
 	public CJMUserDTO(String username, String email, String password, Integer id, Auditorship auditorship) {
 		super(username, email, password);
 		this.id = id;

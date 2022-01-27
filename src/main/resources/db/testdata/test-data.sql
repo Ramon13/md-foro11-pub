@@ -167,7 +167,23 @@ insert into DRAW_LIST (id, creation_date, update_date, army_id, quarter_year, de
 		
 insert into DRAW_LIST_HAS_SOLDIER (draw_list_id, soldier_id)
 	values
-		(3, 21), (3, 22), (3, 23), (3, 24), (3, 25), (3, 26), (3, 28);		
+		(3, 21), (3, 22), (3, 23), (3, 24), (3, 25), (3, 26), (3, 28);
+		
+insert into DRAW_LIST (id, creation_date, update_date, army_id, quarter_year, description, creation_user_id, active, enable_for_draw)
+  values
+    (4, '2021-10-14', '2021-10-14', 1, '4/2021', 'Lista de atualização exército 4º trimestre de 2021', 1, 1, 0);
+    
+insert into DRAW_LIST_HAS_SOLDIER (draw_list_id, soldier_id)
+  values
+    (4, 1), (4, 2), (4, 3), (4, 4), (4, 5);
+        
+insert into DRAW_LIST (id, creation_date, update_date, army_id, quarter_year, description, creation_user_id, active, enable_for_draw)
+  values
+    (5, '2022-01-01', '2022-01-01', 1, '1/2022', 'Primeira lista exército 1º trimestre de 2022', 1, 1, 0);
+    
+insert into DRAW_LIST_HAS_SOLDIER (draw_list_id, soldier_id)
+  values
+    (5, 1), (5, 2), (5, 3), (5, 4), (5, 5);
 		
 #draw----------------------------------------------------------------------------------------------------------------
 #cpj 0 EB 1aud1cjm

@@ -20,7 +20,6 @@ import br.com.javamoon.domain.cjm_user.CJM;
 import br.com.javamoon.domain.cjm_user.CJMRepository;
 import br.com.javamoon.domain.entity.CJMUser;
 import br.com.javamoon.domain.entity.GroupUser;
-import br.com.javamoon.domain.entity.User;
 import br.com.javamoon.domain.repository.CJMUserRepository;
 import br.com.javamoon.domain.repository.GroupUserRepository;
 import br.com.javamoon.domain.soldier.Army;
@@ -36,6 +35,9 @@ import br.com.javamoon.validator.ValidationConstants;
 import br.com.javamoon.validator.ValidationError;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
+import org.apache.commons.lang3.StringUtils;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -75,7 +77,7 @@ public class UserAccountServiceUnitTest {
 		
 		victim.createCJMUserAccount(newUser, auditorship);
 		
-		Optional<List<User>> users = cjmUserRepository.findActiveByAuditorship(auditorship.getId());
+		Optional<List<CJMUser>> users = cjmUserRepository.findActiveByAuditorship(auditorship.getId());
 		
 		assertTrue(users.isPresent());
 		assertEquals(1, users.get().size());
@@ -171,7 +173,22 @@ public class UserAccountServiceUnitTest {
 	}
 	
 	@Test
-	void testDeleteUserSuccessfully() {
+	void testListCjmAccountSuccessfully() {
+		Auditorship auditorship = getPersistedAuditorship();
+		
+		List<CJMUser> users = getCjmUserList(auditorship, 3);
+		users.get(0).setActive(false);
+		cjmUserRepository.saveAllAndFlush(users); 												
+		
+		List<CJMUser> dbUsers = victim.listCjmUserAccounts(auditorship);
+		
+		assertEquals(2, dbUsers.size());
+		assertEquals(users.get(1).getEmail(), dbUsers.get(0).getEmail());
+		assertEquals(users.get(2).getEmail(), dbUsers.get(1).getEmail());
+	}
+	
+	@Test
+	void testDeleteGroupUserSuccessfully() {
 		Army army = armyRepository.saveAndFlush(TestDataCreator.newArmy());
 		CJM cjm = cjmRepository.saveAndFlush(newCjm());
 		
@@ -181,7 +198,7 @@ public class UserAccountServiceUnitTest {
 		GroupUser userVictim = users.get(0);
 		assertTrue(groupUserRepository.findById(userVictim.getId()).isPresent());
 		
-		victim.deleteUserAccount(userVictim.getId(), army, cjm);	
+		victim.deleteGroupUserAccount(userVictim.getId(), army, cjm);	
 		assertFalse(groupUserRepository.findById(userVictim.getId()).get().getActive());
 	
 		//test if a deleted user is retreaving from database
@@ -193,7 +210,24 @@ public class UserAccountServiceUnitTest {
 	}
 	
 	@Test
-	void testDeleteUserWhenIdDoesNotExists() {
+	void testDeleteCjmUserSuccessfully() {
+		Auditorship auditorship = getPersistedAuditorship();
+		List<CJMUser> users = getCjmUserList(auditorship, 3);
+		
+		cjmUserRepository.saveAllAndFlush(users);
+		
+		assertEquals(3, cjmUserRepository.findActiveByAuditorship(auditorship.getId()).get().size());
+		
+		victim.deleteCjmUserAccount(users.get(0).getId(), auditorship);
+		
+		List<CJMUser> dbUsers = cjmUserRepository.findActiveByAuditorship(auditorship.getId()).get();
+		assertEquals(2, dbUsers.size());
+		assertEquals(users.get(1).getEmail(), dbUsers.get(0).getEmail());
+		assertEquals(users.get(2).getEmail(), dbUsers.get(1).getEmail());
+	}
+	
+	@Test
+	void testDeleteGroupUserWhenIdDoesNotExists() {
 		Army army = armyRepository.saveAndFlush(TestDataCreator.newArmy());
 		CJM cjm = cjmRepository.saveAndFlush(newCjm());
 		
@@ -201,11 +235,19 @@ public class UserAccountServiceUnitTest {
 		groupUserRepository.saveAndFlush(user);
 		
 		assertThrows(AccountNotFoundException.class, 
-				() -> victim.deleteUserAccount(user.getId() + 1, army, cjm));
+				() -> victim.deleteGroupUserAccount(user.getId() + 1, army, cjm));
 	}
 	
 	@Test
-	void testDeleteUserWhenLoggedUserHasNotPermission() {
+	void testDeleteCjmUserWhenIdDoesNotExists() {
+		Auditorship auditorship = getPersistedAuditorship();
+		
+		assertThrows(AccountNotFoundException.class, 
+				() -> victim.deleteCjmUserAccount(1, auditorship));
+	}
+	
+	@Test
+	void testDeleteGroupUserWhenLoggedUserHasNotPermission() {
 		Army army = armyRepository.saveAndFlush(TestDataCreator.newArmy());
 		CJM cjm = cjmRepository.saveAndFlush(newCjm());
 		
@@ -218,7 +260,7 @@ public class UserAccountServiceUnitTest {
 		armyRepository.save(diffArmy);
 		
 		IllegalStateException exception = assertThrows(IllegalStateException.class, 
-				() -> victim.deleteUserAccount(user.getId(), diffArmy, cjm));
+				() -> victim.deleteGroupUserAccount(user.getId(), diffArmy, cjm));
 		
 		assertEquals(ValidationConstants.NO_PERMISSION, exception.getMessage());
 	}
@@ -228,5 +270,19 @@ public class UserAccountServiceUnitTest {
 		auditorship.setCjm(cjmRepository.saveAndFlush(newCjm()));
 		auditorshipRepository.saveAndFlush(auditorship);
 		return auditorship;
+	}
+	
+	private List<CJMUser> getCjmUserList(Auditorship auditorship, int listSize){
+		return IntStream
+			.range(0, listSize)
+			.mapToObj(
+				i -> {
+					CJMUserDTO userDTO = TestDataCreator.newCJMUserDTO();
+					userDTO.setEmail(StringUtils.rightPad("email", i + 10 + listSize, 'c'));
+					userDTO.setUsername(StringUtils.rightPad("username", i + 10 + listSize, 'c'));
+					userDTO.setAuditorship(auditorship);
+					return EntityMapper.fromDTOToEntity(userDTO);
+				}
+			).collect(Collectors.toList());
 	}
 }
