@@ -1,19 +1,19 @@
 package br.com.javamoon.mapper;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
-
-import javax.validation.constraints.Size;
-
 import br.com.javamoon.domain.cjm_user.CJM;
 import br.com.javamoon.domain.soldier.Army;
 import br.com.javamoon.infrastructure.web.security.Role;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Objects;
+import javax.validation.constraints.Size;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
 
 @Getter
 @Setter
+@AllArgsConstructor
 public class GroupUserDTO extends UserDTO{
     
     private Integer id;

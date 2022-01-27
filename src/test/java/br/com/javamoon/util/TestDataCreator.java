@@ -25,6 +25,7 @@ import br.com.javamoon.domain.cjm_user.CJMRepository;
 import br.com.javamoon.domain.draw_exclusion.DrawExclusion;
 import br.com.javamoon.domain.entity.DrawList;
 import br.com.javamoon.domain.entity.GroupUser;
+import br.com.javamoon.domain.repository.CJMUserRepository;
 import br.com.javamoon.domain.repository.DrawListRepository;
 import br.com.javamoon.domain.repository.GroupUserRepository;
 import br.com.javamoon.domain.soldier.Army;
@@ -44,8 +45,8 @@ import br.com.javamoon.mapper.UserDTO;
 import br.com.javamoon.service.AnnualQuarterService;
 import br.com.javamoon.validator.DrawExclusionValidator;
 import br.com.javamoon.validator.DrawListValidator;
-import br.com.javamoon.validator.GroupUserAccountValidator;
 import br.com.javamoon.validator.SoldierValidator;
+import br.com.javamoon.validator.UserAccountValidator;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
@@ -56,8 +57,10 @@ public final class TestDataCreator {
 
 	private TestDataCreator () {}
 	
-	public static GroupUserAccountValidator newUserAccountValidator(GroupUserRepository groupUserRepository) {
-		return new GroupUserAccountValidator(groupUserRepository);
+	public static UserAccountValidator newUserAccountValidator(
+			GroupUserRepository groupUserRepository,
+			CJMUserRepository cjmUserRepository) {
+		return new UserAccountValidator(groupUserRepository, cjmUserRepository);
 	}
 	
 	public static SoldierValidator newSoldierValidator(
@@ -77,7 +80,7 @@ public final class TestDataCreator {
 	}
 	
 	public static UserDTO newUserDTO() {
-		return new UserDTO(DEFAULT_USER_USERNAME, DEFAULT_USER_EMAIL, DEFAULT_USER_PASSWORD); 
+		return new UserDTO(DEFAULT_USER_USERNAME, DEFAULT_USER_EMAIL, DEFAULT_USER_PASSWORD);
 	}
 	
 	public static CJMUserDTO newCJMUserDTO() {

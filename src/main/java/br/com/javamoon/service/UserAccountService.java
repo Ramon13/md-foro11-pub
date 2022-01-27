@@ -15,7 +15,7 @@ import br.com.javamoon.infrastructure.web.security.Role;
 import br.com.javamoon.mapper.CJMUserDTO;
 import br.com.javamoon.mapper.EntityMapper;
 import br.com.javamoon.mapper.GroupUserDTO;
-import br.com.javamoon.validator.GroupUserAccountValidator;
+import br.com.javamoon.validator.UserAccountValidator;
 import java.util.List;
 import javax.transaction.Transactional;
 import org.springframework.stereotype.Service;
@@ -25,24 +25,20 @@ public class UserAccountService {
 
 	public static final Integer DEFAULT_CJM_USER_PERMISSION_LEVEL = 1;
 	
-    private GroupUserAccountValidator accountValidator;
+    private UserAccountValidator userAccountValidator;
     private GroupUserRepository groupUserRepository;
     private UserRepository userRepository;
     
-    public UserAccountService(
-    		GroupUserAccountValidator accountValidator, 
-    		GroupUserRepository groupUserRepository,
-    		UserRepository userRepository
-		) {
-    	
-        this.accountValidator = accountValidator;
-        this.groupUserRepository = groupUserRepository;
-        this.userRepository = userRepository;
-    }
-    
-    @Transactional
+	public UserAccountService(UserAccountValidator userAccountValidator, GroupUserRepository groupUserRepository,
+		UserRepository userRepository) {
+		this.userAccountValidator = userAccountValidator;
+		this.groupUserRepository = groupUserRepository;
+		this.userRepository = userRepository;
+	}
+
+	@Transactional
     public GroupUserDTO createGroupUserAccount(GroupUserDTO userDTO, Army army, CJM cjm) throws AccountValidationException {
-        accountValidator.createAccountValidate(userDTO);
+        userAccountValidator.validateCreateGroupUserAccount(userDTO);
         
         userDTO.getSelectedRoles().add(GROUP_USER.toString());
         
@@ -57,11 +53,10 @@ public class UserAccountService {
     }
     
     public CJMUserDTO createCJMUserAccount(CJMUserDTO userDTO, Auditorship auditorship) throws AccountValidationException {
-    	accountValidator.createAccountValidate(userDTO);
+    	userAccountValidator.validateCreateCJMUserAccount(userDTO);
     	CJMUser user = EntityMapper.fromDTOToEntity(userDTO);
     	
     	user.setAuditorship(auditorship);
-    	user.setPermissionLevel(DEFAULT_CJM_USER_PERMISSION_LEVEL);
     	user.encryptPassword();
     	
     	userRepository.save(user);
@@ -77,14 +72,14 @@ public class UserAccountService {
     	if (groupUserRepository.findById(accountID).isEmpty())
     		throw new AccountNotFoundException("account not found: " + accountID);
     	
-    	accountValidator.deleteAccountValidate(accountID, army, cjm);
+    	userAccountValidator.validateDeleteGroupAccount(accountID, army, cjm);
     	
     	groupUserRepository.delete(accountID);
     }
     
     @Transactional
 	public void editPassword(User loggedUser, String newPassword) throws AccountValidationException{
-		accountValidator.editPasswordValidate(newPassword);
+		userAccountValidator.editPasswordValidate(newPassword);
 		
 		loggedUser.setCredentialsExpired(!loggedUser.getCredentialsExpired());
 		loggedUser.setPassword(newPassword);

@@ -10,7 +10,6 @@ import br.com.javamoon.domain.soldier.ArmyRepository;
 import br.com.javamoon.domain.soldier.Soldier;
 import br.com.javamoon.domain.soldier.SoldierRepository;
 import br.com.javamoon.infrastructure.web.controller.ControllerHelper;
-import br.com.javamoon.service.CjmUserService;
 import br.com.javamoon.service.DrawService;
 import br.com.javamoon.service.ValidationException;
 import br.com.javamoon.util.SecurityUtils;
@@ -41,13 +40,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 public class ManagementController {
     
 	@Autowired
-	private CjmUserService cjmUserService;
-	
-	@Autowired
 	private SoldierRepository soldierRepository;
-	
-	@Autowired
-	private ArmyRepository armyRepository;
 	
 	@Autowired
 	private DrawService drawService;
@@ -60,12 +53,6 @@ public class ManagementController {
 	
 	@Autowired
 	private CJMUserRepository cjmUserRepository;
-	
-	@Autowired
-	private CJMRepository cjmRepository;
-	
-	@Autowired
-	private AuditorshipRepository auditorshipRepo;
 	
 	@InitBinder
     public void initBinder(WebDataBinder binder) {
@@ -119,46 +106,6 @@ public class ManagementController {
 		model.addAttribute("users", users);
 		
 		return "/management/register/user-list";
-	}
-	
-	@GetMapping("/gpuser/register")
-	public String gpUserRegister(Model model) {
-		ControllerHelper.setEditMode(model, false);
-		ControllerHelper.addArmiesToRequest(armyRepository, model);
-		
-		model.addAttribute("cjmList", cjmRepository.findAll());
-		model.addAttribute("gpUser", new GroupUser());
-		
-		return "management/register/gpuser-register";
-	}
-	
-	@GetMapping("/cjmuser/register")
-	public String cjmUserRegister(Model model) {
-		ControllerHelper.setEditMode(model, false);
-		ControllerHelper.addAuditorshipListToRequest(auditorshipRepo, model);
-		
-		model.addAttribute("cjmUser", new CJMUser());
-		
-		return "management/register/cjmuser-register";
-	}
-
-	@PostMapping(path = "/cjmuser/register/save")
-	public String saveCjmUser(@ModelAttribute("cjmUser") @Valid CJMUser cjmUser,
-			Errors errors,
-			Model model) {
-		
-		if (!errors.hasErrors()) {
-			try {
-				cjmUserService.saveUser(cjmUser);
-				model.addAttribute("msg", "Cadastro realizado com sucesso");
-			} catch (ValidationException e) {
-				errors.rejectValue(e.getFieldName(), null, e.getMessage());
-			}
-		}
-		
-		ControllerHelper.addAuditorshipListToRequest(auditorshipRepo, model);
-		ControllerHelper.setEditMode(model, false);
-		return "management/register/cjmuser-register";
 	}
 	
 	@GetMapping("/user/register/password/reset/home")

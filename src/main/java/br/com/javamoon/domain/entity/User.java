@@ -57,6 +57,8 @@ public class User implements Serializable{
 	        credentialsExpired = true;
 	    if (Objects.isNull(active))
 	        active = true;
+	    if (Objects.isNull(permissionLevel))
+	    	permissionLevel = 1;
 	}
 	
 	public void encryptPassword() {

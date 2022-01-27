@@ -16,5 +16,6 @@ public interface CJMUserRepository extends JpaRepository<CJMUser, Integer>{
 	@Query("FROM CJMUser c WHERE c.active = true AND c.auditorship.id = :auditorshipId")
 	Optional<List<User>> findActiveByAuditorship(@Param("auditorshipId") Integer auditorshipId);
 	
-	public List<CJMUser> findByEmail(String email);
+	@Query("FROM CJMUser c WHERE c.active = true AND c.email = :email")
+	Optional<CJMUser> findActiveByEmail(@Param("email") String email);
 }

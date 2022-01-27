@@ -2,7 +2,11 @@ package br.com.javamoon.unit.service;
 
 import static br.com.javamoon.util.TestDataCreator.newAuditorship;
 import static br.com.javamoon.util.TestDataCreator.newCjm;
+import static br.com.javamoon.validator.ValidationConstants.ACCOUNT_EMAIL;
+import static br.com.javamoon.validator.ValidationConstants.ACCOUNT_EMAIL_ALREADY_EXISTS;
 import static br.com.javamoon.validator.ValidationConstants.ACCOUNT_PASSWORD;
+import static br.com.javamoon.validator.ValidationConstants.ACCOUNT_USERNAME;
+import static br.com.javamoon.validator.ValidationConstants.ACCOUNT_USERNAME_ALREADY_EXISTS;
 import static br.com.javamoon.validator.ValidationConstants.PASSWORD_DOES_NOT_HAVE_LOWERCASE;
 import static br.com.javamoon.validator.ValidationConstants.PASSWORD_DOES_NOT_HAVE_NUMBER;
 import static br.com.javamoon.validator.ValidationConstants.PASSWORD_DOES_NOT_HAVE_UPPERCASE;
@@ -14,6 +18,7 @@ import br.com.javamoon.domain.cjm_user.Auditorship;
 import br.com.javamoon.domain.cjm_user.AuditorshipRepository;
 import br.com.javamoon.domain.cjm_user.CJM;
 import br.com.javamoon.domain.cjm_user.CJMRepository;
+import br.com.javamoon.domain.entity.CJMUser;
 import br.com.javamoon.domain.entity.GroupUser;
 import br.com.javamoon.domain.entity.User;
 import br.com.javamoon.domain.repository.CJMUserRepository;
@@ -23,6 +28,7 @@ import br.com.javamoon.domain.soldier.ArmyRepository;
 import br.com.javamoon.exception.AccountNotFoundException;
 import br.com.javamoon.exception.AccountValidationException;
 import br.com.javamoon.mapper.CJMUserDTO;
+import br.com.javamoon.mapper.EntityMapper;
 import br.com.javamoon.service.UserAccountService;
 import br.com.javamoon.util.Constants;
 import br.com.javamoon.util.TestDataCreator;
@@ -75,6 +81,50 @@ public class UserAccountServiceUnitTest {
 		assertEquals(1, users.get().size());
 		assertEquals(newUser.getEmail(), users.get().get(0).getEmail());
 		assertEquals(UserAccountService.DEFAULT_CJM_USER_PERMISSION_LEVEL, users.get().get(0).getPermissionLevel());
+	}
+	
+	@Test
+	void testCreateCJMAccountWhenUsernameIsDuplicated() {
+		Auditorship auditorship = getPersistedAuditorship();
+		
+		CJMUser userDB = EntityMapper.fromDTOToEntity(TestDataCreator.newCJMUserDTO());
+		userDB.setUsername("first user");
+		userDB.setEmail("first email");
+		userDB.setAuditorship(auditorship);
+		
+		cjmUserRepository.saveAndFlush(userDB);
+		
+		CJMUserDTO newUser = TestDataCreator.newCJMUserDTO();
+		newUser.setUsername("first user");
+		
+		AccountValidationException exception = 
+				assertThrows(AccountValidationException.class, () -> victim.createCJMUserAccount(newUser, auditorship));
+		assertEquals(1, exception.getValidationErrors().getNumberOfErrors());
+		assertEquals(
+				new ValidationError(ACCOUNT_USERNAME, ACCOUNT_USERNAME_ALREADY_EXISTS),
+				exception.getValidationErrors().getError(0));
+	}
+	
+	@Test
+	void testCreateCJMAccountWhenEmailIsDuplicated() {
+		Auditorship auditorship = getPersistedAuditorship();
+		
+		CJMUser userDB = EntityMapper.fromDTOToEntity(TestDataCreator.newCJMUserDTO());
+		userDB.setUsername("first user");
+		userDB.setEmail("first email");
+		userDB.setAuditorship(auditorship);
+		
+		cjmUserRepository.saveAndFlush(userDB);
+		
+		CJMUserDTO newUser = TestDataCreator.newCJMUserDTO();
+		newUser.setEmail("first email");
+		
+		AccountValidationException exception = 
+				assertThrows(AccountValidationException.class, () -> victim.createCJMUserAccount(newUser, auditorship));
+		assertEquals(1, exception.getValidationErrors().getNumberOfErrors());
+		assertEquals(
+				new ValidationError(ACCOUNT_EMAIL, ACCOUNT_EMAIL_ALREADY_EXISTS),
+				exception.getValidationErrors().getError(0));
 	}
 	
 	@Test

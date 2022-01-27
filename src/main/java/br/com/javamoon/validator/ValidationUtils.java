@@ -1,5 +1,6 @@
 package br.com.javamoon.validator;
 
+import static br.com.javamoon.validator.ValidationConstants.ACCOUNT_PASSWORD;
 import br.com.javamoon.util.StringUtils;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
@@ -99,5 +100,13 @@ public final class ValidationUtils {
     	}
     	
     	return true;
+    }
+    
+    public static boolean validatePassword(String password, ValidationErrors validationErrors) {
+        return (
+            validateIfHasAnyUpperCase(password, ACCOUNT_PASSWORD, validationErrors) &&
+            validateIfHasAnyLowerCase(password, ACCOUNT_PASSWORD, validationErrors) &&
+            validateIfHasAnyNumber(password, ACCOUNT_PASSWORD, validationErrors)
+        );
     }
 }
