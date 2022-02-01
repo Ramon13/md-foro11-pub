@@ -2,7 +2,6 @@ package br.com.javamoon.infrastructure.web.controller;
 
 import br.com.javamoon.domain.cjm_user.AuditorshipRepository;
 import br.com.javamoon.domain.cjm_user.CJM;
-import br.com.javamoon.domain.draw.AnnualQuarter;
 import br.com.javamoon.domain.draw.CouncilType;
 import br.com.javamoon.domain.draw.Draw;
 import br.com.javamoon.domain.draw.DrawRepository;
@@ -17,7 +16,6 @@ import br.com.javamoon.domain.soldier.MilitaryRankRepository;
 import br.com.javamoon.infrastructure.web.security.Role;
 import br.com.javamoon.util.SecurityUtils;
 import br.com.javamoon.util.StringUtils;
-import java.time.LocalDate;
 import java.util.List;
 import java.util.Map;
 import org.springframework.data.domain.Sort;
@@ -104,10 +102,6 @@ public class ControllerHelper {
 	 
 	 public static Army getDefaultArmy(ArmyRepository armyRepo) {
 		 return armyRepo.findById(1).orElseThrow();
-	 }
-	 
-	 public static AnnualQuarter getCurrentAnnualQuarter() {
-		 return new AnnualQuarter(LocalDate.now());
 	 }
 	 
 	 public static void addSuccessMsgToRequest(String msg, Model model) {

@@ -144,42 +144,42 @@ insert into GROUP_USER (id, username, email, user_password, active, credentials_
 		
 		
 #Draw List------------------------------------------------------------------------------------------------------		
-insert into DRAW_LIST (id, creation_date, update_date, army_id, quarter_year, description, creation_user_id, active, enable_for_draw)
+insert into DRAW_LIST (id, creation_date, update_date, army_id, year_quarter, description, creation_user_id, active, enable_for_draw)
 	values
-		(1, '2021-10-13', '2021-10-13', 1, '4/2021', 'Primeira lista exército 4º trimestre de 2021', 1, 1, 0);
+		(1, '2021-10-13', '2021-10-13', 1, '2021\'4', 'Primeira lista exército 4º trimestre de 2021', 1, 1, 0);
 		
 insert into DRAW_LIST_HAS_SOLDIER (draw_list_id, soldier_id)
 	values
 		(1, 1), (1, 2), (1, 3), (1, 4), (1, 5);			
 
 
-insert into DRAW_LIST (id, creation_date, update_date, army_id, quarter_year, description, creation_user_id, active, enable_for_draw)
+insert into DRAW_LIST (id, creation_date, update_date, army_id, year_quarter, description, creation_user_id, active, enable_for_draw)
 	values
-		(2, '2021-10-13', '2021-10-13', 2, '3/2021', 'Primeira lista marinha 4º trimestre de 2021', 1, 1, 0);
+		(2, '2021-10-13', '2021-10-13', 2, '2021\'3', 'Primeira lista marinha 4º trimestre de 2021', 1, 1, 0);
 		
 insert into DRAW_LIST_HAS_SOLDIER (draw_list_id, soldier_id)
 	values
 		(2, 11), (2, 12), (2, 13), (2, 14), (2, 15), (2, 16), (2, 18);		
 
-insert into DRAW_LIST (id, creation_date, update_date, army_id, quarter_year, description, creation_user_id, active, enable_for_draw)
+insert into DRAW_LIST (id, creation_date, update_date, army_id, year_quarter, description, creation_user_id, active, enable_for_draw)
 	values
-		(3, '2021-10-13', '2021-10-13', 3, '3/2021', 'Primeira lista aeronáutica 4º trimestre de 2021', 3, 1, 0);
+		(3, '2021-10-13', '2021-10-13', 3, '2021\'3', 'Primeira lista aeronáutica 4º trimestre de 2021', 3, 1, 0);
 		
 insert into DRAW_LIST_HAS_SOLDIER (draw_list_id, soldier_id)
 	values
 		(3, 21), (3, 22), (3, 23), (3, 24), (3, 25), (3, 26), (3, 28);
 		
-insert into DRAW_LIST (id, creation_date, update_date, army_id, quarter_year, description, creation_user_id, active, enable_for_draw)
+insert into DRAW_LIST (id, creation_date, update_date, army_id, year_quarter, description, creation_user_id, active, enable_for_draw)
   values
-    (4, '2021-10-14', '2021-10-14', 1, '4/2021', 'Lista de atualização exército 4º trimestre de 2021', 1, 1, 0);
+    (4, '2021-10-14', '2021-10-14', 1, '2021\'4', 'Lista de atualização exército 4º trimestre de 2021', 1, 1, 0);
     
 insert into DRAW_LIST_HAS_SOLDIER (draw_list_id, soldier_id)
   values
     (4, 1), (4, 2), (4, 3), (4, 4), (4, 5);
         
-insert into DRAW_LIST (id, creation_date, update_date, army_id, quarter_year, description, creation_user_id, active, enable_for_draw)
+insert into DRAW_LIST (id, creation_date, update_date, army_id, year_quarter, description, creation_user_id, active, enable_for_draw)
   values
-    (5, '2022-01-01', '2022-01-01', 1, '1/2022', 'Primeira lista exército 1º trimestre de 2022', 1, 1, 0);
+    (5, '2022-01-01', '2022-01-01', 1, '2022\'1', 'Primeira lista exército 1º trimestre de 2022', 1, 1, 0);
     
 insert into DRAW_LIST_HAS_SOLDIER (draw_list_id, soldier_id)
   values

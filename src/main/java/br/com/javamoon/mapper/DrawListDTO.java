@@ -1,19 +1,18 @@
 package br.com.javamoon.mapper;
 
-import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
-
-import javax.validation.constraints.NotEmpty;
-import javax.validation.constraints.Size;
 import static br.com.javamoon.mapper.MapperConstants.EDIT_PHASE;
 import static br.com.javamoon.mapper.MapperConstants.EDIT_PHASE_DESCRIPTION;
 import static br.com.javamoon.mapper.MapperConstants.READY_PHASE;
 import static br.com.javamoon.mapper.MapperConstants.READY_PHASE_DESCRIPTION;
 import br.com.javamoon.domain.soldier.Soldier;
-import br.com.javamoon.util.DateTimeUtils;
+import br.com.javamoon.util.DateUtils;
+import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+import javax.validation.constraints.NotEmpty;
+import javax.validation.constraints.Size;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -52,10 +51,10 @@ public class DrawListDTO {
 	}
 	
 	public String getFormattedCreationDate() {
-		return DateTimeUtils.format(creationDate);
+		return DateUtils.format(creationDate);
 	}
 	
 	public String getFormattedUpdateDate() {
-		return DateTimeUtils.format(updateDate);
+		return DateUtils.format(updateDate);
 	}
 }

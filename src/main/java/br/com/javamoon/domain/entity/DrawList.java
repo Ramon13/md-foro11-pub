@@ -48,8 +48,8 @@ public class DrawList {
 	@Column(name = "update_date", nullable = false)
 	private LocalDate updateDate;
 	
-	@Column(name = "quarter_year", nullable = false)
-	private String quarterYear;
+	@Column(name = "yearQuarter", nullable = false)
+	private String yearQuarter;
 	
 	@ManyToOne
 	@JoinColumn(name = "army_id", nullable = false)

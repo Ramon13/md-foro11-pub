@@ -3,7 +3,6 @@ package br.com.javamoon.infrastructure.web.controller;
 import br.com.javamoon.domain.cjm_user.Auditorship;
 import br.com.javamoon.domain.cjm_user.AuditorshipRepository;
 import br.com.javamoon.domain.cjm_user.CJM;
-import br.com.javamoon.domain.draw.AnnualQuarter;
 import br.com.javamoon.domain.draw.CouncilType;
 import br.com.javamoon.domain.draw.Draw;
 import br.com.javamoon.domain.draw.DrawRepository;
@@ -18,12 +17,12 @@ import br.com.javamoon.domain.soldier.NoAvaliableSoldierException;
 import br.com.javamoon.domain.soldier.Soldier;
 import br.com.javamoon.domain.soldier.SoldierRepository;
 import br.com.javamoon.infrastructure.web.repository.DrawRepositoryImpl;
-import br.com.javamoon.service.AnnualQuarterService;
 import br.com.javamoon.service.ArmyService;
 import br.com.javamoon.service.AuditorshipService;
 import br.com.javamoon.service.DrawService;
 import br.com.javamoon.service.RandomSoldierService;
 import br.com.javamoon.service.ValidationException;
+import br.com.javamoon.util.DateUtils;
 import br.com.javamoon.util.SecurityUtils;
 import java.io.IOException;
 import java.time.LocalDate;
@@ -60,9 +59,6 @@ public class ManagementDrawController {
 	
 	@Autowired
 	private DrawService drawSvc;
-	
-	@Autowired
-	private AnnualQuarterService annualQuarterSvc;
 	
 	@Autowired
 	private ArmyService armySvc;
@@ -128,7 +124,7 @@ public class ManagementDrawController {
 				String quarterYear = draw.getDrawList().getQuarterYear();
 				MilitaryRank[] ranks = draw.getRanks().toArray(new MilitaryRank[0]);
 				
-				if (annualQuarterSvc.isValidAnnualQuarter(quarterYear)
+				if (DateUtils.isSelectableQuarter(quarterYear)
 						&& armySvc.isMilitaryRankBelongsToArmy( draw.getArmy(), ranks)) {
 					
 					randomSoldierSvc.randomAllSoldiers(draw);
@@ -264,7 +260,7 @@ public class ManagementDrawController {
 		
 		String selectedQuarterYear;
 		if (draw.getDrawList() == null)
-			selectedQuarterYear = new AnnualQuarter(LocalDate.now()).toShortFormat();
+			selectedQuarterYear = DateUtils.toQuarterFormat(LocalDate.now());
 		else
 			selectedQuarterYear = draw.getDrawList().getQuarterYear();
 		
@@ -276,7 +272,7 @@ public class ManagementDrawController {
 		model.addAttribute("selectQuarter", selectedQuarterYear);
 		model.addAttribute("drawSoldierList", drawList); 
 		
-		model.addAttribute("quarters", annualQuarterSvc.getSelectableQuarters());
+		model.addAttribute("quarters", DateUtils.getSelectableQuarters()); //TODO: fix on template
 		ControllerHelper.addCouncilsToRequest(councilRepo, model);
 		ControllerHelper.addArmiesToRequest(armyRepo, model);
 		

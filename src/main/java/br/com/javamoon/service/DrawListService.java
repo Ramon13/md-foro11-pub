@@ -1,7 +1,6 @@
 package br.com.javamoon.service;
 
 import br.com.javamoon.domain.cjm_user.CJM;
-import br.com.javamoon.domain.draw.AnnualQuarter;
 import br.com.javamoon.domain.entity.DrawList;
 import br.com.javamoon.domain.entity.GroupUser;
 import br.com.javamoon.domain.repository.DrawListRepository;
@@ -10,10 +9,10 @@ import br.com.javamoon.domain.soldier.Soldier;
 import br.com.javamoon.exception.DrawListNotFoundException;
 import br.com.javamoon.mapper.DrawListDTO;
 import br.com.javamoon.mapper.EntityMapper;
+import br.com.javamoon.util.DateUtils;
 import br.com.javamoon.validator.DrawListValidator;
 import java.time.LocalDate;
 import java.util.ArrayList;
-import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -106,35 +105,25 @@ public class DrawListService {
 		);
 		
 		copyOfDrawList.setDescription("Cópia de " + drawList.getDescription());
-		copyOfDrawList.setQuarterYear(new AnnualQuarter(LocalDate.now()).toShortFormat());
+		copyOfDrawList.setQuarterYear(DateUtils.toQuarterFormat(LocalDate.now()));
 		return save(copyOfDrawList, army, cjm, creationUser);
 	}
 	
-	public Map<String, List<DrawList>> getMapAnnualQuarterDrawList(List<DrawList> drawLists){
-		Map<String, List<DrawList>> quarterDrawListMap = new TreeMap<>(new Comparator<String>() {
-			public int compare(String o1, String o2) {
-				int value = o2.substring(2, 6).compareTo(o1.substring(2, 6));
-				if (value != 0)
-					return value;
-				
-				return Integer.compare(o2.charAt(0), o1.charAt(0));
-			};
-		});
+	public Map<String, List<DrawList>> mapListByQuarter(List<DrawList> lists){
+		Map<String, List<DrawList>> quarterLists = new TreeMap<>();
 		
-		
-		List<DrawList> quarterDrawLists;
-		for (DrawList drawList : drawLists) {
+		List<DrawList> list; 
+		for (DrawList drawList : lists) {
+			list = quarterLists.get(drawList.getQuarterYear());
 			
-			quarterDrawLists = quarterDrawListMap.get(drawList.getQuarterYear());
+			if (Objects.isNull(list))
+				list = new ArrayList<DrawList>();
 			
-			if (quarterDrawLists == null)
-				quarterDrawLists = new ArrayList<DrawList>();
-			
-			quarterDrawLists.add(drawList);
-			quarterDrawListMap.put(drawList.getQuarterYear(), quarterDrawLists);
+			list.add(drawList);
+			quarterLists.put(drawList.getQuarterYear(), list);
 		}
 		
-		return quarterDrawListMap;
+		return quarterLists;
 	}
 	
 	private DrawList getListOrElseThrow(Integer listId, Army army, CJM cjm) {

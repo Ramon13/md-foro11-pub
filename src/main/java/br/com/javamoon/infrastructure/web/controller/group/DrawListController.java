@@ -1,7 +1,6 @@
 package br.com.javamoon.infrastructure.web.controller.group;
 
 import br.com.javamoon.domain.cjm_user.CJM;
-import br.com.javamoon.domain.draw.AnnualQuarter;
 import br.com.javamoon.domain.entity.GroupUser;
 import br.com.javamoon.domain.soldier.Army;
 import br.com.javamoon.exception.DrawListValidationException;
@@ -9,9 +8,9 @@ import br.com.javamoon.infrastructure.web.model.PaginationSearchFilter;
 import br.com.javamoon.infrastructure.web.model.SoldiersPagination;
 import br.com.javamoon.mapper.DrawListDTO;
 import br.com.javamoon.mapper.SoldierDTO;
-import br.com.javamoon.service.AnnualQuarterService;
 import br.com.javamoon.service.DrawListService;
 import br.com.javamoon.service.SoldierService;
+import br.com.javamoon.util.DateUtils;
 import br.com.javamoon.util.SecurityUtils;
 import java.time.LocalDate;
 import java.util.List;
@@ -36,15 +35,9 @@ public class DrawListController {
 	
 	private SoldierService soldierService;
 	
-	private AnnualQuarterService annualQuarterService;
-		
-	public DrawListController(
-		DrawListService drawListService,
-		SoldierService soldierService,
-        AnnualQuarterService annualQuarterService) {
+	public DrawListController(DrawListService drawListService, SoldierService soldierService) {
 		this.drawListService = drawListService;
 		this.soldierService = soldierService;
-		this.annualQuarterService = annualQuarterService;
 	}
 
 	@GetMapping("/list")
@@ -74,9 +67,9 @@ public class DrawListController {
 		GroupUser loggedUser = SecurityUtils.groupUser();
 		
 		DrawListDTO drawList = new DrawListDTO();
-		drawList.setQuarterYear(new AnnualQuarter(LocalDate.now()).toShortFormat());
+		drawList.setQuarterYear(DateUtils.toQuarterFormat(LocalDate.now()));
 		
-		model.addAttribute("quarters", annualQuarterService.getSelectableQuarters());
+		model.addAttribute("quarters", DateUtils.getSelectableQuarters()); //TODO: fix this attribute on template <expect annual quarter obj>
 		model.addAttribute("drawList", drawList);
 		model.addAttribute("soldiers", soldierService.listAll(loggedUser.getArmy(), loggedUser.getCjm()));
 		
@@ -119,7 +112,7 @@ public class DrawListController {
 		model.addAttribute("drawList", drawList);
 		model.addAttribute("drawListSoldiers", drawListSoldiers);
 		model.addAttribute("soldiers", allSoldiers);
-		model.addAttribute("quarters", annualQuarterService.getSelectableQuarters());
+		model.addAttribute("quarters", DateUtils.getSelectableQuarters()); //TODO: fix this attribute on template <expect annual quarter obj>
 			
 		return "group/draw-list/soldier-list";
 	}

@@ -18,7 +18,7 @@ import br.com.javamoon.domain.entity.DrawList;
 import br.com.javamoon.domain.repository.DrawListRepository;
 import br.com.javamoon.exception.DrawListValidationException;
 import br.com.javamoon.mapper.DrawListDTO;
-import br.com.javamoon.service.AnnualQuarterService;
+import br.com.javamoon.util.DateUtils;
 import br.com.javamoon.util.TestDataCreator;
 import br.com.javamoon.validator.DrawListValidator;
 import br.com.javamoon.validator.ValidationError;
@@ -40,18 +40,15 @@ public class DrawListValidatorUnitTest {
 	@Mock
 	private DrawListRepository drawListRepository;
 	
-	@Mock
-	private AnnualQuarterService annualQuarterService;
-	
 	@BeforeEach
 	void setupEach() {
-		victim = TestDataCreator.newDrawListValidator(drawListRepository, annualQuarterService);
+		victim = TestDataCreator.newDrawListValidator(drawListRepository);
 	}
 	
 	@Test
 	void testSaveValidatorSuccessfully() {
 		DrawListDTO drawListDTO = TestDataCreator.newDrawListDTO(null, null, 1).get(0);
-		Mockito.when(annualQuarterService.isSelectableQuarter(drawListDTO.getQuarterYear())).thenReturn(true);
+		Mockito.when(DateUtils.isSelectableQuarter(drawListDTO.getQuarterYear())).thenReturn(true);
 		
 		victim.saveListValidation(drawListDTO, null, null);
 	}
@@ -106,7 +103,7 @@ public class DrawListValidatorUnitTest {
 		DrawList drawList = TestDataCreator.newDrawList(null, null, 1).get(0);
 		drawList.setId(1);
 
-		Mockito.when(annualQuarterService.isSelectableQuarter(drawListDTO.getQuarterYear())).thenReturn(true);
+		Mockito.when(DateUtils.isSelectableQuarter(drawListDTO.getQuarterYear())).thenReturn(true);
 		
 		Mockito.when(drawListRepository.findAllActiveByDescriptionAndArmyAndCjm(drawListDTO.getDescription(), null, null))
 			.thenReturn(Optional.of(drawList));
@@ -124,7 +121,7 @@ public class DrawListValidatorUnitTest {
 		Mockito.when(drawListRepository.findAllActiveByDescriptionAndArmyAndCjm(drawListDTO.getDescription(), null, null))
 		.thenReturn(Optional.empty());
 		
-		Mockito.when(annualQuarterService.isSelectableQuarter(drawListDTO.getQuarterYear())).thenReturn(false);
+		Mockito.when(DateUtils.isSelectableQuarter(drawListDTO.getQuarterYear())).thenReturn(false);
 		
 		DrawListValidationException exception = assertThrows(DrawListValidationException.class, 
 				() -> victim.saveListValidation(drawListDTO, null, null));
@@ -140,7 +137,7 @@ public class DrawListValidatorUnitTest {
 		Mockito.when(drawListRepository.findAllActiveByDescriptionAndArmyAndCjm(drawListDTO.getDescription(), null, null))
 		.thenReturn(Optional.empty());
 		
-		Mockito.when(annualQuarterService.isSelectableQuarter(drawListDTO.getQuarterYear())).thenReturn(true);
+		Mockito.when(DateUtils.isSelectableQuarter(drawListDTO.getQuarterYear())).thenReturn(true);
 		
 		DrawListValidationException exception = assertThrows(
 			DrawListValidationException.class, 

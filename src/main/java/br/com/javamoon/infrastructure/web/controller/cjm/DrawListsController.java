@@ -3,14 +3,12 @@ package br.com.javamoon.infrastructure.web.controller.cjm;
 import br.com.javamoon.domain.entity.CJMUser;
 import br.com.javamoon.domain.entity.DrawList;
 import br.com.javamoon.domain.repository.DrawListRepository;
-import br.com.javamoon.domain.soldier.ArmyRepository;
 import br.com.javamoon.domain.soldier.Soldier;
 import br.com.javamoon.domain.soldier.SoldierRepositoryImpl;
 import br.com.javamoon.infrastructure.web.model.PaginationSearchFilter;
 import br.com.javamoon.service.DrawListService;
 import br.com.javamoon.util.SecurityUtils;
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -20,7 +18,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 
 @Controller
 @RequestMapping("/cjm/dw/lists")
-public class CjmDrawListsController {
+public class DrawListsController {
 	
 	private DrawListRepository drawListRepo;
 	
@@ -28,7 +26,7 @@ public class CjmDrawListsController {
 	
 	private SoldierRepositoryImpl soldierRepoImpl;
 	
-	public CjmDrawListsController(DrawListRepository drawListRepo,
+	public DrawListsController(DrawListRepository drawListRepo,
 	        DrawListService drawListService, SoldierRepositoryImpl soldierRepoImpl) {
 		this.drawListRepo = drawListRepo;
 		this.drawListService = drawListService;
@@ -40,7 +38,7 @@ public class CjmDrawListsController {
 		CJMUser loggedUser = SecurityUtils.cjmUser();
 		
 		List<DrawList> lists = drawListService.listByCjm(loggedUser.getAuditorship().getCjm());
-		model.addAttribute("drawListsMap", drawListService.getMapAnnualQuarterDrawList(lists));
+		model.addAttribute("drawListsMap", drawListService.mapListByQuarter(lists));
 		
 		return "cjm/lists/home";
 	}

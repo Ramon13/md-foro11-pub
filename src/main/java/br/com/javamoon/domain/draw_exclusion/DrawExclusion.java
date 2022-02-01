@@ -2,7 +2,7 @@ package br.com.javamoon.domain.draw_exclusion;
 
 import br.com.javamoon.domain.entity.GroupUser;
 import br.com.javamoon.domain.soldier.Soldier;
-import br.com.javamoon.util.DateTimeUtils;
+import br.com.javamoon.util.DateUtils;
 import java.io.Serializable;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -78,7 +78,7 @@ public class DrawExclusion implements Serializable{
 	public String getPeriodAsText() {
 		String format = "dd/MM/yyyy";
 		return String.format("De:%s; Até:%s", 
-				DateTimeUtils.convertToFormat(startDate, format),
-				DateTimeUtils.convertToFormat(endDate, format));
+				DateUtils.convertToFormat(startDate, format),
+				DateUtils.convertToFormat(endDate, format));
 	}
 }

@@ -2,7 +2,7 @@ package br.com.javamoon.mapper;
 
 import br.com.javamoon.domain.entity.GroupUser;
 import br.com.javamoon.domain.soldier.Soldier;
-import br.com.javamoon.util.DateTimeUtils;
+import br.com.javamoon.util.DateUtils;
 import java.time.LocalDate;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
@@ -40,7 +40,7 @@ public class DrawExclusionDTO {
 	public String getPeriodAsText() {
 		String format = "dd/MM/yyyy";
 		return String.format("De:%s; Até:%s", 
-				DateTimeUtils.convertToFormat(startDate, format),
-				DateTimeUtils.convertToFormat(endDate, format));
+				DateUtils.convertToFormat(startDate, format),
+				DateUtils.convertToFormat(endDate, format));
 	}
 }

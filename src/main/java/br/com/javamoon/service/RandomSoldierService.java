@@ -1,20 +1,17 @@
 package br.com.javamoon.service;
 
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
-
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-
-import br.com.javamoon.domain.draw.AnnualQuarter;
 import br.com.javamoon.domain.draw.Draw;
 import br.com.javamoon.domain.draw_exclusion.DrawExclusion;
 import br.com.javamoon.domain.soldier.Army;
 import br.com.javamoon.domain.soldier.MilitaryRank;
 import br.com.javamoon.domain.soldier.NoAvaliableSoldierException;
 import br.com.javamoon.domain.soldier.Soldier;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
 @Service
 public class RandomSoldierService {
@@ -48,7 +45,7 @@ public class RandomSoldierService {
 	public void setSoldierExclusionMessages(Draw draw) {
 		Set <DrawExclusion> exclusions;
 		
-		AnnualQuarter selectedQuarter = new AnnualQuarter(draw.getDrawList().getQuarterYear());
+		String selectedQuarter = draw.getDrawList().getQuarterYear();
 		for (Soldier soldier : draw.getSoldiers()) {
 			exclusions = new HashSet<>();
 			
@@ -65,7 +62,7 @@ public class RandomSoldierService {
 		
 		exclusions = new HashSet<>();
 		
-		AnnualQuarter selectedQuarter = new AnnualQuarter(draw.getDrawList().getQuarterYear());
+		String selectedQuarter = draw.getDrawList().getQuarterYear();
 		exclusions.addAll( drawExclusionSvc.findByAnnualQuarter(selectedQuarter, soldier) );
 		
 		exclusions.addAll( drawExclusionSvc.getByLatestDraws(soldier) );

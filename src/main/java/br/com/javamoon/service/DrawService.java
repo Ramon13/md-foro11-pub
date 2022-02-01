@@ -1,5 +1,15 @@
 package br.com.javamoon.service;
 
+import br.com.javamoon.domain.cjm_user.Auditorship;
+import br.com.javamoon.domain.draw.CouncilType;
+import br.com.javamoon.domain.draw.Draw;
+import br.com.javamoon.domain.draw.DrawRepository;
+import br.com.javamoon.domain.soldier.Soldier;
+import br.com.javamoon.domain.soldier.SoldierRepository;
+import br.com.javamoon.log.Alert;
+import br.com.javamoon.util.DateUtils;
+import br.com.javamoon.util.StringUtils;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -7,21 +17,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
-
 import javax.transaction.Transactional;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
-import br.com.javamoon.domain.cjm_user.Auditorship;
-import br.com.javamoon.domain.draw.AnnualQuarter;
-import br.com.javamoon.domain.draw.CouncilType;
-import br.com.javamoon.domain.draw.Draw;
-import br.com.javamoon.domain.draw.DrawRepository;
-import br.com.javamoon.domain.soldier.Soldier;
-import br.com.javamoon.domain.soldier.SoldierRepository;
-import br.com.javamoon.log.Alert;
-import br.com.javamoon.util.StringUtils;
 import net.sf.jasperreports.engine.data.JRBeanCollectionDataSource;
 
 @Service
@@ -72,19 +70,16 @@ public class DrawService {
 	public Map<String, List<Draw>> getMapAnnualQuarterDraw(List<Draw> drawList){
 		Map<String, List<Draw>> quarterDrawMap = new TreeMap<>(Collections.reverseOrder());
 		
-		AnnualQuarter quarter;
+		String quarterYear;
 		for (Draw draw : drawList) {
-			quarter = (StringUtils.isEmpty(draw.getProcessNumber())) 
-					? new AnnualQuarter(draw.getDrawList().getQuarterYear())
-				    : new AnnualQuarter(draw.getDrawList().getQuarterYear());
-			
-			List<Draw> quarterDrawList = quarterDrawMap.get(quarter.toShortFormat());
+			quarterYear = draw.getDrawList().getQuarterYear();
+			List<Draw> quarterDrawList = quarterDrawMap.get(quarterYear);
 			
 			if (quarterDrawList == null) {
 				quarterDrawList = new ArrayList<Draw>();
 			}
 			quarterDrawList.add(draw);
-			quarterDrawMap.put(quarter.toShortFormat(), quarterDrawList);
+			quarterDrawMap.put(quarterYear, quarterDrawList);
 		}
 		
 		
@@ -148,10 +143,11 @@ public class DrawService {
 		String councilType = draw.getJusticeCouncil().getName();
 		String cjm = draw.getCjmUser().getAuditorship().getCjm().getName();
 		String army = draw.getArmy().getName();
-		AnnualQuarter annualQuarter = new AnnualQuarter(draw.getDrawList().getQuarterYear());
 		String date = "";
+		
+		LocalDate quarterYear = DateUtils.fromQuarterYear(draw.getDrawList().getQuarterYear());
 		if (draw.getJusticeCouncil().getAlias().equalsIgnoreCase("CPJ")) {
-			date = annualQuarter.getQuarter() + "º Trimestre - " + annualQuarter.getYear();
+			date = DateUtils.getQuarter(quarterYear) + "º Trimestre - " + quarterYear.getYear();
 		}
 		 
 		parameters.put("cjm", cjm);

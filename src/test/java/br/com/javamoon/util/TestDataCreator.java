@@ -42,7 +42,6 @@ import br.com.javamoon.mapper.DrawListDTO;
 import br.com.javamoon.mapper.EntityMapper;
 import br.com.javamoon.mapper.SoldierDTO;
 import br.com.javamoon.mapper.UserDTO;
-import br.com.javamoon.service.AnnualQuarterService;
 import br.com.javamoon.validator.DrawExclusionValidator;
 import br.com.javamoon.validator.DrawListValidator;
 import br.com.javamoon.validator.SoldierValidator;
@@ -74,9 +73,8 @@ public final class TestDataCreator {
 		return new DrawExclusionValidator();
 	}
 	
-	public static DrawListValidator newDrawListValidator(
-			DrawListRepository drawListRepository, AnnualQuarterService annualQuarterService) {
-		return new DrawListValidator(drawListRepository, annualQuarterService);
+	public static DrawListValidator newDrawListValidator(DrawListRepository drawListRepository) {
+		return new DrawListValidator(drawListRepository);
 	}
 	
 	public static UserDTO newUserDTO() {

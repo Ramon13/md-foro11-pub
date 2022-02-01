@@ -1,6 +1,5 @@
 package br.com.javamoon.util;
 
-import br.com.javamoon.domain.draw.AnnualQuarter;
 import java.time.LocalDate;
 
 public final class Constants {
@@ -35,5 +34,5 @@ public final class Constants {
     public static final String DEFAULT_EXCLUSION_MESSAGE = "Férias em acapulco";
 
     public static final String DEFAULT_DRAW_LIST_DESCRIPTION = "Primeira lista exército 4º trimestre de 2021";
-    public static final String DEFAULT_DRAW_LIST_QUARTER_YEAR = new AnnualQuarter(LocalDate.now()).toShortFormat();
+    public static final String DEFAULT_DRAW_LIST_QUARTER_YEAR = DateUtils.toQuarterFormat(LocalDate.now());
 }

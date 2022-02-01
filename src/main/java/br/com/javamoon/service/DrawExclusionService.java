@@ -1,6 +1,5 @@
 package br.com.javamoon.service;
 
-import br.com.javamoon.domain.draw.AnnualQuarter;
 import br.com.javamoon.domain.draw.CouncilType;
 import br.com.javamoon.domain.draw.Draw;
 import br.com.javamoon.domain.draw.DrawRepository;
@@ -11,7 +10,7 @@ import br.com.javamoon.domain.soldier.Soldier;
 import br.com.javamoon.exception.DrawExclusionNotFoundException;
 import br.com.javamoon.mapper.DrawExclusionDTO;
 import br.com.javamoon.mapper.EntityMapper;
-import br.com.javamoon.util.DateTimeUtils;
+import br.com.javamoon.util.DateUtils;
 import br.com.javamoon.validator.DrawExclusionValidator;
 import java.time.LocalDate;
 import java.util.HashSet;
@@ -25,20 +24,15 @@ import org.springframework.stereotype.Service;
 public class DrawExclusionService {
 
 	private DrawRepository drawRepo;
-	
-	private AnnualQuarterService annualQuarterSvc;
-
 	private DrawExclusionRepository drawExclusionRepository;
 	
 	private DrawExclusionValidator drawExclusionValidator;
 
 	public DrawExclusionService(
 			DrawRepository drawRepo,
-			AnnualQuarterService annualQuarterSvc,
 			DrawExclusionRepository drawExclusionRepository,
 			DrawExclusionValidator drawExclusionValidator) {
 		this.drawRepo = drawRepo;
-		this.annualQuarterSvc = annualQuarterSvc;
 		this.drawExclusionRepository = drawExclusionRepository;
 		this.drawExclusionValidator = drawExclusionValidator;
 	}
@@ -82,18 +76,20 @@ public class DrawExclusionService {
 		return exclusionDTO;
 	}
 	
-	public Set<DrawExclusion> findByAnnualQuarter(AnnualQuarter annualQuarter, Soldier soldier) {
+	/**
+	 * @param quarterYear A quarter of year in format q/yyyy. For example 1/2020
+	 */
+	public Set<DrawExclusion> findByAnnualQuarter(String quarterYear, Soldier soldier) {
 		return drawExclusionRepository.findBySoldierBetweenDates(
 					soldier.getId(), 
-					annualQuarter.getStartQuarterDate(), 
-					annualQuarter.getEndQuarterDate());
+					DateUtils.getStartQuarterDate(quarterYear), 
+					DateUtils.getEndQuarterDate(quarterYear));
 	}
 	
 	public Set<DrawExclusion> getByLatestDraws(Soldier soldier){
-		List<AnnualQuarter> selectableQuarters = annualQuarterSvc.getSelectableQuarters();
-		LocalDate startDate = selectableQuarters.get(0).getStartQuarterDate();
-		LocalDate endDate = selectableQuarters.get(selectableQuarters.size() - 1).getEndQuarterDate();
-		
+		List<String> selectableQuarters = DateUtils.getSelectableQuarters();
+		LocalDate startDate = DateUtils.getStartQuarterDate(selectableQuarters.get(0));
+		LocalDate endDate = DateUtils.getEndQuarterDate(selectableQuarters.get(selectableQuarters.size() - 1));
 		
 		List<Draw> drawList = drawRepo.findBySoldierBetweenDates(soldier.getId(), startDate, endDate);
 		
@@ -104,7 +100,7 @@ public class DrawExclusionService {
 		for (Draw draw : drawList) {
 			StringBuilder msg = new StringBuilder();
 			msg.append("[Gerado pelo sistema] ");
-			msg.append("Sorteado em: " + DateTimeUtils.convertToFormat(draw.getCreationDate(), "dd/MM/yyyy"));
+			msg.append("Sorteado em: " + DateUtils.convertToFormat(draw.getCreationDate(), "dd/MM/yyyy"));
 			msg.append(" | Conselho: " + draw.getJusticeCouncil().getAlias());
 			msg.append(" | Auditoria: " + draw.getCjmUser().getAuditorship().getName());
 			

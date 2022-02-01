@@ -1,7 +1,6 @@
 package br.com.javamoon.infrastructure.web.controller.group;
 
 import br.com.javamoon.domain.cjm_user.CJM;
-import br.com.javamoon.domain.draw.AnnualQuarter;
 import br.com.javamoon.domain.entity.GroupUser;
 import br.com.javamoon.domain.soldier.Army;
 import br.com.javamoon.domain.soldier.Soldier;
@@ -16,6 +15,7 @@ import br.com.javamoon.service.DrawExclusionService;
 import br.com.javamoon.service.MilitaryOrganizationService;
 import br.com.javamoon.service.MilitaryRankService;
 import br.com.javamoon.service.SoldierService;
+import br.com.javamoon.util.DateUtils;
 import br.com.javamoon.util.SecurityUtils;
 import br.com.javamoon.validator.ValidationUtils;
 import java.time.LocalDate;
@@ -119,9 +119,9 @@ public class SoldierController {
 		Soldier soldier = soldierService.getSoldier(soldierId, loggedUser.getArmy(), loggedUser.getCjm());
 		
 		DrawExclusionDTO exclusionDTO = new DrawExclusionDTO();
-		AnnualQuarter nextQuarter = new AnnualQuarter(LocalDate.now().plusMonths(3));
-		exclusionDTO.setStartDate(nextQuarter.getStartQuarterDate());
-		exclusionDTO.setEndDate(nextQuarter.getEndQuarterDate());
+		String nextQuarter = DateUtils.toQuarterFormat(LocalDate.now().plusMonths(3));
+		exclusionDTO.setStartDate(DateUtils.getStartQuarterDate(nextQuarter));
+		exclusionDTO.setEndDate(DateUtils.getEndQuarterDate(nextQuarter));
 		
 		model.addAttribute("exclusions", drawExclusionService.listBySoldier(soldier));
 		model.addAttribute("exclusion", exclusionDTO);
