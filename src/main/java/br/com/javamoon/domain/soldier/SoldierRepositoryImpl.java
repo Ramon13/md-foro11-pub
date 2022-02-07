@@ -12,7 +12,6 @@ import javax.persistence.TypedQuery;
 import org.springframework.stereotype.Repository;
 
 import br.com.javamoon.domain.cjm_user.CJM;
-import br.com.javamoon.domain.entity.DrawList;
 import br.com.javamoon.infrastructure.web.model.PaginationSearchFilter;
 
 @Repository
@@ -21,24 +20,29 @@ public class SoldierRepositoryImpl {
 	@PersistenceContext
 	private EntityManager entityManager;
 	
-	public Soldier findByMilitaryRankAndArmy(MilitaryRank rank, Army army, DrawList drawList, List<Integer> excludeSoldierIds) throws NoAvaliableSoldierException {
+	public Soldier randomByDrawList(
+			Integer militaryRankId,
+			Army army,
+			Integer drawListId,
+			List<Integer> drawnSoldierIds) throws NoAvaliableSoldierException {
+		String hql = "SELECT s FROM DrawList dl JOIN dl.soldiers s"
+				+ " WHERE s.militaryRank.id = :militaryRankId"
+				+ " AND s.army.id = :armyId"
+				+ " AND dl.id = :drawListId"
+				+ " AND s.id NOT IN (:drawnSoldierIds) "
+				+ " ORDER BY rand()";
 		
-		excludeSoldierIds.add(0);
-		
-		Query query = entityManager.createQuery("select s from DrawList dl join dl.soldiers s where s.militaryRank = :rank "
-				+ "and s.army = :army "
-				+ "and dl.id = :drawListId "
-				+ "and s.id not in (:excludeSoldierIds) "
-				+ "order by rand()", Soldier.class);
-		query.setParameter("rank", rank);
-		query.setParameter("drawListId", drawList.getId());
-		query.setParameter("army", army);
-		query.setParameter("excludeSoldierIds", excludeSoldierIds);
+		Query query = entityManager.createQuery(hql, Soldier.class);
+		query.setParameter("militaryRankId", militaryRankId);
+		query.setParameter("armyId", army.getId());
+		query.setParameter("drawListId", drawListId);
+		query.setParameter("drawnSoldierIds", drawnSoldierIds);
 		query.setMaxResults(1);
+		
 		try {
 			return (Soldier) query.getSingleResult();
 		} catch (NoResultException e) {
-			throw new NoAvaliableSoldierException(rank.getAlias(), e);
+			throw new NoAvaliableSoldierException(e);
 		}
 	}
 	

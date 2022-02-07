@@ -11,5 +11,8 @@ public interface MilitaryRankRepository extends JpaRepository<MilitaryRank, Inte
 	@Query("SELECT mr FROM Army a JOIN a.militaryRanks mr WHERE a = :army ORDER BY mr.rankWeight ASC")
 	List<MilitaryRank> findAllByArmiesIn(@Param("army") Army army);
 	
+	@Query("SELECT mr.id FROM Army a JOIN a.militaryRanks mr WHERE a = :army")
+	List<Integer> findAllIdsByArmiesIn(@Param("army") Army army);
+	
 	MilitaryRank findByAlias(String alias);
 }

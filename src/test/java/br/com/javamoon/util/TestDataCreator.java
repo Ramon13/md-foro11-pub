@@ -22,6 +22,14 @@ import static br.com.javamoon.util.Constants.DEFAULT_USER_PASSWORD;
 import static br.com.javamoon.util.Constants.DEFAULT_USER_USERNAME;
 import static br.com.javamoon.validator.ValidationConstants.SOLDIER_EMAIL_MAX_LEN;
 import static br.com.javamoon.validator.ValidationConstants.SOLDIER_NAME_MAX_LEN;
+
+import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.stream.Collectors;
+
+import org.apache.commons.lang3.StringUtils;
+
 import br.com.javamoon.domain.cjm_user.Auditorship;
 import br.com.javamoon.domain.cjm_user.CJM;
 import br.com.javamoon.domain.cjm_user.CJMRepository;
@@ -42,19 +50,16 @@ import br.com.javamoon.domain.soldier.Soldier;
 import br.com.javamoon.domain.soldier.SoldierRepository;
 import br.com.javamoon.infrastructure.web.model.PaginationSearchFilter;
 import br.com.javamoon.mapper.CJMUserDTO;
+import br.com.javamoon.mapper.DrawDTO;
 import br.com.javamoon.mapper.DrawListDTO;
 import br.com.javamoon.mapper.EntityMapper;
 import br.com.javamoon.mapper.SoldierDTO;
 import br.com.javamoon.mapper.UserDTO;
 import br.com.javamoon.validator.DrawExclusionValidator;
 import br.com.javamoon.validator.DrawListValidator;
+import br.com.javamoon.validator.DrawValidator;
 import br.com.javamoon.validator.SoldierValidator;
 import br.com.javamoon.validator.UserAccountValidator;
-import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.stream.Collectors;
-import org.apache.commons.lang3.StringUtils;
 
 public final class TestDataCreator {
 
@@ -71,6 +76,10 @@ public final class TestDataCreator {
 			MilitaryOrganizationRepository organizationRepository,
 			MilitaryRankRepository militaryRankRepository) {
 		return new SoldierValidator(soldierRepository, organizationRepository, militaryRankRepository);
+	}
+	
+	public static DrawValidator newDrawValidator(MilitaryRankRepository rankRepository) {
+		return new DrawValidator(rankRepository);
 	}
 	
 	public static DrawExclusionValidator newExclusionValidator() {
@@ -221,6 +230,32 @@ public final class TestDataCreator {
 		return soldiers;
 	}
 	
+	public static List<DrawList> getPersistedDrawLists(
+			ArmyRepository armyRepository,
+			CJMRepository cjmRepository,
+			MilitaryOrganizationRepository militaryOrganizationRepository,
+			MilitaryRankRepository militaryRankRepository,
+			GroupUserRepository groupUserRepository,
+			SoldierRepository soldierRepository,
+			DrawListRepository drawListRepository,
+			int numOfLists,
+			int numberOfSoldiers){
+		Army army = getPersistedArmy(armyRepository);
+		CJM cjm = getPersistedCJM(cjmRepository);
+		MilitaryOrganization organization = getPersistedMilitaryOrganization(army, militaryOrganizationRepository);
+		MilitaryRank rank = getPersistedMilitaryRank(army, militaryRankRepository, armyRepository);
+		GroupUser creationUser = getPersistedGroupUserList(groupUserRepository, army, cjm, 1).get(0);
+		
+		List<Soldier> soldiers = TestDataCreator.newSoldierList(army, cjm, organization, rank, numberOfSoldiers);
+		soldierRepository.saveAllAndFlush(soldiers);
+		
+		List<DrawList> lists = TestDataCreator.newDrawList(army, creationUser, numOfLists);
+		
+		lists.stream().forEach(list -> list.getSoldiers().addAll(soldiers));
+		drawListRepository.saveAllAndFlush(lists);
+		return lists;
+	}
+	
 	public static List<Soldier> newSoldierList(
 			Army army,
 			CJM cjm,
@@ -293,5 +328,12 @@ public final class TestDataCreator {
 		justiceCouncil.setName(DEFAULT_COUNCIl_NAME);
 		justiceCouncil.setCouncilSize(DEFAULT_COUNCIl_SIZE);
 		return justiceCouncil;
+	}
+	
+	public static DrawDTO newDrawDTO() {
+		DrawDTO drawDTO = new DrawDTO();
+		drawDTO.getSelectedRanks().addAll(Constants.DEFAULT_SELECTED_RANKS);
+		drawDTO.setArmy(newArmy());
+		return drawDTO;
 	}
 }

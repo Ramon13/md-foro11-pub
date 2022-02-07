@@ -1,4 +1,25 @@
-package br.com.javamoon.infrastructure.web.controller;
+package br.com.javamoon.infrastructure.web.controller.cjm;
+
+import java.io.IOException;
+import java.time.LocalDate;
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
+
+import javax.validation.Valid;
+
+import org.apache.commons.lang3.BooleanUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.validation.Errors;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.SessionAttributes;
+import org.springframework.web.bind.support.SessionStatus;
 
 import br.com.javamoon.config.properties.DrawConfigProperties;
 import br.com.javamoon.domain.cjm_user.Auditorship;
@@ -7,16 +28,13 @@ import br.com.javamoon.domain.cjm_user.CJM;
 import br.com.javamoon.domain.draw.CouncilType;
 import br.com.javamoon.domain.draw.Draw;
 import br.com.javamoon.domain.draw.DrawRepository;
-import br.com.javamoon.domain.draw.JusticeCouncilRepository;
 import br.com.javamoon.domain.entity.CJMUser;
 import br.com.javamoon.domain.entity.DrawList;
-import br.com.javamoon.domain.repository.DrawListRepositoryImpl;
-import br.com.javamoon.domain.soldier.ArmyRepository;
 import br.com.javamoon.domain.soldier.MilitaryRank;
-import br.com.javamoon.domain.soldier.MilitaryRankRepository;
 import br.com.javamoon.domain.soldier.NoAvaliableSoldierException;
 import br.com.javamoon.domain.soldier.Soldier;
 import br.com.javamoon.domain.soldier.SoldierRepository;
+import br.com.javamoon.infrastructure.web.controller.ControllerHelper;
 import br.com.javamoon.infrastructure.web.repository.DrawRepositoryImpl;
 import br.com.javamoon.mapper.DrawDTO;
 import br.com.javamoon.mapper.DrawListDTO;
@@ -30,27 +48,6 @@ import br.com.javamoon.service.RandomSoldierService;
 import br.com.javamoon.service.ValidationException;
 import br.com.javamoon.util.DateUtils;
 import br.com.javamoon.util.SecurityUtils;
-import java.io.IOException;
-import java.time.LocalDate;
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
-import javax.validation.Valid;
-import org.apache.commons.lang3.BooleanUtils;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Sort;
-import org.springframework.data.domain.Sort.Direction;
-import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
-import org.springframework.validation.Errors;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.SessionAttributes;
-import org.springframework.web.bind.support.SessionStatus;
 
 @Controller
 @RequestMapping(path = "/cjm/dw")
@@ -62,9 +59,6 @@ public class DrawController {
 	
 	@Autowired
 	private ArmyService armySvc;
-	
-	@Autowired
-	private RandomSoldierService randomSoldierSvc;
 	
 	@Autowired
 	private SoldierRepository soldierRepo;
@@ -89,15 +83,19 @@ public class DrawController {
 	
 	private MilitaryRankService rankService;
 	
+	private RandomSoldierService randomSoldierService;
+	
 	private DrawConfigProperties drawConfigProperties;
 	
 	public DrawController(ArmyService armyService, JusticeCouncilService councilService,
 	        DrawListService drawListService, MilitaryRankService rankService,
+	        RandomSoldierService randomSoldierService,
 	        DrawConfigProperties drawConfigProperties) {
 		this.armyService = armyService;
 		this.councilService = councilService;
 		this.drawListService = drawListService;
 		this.rankService = rankService;
+		this.randomSoldierService = randomSoldierService;
 		this.drawConfigProperties = drawConfigProperties;
 	}
 
@@ -142,7 +140,16 @@ public class DrawController {
 		return "cjm/draw/home";
 	}
 	
+	
 	@GetMapping("/sdrand/all")
+	public String drawAll(@Valid @ModelAttribute("drawDTO") DrawDTO drawDTO, Errors errors, Model model) {
+		//randomSoldierService.randomAllSoldiers(drawDTO);
+		
+		System.out.println(drawDTO);
+		return "redirect:/cjm/dw/home";
+	}
+	
+	@GetMapping("/old//sdrand/all")
 	public String drawAll(@Valid @ModelAttribute("draw") Draw draw, Errors errors, Model model) {
 		
 		if (!errors.hasErrors()) {

@@ -6,9 +6,8 @@ import static br.com.javamoon.util.Constants.DEFAULT_SOLDIER_NAME;
 import static br.com.javamoon.util.Constants.DEFAULT_USER_EMAIL;
 import static br.com.javamoon.util.TestDataCreator.getPersistedArmy;
 import static br.com.javamoon.util.TestDataCreator.getPersistedCJM;
+import static br.com.javamoon.util.TestDataCreator.getPersistedDrawLists;
 import static br.com.javamoon.util.TestDataCreator.getPersistedGroupUserList;
-import static br.com.javamoon.util.TestDataCreator.getPersistedMilitaryOrganization;
-import static br.com.javamoon.util.TestDataCreator.getPersistedMilitaryRank;
 import static br.com.javamoon.util.TestDataCreator.newArmy;
 import static br.com.javamoon.util.TestDataCreator.newDrawList;
 import static br.com.javamoon.util.TestDataCreator.newSoldierList;
@@ -23,6 +22,18 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+
+import java.time.LocalDate;
+import java.util.List;
+import java.util.stream.Collectors;
+
+import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.annotation.DirtiesContext;
+import org.springframework.test.annotation.DirtiesContext.ClassMode;
+import org.springframework.test.context.ActiveProfiles;
+
 import br.com.javamoon.domain.cjm_user.CJM;
 import br.com.javamoon.domain.cjm_user.CJMRepository;
 import br.com.javamoon.domain.entity.DrawList;
@@ -47,15 +58,6 @@ import br.com.javamoon.util.Constants;
 import br.com.javamoon.util.DateUtils;
 import br.com.javamoon.util.TestDataCreator;
 import br.com.javamoon.validator.ValidationError;
-import java.time.LocalDate;
-import java.util.List;
-import java.util.stream.Collectors;
-import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.annotation.DirtiesContext;
-import org.springframework.test.annotation.DirtiesContext.ClassMode;
-import org.springframework.test.context.ActiveProfiles;
 
 @SpringBootTest
 @ActiveProfiles("test")
@@ -158,7 +160,15 @@ public class DrawListServiceUnitTest {
 
 	@Test
 	void testListByArmyAndCjmAndQuarterSuccessfully() {
-		List<DrawList> lists = getPersistedDrawLists(3, 6);
+		List<DrawList> lists = getPersistedDrawLists(
+				armyRepository,
+				cjmRepository,
+				militaryOrganizationRepository,
+				militaryRankRepository,
+				groupUserRepository,
+				soldierRepository,
+				drawListRepository,
+				3, 6);
 		DrawList drawList = lists.get(0);
 		
 		List<DrawListDTO> listDTO = victim.list(drawList.getArmy(), drawList.getCreationUser().getCjm(), drawList.getYearQuarter());
@@ -213,7 +223,15 @@ public class DrawListServiceUnitTest {
 	
 	@Test
 	void testSaveListSuccessfully() {
-		DrawList persistedDrawList = getPersistedDrawLists(1, 6).get(0);
+		DrawList persistedDrawList = getPersistedDrawLists(
+				armyRepository,
+				cjmRepository,
+				militaryOrganizationRepository,
+				militaryRankRepository,
+				groupUserRepository,
+				soldierRepository,
+				drawListRepository,
+				1, 6).get(0);
 		
 		DrawListDTO newListDTO = EntityMapper.fromEntityToDTO(
 				TestDataCreator.newDrawList(persistedDrawList.getArmy(), persistedDrawList.getCreationUser(), 1).get(0));
@@ -308,7 +326,16 @@ public class DrawListServiceUnitTest {
 	
 	@Test
 	void testEditDrawListDescriptionSuccessfully() {
-		DrawList drawList = getPersistedDrawLists(1, 6).get(0);
+		DrawList drawList = getPersistedDrawLists(
+				armyRepository,
+				cjmRepository,
+				militaryOrganizationRepository,
+				militaryRankRepository,
+				groupUserRepository,
+				soldierRepository,
+				drawListRepository,
+				1, 6).get(0);
+				
 		drawList.setDescription(DEFAULT_DRAW_LIST_DESCRIPTION + "x");
 		
 		victim.save(
@@ -324,7 +351,15 @@ public class DrawListServiceUnitTest {
 	
 	@Test
 	void testEditDrawListWhenModifyDrawList() {
-		DrawList drawList = getPersistedDrawLists(1, 6).get(0);
+		DrawList drawList = getPersistedDrawLists(
+				armyRepository,
+				cjmRepository,
+				militaryOrganizationRepository,
+				militaryRankRepository,
+				groupUserRepository,
+				soldierRepository,
+				drawListRepository,
+				1, 6).get(0);
 		
 		LocalDate newDate = DateUtils.fromYearQuarter(drawList.getYearQuarter()).plusMonths(3).plusDays(1);
 		drawList.setYearQuarter(DateUtils.toQuarterFormat(newDate));
@@ -342,7 +377,15 @@ public class DrawListServiceUnitTest {
 	
 	@Test
 	void testEditDrawListWhenSoldierIsAddedInList() {
-		DrawList drawList = getPersistedDrawLists(1, 6).get(0);
+		DrawList drawList = getPersistedDrawLists(
+				armyRepository,
+				cjmRepository,
+				militaryOrganizationRepository,
+				militaryRankRepository,
+				groupUserRepository,
+				soldierRepository,
+				drawListRepository,
+				1, 6).get(0);
 		MilitaryRank rank = militaryRankRepository.findById(1).orElseThrow();
 		MilitaryOrganization organization = militaryOrganizationRepository.findById(1).orElseThrow();
 		
@@ -373,7 +416,15 @@ public class DrawListServiceUnitTest {
 	
 	@Test
 	void testEditDrawListWhenSoldierIsRemovedFromList() {
-		DrawList drawList = getPersistedDrawLists(1, 6).get(0);
+		DrawList drawList = getPersistedDrawLists(
+				armyRepository,
+				cjmRepository,
+				militaryOrganizationRepository,
+				militaryRankRepository,
+				groupUserRepository,
+				soldierRepository,
+				drawListRepository,
+				1, 6).get(0);
 		
 		assertEquals(6, soldierRepository.findAllActiveByDrawList(drawList.getId()).size());
 		
@@ -391,7 +442,15 @@ public class DrawListServiceUnitTest {
 	
 	@Test
 	void testDeleteDrawList() {
-		DrawList drawList = getPersistedDrawLists(1, 6).get(0);
+		DrawList drawList = getPersistedDrawLists(
+				armyRepository,
+				cjmRepository,
+				militaryOrganizationRepository,
+				militaryRankRepository,
+				groupUserRepository,
+				soldierRepository,
+				drawListRepository,
+				1, 6).get(0);
 		
 		assertTrue(drawListRepository.findActiveByIdAndArmyAndCjm(
 				drawList.getId(), drawList.getArmy(), drawList.getCreationUser().getCjm()).isPresent());
@@ -404,7 +463,15 @@ public class DrawListServiceUnitTest {
 	
 	@Test
 	void testDuplicateDrawList() {
-		DrawList drawList = getPersistedDrawLists(1, 6).get(0);
+		DrawList drawList = getPersistedDrawLists(
+				armyRepository,
+				cjmRepository,
+				militaryOrganizationRepository,
+				militaryRankRepository,
+				groupUserRepository,
+				soldierRepository,
+				drawListRepository,
+				1, 6).get(0);
 		DrawList copyOfDrawList = victim.duplicate(
 			drawList.getId(),
 			drawList.getArmy(), 
@@ -417,8 +484,16 @@ public class DrawListServiceUnitTest {
 	}
 	
 	@Test
-	void testMapListByQuater() {
-		List<DrawList> lists = getPersistedDrawLists(5, 10);
+	void testMapListByQuarter() {
+		List<DrawList> lists = getPersistedDrawLists(
+				armyRepository,
+				cjmRepository,
+				militaryOrganizationRepository,
+				militaryRankRepository,
+				groupUserRepository,
+				soldierRepository,
+				drawListRepository,
+				5, 10);
 		String previousQuarter = DateUtils.toQuarterFormat(LocalDate.now().minusMonths(6));
 		String futureQuarter = DateUtils.toQuarterFormat(LocalDate.now().plusMonths(6));
 		lists.get(0).setYearQuarter(previousQuarter);
@@ -431,22 +506,5 @@ public class DrawListServiceUnitTest {
 		assertEquals(3, drawListsDTO.size());
 		assertEquals(futureQuarter, drawListsDTO.get(0).getYearQuarter());
 		assertEquals(previousQuarter, drawListsDTO.get(drawListsDTO.size() - 1).getYearQuarter());
-	}
-	
-	private List<DrawList> getPersistedDrawLists(int listSize, int numberOfSoldiers){
-		Army army = getPersistedArmy(armyRepository);
-		CJM cjm = getPersistedCJM(cjmRepository);
-		MilitaryOrganization organization = getPersistedMilitaryOrganization(army, militaryOrganizationRepository);
-		MilitaryRank rank = getPersistedMilitaryRank(army, militaryRankRepository, armyRepository);
-		GroupUser creationUser = getPersistedGroupUserList(groupUserRepository, army, cjm, 1).get(0);
-		
-		List<Soldier> soldiers = TestDataCreator.newSoldierList(army, cjm, organization, rank, numberOfSoldiers);
-		soldierRepository.saveAllAndFlush(soldiers);
-		
-		List<DrawList> lists = TestDataCreator.newDrawList(army, creationUser, listSize);
-		
-		lists.stream().forEach(list -> list.getSoldiers().addAll(soldiers));
-		drawListRepository.saveAllAndFlush(lists);
-		return lists;
 	}
 }

@@ -18,10 +18,12 @@ import javax.validation.constraints.Size;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
+import lombok.ToString;
 
 @SuppressWarnings("serial")
 @Getter
 @Setter
+@ToString
 @EqualsAndHashCode(onlyExplicitlyIncluded = true)
 @Entity
 @Table(name = "MILITARY_RANK")
@@ -45,7 +47,8 @@ public class MilitaryRank implements Serializable{
 	@NotNull(message = "The military rank weight cannot be null")
 	@Column(name="rank_weight", nullable = false)
 	private Integer rankWeight;
-	
+
+	@ToString.Exclude
 	@ManyToMany(mappedBy = "militaryRanks")
 	private Set<Army> armies = new HashSet<>(0);
 }

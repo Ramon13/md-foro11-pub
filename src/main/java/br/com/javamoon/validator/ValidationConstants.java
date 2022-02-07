@@ -47,5 +47,8 @@ public final class ValidationConstants {
     public static final String DRAW_LIST_SELECTED_SOLDIERS_BELOW_MIN_LEN = "A lista deve ser composta por no mínimo 5 militares";
     
     public static final String NO_PERMISSION = "You do not have permision to edit this property.";
+    
+    public static final String DRAW_SELECTED_RANKS = "selectedRanks";
+    public static final String RANK_LIST_INVALID_SIZE = "A lista de postos não corresponde ao tamanho do conselho.";
     private ValidationConstants() {}
 }
