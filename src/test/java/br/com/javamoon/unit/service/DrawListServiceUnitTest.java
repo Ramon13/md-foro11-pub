@@ -1,6 +1,7 @@
 package br.com.javamoon.unit.service;
 
 import static br.com.javamoon.util.Constants.DEFAULT_ARMY_NAME;
+import static br.com.javamoon.util.Constants.DEFAULT_DRAW_LIST_DESCRIPTION;
 import static br.com.javamoon.util.Constants.DEFAULT_SOLDIER_NAME;
 import static br.com.javamoon.util.Constants.DEFAULT_USER_EMAIL;
 import static br.com.javamoon.util.TestDataCreator.getPersistedArmy;
@@ -39,6 +40,7 @@ import br.com.javamoon.domain.soldier.SoldierRepository;
 import br.com.javamoon.exception.DrawListNotFoundException;
 import br.com.javamoon.exception.DrawListValidationException;
 import br.com.javamoon.mapper.DrawListDTO;
+import br.com.javamoon.mapper.DrawListsDTO;
 import br.com.javamoon.mapper.EntityMapper;
 import br.com.javamoon.service.DrawListService;
 import br.com.javamoon.util.Constants;
@@ -47,7 +49,6 @@ import br.com.javamoon.util.TestDataCreator;
 import br.com.javamoon.validator.ValidationError;
 import java.time.LocalDate;
 import java.util.List;
-import java.util.Map;
 import java.util.stream.Collectors;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -84,7 +85,7 @@ public class DrawListServiceUnitTest {
 	
 	@Autowired
 	private SoldierRepository soldierRepository;
-	
+
 	@Test
 	void testListSuccessfully() {
 		Army army = getPersistedArmy(armyRepository);
@@ -154,6 +155,24 @@ public class DrawListServiceUnitTest {
 		
 		assertEquals(1, victim.listByCjm(newCjm).size());
 	}
+
+	@Test
+	void testListByArmyAndCjmAndQuarterSuccessfully() {
+		List<DrawList> lists = getPersistedDrawLists(3, 6);
+		DrawList drawList = lists.get(0);
+		
+		List<DrawListDTO> listDTO = victim.list(drawList.getArmy(), drawList.getCreationUser().getCjm(), drawList.getYearQuarter());
+		
+		assertEquals(3, listDTO.size());
+		
+		drawList.setYearQuarter(DateUtils.toQuarterFormat(LocalDate.now().plusMonths(6)));
+		drawListRepository.saveAndFlush(drawList);
+		
+		listDTO = victim.list(drawList.getArmy(), drawList.getCreationUser().getCjm(), drawList.getYearQuarter());
+		
+		assertEquals(1, listDTO.size());
+		assertEquals(drawList.getId(), listDTO.get(0).getId());
+	}
 	
 	@Test
 	void testGetListSuccessfully() {
@@ -194,7 +213,23 @@ public class DrawListServiceUnitTest {
 	
 	@Test
 	void testSaveListSuccessfully() {
-		getPersistedDrawList();
+		DrawList persistedDrawList = getPersistedDrawLists(1, 6).get(0);
+		
+		DrawListDTO newListDTO = EntityMapper.fromEntityToDTO(
+				TestDataCreator.newDrawList(persistedDrawList.getArmy(), persistedDrawList.getCreationUser(), 1).get(0));
+		
+		newListDTO.setDescription(DEFAULT_DRAW_LIST_DESCRIPTION + "__");
+		newListDTO.setSelectedSoldiers(
+			persistedDrawList.getSoldiers()
+			.stream()
+			.map(s -> s.getId())
+			.collect(Collectors.toList()));
+		
+		victim.save(
+				newListDTO,
+				persistedDrawList.getArmy(),
+				persistedDrawList.getCreationUser().getCjm(),
+				persistedDrawList.getCreationUser());
 	}
 	
 	@Test
@@ -239,7 +274,7 @@ public class DrawListServiceUnitTest {
 		GroupUser creationUser = getPersistedGroupUserList(groupUserRepository, army, cjm, 1).get(0);
 		
 		DrawListDTO drawListDTO = TestDataCreator.newDrawListDTO(army, creationUser, 1).get(0);
-		drawListDTO.setQuarterYear(DateUtils.toQuarterFormat(LocalDate.now().plusMonths(6).plusDays(1)));
+		drawListDTO.setYearQuarter(DateUtils.toQuarterFormat(LocalDate.now().plusMonths(6).plusDays(1)));
 		
 		DrawListValidationException exception = assertThrows(
 			DrawListValidationException.class, () -> victim.save(drawListDTO, army, cjm, creationUser)
@@ -273,8 +308,8 @@ public class DrawListServiceUnitTest {
 	
 	@Test
 	void testEditDrawListDescriptionSuccessfully() {
-		DrawList drawList = getPersistedDrawList();
-		drawList.setDescription(Constants.DEFAULT_DRAW_LIST_DESCRIPTION + "x");
+		DrawList drawList = getPersistedDrawLists(1, 6).get(0);
+		drawList.setDescription(DEFAULT_DRAW_LIST_DESCRIPTION + "x");
 		
 		victim.save(
 			EntityMapper.fromEntityToDTO(drawList),
@@ -289,10 +324,10 @@ public class DrawListServiceUnitTest {
 	
 	@Test
 	void testEditDrawListWhenModifyDrawList() {
-		DrawList drawList = getPersistedDrawList();
+		DrawList drawList = getPersistedDrawLists(1, 6).get(0);
 		
-		LocalDate newDate = DateUtils.fromQuarterYear(drawList.getQuarterYear()).plusMonths(3).plusDays(1);
-		drawList.setQuarterYear(DateUtils.toQuarterFormat(newDate));
+		LocalDate newDate = DateUtils.fromYearQuarter(drawList.getYearQuarter()).plusMonths(3).plusDays(1);
+		drawList.setYearQuarter(DateUtils.toQuarterFormat(newDate));
 		
 		victim.save(
 			EntityMapper.fromEntityToDTO(drawList),
@@ -302,12 +337,12 @@ public class DrawListServiceUnitTest {
 		);
 		
 		DrawList drawListDB = drawListRepository.findById(drawList.getId()).orElseThrow();
-		assertEquals(drawList.getQuarterYear(), drawListDB.getQuarterYear());
+		assertEquals(drawList.getYearQuarter(), drawListDB.getYearQuarter());
 	}
 	
 	@Test
 	void testEditDrawListWhenSoldierIsAddedInList() {
-		DrawList drawList = getPersistedDrawList();
+		DrawList drawList = getPersistedDrawLists(1, 6).get(0);
 		MilitaryRank rank = militaryRankRepository.findById(1).orElseThrow();
 		MilitaryOrganization organization = militaryOrganizationRepository.findById(1).orElseThrow();
 		
@@ -338,7 +373,7 @@ public class DrawListServiceUnitTest {
 	
 	@Test
 	void testEditDrawListWhenSoldierIsRemovedFromList() {
-		DrawList drawList = getPersistedDrawList();
+		DrawList drawList = getPersistedDrawLists(1, 6).get(0);
 		
 		assertEquals(6, soldierRepository.findAllActiveByDrawList(drawList.getId()).size());
 		
@@ -356,7 +391,7 @@ public class DrawListServiceUnitTest {
 	
 	@Test
 	void testDeleteDrawList() {
-		DrawList drawList = getPersistedDrawList();
+		DrawList drawList = getPersistedDrawLists(1, 6).get(0);
 		
 		assertTrue(drawListRepository.findActiveByIdAndArmyAndCjm(
 				drawList.getId(), drawList.getArmy(), drawList.getCreationUser().getCjm()).isPresent());
@@ -369,7 +404,7 @@ public class DrawListServiceUnitTest {
 	
 	@Test
 	void testDuplicateDrawList() {
-		DrawList drawList = getPersistedDrawList();
+		DrawList drawList = getPersistedDrawLists(1, 6).get(0);
 		DrawList copyOfDrawList = victim.duplicate(
 			drawList.getId(),
 			drawList.getArmy(), 
@@ -383,17 +418,22 @@ public class DrawListServiceUnitTest {
 	
 	@Test
 	void testMapListByQuater() {
-		List<DrawList> lists = getDrawLists(5, 10);
+		List<DrawList> lists = getPersistedDrawLists(5, 10);
+		String previousQuarter = DateUtils.toQuarterFormat(LocalDate.now().minusMonths(6));
+		String futureQuarter = DateUtils.toQuarterFormat(LocalDate.now().plusMonths(6));
+		lists.get(0).setYearQuarter(previousQuarter);
+		lists.get(1).setYearQuarter(futureQuarter);
 		
-		LocalDate nextQuarter = LocalDate.now().plusMonths(DateUtils.MONTHS_IN_QUARTER);
-		lists.get(0).setQuarterYear(DateUtils.toQuarterFormat(nextQuarter));
+		drawListRepository.saveAllAndFlush(lists);
 		
-		Map<String, List<DrawList>> drawListsMap = victim.mapListByQuarter(lists);
+		List<DrawListsDTO> drawListsDTO = victim.getListsByQuarter(lists);
 		
-		assertEquals(lists.get(0).getQuarterYear(), drawListsMap.keySet().stream().findFirst().get());
+		assertEquals(3, drawListsDTO.size());
+		assertEquals(futureQuarter, drawListsDTO.get(0).getYearQuarter());
+		assertEquals(previousQuarter, drawListsDTO.get(drawListsDTO.size() - 1).getYearQuarter());
 	}
 	
-	private List<DrawList> getDrawLists(int listSize, int numberOfSoldiers){
+	private List<DrawList> getPersistedDrawLists(int listSize, int numberOfSoldiers){
 		Army army = getPersistedArmy(armyRepository);
 		CJM cjm = getPersistedCJM(cjmRepository);
 		MilitaryOrganization organization = getPersistedMilitaryOrganization(army, militaryOrganizationRepository);
@@ -406,19 +446,7 @@ public class DrawListServiceUnitTest {
 		List<DrawList> lists = TestDataCreator.newDrawList(army, creationUser, listSize);
 		
 		lists.stream().forEach(list -> list.getSoldiers().addAll(soldiers));
+		drawListRepository.saveAllAndFlush(lists);
 		return lists;
-	}
-	
-	private DrawList getPersistedDrawList() {
-		 DrawList list = getDrawLists(1, 6).get(0);
-		
-		DrawListDTO drawListDTO = TestDataCreator.newDrawListDTO(list.getArmy(), list.getCreationUser(), 1).get(0);
-		drawListDTO.setSelectedSoldiers(
-			list.getSoldiers().stream()
-			.map(r -> r.getId())
-			.collect(Collectors.toList())
-		);
-		
-		return victim.save(drawListDTO, list.getArmy(), list.getCreationUser().getCjm(), list.getCreationUser());
 	}
 }

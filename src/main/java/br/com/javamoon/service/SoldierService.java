@@ -49,6 +49,10 @@ public class SoldierService{
 		return getSoldierOrElseThrow(id, army , cjm);
 	}
 	
+	public Soldier getSoldierByCjm(Integer id, CJM cjm) {
+		return getSoldierOrElseThrow(id, cjm);
+	}
+	
 	/**
 	 * @param army logged user army. Assumes that is not null
 	 * @param cjm logged user cjm. Assumes that is not null
@@ -144,22 +148,9 @@ public class SoldierService{
 		return drawRepo.countDrawBySoldier(soldier.getId());
 	}
 	
-	/**
-	 * Check if this soldier belongs to this army
-	 */
-	public boolean isValidArmy(Army army, Soldier...soldiers) {
-		for (Soldier s : soldiers)
-			if (!army.equals(s.getArmy()))
-				return false;
-		
-		return true;
-	}
-	
-	public boolean isValidCjm(CJM cjm, Soldier...soldiers) {
-		for (Soldier s : soldiers)
-			if (!cjm.equals(s.getCjm()))
-				return false;
-		
-		return true;
+	private Soldier getSoldierOrElseThrow(Integer soldierId, CJM cjm) {
+		Objects.requireNonNull(soldierId);
+		return soldierRepository.findActiveByIdAndCJM(soldierId, cjm.getId())
+				.orElseThrow(() -> new SoldierNotFoundException("soldier not found: " + soldierId));
 	}
 }

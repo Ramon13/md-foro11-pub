@@ -30,7 +30,7 @@ import lombok.ToString;
 @EqualsAndHashCode(onlyExplicitlyIncluded = true)
 @Entity
 @Table(name = "DRAW_LIST")
-public class DrawList {
+public class DrawList implements Comparable<DrawList>{
 
 	@EqualsAndHashCode.Include
 	@Id
@@ -48,7 +48,7 @@ public class DrawList {
 	@Column(name = "update_date", nullable = false)
 	private LocalDate updateDate;
 	
-	@Column(name = "yearQuarter", nullable = false)
+	@Column(name = "year_quarter", nullable = false)
 	private String yearQuarter;
 	
 	@ManyToOne
@@ -78,5 +78,15 @@ public class DrawList {
 			active = true;
 		if (Objects.isNull(enableForDraw))
 			enableForDraw = false;
+	}
+
+	@Override
+	public int compareTo(DrawList o) {
+		if (this.getId() > o.getId())
+			return 1;
+		else if (this.getId() < o.getId())
+			return -1;
+		
+		return 0;
 	}
 }

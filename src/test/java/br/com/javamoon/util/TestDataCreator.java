@@ -6,6 +6,9 @@ import static br.com.javamoon.util.Constants.DEFAULT_AUDITORSHIP_NAME;
 import static br.com.javamoon.util.Constants.DEFAULT_CJM_ALIAS;
 import static br.com.javamoon.util.Constants.DEFAULT_CJM_NAME;
 import static br.com.javamoon.util.Constants.DEFAULT_CJM_REGIONS;
+import static br.com.javamoon.util.Constants.DEFAULT_COUNCIl_ALIAS;
+import static br.com.javamoon.util.Constants.DEFAULT_COUNCIl_NAME;
+import static br.com.javamoon.util.Constants.DEFAULT_COUNCIl_SIZE;
 import static br.com.javamoon.util.Constants.DEFAULT_DRAW_LIST_QUARTER_YEAR;
 import static br.com.javamoon.util.Constants.DEFAULT_EXCLUSION_MESSAGE;
 import static br.com.javamoon.util.Constants.DEFAULT_ORGANIZATION_ALIAS;
@@ -22,6 +25,7 @@ import static br.com.javamoon.validator.ValidationConstants.SOLDIER_NAME_MAX_LEN
 import br.com.javamoon.domain.cjm_user.Auditorship;
 import br.com.javamoon.domain.cjm_user.CJM;
 import br.com.javamoon.domain.cjm_user.CJMRepository;
+import br.com.javamoon.domain.draw.JusticeCouncil;
 import br.com.javamoon.domain.draw_exclusion.DrawExclusion;
 import br.com.javamoon.domain.entity.DrawList;
 import br.com.javamoon.domain.entity.GroupUser;
@@ -197,6 +201,26 @@ public final class TestDataCreator {
 		return groupUserRepository.saveAllAndFlush(newGroupUserList(army, cjm, listSize));
 	}
 	
+	public static List<Soldier> getPersistedSoldierList(
+			SoldierRepository soldierRepository,
+			ArmyRepository armyRepository,
+			MilitaryOrganizationRepository organizationRepository,
+			MilitaryRankRepository rankRepository,
+			CJMRepository cjmRepository,
+			int listSize){
+		Army army = getPersistedArmy(armyRepository);
+		List<Soldier> soldiers = newSoldierList(
+			army,
+			getPersistedCJM(cjmRepository),
+			getPersistedMilitaryOrganization(army, organizationRepository),
+			getPersistedMilitaryRank(army, rankRepository, armyRepository),
+			listSize
+		);
+		
+		soldierRepository.saveAllAndFlush(soldiers);
+		return soldiers;
+	}
+	
 	public static List<Soldier> newSoldierList(
 			Army army,
 			CJM cjm,
@@ -241,7 +265,7 @@ public final class TestDataCreator {
 		while (numOfLists-- > 0) {
 			list = new DrawList();
 			list.setDescription(StringUtils.rightPad(Constants.DEFAULT_DRAW_LIST_DESCRIPTION, 64 - numOfLists, 'x'));
-			list.setQuarterYear(DEFAULT_DRAW_LIST_QUARTER_YEAR);
+			list.setYearQuarter(DEFAULT_DRAW_LIST_QUARTER_YEAR);
 			list.setArmy(army);
 			list.setCreationUser(creationUser);
 			lists.add(list);	
@@ -261,5 +285,13 @@ public final class TestDataCreator {
 				r.setSelectedSoldiers(List.of(1, 2, 3, 4, 5));
 			});
 		return listDTO;
+	}
+	
+	public static JusticeCouncil getJusticeCouncil() {
+		JusticeCouncil justiceCouncil = new JusticeCouncil();
+		justiceCouncil.setAlias(DEFAULT_COUNCIl_ALIAS);
+		justiceCouncil.setName(DEFAULT_COUNCIl_NAME);
+		justiceCouncil.setCouncilSize(DEFAULT_COUNCIl_SIZE);
+		return justiceCouncil;
 	}
 }

@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html
   xmlns="http://www.w3.org/1999/xhtml"
-  xmlns:th="http://www.thymeleaf.org" layout:decorate="~{management/layout}">
+  xmlns:th="http://www.thymeleaf.org" layout:decorate="~{cjm/layout}">
   <style layout:fragment="style">
     input[type=date].app-dateinput {
       width: 20% !important;
@@ -92,7 +92,7 @@
       </div>
       <div class="impediment" th:each="exclusion : ${exclusions}">
         <div class="impediment-header">
-          <span th:text="'De:' + ${#temporals.format(exclusion.startDate, 'dd/MM/yyyy')} + ';   Até:' + ${#temporals.format(exclusion.endDate, 'dd/MM/yyyy')}"></span>
+          <span th:text="${exclusion.periodAsText}"></span>
         </div>
         <p th:text="${exclusion.message}"></p><br/>
       </div>
@@ -105,7 +105,7 @@
     <script layout:fragment="page-script" th:inline="javascript">
       const backBtn = document.querySelector("button#back");
       backBtn.addEventListener("click", function(){
-        window.history.back();
+        location.href = historyPop();
       });
     </script>
   </body>

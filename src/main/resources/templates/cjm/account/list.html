@@ -1,35 +1,46 @@
 <!DOCTYPE html>
 <html
   xmlns="http://www.w3.org/1999/xhtml"
-  xmlns:th="http://www.thymeleaf.org" layout:decorate="~{management/layout}">
+  xmlns:th="http://www.thymeleaf.org" layout:decorate="~{cjm/layout}">
   
   <style layout:fragment="style">
-    
+    div#accounts{
+      height: 80vh;
+      overflow: auto;
+    } 
   </style>
   
   <body>
     <div layout:fragment="content">
-      <h1>Usuários Ativos</h1>
-      <hr />
-      <div id="users">
-        <table class="default-app-table">
-          <thead>
-            <tr>
-              <th>usuario</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr th:each="account : ${accounts}">
-              <td><span th:text="${account.prettyPrintUsernameAndEmail()}"></span></td>
-              <td>
-                <div>
-                  <a href="#" th:attr="data-deleteurl=@{/cjm/accounts/delete/} + ${account.id}" class="delete-account">delete this account</a>
-                </div>
-              </td>
-            </tr>
-          </tbody>
-        </table>
-      </div>    
+      <div id="accounts">
+        <h1>Usuários Ativos</h1>
+        <hr />
+        <div id="users">
+          <table class="default-app-table">
+            <thead>
+              <tr>
+                <th>usuario</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr th:each="account : ${accounts}">
+                <td><span th:text="${account.prettyPrintUsernameAndEmail()}"></span></td>
+                <td>
+                  <div>
+                    <a href="#" th:attr="data-deleteurl=@{/cjm/accounts/delete/} + ${account.id}" class="delete-account">delete this account</a>
+                  </div>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+        
+      <br/>
+      
+      <button type="button" id="back" class="app-gray-btn">
+        <span>Voltar</span>
+      </button>    
     </div>
     
     <script layout:fragment="page-script" th:inline="javascript">
@@ -56,6 +67,11 @@
       function displayDeleteUserConfirmation(){
     	  return confirm("[Atenção] Após a exclusão o usuário não terá mais acesso ao sistema. Prosseguir com a exclusão da conta?");
       }
+      
+      const backBtn = document.querySelector("button#back");
+      backBtn.addEventListener("click", function(){
+        location.href = historyPop();
+      });
     </script>
   </body>
 </html>

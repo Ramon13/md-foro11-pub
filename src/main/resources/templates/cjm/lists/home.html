@@ -40,32 +40,25 @@
       <h1>Relações de militares para sorteio</h1>
       <hr />
       
-      <div class="empty-list" th:if="${#lists.isEmpty(drawListsMap)}">
+      <div class="empty-list" th:if="${#lists.isEmpty(listsByQuarter)}">
           <span>Não há listas cadastradas no sistema</span>
         </div>    
-      <div th:each="drawListMap : ${drawListsMap}">
+      <div th:each="listByQuarter : ${listsByQuarter}">
         <div class="quarter">
-          <span th:text="${drawListMap.key}"></span>
+          <span th:text="${listByQuarter.formattedQuarterYear}"></span>
         </div>
         
-        <div class="draw-list" th:each="drawList : ${drawListMap.value}">
+        <div class="draw-list" th:each="drawListDTO : ${listByQuarter.lists}">
           <div class="list-header">
-            <span th:text="'[' + ${drawList.quarterYear} + ']' + ' ' + ${drawList.description}"></span>
+            <span th:text="${drawListDTO.prettyPrintListTitle()}"></span>
           </div>
           
           <div class="list-info">
-            <span th:text="${drawList.army.name}"></span><br/>
-            <span>criado em:</span>
-            <span th:text="${drawList.creationDate}"></span> 
-            <span> | </span>
-            <span>por:</span>
-            <span th:text="${drawList.creationUser.username}"></span> 
-            <span> | </span>
-            <span>ultima modificação:</span>
-            <span th:text="${drawList.updateDate}"></span>
+            <span th:text="${drawListDTO.army.name}"></span><br/>
+            <span th:text="${drawListDTO.prettyPrintListInfo()}"></span>
           </div>
           <br/>
-          <a th:href="@{/mngmt/dw-list/list/} + '' + ${drawList.id}">exibir</a>
+          <a th:href="@{/cjm/dw/lists/list/} + '' + ${drawListDTO.id}">exibir</a>
         </div>
       </div>
       
@@ -73,7 +66,7 @@
     </div>
     
     <script layout:fragment="page-script" th:inline="javascript">
-    	
+       historyPush();
     </script>
   </body>
 </html>

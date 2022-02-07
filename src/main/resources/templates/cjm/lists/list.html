@@ -1,38 +1,42 @@
 <!DOCTYPE html>
 <html
   xmlns="http://www.w3.org/1999/xhtml"
-  xmlns:th="http://www.thymeleaf.org" layout:decorate="~{management/layout}">
+  xmlns:th="http://www.thymeleaf.org" layout:decorate="~{cjm/layout}">
   
   <style layout:fragment="style">    
-	span#listDescription{
-	  font-size: 20px;
-	}
+  	span#listDescription{
+  	  font-size: 20px;
+  	}
     
     fieldset#saveEditSoldierFieldset {
       margin: 32px auto;
+    }
+    
+    tbody.soldier:hover{
+      cursor: pointer;
     }
   </style>
   <body>
     <div layout:fragment="content">
       <div id="listInfo">
-	      <span th:text="'[' + ${drawList.quarterYear} + ']' + ' ' + ${drawList.description}"></span>
+	      <span th:text="${drawList.prettyPrintListTitle()}"></span>
       </div>
       <hr />
        
       <div id="paginationSearchMenu">
         <form method="GET" id="paginationForm">
-	        <input id="selectedPage" name="selectedPage" type="hidden" th:value="${filter.selectedPage}"/>
-	        <input id="firstResult" name="firstResult" type="hidden" th:value="${filter.firstResult}"/>
-	        <input id="lastResult" name="lastResult" type="hidden" th:value="${filter.lastResult}"/>
-	        <input id="total" name="total" type="hidden" th:value="${filter.total}"/>
-	        
-	        <div id="pages" class="pages">
-	        </div>  
-	        <div id="search">
-	          <input id="searchInput" name="key" th:value='${filter.key}' type="text" placeholder="Pesquisar...">
-	          <input id="searchBtn" type="submit" value="buscar">
-	        </div>
-	      </form>
+          <input id="selectedPage" name="selectedPage" type="hidden" th:value="${filter.selectedPage}"/>
+          <input id="firstResult" name="firstResult" type="hidden" th:value="${filter.firstResult}"/>
+          <input id="lastResult" name="lastResult" type="hidden" th:value="${filter.lastResult}"/>
+          <input id="total" name="total" type="hidden" th:value="${filter.total}"/>
+          
+          <div id="pages" class="pages">
+          </div>  
+          <div id="search">
+            <input id="searchInput" class="app-txtinput" name="key" th:value='${filter.key}' type="text" placeholder="Pesquisar...">
+            <input id="searchBtn" type="submit" value="buscar" class="app-green-btn">
+          </div>
+        </form>
         
         <script type="text/javascript" th:src="@{/scripts/pagination-search-list.js}"></script>
       </div>
@@ -45,15 +49,14 @@
             <th>Posto</th>
           </tr>
         </thead>
-        <tbody>
-          <tr th:each="soldier : ${soldiers}">
+        <tbody th:each="soldier : ${soldiersPagination.soldiers}" class="soldier" 
+          th:attr="data-sdprofile = @{/cjm/sd/profile/home/} + ${soldier.id}">
+          <tr>
             <td><span th:text="${soldier.getIdInfoAsText()}"></span></td>
             
             <td><span th:text="${soldier.militaryOrganization.alias}"></span></td>
             
-            <td><span th:text="${soldier.militaryRank.alias}"></span></td>
-            
-            <td><a th:href="@{/mngmt/sd/profile/} + ${soldier.id}">exibir perfil</a></td>            
+            <td><span th:text="${soldier.militaryRank.alias}"></span></td>            
           </tr>
           
         </tbody>
@@ -67,10 +70,18 @@
     </div>
     
     <script layout:fragment="page-script" th:inline="javascript">
-      	const backBtn = document.querySelector("button#back");
-  		backBtn.addEventListener("click", function(){
-    		location.href = "[(@{/mngmt/dw-list/list})]";
-    	});
+      const backBtn = document.querySelector("button#back");
+      backBtn.addEventListener("click", function(){
+        location.href = historyPop();
+      });
+      
+      const soldiers = document.querySelectorAll("tbody.soldier");
+      for (let i = 0; i < soldiers.length; i++){
+        soldiers[i].addEventListener('click', function(){
+          historyPush();
+          location.href = this.dataset.sdprofile;
+        }); 
+      }
     </script>
   </body>
 </html>

@@ -12,13 +12,11 @@ import br.com.javamoon.domain.entity.User;
 import br.com.javamoon.domain.soldier.Army;
 import br.com.javamoon.domain.soldier.ArmyRepository;
 import br.com.javamoon.domain.soldier.MilitaryOrganizationRepository;
-import br.com.javamoon.domain.soldier.MilitaryRankRepository;
 import br.com.javamoon.infrastructure.web.security.Role;
 import br.com.javamoon.util.SecurityUtils;
 import br.com.javamoon.util.StringUtils;
 import java.util.List;
 import java.util.Map;
-import org.springframework.data.domain.Sort;
 import org.springframework.ui.Model;
 
 public class ControllerHelper {
@@ -46,24 +44,12 @@ public class ControllerHelper {
 		 model.addAttribute("councilType", councilType);
 	 }
 	 
-	 public static void addCouncilsToRequest(JusticeCouncilRepository repo, Model model) {
-		 model.addAttribute("councils", repo.findAll());
-	 }
-	 
-	 public static void addArmiesToRequest(ArmyRepository armyRepository, Model model) {
-		 model.addAttribute("armies", armyRepository.findAll(Sort.by("id")));
-	 }
-	 
 	 public static void addAuditorshipListToRequest(AuditorshipRepository auditorshipRepository, Model model) {
 		 model.addAttribute("auditorshipList", auditorshipRepository.findAll());
 	 }
 	 
 	 public static void addMilitaryOrganizationsToRequest(MilitaryOrganizationRepository omRepo, Army army, Model model) {
 		 model.addAttribute("oms", omRepo.findByArmy(army));
-	 }
-	 
-	 public static void addMilitaryRanksToRequest(MilitaryRankRepository rankRepository, Army army, Model model) {
-		 model.addAttribute("ranksByArmy", rankRepository.findAllByArmiesIn(army));
 	 }
 	 
 	 public static Army getGpUserArmy() {

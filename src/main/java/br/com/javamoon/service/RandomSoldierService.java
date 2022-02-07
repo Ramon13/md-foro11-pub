@@ -45,7 +45,7 @@ public class RandomSoldierService {
 	public void setSoldierExclusionMessages(Draw draw) {
 		Set <DrawExclusion> exclusions;
 		
-		String selectedQuarter = draw.getDrawList().getQuarterYear();
+		String selectedQuarter = draw.getDrawList().getYearQuarter();
 		for (Soldier soldier : draw.getSoldiers()) {
 			exclusions = new HashSet<>();
 			
@@ -62,7 +62,7 @@ public class RandomSoldierService {
 		
 		exclusions = new HashSet<>();
 		
-		String selectedQuarter = draw.getDrawList().getQuarterYear();
+		String selectedQuarter = draw.getDrawList().getYearQuarter();
 		exclusions.addAll( drawExclusionSvc.findByAnnualQuarter(selectedQuarter, soldier) );
 		
 		exclusions.addAll( drawExclusionSvc.getByLatestDraws(soldier) );

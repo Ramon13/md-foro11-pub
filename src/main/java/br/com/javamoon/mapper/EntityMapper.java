@@ -1,5 +1,6 @@
 package br.com.javamoon.mapper;
 
+import br.com.javamoon.domain.draw.Draw;
 import br.com.javamoon.domain.draw_exclusion.DrawExclusion;
 import br.com.javamoon.domain.entity.CJMUser;
 import br.com.javamoon.domain.entity.DrawList;
@@ -74,7 +75,7 @@ public final class EntityMapper {
     	soldierDTO.setActive(soldier.getActive());
     	soldierDTO.setMilitaryOrganization(soldier.getMilitaryOrganization());
     	soldierDTO.setMilitaryRank(soldier.getMilitaryRank());	
-    	
+    	soldierDTO.setArmy(soldier.getArmy());
     	return soldierDTO;
     }
     
@@ -103,18 +104,33 @@ public final class EntityMapper {
     	DrawListDTO drawListDTO = new DrawListDTO();
     	drawListDTO.setId(drawList.getId());
     	drawListDTO.setDescription(drawList.getDescription());
-    	drawListDTO.setQuarterYear(drawList.getQuarterYear());
+    	drawListDTO.setYearQuarter(drawList.getYearQuarter());
     	drawListDTO.setCreationDate(drawList.getCreationDate());
     	drawListDTO.setUpdateDate(drawList.getUpdateDate());
     	drawListDTO.setEnableForDraw(drawList.getEnableForDraw());
+    	drawListDTO.setArmy(drawList.getArmy());
+    	drawListDTO.setCreationUser(drawList.getCreationUser());
     	return drawListDTO;
     }
     
     public static DrawList fromDTOToEntity(DrawListDTO drawListDTO) {
     	DrawList drawList = new DrawList();
     	drawList.setDescription(drawListDTO.getDescription());
-    	drawList.setQuarterYear(drawListDTO.getQuarterYear());
+    	drawList.setYearQuarter(drawListDTO.getYearQuarter());
     	drawList.setEnableForDraw(drawListDTO.getEnableForDraw());
     	return drawList;
+    }
+    
+    public static DrawDTO fromEntityToDTO(Draw draw) {
+    	DrawDTO drawDTO = new DrawDTO();
+    	drawDTO.setId(draw.getId());
+    	drawDTO.setCreationDate(draw.getCreationDate());
+    	drawDTO.setUpdateDate(draw.getUpdateDate());
+    	drawDTO.setFinished(draw.getFinished());
+    	drawDTO.setProcessNumber(draw.getProcessNumber());
+    	drawDTO.setArmy(draw.getArmy());
+    	drawDTO.setJusticeCouncil(draw.getJusticeCouncil());
+    	drawDTO.setDrawListDTO(fromEntityToDTO(draw.getDrawList()));
+    	return drawDTO;
     }
 }

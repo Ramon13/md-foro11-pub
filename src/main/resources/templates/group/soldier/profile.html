@@ -125,42 +125,6 @@
       </div>
       
       <hr />
-      <h1>Adicionar impedimentos </h1>
-      <div>
-        <form method="post" th:action="@{/gp/sd/exclusion/save}" th:object="${exclusion}">
-          <input type="hidden" name="soldier.id" th:value="${soldier.id}"/>
-          
-          <div th:if="${#fields.hasErrors('startDate')}">
-            <span class="error" th:errors="*{startDate}"></span>
-          </div>
-          <div th:if="${#fields.hasErrors('endDate')}">
-            <span class="error" th:errors="*{endDate}"></span>
-          </div>
-          <span>De: </span>
-          <input type="date" class="app-dateinput" th:field="*{startDate}"
-            th:classappend="${#fields.hasErrors('startDate') ? 'error' : ''}"/>
-          
-          <span>Até: </span>
-          <input type="date" class="app-dateinput" th:field="*{endDate}"
-            th:classappend="${#fields.hasErrors('endDate') ? 'error' : ''}"/><br/>
-          
-          <div th:if="${#fields.hasErrors('message')}">
-            <span class="error" th:errors="*{message}"></span>
-          </div>
-          <div>
-            <textarea rows="5" cols="50" placeholder="Adicionar novo impedimento..." th:field="*{message}"
-              th:classappend="${#fields.hasErrors('message') ? 'error' : ''}"></textarea><br/>
-          </div>
-          
-          <div id="controlBtns">
-            <button type="submit" class="add-impediments app-green-btn">
-              <span>Adicionar</span>
-            </button>          
-          </div>
-        </form>
-      </div>
-      
-      
       <div id="exclusions">
         <h2>Impedimentos</h2>
         <div class="no-exclusions" th:if="${#lists.isEmpty(exclusions)}">

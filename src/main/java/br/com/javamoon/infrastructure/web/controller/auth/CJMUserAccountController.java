@@ -39,7 +39,7 @@ public class CJMUserAccountController {
     public String registerHome(@RequestParam(name = "accCreated", required = false) Boolean accCreated, Model model) {
     	model.addAttribute("successMsg", Objects.isNull(accCreated) ? null : CREATE_USER_SUCCESS_MSG);
         model.addAttribute("user", new CJMUserDTO());
-        return "management/account/register";
+        return "cjm/account/register";
     }
     
     @PostMapping("/register/save")
@@ -55,7 +55,7 @@ public class CJMUserAccountController {
         }
         
         model.addAttribute("user", user);
-        return "management/account/register";
+        return "cjm/account/register";
     }
     
     @GetMapping(path="/list/home")
@@ -68,7 +68,7 @@ public class CJMUserAccountController {
     			.collect(Collectors.toList());
     	
     	model.addAttribute("accounts", accountsDTO);
-    	return "management/account/list";
+    	return "cjm/account/list";
     }
     
     @PostMapping(path="/delete/{accountID}")

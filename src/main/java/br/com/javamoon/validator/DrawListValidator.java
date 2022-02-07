@@ -32,10 +32,10 @@ public class DrawListValidator {
 		
 		if (
 		    validateDescription(drawListDTO.getDescription(), validationErrors) &&
-		    validateQuarterYear(drawListDTO.getQuarterYear(), validationErrors)
+		    validateQuarterYear(drawListDTO.getYearQuarter(), validationErrors)
 		) {
 			validateDuplicatedDescription(drawListDTO.getDescription(), drawListDTO.getId(), army, cjm, validationErrors);
-			validateSelectableQuarter(drawListDTO.getQuarterYear(), validationErrors);
+			validateSelectableQuarter(drawListDTO.getYearQuarter(), validationErrors);
 			validateMinSoldierListSize(drawListDTO.getId(), drawListDTO.getSelectedSoldiers().size(), validationErrors);
 		}
 		

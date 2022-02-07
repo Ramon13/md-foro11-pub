@@ -2,6 +2,9 @@ package br.com.javamoon.unit.service;
 
 import static br.com.javamoon.util.Constants.DEFAULT_ARMY_ALIAS;
 import static br.com.javamoon.util.Constants.DEFAULT_ARMY_NAME;
+import static br.com.javamoon.util.Constants.DEFAULT_CJM_ALIAS;
+import static br.com.javamoon.util.Constants.DEFAULT_CJM_NAME;
+import static br.com.javamoon.util.Constants.DEFAULT_CJM_REGIONS;
 import static br.com.javamoon.util.Constants.DEFAULT_ORGANIZATION_ALIAS;
 import static br.com.javamoon.util.Constants.DEFAULT_ORGANIZATION_NAME;
 import static br.com.javamoon.util.Constants.DEFAULT_RANK_ALIAS;
@@ -273,7 +276,7 @@ public class SoldierServiceUnitTest {
 	}
 	
 	@Test
-	void testGetSoldierSuccessfully() {
+	void testGetSoldierWhithDifferentArmies() {
 		Army army = getPersistedArmy(armyRepository);
 		CJM cjm = getPersistedCJM(cjmRepository);
 		
@@ -294,6 +297,51 @@ public class SoldierServiceUnitTest {
 		assertNotNull(soldierDB);
 		assertEquals(army, soldierDB.getArmy());
 		assertEquals(cjm, soldierDB.getCjm());
+	}
+	
+	@Test
+	void testGetSoldierByCjmSucessfully() {
+		List<Soldier> soldiers = TestDataCreator.getPersistedSoldierList(
+				soldierRepository, armyRepository, organizationRepository, rankRepository, cjmRepository, 3);
+		Soldier persistedSoldier = soldiers.get(0);
+		CJM cjm = persistedSoldier.getCjm();
+		
+		assertEquals(persistedSoldier, victim.getSoldierByCjm(persistedSoldier.getId(), cjm));
+		
+		CJM newCjm = TestDataCreator.newCjm();
+		newCjm.setAlias(DEFAULT_CJM_ALIAS + "__");
+		newCjm.setName(DEFAULT_CJM_NAME + "__");
+		newCjm.setRegions((DEFAULT_CJM_REGIONS + "__"));
+		cjmRepository.saveAndFlush(newCjm);
+		
+		persistedSoldier.setCjm(newCjm);
+		soldierRepository.saveAndFlush(persistedSoldier);
+		
+		assertEquals(persistedSoldier, victim.getSoldierByCjm(persistedSoldier.getId(), newCjm));
+	}
+	
+	@Test
+	void testGetSoldierByCjmWhenIdDoesNotExists() {
+		CJM cjm = getPersistedCJM(cjmRepository);
+		assertThrows(SoldierNotFoundException.class, () -> victim.getSoldierByCjm(1, cjm));
+	}
+	
+	@Test
+	void tesstGetSoldierCjmWhenSoldierBelongsToAnotherCjm() {
+		List<Soldier> soldiers = TestDataCreator.getPersistedSoldierList(
+				soldierRepository, armyRepository, organizationRepository, rankRepository, cjmRepository, 3);
+		Soldier persistedSoldier = soldiers.get(0);
+		CJM cjm = persistedSoldier.getCjm();
+		
+		assertEquals(persistedSoldier, victim.getSoldierByCjm(persistedSoldier.getId(), cjm));
+		
+		CJM newCjm = TestDataCreator.newCjm();
+		newCjm.setAlias(DEFAULT_CJM_ALIAS + "__");
+		newCjm.setName(DEFAULT_CJM_NAME + "__");
+		newCjm.setRegions((DEFAULT_CJM_REGIONS + "__"));
+		cjmRepository.saveAndFlush(newCjm);
+		
+		assertThrows(SoldierNotFoundException.class, () -> victim.getSoldierByCjm(persistedSoldier.getId(), newCjm));
 	}
 	
 	@Test

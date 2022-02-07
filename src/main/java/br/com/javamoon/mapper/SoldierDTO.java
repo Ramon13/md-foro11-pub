@@ -1,5 +1,6 @@
 package br.com.javamoon.mapper;
 
+import br.com.javamoon.domain.soldier.Army;
 import br.com.javamoon.domain.soldier.MilitaryOrganization;
 import br.com.javamoon.domain.soldier.MilitaryRank;
 import br.com.javamoon.util.StringUtils;
@@ -40,6 +41,8 @@ public class SoldierDTO{
 	
 	@NotNull(message = "É necessário selecionar um posto.")
 	private MilitaryRank militaryRank;
+	
+	private Army army;
 	
 	private Boolean active;
 	

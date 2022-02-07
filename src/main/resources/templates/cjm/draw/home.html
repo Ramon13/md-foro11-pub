@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html
+  xmlns="http://www.w3.org/1999/xhtml"
+  xmlns:th="http://www.thymeleaf.org" layout:decorate="~{cjm/layout}">
+  
+  <style layout:fragment="style">
+    div .list-header{
+      float: right;
+      width: 90%;
+    }
+    
+    div .list-info{
+      float: right;
+      width: 90%;
+    }
+    
+    div .draw-soldier-list{
+      height: 80px;
+    }
+    
+    input.selDrawList {
+      margin-top: 30px;
+    }     
+    
+    div.tab{
+      height: 60vh;
+    }
+    
+    div#multipleFormPages{
+      text-align: center;
+      margin-top: 40px";
+    }
+    
+    div#multipleFormBtns{
+      float: right;
+    }
+  </style>
+  
+  <body>
+    <div layout:fragment="content">
+      <form id="drawForm" class="multipleForm" th:object="${drawDTO}">
+        <div class="tab tab1" th:if="${!editMode}">
+          <h1>Novo Sorteio</h1>
+          <h2>Configurações Gerais:</h2>
+          
+          <div>
+            <label>Conselho de Justiça:</label><br/>            
+            <select id="councilSelect" class="app-select" th:field="*{justiceCouncil}">
+              <option th:each="council : ${councils}" th:value="${council.id}" th:text="${council.name}"
+                th:attr="data-changeurl = @{/cjm/dw/home(justiceCouncil=${council.id})}">
+              </option>
+            </select>
+          </div>
+          
+          <div>
+            <label>Força Armada:</label><br/>
+            <select id="armySelect" class="app-select" th:field="*{army}">
+              <option th:each="army : ${armies}" th:value="${army.id}" th:text="${army.name}"
+                th:attr="data-changeurl = @{/cjm/dw/home(army=${army.id})}">
+              </option>
+            </select>
+          </div>
+          
+          <div id="annualQuarter">
+            <label>Trimestre:</label><br/>
+            <div th:if="${#fields.hasErrors('selectedYearQuarter')}">
+              <span class="error" th:errors="*{selectedYearQuarter}" data-tabid="0"></span>
+            </div>
+            <select id="quarterSelect" class="app-select" th:field="*{selectedYearQuarter}">
+              <option th:each="quarter : ${quarters}" th:value="${quarter}" 
+                th:text="${drawDTO.prettyPrintQuarterYear(quarter)}"
+                th:selected="${drawDTO.isSameQuarter(quarter)}"
+                th:attr="data-changeurl = @{/cjm/dw/home(selectedYearQuarter=${quarter})}">
+              </option>
+            </select>
+          </div>
+          
+          <div th:if="${!drawDTO.isCPJ()}">
+            <label>Nº do Processo:</label><br/>
+            <div th:if="${#fields.hasErrors('processNumber')}">
+              <span class="error" th:errors="*{processNumber}" data-tabid="0"></span>
+            </div>
+            <input type="text" th:field="*{processNumber}" class="app-txtinput"
+              th:classappend="${#fields.hasErrors('processNumber')} ? 'error' : ''"/>
+          </div>
+        </div>
+        
+        <div class="tab">
+          <h2>Seleção de lista:</h2>
+          
+          <div class="empty-list" th:if="${#lists.isEmpty(drawLists)}">
+            <span>Não foram encontradas listas para este trimestre. </span>
+          </div>
+          
+          <div th:if="${#fields.hasErrors('selectedDrawList')}">
+            <span class="error" th:errors="*{drawListDTO.id}" data-tabid="1"></span>
+          </div>
+          
+          <div th:each="selectDrawList : ${drawLists}">          
+            <div class="draw-soldier-list">
+              <input class="selDrawList" th:field="*{selectedDrawList}" th:value="${selectDrawList.id}" type="radio"/>
+              <div class="list-header">
+                <span th:text="${selectDrawList.prettyPrintListTitle()}"></span>
+              </div>
+              <div class="list-info">
+                <span th:text="${selectDrawList.prettyPrintListInfo()}"></span>
+              </div>
+              <br/>
+            </div>
+          </div>
+        </div>
+        
+        <div id="ranks" class="tab">
+          <h1 th:text="*{justiceCouncil.name}"></h1>          
+          <h2>Seleção de postos:</h2>
+          
+          <div th:if="${#fields.hasErrors('selectedRanks')}">
+            <span class="error" th:errors="*{selectedRanks}" data-tabid="2"></span>
+          </div>
+          
+          <div class="ranks" th:each="selectedRank : *{selectedRanks}">
+            <select class="app-select ranks" th:name="selectedRanks">
+              <option th:each="rank : ${ranks}" th:value="${rank.id}" th:text="${rank.name}"
+                th:selected="${selectedRank != null and rank.id eq selectedRank.id}">
+              </option>
+            </select>
+          </div>
+          
+          <div>
+            <button th:if="${drawDTO.isNeverDrawn()}" type="button" id="randAll" class="app-green-btn"
+              th:attr="data-randallurl=@{/cjm/dw/sdrand/all(selectedDrawList)}">Sortear todos</button>
+            <br/>
+          </div>
+        </div>
+        
+        <div style="overflow:auto;width: 100%;">
+          <div id="multipleFormBtns">
+            <button type="button" id="prevBtn" class="app-gray-btn" onclick="nextPrev(-1)">Voltar</button>
+            <button type="button" id="nextBtn" class="app-green-btn" onclick="nextPrev(1)">Próximo</button>
+          </div>
+        </div>
+        <div id="multipleFormPages">
+          <span class="step" th:if="${!editMode}"></span>
+          <span class="step"></span>
+          <span class="step"></span>
+          <span class="step" th:if="${!#lists.isEmpty(soldiers)}"></span>
+        </div>
+      </form>
+    </div>
+    
+    <script layout:fragment="page-script" th:inline="javascript">
+      const councilSelect = document.querySelector('select#councilSelect');
+      councilSelect.addEventListener('change', function (){submitFormChanges(this)});
+      
+      const armySelect = document.querySelector('select#armySelect');
+      armySelect.addEventListener('change', function (){submitFormChanges(this)});
+      
+      const quarterSelect = document.querySelector('select#quarterSelect');
+      quarterSelect.addEventListener('change', function (){submitFormChanges(this)});
+      
+      const randAllBtn = document.querySelector("button#randAll");
+      randAllBtn.addEventListener('click', function(){randAll(this)});
+      
+      setTabFocus();
+        
+      function setTabFocus(){
+        const tabs = document.getElementsByClassName("div.tab");
+        const errors = document.querySelectorAll(".error");
+        
+        if (errors.length > 0)
+            showTab(errors[0].dataset.tabid);   // Focus on first tab with error
+        else if (hasDrawnSoldiers())
+          showTab(tabs.length - 1);             // In edit mode. Focus on soldiers tab
+        else
+          showTab(0);                           // Focus in first tab
+      }
+      
+      function hasDrawnSoldiers(){
+        return document.getElementsByClassName("soldiers").length > 0;
+      }
+      
+      function submitFormChanges(htmlSelect){
+    	  location.href = htmlSelect.options[htmlSelect.selectedIndex].dataset.changeurl;	  
+      }
+      
+      function randAll(htmlButton){
+    	  let lists = document.querySelectorAll("input[type=radio].selDrawList");
+    	  let selectedListId = getCheckedRadio(lists).value;
+    	  
+    	  console.log(htmlButton.dataset.randallurl + "=" + selectedListId);
+      }
+      
+      function getCheckedRadio(htmlRadioArr){
+    	  for (let i = 0; i < htmlRadioArr.length; i++)
+              if (htmlRadioArr[i].checked)
+                return htmlRadioArr[i];  
+      }
+    </script>
+  </body>  
+</html>

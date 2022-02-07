@@ -88,21 +88,21 @@ insert into SOLDIER (id, email, soldier_name, phone, army_id, cjm_id, military_b
 		(12, 'davidson.david@marinha.mil.br', 'DAVIDSON JUARÊZ DAVID', '(61) 9 8103 4275', 2, 1, 6, 5, null, 1),
 		(13, 'joao.moraes@marinha.mil.br', 'JOÃO JOSÉ BAPTISTA DE MORAES', '(21) 9 9193-0205', 2, 1, 7, 5, null, 1),
 		(14, null, 'PEDRO LUCAS LOPES PRAXEDES', '(61)3429-1173', 2, 1, 7, 5, null, 1),
-		(15, null, 'HYAGO LUIZ TEIXEIRA PINTO', '(61)3429-1173', 2, 2, 8, 5, null, 1),
-		(16, 'raphael.amaral@marinha.mil.br', 'RAPHAEL DE ALBUQUERQUE DO AMARAL', '(22) 99865-1604', 2, 2, 8, 5, null, 1),
-		(17, 'farah@marinha.mil.br', 'CAIO PEREIRA FARAH NOLASCO', '(21)99736-5766', 2, 2, 9, 5, null, 1),
-		(18, 'sa.freire@marinha.mil.br', 'RAFAEL SÁ FREIRE DIAS', '(21) 9 8074-2842', 2, 2, 9, 6, null, 1),
-		(19, 'paula.gonçalves@marinha.mil.br', 'ANTONIO DE BARCELLOS NETO', '3429-1025', 2, 2, 10, 9, null, 1),
-		(20, null, 'WANDERSON MORAIS RAMOS', '3429-1825', 2, 2, 10, 9, null, 1);
+		(15, null, 'HYAGO LUIZ TEIXEIRA PINTO', '(61)3429-1173', 2, 1, 8, 5, null, 1),
+		(16, 'raphael.amaral@marinha.mil.br', 'RAPHAEL DE ALBUQUERQUE DO AMARAL', '(22) 99865-1604', 2, 1, 8, 5, null, 1),
+		(17, 'farah@marinha.mil.br', 'CAIO PEREIRA FARAH NOLASCO', '(21)99736-5766', 2, 1, 9, 5, null, 1),
+		(18, 'sa.freire@marinha.mil.br', 'RAFAEL SÁ FREIRE DIAS', '(21) 9 8074-2842', 2, 1, 9, 6, null, 1),
+		(19, 'paula.gonçalves@marinha.mil.br', 'ANTONIO DE BARCELLOS NETO', '3429-1025', 2, 1, 10, 9, null, 1),
+		(20, null, 'WANDERSON MORAIS RAMOS', '3429-1825', 2, 1, 10, 9, null, 1);
 
 #soldiers FAB
 insert into SOLDIER (id, email, soldier_name, phone, army_id, cjm_id, military_base_id,
 	military_rank_id, military_specialization_id, active)
 	values		
-		(21, null, 'IAGO VIEIRA DE OLIVEIRA', '61 98288-1416', 3, 1, 11, 5, null, 1),
-		(22, null, 'KAREN DE OLIVEIRA VALVASSORI', '61 99175-9719', 3, 1, 11, 5, null, 1),
-		(23, null, 'GUSTAVO DA MATA PETROVICH', '61 99556-7651', 3, 1, 12, 5, null, 1),
-		(24, null, 'CHARLES JOSÉ DE OLIVEIRA', '(61) 98114-5297', 3, 1, 12, 5, null, 1),
+		(21, null, 'IAGO VIEIRA DE OLIVEIRA', '61 98288-1416', 3, 2, 11, 5, null, 1),
+		(22, null, 'KAREN DE OLIVEIRA VALVASSORI', '61 99175-9719', 3, 2, 11, 5, null, 1),
+		(23, null, 'GUSTAVO DA MATA PETROVICH', '61 99556-7651', 3, 2, 12, 5, null, 1),
+		(24, null, 'CHARLES JOSÉ DE OLIVEIRA', '(61) 98114-5297', 3, 2, 12, 5, null, 1),
 		(25, null, 'FELIPE DA SILVA FERNANES', '61 98333-3040', 3, 2, 13, 5, null, 1),
 		(26, null, 'RENATO PEDERSOLI', '69 99261-9984', 3, 2, 13, 5, null, 1),
 		(27, null, 'FERNANDO MAYA XAVIER', '61 99639-7042', 3, 2, 14, 5, null, 1),
@@ -151,7 +151,6 @@ insert into DRAW_LIST (id, creation_date, update_date, army_id, year_quarter, de
 insert into DRAW_LIST_HAS_SOLDIER (draw_list_id, soldier_id)
 	values
 		(1, 1), (1, 2), (1, 3), (1, 4), (1, 5);			
-
 
 insert into DRAW_LIST (id, creation_date, update_date, army_id, year_quarter, description, creation_user_id, active, enable_for_draw)
 	values

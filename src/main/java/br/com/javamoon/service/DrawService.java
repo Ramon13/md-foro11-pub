@@ -72,7 +72,7 @@ public class DrawService {
 		
 		String quarterYear;
 		for (Draw draw : drawList) {
-			quarterYear = draw.getDrawList().getQuarterYear();
+			quarterYear = draw.getDrawList().getYearQuarter();
 			List<Draw> quarterDrawList = quarterDrawMap.get(quarterYear);
 			
 			if (quarterDrawList == null) {
@@ -89,19 +89,21 @@ public class DrawService {
 	/**
 	 * Select the first n soldiers in Draw.soldiers list, where n is the council size
 	 */
+	@Deprecated
 	private List<Soldier> getSelectedSoldiers(Draw draw, CouncilType councilType) {
-		int councilSize = councilType.getCouncilSize();
-		List<Soldier> selectedSoldiers = new ArrayList<>();
-		
-		for (int i = 0; i < councilSize; i++) {
-			if ( soldierSvc.isValidArmy(draw.getArmy(), draw.getSoldiers().get(i)) == Boolean.FALSE ) {
-				throw new IllegalStateException("The soldier does not belong to this army");
-			}
-			
-			selectedSoldiers.add(draw.getSoldiers().get(i));
-		}
-		
-		return selectedSoldiers;
+		return null;
+//		int councilSize = councilType.getCouncilSize();
+//		List<Soldier> selectedSoldiers = new ArrayList<>();
+//		
+//		for (int i = 0; i < councilSize; i++) {
+//			if ( soldierSvc.isValidArmy(draw.getArmy(), draw.getSoldiers().get(i)) == Boolean.FALSE ) {
+//				throw new IllegalStateException("The soldier does not belong to this army");
+//			}
+//			
+//			selectedSoldiers.add(draw.getSoldiers().get(i));
+//		}
+//		
+//		return selectedSoldiers;
 	}
 	
 	private void validateSoldiersAmount(CouncilType councilType, Collection<Soldier> soldiers) throws ApplicationServiceException{
@@ -145,7 +147,7 @@ public class DrawService {
 		String army = draw.getArmy().getName();
 		String date = "";
 		
-		LocalDate quarterYear = DateUtils.fromQuarterYear(draw.getDrawList().getQuarterYear());
+		LocalDate quarterYear = DateUtils.fromYearQuarter(draw.getDrawList().getYearQuarter());
 		if (draw.getJusticeCouncil().getAlias().equalsIgnoreCase("CPJ")) {
 			date = DateUtils.getQuarter(quarterYear) + "º Trimestre - " + quarterYear.getYear();
 		}

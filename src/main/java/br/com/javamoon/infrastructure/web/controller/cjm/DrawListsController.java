@@ -2,14 +2,13 @@ package br.com.javamoon.infrastructure.web.controller.cjm;
 
 import br.com.javamoon.domain.entity.CJMUser;
 import br.com.javamoon.domain.entity.DrawList;
-import br.com.javamoon.domain.repository.DrawListRepository;
-import br.com.javamoon.domain.soldier.Soldier;
-import br.com.javamoon.domain.soldier.SoldierRepositoryImpl;
 import br.com.javamoon.infrastructure.web.model.PaginationSearchFilter;
+import br.com.javamoon.infrastructure.web.model.SoldiersPagination;
+import br.com.javamoon.mapper.DrawListDTO;
 import br.com.javamoon.service.DrawListService;
+import br.com.javamoon.service.SoldierService;
 import br.com.javamoon.util.SecurityUtils;
 import java.util.List;
-import java.util.Optional;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -20,55 +19,36 @@ import org.springframework.web.bind.annotation.RequestMapping;
 @RequestMapping("/cjm/dw/lists")
 public class DrawListsController {
 	
-	private DrawListRepository drawListRepo;
-	
 	private DrawListService drawListService;
 	
-	private SoldierRepositoryImpl soldierRepoImpl;
+	private SoldierService soldierService;
 	
-	public DrawListsController(DrawListRepository drawListRepo,
-	        DrawListService drawListService, SoldierRepositoryImpl soldierRepoImpl) {
-		this.drawListRepo = drawListRepo;
+	public DrawListsController(DrawListService drawListService, SoldierService soldierService) {
 		this.drawListService = drawListService;
-		this.soldierRepoImpl = soldierRepoImpl;
+		this.soldierService = soldierService;
 	}
 
 	@GetMapping("/list")
 	public String drawSoldierList(Model model) {
 		CJMUser loggedUser = SecurityUtils.cjmUser();
-		
 		List<DrawList> lists = drawListService.listByCjm(loggedUser.getAuditorship().getCjm());
-		model.addAttribute("drawListsMap", drawListService.mapListByQuarter(lists));
 		
+		model.addAttribute("listsByQuarter", drawListService.getListsByQuarter(lists));
 		return "cjm/lists/home";
 	}
 	
-	@GetMapping("/list/{drawListId}")
-	public String loadDrawList(@PathVariable Integer drawListId,
-			PaginationSearchFilter filter,
-			Model model) {
+	@GetMapping("/list/{listId}")
+	public String getDrawList(@PathVariable Integer listId, PaginationSearchFilter filter, Model model) {
+		CJMUser loggedUser = SecurityUtils.cjmUser();
+		DrawListDTO drawListDTO = drawListService.getList(listId, loggedUser.getAuditorship().getCjm());
 		
-		//TODO: filter by army and cjm
-		Optional<DrawList> drawList = drawListRepo.findById(drawListId);
-		if (drawList.isPresent()) {
-			List<Soldier> soldiers;
-			Long total;
+		SoldiersPagination soldiersPagination = soldierService.listPagination(drawListDTO.getId(), filter);
+		filter.setTotal(soldiersPagination.getTotal().intValue());
 			
-			model.addAttribute("drawList", drawList.get());
-			
-			soldiers = (List<Soldier>) soldierRepoImpl
-					.findAllByDrawListPaginable(drawList.get().getId(), filter);
-			
-			total = (Long) soldierRepoImpl
-					.countAllByDrawListPaginable(drawList.get().getId(), filter);
-			
-			filter.setTotal(total.intValue());
-			
-			model.addAttribute("soldiers", soldiers);
-			model.addAttribute("filter", filter);
-			return  "management/draw-list/list";
-		}
+		model.addAttribute("drawList", drawListDTO);
+		model.addAttribute("soldiersPagination", soldiersPagination);
+		model.addAttribute("filter", filter);
 		
-		throw new IllegalStateException("Lista inexistente!");
+		return  "cjm/lists/list";
 	}
 }

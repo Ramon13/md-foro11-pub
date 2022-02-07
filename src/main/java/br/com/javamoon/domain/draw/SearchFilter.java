@@ -20,7 +20,7 @@ public class SearchFilter {
 	public SearchFilter() {}
 	
 	public SearchFilter(JusticeCouncil council, String quarterYear) {
-		LocalDate quarterDate = DateUtils.fromQuarterYear(quarterYear);
+		LocalDate quarterDate = DateUtils.fromYearQuarter(quarterYear);
 		this.council = council;
 		this.quarter = DateUtils.getQuarter(quarterDate);
 		this.year = quarterDate.getYear();

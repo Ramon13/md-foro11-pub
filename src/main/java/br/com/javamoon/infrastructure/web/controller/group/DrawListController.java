@@ -67,7 +67,7 @@ public class DrawListController {
 		GroupUser loggedUser = SecurityUtils.groupUser();
 		
 		DrawListDTO drawList = new DrawListDTO();
-		drawList.setQuarterYear(DateUtils.toQuarterFormat(LocalDate.now()));
+		drawList.setYearQuarter(DateUtils.toQuarterFormat(LocalDate.now()));
 		
 		model.addAttribute("quarters", DateUtils.getSelectableQuarters()); //TODO: fix this attribute on template <expect annual quarter obj>
 		model.addAttribute("drawList", drawList);

@@ -52,7 +52,6 @@ public class Draw implements Serializable{
 	@Column(name = "update_date", nullable = false)
 	private LocalDate updateDate;
 	
-	@Size(max = 64, message="Número de caracteres máximo permitido: 64")
 	@Column(name="process_number", nullable = true, unique = true, length = 64)
 	private String processNumber;
 	
@@ -108,7 +107,7 @@ public class Draw implements Serializable{
 		councilType = CouncilType.fromAlias(justiceCouncil.getAlias());
 		
 		return (councilType == CouncilType.CPJ)
-					? String.format("%s (%s) - %s", justiceCouncil.getName(), drawList.getQuarterYear(), army.getName())
+					? String.format("%s (%s) - %s", justiceCouncil.getName(), drawList.getYearQuarter(), army.getName())
 					: String.format("%s (%s) - %s", justiceCouncil.getName(), processNumber, army.getName());		
 	}
 	

@@ -20,10 +20,12 @@ import javax.validation.constraints.Size;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
+import lombok.ToString;
 
 @SuppressWarnings("serial")
 @Getter
 @Setter
+@ToString
 @EqualsAndHashCode(onlyExplicitlyIncluded = true)
 @Entity
 @Table(name = "ARMY")
@@ -44,18 +46,23 @@ public class Army implements Serializable{
 	@Column(name = "army_alias", unique = true, nullable = false, length = 10)
 	private String alias;
 	
+	@ToString.Exclude
 	@OneToMany(mappedBy = "army")
 	private Set<Soldier> soldiers = new HashSet<>(0);
 	
+	@ToString.Exclude
 	@OneToMany(mappedBy = "army")
 	private Set<GroupUser> soldierUsers = new HashSet<>(0);
 	
+	@ToString.Exclude
 	@OneToMany(mappedBy = "army")
 	private Set<MilitaryOrganization> militaryOrganizations = new HashSet<>(0);
 	
+	@ToString.Exclude
 	@OneToMany(mappedBy = "army")
 	private Set<Draw> drawList = new HashSet<>(0);
 	
+	@ToString.Exclude
 	@ManyToMany
 	@JoinTable(
 	    name="ARMY_HAS_MILITARY_RANK",

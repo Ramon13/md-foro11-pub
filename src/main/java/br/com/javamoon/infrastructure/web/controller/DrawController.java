@@ -1,5 +1,6 @@
 package br.com.javamoon.infrastructure.web.controller;
 
+import br.com.javamoon.config.properties.DrawConfigProperties;
 import br.com.javamoon.domain.cjm_user.Auditorship;
 import br.com.javamoon.domain.cjm_user.AuditorshipRepository;
 import br.com.javamoon.domain.cjm_user.CJM;
@@ -17,9 +18,14 @@ import br.com.javamoon.domain.soldier.NoAvaliableSoldierException;
 import br.com.javamoon.domain.soldier.Soldier;
 import br.com.javamoon.domain.soldier.SoldierRepository;
 import br.com.javamoon.infrastructure.web.repository.DrawRepositoryImpl;
+import br.com.javamoon.mapper.DrawDTO;
+import br.com.javamoon.mapper.DrawListDTO;
 import br.com.javamoon.service.ArmyService;
 import br.com.javamoon.service.AuditorshipService;
+import br.com.javamoon.service.DrawListService;
 import br.com.javamoon.service.DrawService;
+import br.com.javamoon.service.JusticeCouncilService;
+import br.com.javamoon.service.MilitaryRankService;
 import br.com.javamoon.service.RandomSoldierService;
 import br.com.javamoon.service.ValidationException;
 import br.com.javamoon.util.DateUtils;
@@ -32,6 +38,9 @@ import java.util.Map;
 import javax.validation.Valid;
 import org.apache.commons.lang3.BooleanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.domain.Sort.Direction;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.Errors;
@@ -44,19 +53,10 @@ import org.springframework.web.bind.annotation.SessionAttributes;
 import org.springframework.web.bind.support.SessionStatus;
 
 @Controller
-@RequestMapping(path = "/mngmt/dw")
-@SessionAttributes("draw")
-public class ManagementDrawController {
+@RequestMapping(path = "/cjm/dw")
+@SessionAttributes("drawDTO")
+public class DrawController {
 
-	@Autowired
-	private JusticeCouncilRepository councilRepo;
-	
-	@Autowired
-	private ArmyRepository armyRepo;
-	
-	@Autowired
-	private MilitaryRankRepository rankRepo;
-	
 	@Autowired
 	private DrawService drawSvc;
 	
@@ -81,19 +81,32 @@ public class ManagementDrawController {
 	@Autowired
 	private AuditorshipService auditorshipSvc;
 	
-	@Autowired
-	private DrawListRepositoryImpl drawListRepoImpl;
+	private ArmyService armyService;
 	
-	@ModelAttribute("draw")
-	public Draw initDrawnSoldiers() {
-		Draw draw = new Draw();
-		draw.setArmy(ControllerHelper.getDefaultArmy(armyRepo));
-		draw.setJusticeCouncil(ControllerHelper.getDefaultCouncil(councilRepo));
-		draw.setCouncilType(CouncilType.fromAlias(draw.getJusticeCouncil().getAlias()));
-		return draw;
+	private JusticeCouncilService councilService;
+	
+	private DrawListService drawListService;
+	
+	private MilitaryRankService rankService;
+	
+	private DrawConfigProperties drawConfigProperties;
+	
+	public DrawController(ArmyService armyService, JusticeCouncilService councilService,
+	        DrawListService drawListService, MilitaryRankService rankService,
+	        DrawConfigProperties drawConfigProperties) {
+		this.armyService = armyService;
+		this.councilService = councilService;
+		this.drawListService = drawListService;
+		this.rankService = rankService;
+		this.drawConfigProperties = drawConfigProperties;
+	}
+
+	@ModelAttribute("drawDTO")
+	public DrawDTO initDrawDTO() {
+		return new DrawDTO(armyService, councilService, drawConfigProperties);
 	}
 	
-	@GetMapping("/home")
+	@GetMapping("/old/home")
 	public String drawPage(@ModelAttribute("draw") Draw draw,
 			@RequestParam(required = false) Boolean complete,
 			@RequestParam(required = false) String successMsg,
@@ -109,6 +122,26 @@ public class ManagementDrawController {
 		return "management/draw-home";
 	}
 	
+	@GetMapping("/home")
+	public String home(Model model, @ModelAttribute("drawDTO") DrawDTO drawDTO) {
+		System.out.println(drawDTO);
+		CJMUser loggedUser = SecurityUtils.cjmUser();
+		
+		List<DrawListDTO> drawLists = drawListService.list(
+				drawDTO.getArmy(), 
+				loggedUser.getAuditorship().getCjm(), 
+				drawDTO.getSelectedYearQuarter());
+		
+		model.addAttribute("drawLists", drawLists);
+		model.addAttribute("quarters", DateUtils.getSelectableQuarters());
+		model.addAttribute("councils", councilService.list());
+		model.addAttribute("armies", armyService.list());
+		model.addAttribute("ranks", rankService.listRanksByArmy(drawDTO.getArmy()));
+		ControllerHelper.setEditMode(model, false);
+		
+		return "cjm/draw/home";
+	}
+	
 	@GetMapping("/sdrand/all")
 	public String drawAll(@Valid @ModelAttribute("draw") Draw draw, Errors errors, Model model) {
 		
@@ -121,7 +154,7 @@ public class ManagementDrawController {
 				if (councilType == CouncilType.CEJ) 
 					drawSvc.validateProcessNumber(draw.getProcessNumber(), draw.getId());
 				
-				String quarterYear = draw.getDrawList().getQuarterYear();
+				String quarterYear = draw.getDrawList().getYearQuarter();
 				MilitaryRank[] ranks = draw.getRanks().toArray(new MilitaryRank[0]);
 				
 				if (DateUtils.isSelectableQuarter(quarterYear)
@@ -262,7 +295,7 @@ public class ManagementDrawController {
 		if (draw.getDrawList() == null)
 			selectedQuarterYear = DateUtils.toQuarterFormat(LocalDate.now());
 		else
-			selectedQuarterYear = draw.getDrawList().getQuarterYear();
+			selectedQuarterYear = draw.getDrawList().getYearQuarter();
 		
 		List<DrawList> drawList = drawListRepoImpl.getDrawableLists(
 				draw.getArmy(),

@@ -4,6 +4,8 @@ import static br.com.javamoon.mapper.MapperConstants.EDIT_PHASE;
 import static br.com.javamoon.mapper.MapperConstants.EDIT_PHASE_DESCRIPTION;
 import static br.com.javamoon.mapper.MapperConstants.READY_PHASE;
 import static br.com.javamoon.mapper.MapperConstants.READY_PHASE_DESCRIPTION;
+import br.com.javamoon.domain.entity.GroupUser;
+import br.com.javamoon.domain.soldier.Army;
 import br.com.javamoon.domain.soldier.Soldier;
 import br.com.javamoon.util.DateUtils;
 import java.time.LocalDate;
@@ -26,9 +28,7 @@ public class DrawListDTO {
 	@Size(min = 16, max = 2048, message = "A descrição deve conter entre 16 e 2048 caracteres")
 	private String description;
 	
-	@NotEmpty(message = "Trimestre não selecionado")
-	@Size(min = 6, max = 6, message = "Trimestre inválido")
-	private String quarterYear;
+	private String yearQuarter;
 
 	private Set<Soldier> soldiers = new HashSet<Soldier>(0);
 	
@@ -37,6 +37,10 @@ public class DrawListDTO {
 	private LocalDate updateDate;
 	
 	private Boolean enableForDraw;
+	
+	private Army army;
+	
+	private GroupUser creationUser;
 	
 	private List<Integer> selectedSoldiers = new ArrayList<>(0);
 	
@@ -56,5 +60,20 @@ public class DrawListDTO {
 	
 	public String getFormattedUpdateDate() {
 		return DateUtils.format(updateDate);
+	}
+	
+	public String prettyPrintQuarterYear() {
+		return String.format("%s/%s", yearQuarter.split("'")[1], yearQuarter.split("'")[0]);
+	}
+	
+	public String prettyPrintListTitle() {
+		return String.format("[%s] %s", prettyPrintQuarterYear(), description);
+	}
+	
+	public String prettyPrintListInfo(){
+		return String.format("criado em: %s | por: %s | última modificação: %s", 
+				getFormattedCreationDate(),
+				creationUser.getUsername(),
+				getFormattedUpdateDate());
 	}
 }
