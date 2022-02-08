@@ -143,7 +143,7 @@
           <span class="step" th:if="${!editMode}"></span>
           <span class="step"></span>
           <span class="step"></span>
-          <span class="step" th:if="${!#lists.isEmpty(soldiers)}"></span>
+          <span class="step" th:if="${!drawDTO.isNeverDrawn()}"></span>
         </div>
       </form>
     </div>
@@ -159,7 +159,8 @@
       quarterSelect.addEventListener('change', function (){submitFormChanges(this)});
       
       const randAllBtn = document.querySelector("button#randAll");
-      randAllBtn.addEventListener('click', function(){randAll(this)});
+      if (randAllBtn)
+    	  randAllBtn.addEventListener('click', function(){randAll(this)});
       
       setTabFocus();
         

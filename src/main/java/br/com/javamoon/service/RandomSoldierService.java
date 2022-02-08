@@ -9,6 +9,7 @@ import br.com.javamoon.domain.soldier.MilitaryRank;
 import br.com.javamoon.domain.soldier.NoAvaliableSoldierException;
 import br.com.javamoon.domain.soldier.Soldier;
 import br.com.javamoon.domain.soldier.SoldierRepositoryImpl;
+import br.com.javamoon.exception.DrawValidationException;
 import br.com.javamoon.mapper.DrawDTO;
 import br.com.javamoon.validator.DrawValidator;
 
@@ -39,7 +40,7 @@ public class RandomSoldierService {
 		this.drawListService = drawListService;
 	}
 
-	public void randomAllSoldiers(DrawDTO drawDTO, CJM cjm) throws NoAvaliableSoldierException{
+	public void randomAllSoldiers(DrawDTO drawDTO, CJM cjm) throws NoAvaliableSoldierException, DrawValidationException{
 		drawValidator.randAllSoldiersValidation(drawDTO);
 		drawListService.getList(drawDTO.getSelectedDrawList(), cjm);		// validate if list exists, otherwise throw an exception
 		

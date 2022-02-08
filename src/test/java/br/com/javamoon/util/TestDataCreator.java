@@ -334,6 +334,7 @@ public final class TestDataCreator {
 		DrawDTO drawDTO = new DrawDTO();
 		drawDTO.getSelectedRanks().addAll(Constants.DEFAULT_SELECTED_RANKS);
 		drawDTO.setArmy(newArmy());
+		drawDTO.setJusticeCouncil(getJusticeCouncil());
 		return drawDTO;
 	}
 }

@@ -34,6 +34,7 @@ import br.com.javamoon.domain.soldier.MilitaryRank;
 import br.com.javamoon.domain.soldier.NoAvaliableSoldierException;
 import br.com.javamoon.domain.soldier.Soldier;
 import br.com.javamoon.domain.soldier.SoldierRepository;
+import br.com.javamoon.exception.DrawValidationException;
 import br.com.javamoon.infrastructure.web.controller.ControllerHelper;
 import br.com.javamoon.infrastructure.web.repository.DrawRepositoryImpl;
 import br.com.javamoon.mapper.DrawDTO;
@@ -122,7 +123,6 @@ public class DrawController {
 	
 	@GetMapping("/home")
 	public String home(Model model, @ModelAttribute("drawDTO") DrawDTO drawDTO) {
-		System.out.println(drawDTO);
 		CJMUser loggedUser = SecurityUtils.cjmUser();
 		
 		List<DrawListDTO> drawLists = drawListService.list(
@@ -143,9 +143,18 @@ public class DrawController {
 	
 	@GetMapping("/sdrand/all")
 	public String drawAll(@Valid @ModelAttribute("drawDTO") DrawDTO drawDTO, Errors errors, Model model) {
-		//randomSoldierService.randomAllSoldiers(drawDTO);
+		try {
+			System.out.println(drawDTO);
+			CJMUser loggedUser = SecurityUtils.cjmUser();
+			randomSoldierService.randomAllSoldiers(drawDTO, loggedUser.getAuditorship().getCjm());
+		} catch (DrawValidationException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (NoAvaliableSoldierException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 		
-		System.out.println(drawDTO);
 		return "redirect:/cjm/dw/home";
 	}
 	

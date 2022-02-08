@@ -11,7 +11,6 @@ import org.springframework.stereotype.Component;
 import br.com.javamoon.domain.soldier.Army;
 import br.com.javamoon.domain.soldier.MilitaryRankRepository;
 import br.com.javamoon.exception.DrawValidationException;
-import br.com.javamoon.exception.SoldierValidationException;
 import br.com.javamoon.mapper.DrawDTO;
 
 @Component
@@ -23,12 +22,11 @@ public class DrawValidator {
 		this.militaryRankRepository = rankRepository;
 	}
 
-	public void randAllSoldiersValidation(DrawDTO drawDTO) throws SoldierValidationException {
+	public void randAllSoldiersValidation(DrawDTO drawDTO) throws DrawValidationException{
 		ValidationErrors validationErrors = new ValidationErrors();
 		
 		validateRanks(drawDTO.getSelectedRanks(), drawDTO.getJusticeCouncil().getCouncilSize(), validationErrors);
 		ValidationUtils.throwOnErrors(DrawValidationException.class, validationErrors);
-		
 			
 		validateIfRankBelongsToArmy(drawDTO.getArmy(), drawDTO.getSelectedRanks());
 	}

@@ -1,5 +1,6 @@
 package br.com.javamoon.unit.service;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import java.util.List;
@@ -21,6 +22,7 @@ import br.com.javamoon.domain.soldier.ArmyRepository;
 import br.com.javamoon.domain.soldier.MilitaryOrganizationRepository;
 import br.com.javamoon.domain.soldier.MilitaryRankRepository;
 import br.com.javamoon.domain.soldier.NoAvaliableSoldierException;
+import br.com.javamoon.domain.soldier.Soldier;
 import br.com.javamoon.domain.soldier.SoldierRepository;
 import br.com.javamoon.exception.DrawListNotFoundException;
 import br.com.javamoon.mapper.DrawDTO;
@@ -62,13 +64,20 @@ public class RandomSoldierServiceUnitTest {
 		DrawList drawList = getPersistedDrawList();
 		
 		DrawDTO drawDTO = TestDataCreator.newDrawDTO();
-		drawDTO.setSelectedRanks(List.of(1));
+		drawDTO.setSelectedRanks(List.of(1,1,1,1,1));
 		drawDTO.setSelectedDrawList(drawList.getId());
 		drawDTO.setArmy(drawList.getArmy());
 		
 		victim.randomAllSoldiers(drawDTO, drawList.getCreationUser().getCjm());
+		
+		List<Integer> ranks = drawDTO.getSelectedRanks();
+		List<Soldier> soldiers = drawDTO.getSoldiers();
+		
+		assertEquals(drawDTO.getJusticeCouncil().getCouncilSize(), soldiers.size());
+		assertEquals(ranks.get(0), soldiers.get(0).getMilitaryRank().getId());
+		assertEquals(ranks.get(ranks.size() - 1), soldiers.get(soldiers.size() - 1).getMilitaryRank().getId());
+		assertEquals(ranks.get(ranks.size() / 2), soldiers.get(soldiers.size() / 2).getMilitaryRank().getId());
 	}
-	
 	
 	@Test
 	void testRandomAllSoldiersWhenRankAreInconsistent() throws NoAvaliableSoldierException {
@@ -80,14 +89,14 @@ public class RandomSoldierServiceUnitTest {
 		armyRepository.saveAndFlush(newArmy);
 		
 		DrawDTO drawDTO = TestDataCreator.newDrawDTO();					// Rank exists, but with different army
-		drawDTO.setSelectedRanks(List.of(1));
+		drawDTO.setSelectedRanks(List.of(1,1,1,1,1));
 		drawDTO.setSelectedDrawList(drawList.getId());
 		drawDTO.setArmy(newArmy);
 		
 		assertThrows(IllegalStateException.class,
 			() -> victim.randomAllSoldiers(drawDTO, drawList.getCreationUser().getCjm()));
 		
-		drawDTO.setSelectedRanks(List.of(2));							// Rank does not exists
+		drawDTO.setSelectedRanks(List.of(2,1,1,1,1));							// Rank does not exists
 		
 		assertThrows(IllegalStateException.class,
 				() -> victim.randomAllSoldiers(drawDTO, drawList.getCreationUser().getCjm()));
@@ -104,7 +113,7 @@ public class RandomSoldierServiceUnitTest {
 		cjmRepository.saveAndFlush(newCjm);
 		
 		DrawDTO drawDTO = TestDataCreator.newDrawDTO();					
-		drawDTO.setSelectedRanks(List.of(1));
+		drawDTO.setSelectedRanks(List.of(1,1,1,1,1));
 		drawDTO.setSelectedDrawList(drawList.getId());
 		drawDTO.setArmy(drawList.getArmy());
 		

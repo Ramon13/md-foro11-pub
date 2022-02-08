@@ -25,11 +25,15 @@ public class SoldierRepositoryImpl {
 			Army army,
 			Integer drawListId,
 			List<Integer> drawnSoldierIds) throws NoAvaliableSoldierException {
+		
+		if (drawnSoldierIds.isEmpty())
+			drawnSoldierIds.add(0);
+		
 		String hql = "SELECT s FROM DrawList dl JOIN dl.soldiers s"
 				+ " WHERE s.militaryRank.id = :militaryRankId"
 				+ " AND s.army.id = :armyId"
 				+ " AND dl.id = :drawListId"
-				+ " AND s.id NOT IN (:drawnSoldierIds) "
+				+ " AND s.id NOT IN (:drawnSoldierIds)"
 				+ " ORDER BY rand()";
 		
 		Query query = entityManager.createQuery(hql, Soldier.class);
