@@ -39,10 +39,6 @@ public interface DrawRepository extends JpaRepository<Draw, Integer>{
 	List<Draw> findByProcessNumberIgnoreCaseContaining(String processNumber);
 	
 	@Deprecated
-	@Query("from Draw d join d.soldiers sd where sd.id = :soldierId and d.finished = false and d.justiceCouncil.name = 'CEJ'")
-	List<Draw> findUnfinishedBySoldierAndCJM(@Param("soldierId") Integer soldierId);
-	
-	@Deprecated
 	@Query("from Draw d where d.cjmUser.auditorship.id = :auditorshipId and d.justiceCouncil.id = 2 and d.finished = false")
 	List<Draw> findUnfinishedByAuditorship(@Param("auditorshipId") Integer auditorshipId);
 	
@@ -58,5 +54,15 @@ public interface DrawRepository extends JpaRepository<Draw, Integer>{
 		@Param("soldierId") Integer soldierId, 
 		@Param("startDate") LocalDate startDate,
 		@Param("endDate") LocalDate endDate
+	);
+	
+	@Query(
+		"FROM Draw d JOIN d.soldiers s"
+		+ " WHERE s.id = :soldierId"
+		+ "	AND d.finished = false"
+		+ " AND d.justiceCouncil.alias = :councilAlias")
+	List<Draw> findUnfinishedByCJM(
+		@Param("councilAlias") String councilAlias,
+		@Param("soldierId") Integer soldierId
 	);
 }

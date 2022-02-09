@@ -1,5 +1,13 @@
 package br.com.javamoon.service;
 
+import java.time.LocalDate;
+import java.util.List;
+import java.util.stream.Collectors;
+
+import javax.transaction.Transactional;
+
+import org.springframework.stereotype.Service;
+
 import br.com.javamoon.domain.draw.Draw;
 import br.com.javamoon.domain.draw_exclusion.DrawExclusion;
 import br.com.javamoon.domain.draw_exclusion.DrawExclusionRepository;
@@ -11,11 +19,6 @@ import br.com.javamoon.mapper.DrawExclusionDTO;
 import br.com.javamoon.mapper.EntityMapper;
 import br.com.javamoon.util.DateUtils;
 import br.com.javamoon.validator.DrawExclusionValidator;
-import java.time.LocalDate;
-import java.util.List;
-import java.util.stream.Collectors;
-import javax.transaction.Transactional;
-import org.springframework.stereotype.Service;
 
 @Service
 public class DrawExclusionService {
@@ -73,20 +76,29 @@ public class DrawExclusionService {
 		return exclusionDTO;
 	}
 	
-	public List<DrawExclusion> getByAnnualQuarter(String yearQuarter, Integer soldierId) {
+	public List<DrawExclusion> listByAnnualQuarter(String yearQuarter, Integer soldierId) {
 		return drawExclusionRepository.findBySoldierBetweenDates(
 					soldierId, 
 					DateUtils.getStartQuarterDate(yearQuarter), 
 					DateUtils.getEndQuarterDate(yearQuarter));
 	}
 	
-	public List<DrawExclusion> getBySelectableQuarterPeriod(Integer soldierId){
+	public List<DrawExclusion> generateByUnfinishedCejDraw(Integer soldierId){
+		List<Draw> unfinishedDrawList = drawRepository.findUnfinishedByCJM("CEJ", soldierId);
+		return generateSystemExclusionMessage(null, null, unfinishedDrawList);
+	}
+	
+	public List<DrawExclusion> listBySelectableQuarterPeriod(Integer soldierId){
 		List<String> selectableQuarters = DateUtils.getSelectableQuarters();
 		LocalDate startDate = DateUtils.getStartQuarterDate(selectableQuarters.get(0));
 		LocalDate endDate = DateUtils.getEndQuarterDate(selectableQuarters.get(selectableQuarters.size() - 1));
 		
 		List<Draw> drawList = drawRepository.findBySoldierBetweenDates(soldierId, startDate, endDate);
 		
+		return generateSystemExclusionMessage(startDate, endDate, drawList);
+	}
+	
+	private List<DrawExclusion> generateSystemExclusionMessage(LocalDate startDate, LocalDate endDate, List<Draw> drawList){
 		return drawList.stream().map(draw -> {
 			String msg = String.format(
 				ServiceConstants.GENERATED_SYSTEM_EXCLUSION_MSG, 
@@ -96,7 +108,7 @@ public class DrawExclusionService {
 			);
 			
 			DrawExclusion exclusion = new DrawExclusion();
-			exclusion.setStartDate(startDate);
+			exclusion.setStartDate((startDate));
 			exclusion.setEndDate(endDate);
 			exclusion.setMessage(msg);
 			return exclusion;

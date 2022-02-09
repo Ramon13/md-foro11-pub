@@ -20,6 +20,7 @@ import br.com.javamoon.domain.cjm_user.AuditorshipRepository;
 import br.com.javamoon.domain.cjm_user.CJM;
 import br.com.javamoon.domain.cjm_user.CJMRepository;
 import br.com.javamoon.domain.draw.Draw;
+import br.com.javamoon.domain.draw.JusticeCouncil;
 import br.com.javamoon.domain.draw.JusticeCouncilRepository;
 import br.com.javamoon.domain.draw_exclusion.DrawExclusion;
 import br.com.javamoon.domain.draw_exclusion.DrawExclusionRepository;
@@ -247,7 +248,7 @@ public class DrawExclusionServiceUnitTest {
 	}
 	
 	@Test
-	void testFindByAnnualQuarterSuccessFully() {
+	void testListByAnnualQuarterSuccessFully() {
 		Army army = getPersistedArmy(armyRepository);
 		CJM cjm = getPersistedCJM(cjmRepository);
 		MilitaryOrganization organization = getPersistedMilitaryOrganization(army, organizationRepository);
@@ -280,17 +281,17 @@ public class DrawExclusionServiceUnitTest {
 		exclusionList.get(4).setEndDate(endQuarterDate.plusDays(10));
 		exclusionRepository.saveAllAndFlush(exclusionList);
 		
-		List<DrawExclusion> foundExclusionList = victim.getByAnnualQuarter(currentYearQuarter, soldier.getId());
+		List<DrawExclusion> foundExclusionList = victim.listByAnnualQuarter(currentYearQuarter, soldier.getId());
 		
 		assertEquals(3, foundExclusionList.size());
 	}
 	
 	@Test
-	void testGetBySelectableQuarterPeriod() {
+	void testListBySelectableQuarterPeriod() {
 		Draw draw = getPersistedDraw();
 		Soldier soldier = draw.getDrawList().getSoldiers().stream().findFirst().get();
 		
-		List<DrawExclusion> exclusions = victim.getBySelectableQuarterPeriod(soldier.getId());
+		List<DrawExclusion> exclusions = victim.listBySelectableQuarterPeriod(soldier.getId());
 		
 		String expectedMsg = String.format(
 			ServiceConstants.GENERATED_SYSTEM_EXCLUSION_MSG, 
@@ -301,6 +302,26 @@ public class DrawExclusionServiceUnitTest {
 		
 		assertEquals(1, exclusions.size());
 		assertEquals(expectedMsg, exclusions.get(0).getMessage());
+	}
+	
+	@Test
+	void testListByUnfinishedCejDraw() {
+		JusticeCouncil council = TestDataCreator.getJusticeCouncil();
+		council.setAlias("CEJ");
+		justiceCouncilRepository.saveAndFlush(council);
+		
+		Draw draw = getPersistedDraw();
+		draw.setJusticeCouncil(council);
+		drawRepository.saveAndFlush(draw);
+		
+		Soldier soldier = draw.getDrawList().getSoldiers().stream().findFirst().get();
+		
+		assertEquals(0, victim.generateByUnfinishedCejDraw(soldier.getId()).size());
+		
+		draw.setFinished(false);
+		drawRepository.saveAndFlush(draw);
+		
+		assertEquals(1, victim.generateByUnfinishedCejDraw(soldier.getId()).size());
 	}
 	
 	private Draw getPersistedDraw() {

@@ -65,11 +65,10 @@ public class SoldierDTO{
 	}
 	
 	public String getImpedimentStatusAsText() {
-//		char s = customExclusions.size() > 1 ? 's' : ' ';
-//		return customExclusions.isEmpty()
-//				? "(Disponível)"
-//				: String.format("(%d impedimento%c encontrado%c)", customExclusions.size(), s, s);
-		return "Disponível";
+		char s = exclusions.size() > 1 ? 's' : ' ';
+		return exclusions.isEmpty()
+				? "(Disponível)"
+				: String.format("(%d impedimento%c encontrado%c)", exclusions.size(), s, s);
 	}
 	
 	public String getOmAliasAndName() {

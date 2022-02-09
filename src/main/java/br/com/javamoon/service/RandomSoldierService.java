@@ -20,6 +20,9 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
+
+import javax.persistence.Entity;
+
 import org.springframework.stereotype.Service;
 
 @Service
@@ -58,28 +61,15 @@ public class RandomSoldierService {
 	}
 	
 	public void setSoldierExclusionMessages(Collection<SoldierDTO> soldiers, String selectedYearQuarter) {
-		List<DrawExclusion> exclusions = new ArrayList<>(0);
 		for (SoldierDTO soldierDTO : soldiers) {
-			exclusions.addAll(drawExclusionService.getByAnnualQuarter(selectedYearQuarter, soldierDTO.getId()));
-			exclusions.addAll(drawExclusionService.getBySelectableQuarterPeriod(soldierDTO.getId()));
-			
-			//TODO: add cej unfinished exclusions
-			soldier.setCustomExclusions(exclusions);
+			List<DrawExclusion> exclusions = new ArrayList<>(0);
+			exclusions.addAll(drawExclusionService.listByAnnualQuarter(selectedYearQuarter, soldierDTO.getId()));
+			exclusions.addAll(drawExclusionService.listBySelectableQuarterPeriod(soldierDTO.getId()));
+			exclusions.addAll(drawExclusionService.generateByUnfinishedCejDraw(soldierDTO.getId()));
+			soldierDTO.getExclusions().addAll(
+				exclusions.stream().map(e -> EntityMapper.fromEntityToDTO(e)).collect(Collectors.toList())
+			);
 		}
-	}
-	
-	public void setSoldierExclusionMessages(Soldier soldier, Draw draw) {
-		Set <DrawExclusion> exclusions;
-		
-		exclusions = new HashSet<>();
-		
-		String selectedQuarter = draw.getDrawList().getYearQuarter();
-		exclusions.addAll( drawExclusionSvc.findByAnnualQuarter(selectedQuarter, soldier) );
-		
-		exclusions.addAll( drawExclusionSvc.getByLatestDraws(soldier) );
-		
-		soldier.setCustomExclusions(exclusions);
-		
 	}
 	
 	/**

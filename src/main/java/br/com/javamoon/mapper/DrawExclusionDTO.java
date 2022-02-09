@@ -4,6 +4,8 @@ import br.com.javamoon.domain.entity.GroupUser;
 import br.com.javamoon.domain.soldier.Soldier;
 import br.com.javamoon.util.DateUtils;
 import java.time.LocalDate;
+import java.util.Objects;
+
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import org.hibernate.validator.constraints.Length;
@@ -39,8 +41,10 @@ public class DrawExclusionDTO {
 	
 	public String getPeriodAsText() {
 		String format = "dd/MM/yyyy";
-		return String.format("De:%s; Até:%s", 
-				DateUtils.convertToFormat(startDate, format),
-				DateUtils.convertToFormat(endDate, format));
+		return !Objects.isNull(startDate) ?
+				String.format("De:%s; Até:%s", 
+						DateUtils.convertToFormat(startDate, format),
+						DateUtils.convertToFormat(endDate, format))
+				: "";
 	}
 }
