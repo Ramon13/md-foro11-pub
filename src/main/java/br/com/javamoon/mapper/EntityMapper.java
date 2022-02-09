@@ -130,7 +130,7 @@ public final class EntityMapper {
     	drawDTO.setProcessNumber(draw.getProcessNumber());
     	drawDTO.setArmy(draw.getArmy());
     	drawDTO.setJusticeCouncil(draw.getJusticeCouncil());
-    	drawDTO.setDrawListDTO(fromEntityToDTO(draw.getDrawList()));
+    	drawDTO.setSelectedDrawList(draw.getDrawList().getId());
     	return drawDTO;
     }
 }

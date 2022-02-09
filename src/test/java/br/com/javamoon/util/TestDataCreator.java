@@ -22,24 +22,22 @@ import static br.com.javamoon.util.Constants.DEFAULT_USER_PASSWORD;
 import static br.com.javamoon.util.Constants.DEFAULT_USER_USERNAME;
 import static br.com.javamoon.validator.ValidationConstants.SOLDIER_EMAIL_MAX_LEN;
 import static br.com.javamoon.validator.ValidationConstants.SOLDIER_NAME_MAX_LEN;
-
-import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.stream.Collectors;
-
-import org.apache.commons.lang3.StringUtils;
-
 import br.com.javamoon.domain.cjm_user.Auditorship;
+import br.com.javamoon.domain.cjm_user.AuditorshipRepository;
 import br.com.javamoon.domain.cjm_user.CJM;
 import br.com.javamoon.domain.cjm_user.CJMRepository;
+import br.com.javamoon.domain.draw.Draw;
 import br.com.javamoon.domain.draw.JusticeCouncil;
+import br.com.javamoon.domain.draw.JusticeCouncilRepository;
 import br.com.javamoon.domain.draw_exclusion.DrawExclusion;
+import br.com.javamoon.domain.entity.CJMUser;
 import br.com.javamoon.domain.entity.DrawList;
 import br.com.javamoon.domain.entity.GroupUser;
 import br.com.javamoon.domain.repository.CJMUserRepository;
 import br.com.javamoon.domain.repository.DrawListRepository;
+import br.com.javamoon.domain.repository.DrawRepository;
 import br.com.javamoon.domain.repository.GroupUserRepository;
+import br.com.javamoon.domain.repository.SoldierRepository;
 import br.com.javamoon.domain.soldier.Army;
 import br.com.javamoon.domain.soldier.ArmyRepository;
 import br.com.javamoon.domain.soldier.MilitaryOrganization;
@@ -47,7 +45,6 @@ import br.com.javamoon.domain.soldier.MilitaryOrganizationRepository;
 import br.com.javamoon.domain.soldier.MilitaryRank;
 import br.com.javamoon.domain.soldier.MilitaryRankRepository;
 import br.com.javamoon.domain.soldier.Soldier;
-import br.com.javamoon.domain.soldier.SoldierRepository;
 import br.com.javamoon.infrastructure.web.model.PaginationSearchFilter;
 import br.com.javamoon.mapper.CJMUserDTO;
 import br.com.javamoon.mapper.DrawDTO;
@@ -60,6 +57,11 @@ import br.com.javamoon.validator.DrawListValidator;
 import br.com.javamoon.validator.DrawValidator;
 import br.com.javamoon.validator.SoldierValidator;
 import br.com.javamoon.validator.UserAccountValidator;
+import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.stream.Collectors;
+import org.apache.commons.lang3.StringUtils;
 
 public final class TestDataCreator {
 
@@ -256,6 +258,10 @@ public final class TestDataCreator {
 		return lists;
 	}
 	
+	public static JusticeCouncil getPersistedJusticeCouncil(JusticeCouncilRepository councilRepository) {
+		return councilRepository.saveAndFlush(getJusticeCouncil());
+	}
+	
 	public static List<Soldier> newSoldierList(
 			Army army,
 			CJM cjm,
@@ -292,6 +298,24 @@ public final class TestDataCreator {
 		}
 		
 		return exclusions;
+	}
+	
+	public static Auditorship getPersistedAuditorship(AuditorshipRepository auditorshipRepository,
+			CJMRepository cjmRepository) {
+		Auditorship auditorship = new Auditorship();
+		auditorship.setName(Constants.DEFAULT_AUDITORSHIP_NAME);
+		auditorship.setCjm(getPersistedCJM(cjmRepository));
+		return auditorshipRepository.saveAndFlush(auditorship);
+	}
+	
+	public static CJMUser getPersistedCJMUser(CJMUserRepository cjmUserRepository,
+			AuditorshipRepository auditorshipRepository, CJMRepository cjmRepository) {
+		CJMUser cjmUser = new CJMUser();
+		cjmUser.setUsername(DEFAULT_USER_USERNAME);
+		cjmUser.setEmail(DEFAULT_USER_EMAIL);
+		cjmUser.setPassword(DEFAULT_USER_PASSWORD);
+		cjmUser.setAuditorship(getPersistedAuditorship(auditorshipRepository, cjmRepository));
+		return cjmUserRepository.saveAndFlush(cjmUser);
 	}
 	
 	public static List<DrawList> newDrawList(Army army, GroupUser creationUser, int numOfLists){

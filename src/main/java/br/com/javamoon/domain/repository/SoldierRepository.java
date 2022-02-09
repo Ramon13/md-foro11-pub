@@ -1,16 +1,16 @@
-package br.com.javamoon.domain.soldier;
+package br.com.javamoon.domain.repository;
 
+import br.com.javamoon.domain.cjm_user.CJM;
+import br.com.javamoon.domain.draw_exclusion.DrawExclusion;
+import br.com.javamoon.domain.soldier.Army;
+import br.com.javamoon.domain.soldier.Soldier;
 import java.util.List;
 import java.util.Optional;
-
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
-
-import br.com.javamoon.domain.cjm_user.CJM;
-import br.com.javamoon.domain.draw_exclusion.DrawExclusion;
 
 @Repository
 public interface SoldierRepository extends JpaRepository<Soldier, Integer>{

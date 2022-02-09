@@ -94,19 +94,6 @@ public class Soldier implements Serializable, Comparable<Soldier>{
 	
 	private transient Set<DrawExclusion> customExclusions = new HashSet<>(0);
 	
-	public String getOmAliasAndName() {
-		return militaryOrganization != null
-				? String.format("%s - %s", militaryOrganization.getAlias(), militaryOrganization.getName())
-				: "";
-	}
-	
-	public String getImpedimentStatusAsText() {
-		char s = customExclusions.size() > 1 ? 's' : ' ';
-		return customExclusions.isEmpty()
-				? "(Disponível)"
-				: String.format("(%d impedimento%c encontrado%c)", customExclusions.size(), s, s);
-	}
-	
 	public boolean hasImpediment() {
 		return !customExclusions.isEmpty();
 	}

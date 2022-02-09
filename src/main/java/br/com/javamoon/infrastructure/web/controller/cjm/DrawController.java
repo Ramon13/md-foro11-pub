@@ -1,39 +1,18 @@
 package br.com.javamoon.infrastructure.web.controller.cjm;
 
-import java.io.IOException;
-import java.time.LocalDate;
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
-
-import javax.validation.Valid;
-
-import org.apache.commons.lang3.BooleanUtils;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
-import org.springframework.validation.Errors;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.SessionAttributes;
-import org.springframework.web.bind.support.SessionStatus;
-
 import br.com.javamoon.config.properties.DrawConfigProperties;
 import br.com.javamoon.domain.cjm_user.Auditorship;
 import br.com.javamoon.domain.cjm_user.AuditorshipRepository;
 import br.com.javamoon.domain.cjm_user.CJM;
 import br.com.javamoon.domain.draw.CouncilType;
 import br.com.javamoon.domain.draw.Draw;
-import br.com.javamoon.domain.draw.DrawRepository;
 import br.com.javamoon.domain.entity.CJMUser;
 import br.com.javamoon.domain.entity.DrawList;
+import br.com.javamoon.domain.repository.DrawRepository;
+import br.com.javamoon.domain.repository.SoldierRepository;
 import br.com.javamoon.domain.soldier.MilitaryRank;
 import br.com.javamoon.domain.soldier.NoAvaliableSoldierException;
 import br.com.javamoon.domain.soldier.Soldier;
-import br.com.javamoon.domain.soldier.SoldierRepository;
 import br.com.javamoon.exception.DrawValidationException;
 import br.com.javamoon.infrastructure.web.controller.ControllerHelper;
 import br.com.javamoon.infrastructure.web.repository.DrawRepositoryImpl;
@@ -49,6 +28,24 @@ import br.com.javamoon.service.RandomSoldierService;
 import br.com.javamoon.service.ValidationException;
 import br.com.javamoon.util.DateUtils;
 import br.com.javamoon.util.SecurityUtils;
+import java.io.IOException;
+import java.time.LocalDate;
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
+import javax.validation.Valid;
+import org.apache.commons.lang3.BooleanUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.validation.Errors;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.SessionAttributes;
+import org.springframework.web.bind.support.SessionStatus;
 
 @Controller
 @RequestMapping(path = "/cjm/dw")
@@ -147,6 +144,8 @@ public class DrawController {
 			System.out.println(drawDTO);
 			CJMUser loggedUser = SecurityUtils.cjmUser();
 			randomSoldierService.randomAllSoldiers(drawDTO, loggedUser.getAuditorship().getCjm());
+			randomSoldierService.setSoldierExclusionMessages(drawDTO.getSoldiers(), drawDTO.getSelectedYearQuarter());
+			
 		} catch (DrawValidationException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

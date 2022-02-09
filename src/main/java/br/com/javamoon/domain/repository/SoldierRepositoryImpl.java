@@ -1,18 +1,18 @@
-package br.com.javamoon.domain.soldier;
+package br.com.javamoon.domain.repository;
 
+import br.com.javamoon.domain.cjm_user.CJM;
+import br.com.javamoon.domain.soldier.Army;
+import br.com.javamoon.domain.soldier.NoAvaliableSoldierException;
+import br.com.javamoon.domain.soldier.Soldier;
+import br.com.javamoon.infrastructure.web.model.PaginationSearchFilter;
 import java.util.List;
 import java.util.Objects;
-
 import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
 import javax.persistence.TypedQuery;
-
 import org.springframework.stereotype.Repository;
-
-import br.com.javamoon.domain.cjm_user.CJM;
-import br.com.javamoon.infrastructure.web.model.PaginationSearchFilter;
 
 @Repository
 public class SoldierRepositoryImpl {
@@ -30,7 +30,8 @@ public class SoldierRepositoryImpl {
 			drawnSoldierIds.add(0);
 		
 		String hql = "SELECT s FROM DrawList dl JOIN dl.soldiers s"
-				+ " WHERE s.militaryRank.id = :militaryRankId"
+				+ " WHERE s.active = true"
+				+ " AND s.militaryRank.id = :militaryRankId"
 				+ " AND s.army.id = :armyId"
 				+ " AND dl.id = :drawListId"
 				+ " AND s.id NOT IN (:drawnSoldierIds)"

@@ -1,7 +1,7 @@
 package br.com.javamoon.infrastructure.web.controller.cjm;
 
 import br.com.javamoon.domain.draw.Draw;
-import br.com.javamoon.domain.draw.DrawRepository;
+import br.com.javamoon.domain.repository.DrawRepository;
 import br.com.javamoon.service.DrawService;
 import javax.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Autowired;

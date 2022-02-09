@@ -16,12 +16,20 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import br.com.javamoon.domain.cjm_user.AuditorshipRepository;
 import br.com.javamoon.domain.cjm_user.CJM;
 import br.com.javamoon.domain.cjm_user.CJMRepository;
+import br.com.javamoon.domain.draw.Draw;
+import br.com.javamoon.domain.draw.JusticeCouncilRepository;
 import br.com.javamoon.domain.draw_exclusion.DrawExclusion;
 import br.com.javamoon.domain.draw_exclusion.DrawExclusionRepository;
+import br.com.javamoon.domain.entity.DrawList;
 import br.com.javamoon.domain.entity.GroupUser;
+import br.com.javamoon.domain.repository.CJMUserRepository;
+import br.com.javamoon.domain.repository.DrawListRepository;
+import br.com.javamoon.domain.repository.DrawRepository;
 import br.com.javamoon.domain.repository.GroupUserRepository;
+import br.com.javamoon.domain.repository.SoldierRepository;
 import br.com.javamoon.domain.soldier.Army;
 import br.com.javamoon.domain.soldier.ArmyRepository;
 import br.com.javamoon.domain.soldier.MilitaryOrganization;
@@ -29,14 +37,16 @@ import br.com.javamoon.domain.soldier.MilitaryOrganizationRepository;
 import br.com.javamoon.domain.soldier.MilitaryRank;
 import br.com.javamoon.domain.soldier.MilitaryRankRepository;
 import br.com.javamoon.domain.soldier.Soldier;
-import br.com.javamoon.domain.soldier.SoldierRepository;
 import br.com.javamoon.exception.DrawExclusionNotFoundException;
 import br.com.javamoon.exception.DrawExclusionValidationException;
 import br.com.javamoon.mapper.DrawExclusionDTO;
 import br.com.javamoon.mapper.EntityMapper;
 import br.com.javamoon.service.DrawExclusionService;
+import br.com.javamoon.service.ServiceConstants;
+import br.com.javamoon.util.DateUtils;
 import br.com.javamoon.util.TestDataCreator;
 import br.com.javamoon.validator.ValidationError;
+import java.time.LocalDate;
 import java.util.List;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -73,6 +83,21 @@ public class DrawExclusionServiceUnitTest {
 	
 	@Autowired
 	private DrawExclusionRepository exclusionRepository;
+	
+	@Autowired
+	private JusticeCouncilRepository justiceCouncilRepository;
+	
+	@Autowired
+	private AuditorshipRepository auditorshipRepository;
+	
+	@Autowired
+	private CJMUserRepository cjmUserRepository;
+	
+	@Autowired
+	private DrawRepository drawRepository;
+	
+	@Autowired
+	private DrawListRepository drawListRepository;
 	
 	@Test
 	void testListBySoldierSuccessfully() {
@@ -219,5 +244,75 @@ public class DrawExclusionServiceUnitTest {
 		IllegalStateException exception = assertThrows(IllegalStateException.class, 
 				() -> victim.delete(exclusions.get(0).getId(), groupUser));
 		assertEquals(INCONSISTENT_DATA, exception.getMessage());
+	}
+	
+	@Test
+	void testFindByAnnualQuarterSuccessFully() {
+		Army army = getPersistedArmy(armyRepository);
+		CJM cjm = getPersistedCJM(cjmRepository);
+		MilitaryOrganization organization = getPersistedMilitaryOrganization(army, organizationRepository);
+		MilitaryRank rank = getPersistedMilitaryRank(army, rankRepository, armyRepository);
+		
+		Soldier soldier = newSoldierList(army, cjm, organization, rank, 1).get(0);
+		GroupUser groupUser = TestDataCreator.newGroupUserList(army, cjm, 1).get(0);
+		
+		groupUserRepository.saveAndFlush(groupUser);
+		soldierRepository.saveAndFlush(soldier);
+		List<DrawExclusion> exclusionList = TestDataCreator.newDrawExclusionList(soldier, groupUser, 5);
+		
+		String currentYearQuarter = DateUtils.toQuarterFormat(LocalDate.now());
+		LocalDate startQuarterDate = DateUtils.getStartQuarterDate(currentYearQuarter);
+		LocalDate endQuarterDate = DateUtils.getEndQuarterDate(currentYearQuarter);
+		
+		exclusionList.get(0).setStartDate(endQuarterDate);
+		exclusionList.get(0).setEndDate(endQuarterDate.plusDays(10));
+		
+		exclusionList.get(1).setStartDate(startQuarterDate.minusDays(10));
+		exclusionList.get(1).setEndDate(startQuarterDate);
+		
+		exclusionList.get(2).setStartDate(endQuarterDate.minusMonths(1));
+		exclusionList.get(2).setEndDate(endQuarterDate.minusMonths(1).plusDays(10));
+		
+		exclusionList.get(3).setStartDate(startQuarterDate.minusDays(10));
+		exclusionList.get(3).setEndDate(startQuarterDate.minusDays(1));
+		
+		exclusionList.get(4).setStartDate(endQuarterDate.plusDays(1));
+		exclusionList.get(4).setEndDate(endQuarterDate.plusDays(10));
+		exclusionRepository.saveAllAndFlush(exclusionList);
+		
+		List<DrawExclusion> foundExclusionList = victim.getByAnnualQuarter(currentYearQuarter, soldier.getId());
+		
+		assertEquals(3, foundExclusionList.size());
+	}
+	
+	@Test
+	void testGetBySelectableQuarterPeriod() {
+		Draw draw = getPersistedDraw();
+		Soldier soldier = draw.getDrawList().getSoldiers().stream().findFirst().get();
+		
+		List<DrawExclusion> exclusions = victim.getBySelectableQuarterPeriod(soldier.getId());
+		
+		String expectedMsg = String.format(
+			ServiceConstants.GENERATED_SYSTEM_EXCLUSION_MSG, 
+			DateUtils.format(draw.getCreationDate()),
+			draw.getJusticeCouncil().getAlias(),
+			draw.getCjmUser().getAuditorship().getName()
+		);
+		
+		assertEquals(1, exclusions.size());
+		assertEquals(expectedMsg, exclusions.get(0).getMessage());
+	}
+	
+	private Draw getPersistedDraw() {
+		DrawList drawList = TestDataCreator.getPersistedDrawLists(
+				armyRepository, cjmRepository, organizationRepository, rankRepository, groupUserRepository, soldierRepository, drawListRepository, 1, 5).get(0);
+		
+		Draw draw = new Draw();
+		draw.setJusticeCouncil(TestDataCreator.getPersistedJusticeCouncil(justiceCouncilRepository));
+		draw.setCjmUser(TestDataCreator.getPersistedCJMUser(cjmUserRepository, auditorshipRepository, cjmRepository));
+		draw.setArmy(drawList.getArmy());
+		draw.getSoldiers().addAll(drawList.getSoldiers());
+		draw.setDrawList(drawList);
+		return drawRepository.saveAndFlush(draw);
 	}
 }

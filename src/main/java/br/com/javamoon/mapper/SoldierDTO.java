@@ -4,9 +4,9 @@ import br.com.javamoon.domain.soldier.Army;
 import br.com.javamoon.domain.soldier.MilitaryOrganization;
 import br.com.javamoon.domain.soldier.MilitaryRank;
 import br.com.javamoon.util.StringUtils;
-
+import java.util.ArrayList;
 import java.util.Arrays;
-
+import java.util.List;
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
@@ -46,6 +46,8 @@ public class SoldierDTO{
 	
 	private Boolean active;
 	
+	private List<DrawExclusionDTO> exclusions = new ArrayList<>(0);
+	
 	public void capitalizeName() {
 		name = name.toUpperCase();
 	}
@@ -60,5 +62,19 @@ public class SoldierDTO{
 	public String getIdInfoAsText() {
 		return String.format("%s <%s>", name, 
 				(email == null) ? "Não enviado" : email);
+	}
+	
+	public String getImpedimentStatusAsText() {
+//		char s = customExclusions.size() > 1 ? 's' : ' ';
+//		return customExclusions.isEmpty()
+//				? "(Disponível)"
+//				: String.format("(%d impedimento%c encontrado%c)", customExclusions.size(), s, s);
+		return "Disponível";
+	}
+	
+	public String getOmAliasAndName() {
+		return militaryOrganization != null
+				? String.format("%s - %s", militaryOrganization.getAlias(), militaryOrganization.getName())
+				: "";
 	}
 }

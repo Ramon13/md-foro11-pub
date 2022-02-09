@@ -2,7 +2,13 @@ package br.com.javamoon.mapper;
 
 import static br.com.javamoon.config.properties.DrawConfigProperties.PROPERTY_ARMY_ALIAS;
 import static br.com.javamoon.config.properties.DrawConfigProperties.PROPERTY_COUNCIL_ALIAS;
-
+import br.com.javamoon.config.properties.DrawConfigProperties;
+import br.com.javamoon.domain.draw.CouncilType;
+import br.com.javamoon.domain.draw.JusticeCouncil;
+import br.com.javamoon.domain.soldier.Army;
+import br.com.javamoon.service.ArmyService;
+import br.com.javamoon.service.JusticeCouncilService;
+import br.com.javamoon.util.DateUtils;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.LinkedList;
@@ -10,15 +16,6 @@ import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
-
-import br.com.javamoon.config.properties.DrawConfigProperties;
-import br.com.javamoon.domain.draw.CouncilType;
-import br.com.javamoon.domain.draw.JusticeCouncil;
-import br.com.javamoon.domain.soldier.Army;
-import br.com.javamoon.domain.soldier.Soldier;
-import br.com.javamoon.service.ArmyService;
-import br.com.javamoon.service.JusticeCouncilService;
-import br.com.javamoon.util.DateUtils;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
@@ -50,7 +47,7 @@ public class DrawDTO{
 	private Integer selectedDrawList;
 	
 	@ToString.Exclude
-	private List<Soldier> soldiers = new LinkedList<>();
+	private List<SoldierDTO> soldiers = new LinkedList<>();
 	
 	private List<Integer> selectedRanks = new ArrayList<Integer>(0);
 

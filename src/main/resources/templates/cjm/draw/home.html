@@ -133,6 +133,44 @@
           </div>
         </div>
         
+        <div class="tab" th:if="${!drawDTO.isNeverDrawn()}">
+          <h1 th:text="*{justiceCouncil.name}"></h1>
+          
+          <h2>Militares sorteados:</h2>
+          
+          <div class="soldiers" th:each="soldier : *{soldiers}">
+            <button type="button" class="accordion" 
+              th:text="${soldier.name} + ' ' + ${soldier.impedimentStatusAsText}"></button>
+            <div class="panel">
+              <div class="sdInfo">
+                <div>
+                  <label>Organização Militar</label><br />
+                  <span th:text="${soldier.omAliasAndName}"></span>
+                </div>
+                
+                <div>
+                  <label>Posto</label><br />
+                  <span th:text="${soldier.militaryRank.name}"></span>
+                </div>
+                
+                 <br/><br/>
+                                
+                <div>
+                  <label>E-mail</label><br />
+                  <span th:text="${soldier.email}"></span>
+                </div>
+                
+                <div>
+                  <label>Telefone</label><br />
+                  <span th:text="${soldier.phone}"></span>
+                </div>
+              </div>
+              <br/><br/><br/>
+              
+            </div>
+          </div>
+        </div>
+        
         <div style="overflow:auto;width: 100%;">
           <div id="multipleFormBtns">
             <button type="button" id="prevBtn" class="app-gray-btn" onclick="nextPrev(-1)">Voltar</button>
@@ -149,6 +187,9 @@
     </div>
     
     <script layout:fragment="page-script" th:inline="javascript">
+      accordion(document.getElementsByClassName("accordion"));
+      setTabFocus();
+      
       const councilSelect = document.querySelector('select#councilSelect');
       councilSelect.addEventListener('change', function (){submitFormChanges(this)});
       
@@ -161,11 +202,9 @@
       const randAllBtn = document.querySelector("button#randAll");
       if (randAllBtn)
     	  randAllBtn.addEventListener('click', function(){randAll(this)});
-      
-      setTabFocus();
         
       function setTabFocus(){
-        const tabs = document.getElementsByClassName("div.tab");
+        const tabs = document.querySelectorAll("div.tab");
         const errors = document.querySelectorAll(".error");
         
         if (errors.length > 0)

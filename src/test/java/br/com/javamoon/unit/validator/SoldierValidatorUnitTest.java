@@ -12,12 +12,12 @@ import static br.com.javamoon.validator.ValidationConstants.STRING_EXCEEDS_MAX_L
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import br.com.javamoon.domain.cjm_user.CJM;
+import br.com.javamoon.domain.repository.SoldierRepository;
 import br.com.javamoon.domain.soldier.Army;
 import br.com.javamoon.domain.soldier.MilitaryOrganizationRepository;
 import br.com.javamoon.domain.soldier.MilitaryRank;
 import br.com.javamoon.domain.soldier.MilitaryRankRepository;
 import br.com.javamoon.domain.soldier.Soldier;
-import br.com.javamoon.domain.soldier.SoldierRepository;
 import br.com.javamoon.exception.SoldierValidationException;
 import br.com.javamoon.mapper.SoldierDTO;
 import br.com.javamoon.util.TestDataCreator;

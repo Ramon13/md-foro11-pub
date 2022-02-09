@@ -3,23 +3,23 @@ package br.com.javamoon.service;
 import br.com.javamoon.domain.cjm_user.CJM;
 import br.com.javamoon.domain.draw.Draw;
 import br.com.javamoon.domain.draw_exclusion.DrawExclusion;
-import br.com.javamoon.domain.entity.DrawList;
+import br.com.javamoon.domain.repository.SoldierRepositoryImpl;
 import br.com.javamoon.domain.soldier.Army;
 import br.com.javamoon.domain.soldier.MilitaryRank;
 import br.com.javamoon.domain.soldier.NoAvaliableSoldierException;
 import br.com.javamoon.domain.soldier.Soldier;
-import br.com.javamoon.domain.soldier.SoldierRepositoryImpl;
 import br.com.javamoon.exception.DrawValidationException;
 import br.com.javamoon.mapper.DrawDTO;
+import br.com.javamoon.mapper.DrawExclusionDTO;
+import br.com.javamoon.mapper.EntityMapper;
+import br.com.javamoon.mapper.SoldierDTO;
 import br.com.javamoon.validator.DrawValidator;
-
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
-
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -53,21 +53,17 @@ public class RandomSoldierService {
 				drawDTO.getSelectedDrawList(),
 				drawDTO.getSoldiers().stream().map(s -> s.getId()).collect(Collectors.toList()));
 			
-			drawDTO.getSoldiers().add(randomSoldier);
+			drawDTO.getSoldiers().add(EntityMapper.fromEntityToDTO(randomSoldier));
 		}
 	}
 	
-	public void setSoldierExclusionMessages(Draw draw) {
-		Set <DrawExclusion> exclusions;
-		
-		String selectedQuarter = draw.getDrawList().getYearQuarter();
-		for (Soldier soldier : draw.getSoldiers()) {
-			exclusions = new HashSet<>();
+	public void setSoldierExclusionMessages(Collection<SoldierDTO> soldiers, String selectedYearQuarter) {
+		List<DrawExclusion> exclusions = new ArrayList<>(0);
+		for (SoldierDTO soldierDTO : soldiers) {
+			exclusions.addAll(drawExclusionService.getByAnnualQuarter(selectedYearQuarter, soldierDTO.getId()));
+			exclusions.addAll(drawExclusionService.getBySelectableQuarterPeriod(soldierDTO.getId()));
 			
-			exclusions.addAll( drawExclusionSvc.findByAnnualQuarter(selectedQuarter, soldier) );
-			
-			exclusions.addAll( drawExclusionSvc.getByLatestDraws(soldier) );
-			
+			//TODO: add cej unfinished exclusions
 			soldier.setCustomExclusions(exclusions);
 		}
 	}
