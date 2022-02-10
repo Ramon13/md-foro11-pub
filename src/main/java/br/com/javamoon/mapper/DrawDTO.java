@@ -6,6 +6,7 @@ import br.com.javamoon.config.properties.DrawConfigProperties;
 import br.com.javamoon.domain.draw.CouncilType;
 import br.com.javamoon.domain.draw.JusticeCouncil;
 import br.com.javamoon.domain.soldier.Army;
+import br.com.javamoon.domain.soldier.Soldier;
 import br.com.javamoon.service.ArmyService;
 import br.com.javamoon.service.JusticeCouncilService;
 import br.com.javamoon.util.DateUtils;
@@ -40,6 +41,8 @@ public class DrawDTO{
 	
 	private JusticeCouncil justiceCouncil;
 	
+	private Soldier substitute;
+	
 //	@NotEmpty(message = "Trimestre não selecionado")
 //	@Size(min = 6, max = 6, message = "Trimestre inválido")
 	private String selectedYearQuarter;
@@ -47,9 +50,15 @@ public class DrawDTO{
 	private Integer selectedDrawList;
 	
 	@ToString.Exclude
-	private List<SoldierDTO> soldiers = new LinkedList<>();
+	private List<SoldierDTO> soldiers = new ArrayList<SoldierDTO>(0);
+	
+	private List<Integer> drawnSoldiers = new LinkedList<Integer>();
 	
 	private List<Integer> selectedRanks = new ArrayList<Integer>(0);
+	
+	private Integer replaceSoldier;
+	
+	private Integer replaceRank;
 
 	public DrawDTO(
 			ArmyService armyService, 
@@ -85,5 +94,14 @@ public class DrawDTO{
 	
 	public boolean isSameQuarter(String yearQuarter) {
 		return yearQuarter.equals(selectedYearQuarter);
+	}
+	
+	public String getManagementListHeader() {
+//		councilType = CouncilType.fromAlias(justiceCouncil.getAlias());
+//		
+//		return (councilType == CouncilType.CPJ)
+//					? String.format("%s (%s) - %s", justiceCouncil.getName(), drawList.getYearQuarter(), army.getName())
+//					: String.format("%s (%s) - %s", justiceCouncil.getName(), processNumber, army.getName());
+		return null;
 	}
 }

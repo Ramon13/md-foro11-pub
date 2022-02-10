@@ -4,14 +4,11 @@ import br.com.javamoon.validator.ValidationErrors;
 import lombok.Getter;
 
 @Getter
-public class DrawValidationException extends RuntimeException{
+public class DrawValidationException extends BaseValidationException{
 
     private static final long serialVersionUID = 1L;
-    
-    private ValidationErrors validationErrors;
-    
+        
     public DrawValidationException(ValidationErrors validationErrors) {
-        super(validationErrors.toString());
-        this.validationErrors = validationErrors;
+        super(validationErrors);
     }
 }

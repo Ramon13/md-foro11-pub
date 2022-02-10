@@ -1,15 +1,10 @@
 package br.com.javamoon.domain.draw;
 
-import br.com.javamoon.domain.entity.CJMUser;
-import br.com.javamoon.domain.entity.DrawList;
-import br.com.javamoon.domain.soldier.Army;
-import br.com.javamoon.domain.soldier.MilitaryRank;
-import br.com.javamoon.domain.soldier.Soldier;
 import java.io.Serializable;
 import java.time.LocalDate;
-import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -21,8 +16,14 @@ import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
+
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
+
+import br.com.javamoon.domain.entity.CJMUser;
+import br.com.javamoon.domain.entity.DrawList;
+import br.com.javamoon.domain.soldier.Army;
+import br.com.javamoon.domain.soldier.Soldier;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
@@ -87,35 +88,4 @@ public class Draw implements Serializable{
 	@ManyToOne
 	@JoinColumn(name="draw_list_id", nullable = true)
 	private DrawList drawList;
-	
-	@ToString.Exclude
-	private transient List<MilitaryRank> ranks = new ArrayList<>();
-	
-	@ToString.Exclude
-	private transient List<Integer> excludeSoldiers = new ArrayList<Integer>();
-
-	@ToString.Exclude
-	private transient CouncilType councilType;
-	
-	public void setJusticeCouncil(JusticeCouncil justiceCouncil) {
-		this.justiceCouncil = justiceCouncil;
-		councilType = CouncilType.fromAlias(justiceCouncil.getAlias());
-	}
-	
-	public String getManagementListHeader() {
-		councilType = CouncilType.fromAlias(justiceCouncil.getAlias());
-		
-		return (councilType == CouncilType.CPJ)
-					? String.format("%s (%s) - %s", justiceCouncil.getName(), drawList.getYearQuarter(), army.getName())
-					: String.format("%s (%s) - %s", justiceCouncil.getName(), processNumber, army.getName());		
-	}
-	
-	public void clearSoldierList() {
-		soldiers.clear();
-	}
-	
-	public void clearRankList() {
-		if (ranks != null)
-			ranks.clear();
-	}
 }

@@ -1,6 +1,7 @@
 package br.com.javamoon.domain.soldier;
 
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -15,4 +16,6 @@ public interface MilitaryRankRepository extends JpaRepository<MilitaryRank, Inte
 	List<Integer> findAllIdsByArmiesIn(@Param("army") Army army);
 	
 	MilitaryRank findByAlias(String alias);
+	
+	Optional<MilitaryRank> findById(Integer id);
 }

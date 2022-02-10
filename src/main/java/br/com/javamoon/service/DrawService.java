@@ -1,5 +1,19 @@
 package br.com.javamoon.service;
 
+import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.TreeMap;
+
+import javax.transaction.Transactional;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
 import br.com.javamoon.domain.cjm_user.Auditorship;
 import br.com.javamoon.domain.draw.CouncilType;
 import br.com.javamoon.domain.draw.Draw;
@@ -9,17 +23,6 @@ import br.com.javamoon.domain.soldier.Soldier;
 import br.com.javamoon.log.Alert;
 import br.com.javamoon.util.DateUtils;
 import br.com.javamoon.util.StringUtils;
-import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.TreeMap;
-import javax.transaction.Transactional;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
 import net.sf.jasperreports.engine.data.JRBeanCollectionDataSource;
 
 @Service

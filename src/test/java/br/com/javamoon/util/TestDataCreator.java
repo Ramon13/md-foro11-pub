@@ -16,17 +16,25 @@ import static br.com.javamoon.util.Constants.DEFAULT_ORGANIZATION_NAME;
 import static br.com.javamoon.util.Constants.DEFAULT_RANK_ALIAS;
 import static br.com.javamoon.util.Constants.DEFAULT_RANK_NAME;
 import static br.com.javamoon.util.Constants.DEFAULT_RANK_WEIGHT;
+import static br.com.javamoon.util.Constants.DEFAULT_REPLACE_SOLDIER_ID;
 import static br.com.javamoon.util.Constants.DEFAULT_SOLDIER_NAME;
 import static br.com.javamoon.util.Constants.DEFAULT_USER_EMAIL;
 import static br.com.javamoon.util.Constants.DEFAULT_USER_PASSWORD;
 import static br.com.javamoon.util.Constants.DEFAULT_USER_USERNAME;
 import static br.com.javamoon.validator.ValidationConstants.SOLDIER_EMAIL_MAX_LEN;
 import static br.com.javamoon.validator.ValidationConstants.SOLDIER_NAME_MAX_LEN;
+
+import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.stream.Collectors;
+
+import org.apache.commons.lang3.StringUtils;
+
 import br.com.javamoon.domain.cjm_user.Auditorship;
 import br.com.javamoon.domain.cjm_user.AuditorshipRepository;
 import br.com.javamoon.domain.cjm_user.CJM;
 import br.com.javamoon.domain.cjm_user.CJMRepository;
-import br.com.javamoon.domain.draw.Draw;
 import br.com.javamoon.domain.draw.JusticeCouncil;
 import br.com.javamoon.domain.draw.JusticeCouncilRepository;
 import br.com.javamoon.domain.draw_exclusion.DrawExclusion;
@@ -35,7 +43,6 @@ import br.com.javamoon.domain.entity.DrawList;
 import br.com.javamoon.domain.entity.GroupUser;
 import br.com.javamoon.domain.repository.CJMUserRepository;
 import br.com.javamoon.domain.repository.DrawListRepository;
-import br.com.javamoon.domain.repository.DrawRepository;
 import br.com.javamoon.domain.repository.GroupUserRepository;
 import br.com.javamoon.domain.repository.SoldierRepository;
 import br.com.javamoon.domain.soldier.Army;
@@ -57,11 +64,6 @@ import br.com.javamoon.validator.DrawListValidator;
 import br.com.javamoon.validator.DrawValidator;
 import br.com.javamoon.validator.SoldierValidator;
 import br.com.javamoon.validator.UserAccountValidator;
-import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.stream.Collectors;
-import org.apache.commons.lang3.StringUtils;
 
 public final class TestDataCreator {
 
@@ -359,6 +361,8 @@ public final class TestDataCreator {
 		drawDTO.getSelectedRanks().addAll(Constants.DEFAULT_SELECTED_RANKS);
 		drawDTO.setArmy(newArmy());
 		drawDTO.setJusticeCouncil(getJusticeCouncil());
+		drawDTO.setReplaceRank(Constants.DEFAULT_REPLACE_RANK_ID);
+		drawDTO.setReplaceSoldier(DEFAULT_REPLACE_SOLDIER_ID);
 		return drawDTO;
 	}
 }

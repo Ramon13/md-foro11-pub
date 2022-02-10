@@ -32,6 +32,10 @@ public final class ValidationConstants {
     public static final String DRAW_EXCLUSION_END_DATE = "endDate";
     public static final Integer DRAW_EXCLUSION_MAX_LEN = 1024;
     
+    public static final String DRAW_SOLDIERS = "soldiers";
+    public static final String NO_AVALIABLE_SOLDIERS = "Não há militares disponíveis para o posto: ";
+    public static final String REPLACE_SOLDIER_IS_NOT_IN_THE_LIST = "O militar a ser substituído não encontra-se na lista";
+    
     public static final String EQUALS_DATES = "Datas iguais";
     public static final String IN_THE_PAST = "A data deve ser posterior a data atual";
     public static final String INCONSISTENT_DATE_PERIOD = "Período inválido";

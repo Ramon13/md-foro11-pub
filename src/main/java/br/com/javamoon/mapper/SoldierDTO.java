@@ -76,4 +76,9 @@ public class SoldierDTO{
 				? String.format("%s - %s", militaryOrganization.getAlias(), militaryOrganization.getName())
 				: "";
 	}
+	
+
+	public boolean hasImpediment() {
+		return !exclusions.isEmpty();
+	}
 }

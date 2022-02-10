@@ -1,7 +1,20 @@
 package br.com.javamoon.unit.service;
 
+import static br.com.javamoon.util.Constants.DEFAULT_REPLACE_RANK_ID;
+import static br.com.javamoon.util.Constants.DEFAULT_REPLACE_SOLDIER_ID;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+
+import java.util.List;
+import java.util.stream.Collectors;
+
+import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.annotation.DirtiesContext;
+import org.springframework.test.annotation.DirtiesContext.ClassMode;
+import org.springframework.test.context.ActiveProfiles;
+
 import br.com.javamoon.domain.cjm_user.CJM;
 import br.com.javamoon.domain.cjm_user.CJMRepository;
 import br.com.javamoon.domain.entity.DrawList;
@@ -16,17 +29,11 @@ import br.com.javamoon.domain.soldier.NoAvaliableSoldierException;
 import br.com.javamoon.domain.soldier.Soldier;
 import br.com.javamoon.exception.DrawListNotFoundException;
 import br.com.javamoon.mapper.DrawDTO;
+import br.com.javamoon.mapper.EntityMapper;
 import br.com.javamoon.mapper.SoldierDTO;
 import br.com.javamoon.service.RandomSoldierService;
 import br.com.javamoon.util.Constants;
 import br.com.javamoon.util.TestDataCreator;
-import java.util.List;
-import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.annotation.DirtiesContext;
-import org.springframework.test.annotation.DirtiesContext.ClassMode;
-import org.springframework.test.context.ActiveProfiles;
 
 @SpringBootTest
 @ActiveProfiles("test")
@@ -136,6 +143,34 @@ public class RandomSoldierServiceUnitTest {
 		drawDTO.setSelectedDrawList(2);
 		assertThrows(DrawListNotFoundException.class,
 				() -> victim.randomAllSoldiers(drawDTO, newCjm));		// List does not exists
+	}
+	
+	@Test
+	void testReplaceRandomSoldierSuccessfully() throws NoAvaliableSoldierException {
+		DrawList drawList = getPersistedDrawList(6); 
+		DrawDTO drawDTO = TestDataCreator.newDrawDTO();
+		
+		drawDTO.getSoldiers().addAll(
+			drawList.getSoldiers().stream()
+			.map(s -> EntityMapper.fromEntityToDTO(s))
+			.collect(Collectors.toList())
+		);
+		
+		SoldierDTO replaceSoldier = drawDTO.getSoldiers().remove
+		
+		drawDTO.getDrawnSoldiers().addAll(
+			drawDTO.getSoldiers().stream().map(s -> s.getId()).collect(Collectors.toList())
+		);
+		
+		drawDTO.setArmy(drawList.getArmy());
+		drawDTO.setReplaceSoldier(DEFAULT_REPLACE_SOLDIER_ID);
+		drawDTO.setReplaceRank(DEFAULT_REPLACE_RANK_ID);
+		drawDTO.setSelectedDrawList(drawList.getId());
+		
+		System.out.println(drawDTO);
+		victim.replaceRandomSoldier(drawDTO);
+		
+		assertEquals(drawDTO.getSoldiers().get(DEFAULT_REPLACE_SOLDIER_ID).getId(), replaceSoldier.getId());
 	}
 	
 	private DrawList getPersistedDrawList(int numOfSoldiers) {

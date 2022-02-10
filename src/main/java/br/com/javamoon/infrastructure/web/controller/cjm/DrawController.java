@@ -28,6 +28,8 @@ import br.com.javamoon.service.RandomSoldierService;
 import br.com.javamoon.service.ValidationException;
 import br.com.javamoon.util.DateUtils;
 import br.com.javamoon.util.SecurityUtils;
+import br.com.javamoon.validator.ValidationUtils;
+
 import java.io.IOException;
 import java.time.LocalDate;
 import java.util.Collections;
@@ -119,21 +121,18 @@ public class DrawController {
 	}
 	
 	@GetMapping("/home")
-	public String home(Model model, @ModelAttribute("drawDTO") DrawDTO drawDTO) {
-		CJMUser loggedUser = SecurityUtils.cjmUser();
+	public String home(
+			@ModelAttribute("drawDTO") DrawDTO drawDTO,
+			Model model,
+			@RequestParam(required = false) Boolean complete,
+			SessionStatus sessionStatus) {
 		
-		List<DrawListDTO> drawLists = drawListService.list(
-				drawDTO.getArmy(), 
-				loggedUser.getAuditorship().getCjm(), 
-				drawDTO.getSelectedYearQuarter());
+		if (BooleanUtils.isTrue(complete)) {
+			sessionStatus.setComplete();
+			return "redirect:/cjm/dw/home";
+		}
 		
-		model.addAttribute("drawLists", drawLists);
-		model.addAttribute("quarters", DateUtils.getSelectableQuarters());
-		model.addAttribute("councils", councilService.list());
-		model.addAttribute("armies", armyService.list());
-		model.addAttribute("ranks", rankService.listRanksByArmy(drawDTO.getArmy()));
-		ControllerHelper.setEditMode(model, false);
-		
+		setDefaultHomeAttributes(model, drawDTO);
 		return "cjm/draw/home";
 	}
 	
@@ -141,20 +140,17 @@ public class DrawController {
 	@GetMapping("/sdrand/all")
 	public String drawAll(@Valid @ModelAttribute("drawDTO") DrawDTO drawDTO, Errors errors, Model model) {
 		try {
-			System.out.println(drawDTO);
 			CJMUser loggedUser = SecurityUtils.cjmUser();
 			randomSoldierService.randomAllSoldiers(drawDTO, loggedUser.getAuditorship().getCjm());
 			randomSoldierService.setSoldierExclusionMessages(drawDTO.getSoldiers(), drawDTO.getSelectedYearQuarter());
 			
 		} catch (DrawValidationException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (NoAvaliableSoldierException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			ValidationUtils.rejectValues(errors, e.getValidationErrors());
 		}
 		
-		return "redirect:/cjm/dw/home";
+		System.out.println(drawDTO);
+		setDefaultHomeAttributes(model, drawDTO);
+		return "cjm/draw/home";
 	}
 	
 	@GetMapping("/old//sdrand/all")
@@ -195,6 +191,12 @@ public class DrawController {
 		
 		setDefaultPageAttributes(draw, model);
 		return "management/draw-home";
+	}
+	
+	@GetMapping("/sdrand/replace")
+	public String replaceSoldier() {
+		
+		return null;
 	}
 	
 	@GetMapping("/sdrand/replace/{replaceRankId}/{replaceSoldierId}")
@@ -303,28 +305,19 @@ public class DrawController {
 		return "management/draw-list";
 	}
 	 
-	private void setDefaultPageAttributes(Draw draw, Model model) {
-		Auditorship loggedUser = SecurityUtils.cjmUser().getAuditorship();
+	private void setDefaultHomeAttributes(Model model, DrawDTO drawDTO) {
+		CJMUser loggedUser = SecurityUtils.cjmUser();
 		
-		String selectedQuarterYear;
-		if (draw.getDrawList() == null)
-			selectedQuarterYear = DateUtils.toQuarterFormat(LocalDate.now());
-		else
-			selectedQuarterYear = draw.getDrawList().getYearQuarter();
+		List<DrawListDTO> drawLists = drawListService.list(
+				drawDTO.getArmy(), 
+				loggedUser.getAuditorship().getCjm(), 
+				drawDTO.getSelectedYearQuarter());
 		
-		List<DrawList> drawList = drawListRepoImpl.getDrawableLists(
-				draw.getArmy(),
-				loggedUser.getCjm(),
-				selectedQuarterYear);
-		
-		model.addAttribute("selectQuarter", selectedQuarterYear);
-		model.addAttribute("drawSoldierList", drawList); 
-		
-		model.addAttribute("quarters", DateUtils.getSelectableQuarters()); //TODO: fix on template
-		ControllerHelper.addCouncilsToRequest(councilRepo, model);
-		ControllerHelper.addArmiesToRequest(armyRepo, model);
-		
-		ControllerHelper.addMilitaryRanksToRequest(rankRepo, draw.getArmy(), model);
-		ControllerHelper.setEditMode(model, false);	
+		model.addAttribute("drawLists", drawLists);
+		model.addAttribute("quarters", DateUtils.getSelectableQuarters());
+		model.addAttribute("councils", councilService.list());
+		model.addAttribute("armies", armyService.list());
+		model.addAttribute("ranks", rankService.listRanksByArmy(drawDTO.getArmy()));
+		ControllerHelper.setEditMode(model, false);
 	}
 }

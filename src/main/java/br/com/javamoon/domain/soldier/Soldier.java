@@ -93,10 +93,6 @@ public class Soldier implements Serializable, Comparable<Soldier>{
 	}
 	
 	private transient Set<DrawExclusion> customExclusions = new HashSet<>(0);
-	
-	public boolean hasImpediment() {
-		return !customExclusions.isEmpty();
-	}
 
 	@Override
 	public int compareTo(Soldier soldier) {

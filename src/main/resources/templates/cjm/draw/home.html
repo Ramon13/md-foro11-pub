@@ -138,10 +138,14 @@
           <h1 th:text="*{justiceCouncil.name}"></h1>
           
           <h2>Militares sorteados:</h2>
-          
+          <div th:if="${#fields.hasErrors('soldiers')}">
+            <span class="error" th:errors="*{soldiers}" data-tabid="3"></span>
+          </div>
+              
           <div class="soldiers" th:each="soldier : *{soldiers}">
             <button type="button" class="accordion" 
-              th:text="${soldier.name} + ' ' + ${soldier.impedimentStatusAsText}"></button>
+              th:text="${soldier.name} + ' ' + ${soldier.impedimentStatusAsText}"
+              th:classappend="${soldier.hasImpediment() ? 'highlight-impediment' : ''}"></button>
             <div class="panel">
               <div class="sdInfo">
                 <div>
@@ -167,7 +171,7 @@
                 </div>
               </div>
               
-              <br/><br/><br/>
+              <br/>
               
               <div class="impediment" th:each="exclusion : ${soldier.exclusions}">
                 <div class="impediment-header">
@@ -178,9 +182,14 @@
               </div>
             </div>
           </div>
+          
+          <button id="saveDraw" type="button" class="app-green-btn">Salvar Sorteio</button>
         </div>
         
         <div style="overflow:auto;width: 100%;">
+          <div class="cancelDraw" th:if="${!editMode}">
+            <a th:href="@{/cjm/dw/home(complete=true)}">cancelar sorteio</a>
+          </div>
           <div id="multipleFormBtns">
             <button type="button" id="prevBtn" class="app-gray-btn" onclick="nextPrev(-1)">Voltar</button>
             <button type="button" id="nextBtn" class="app-green-btn" onclick="nextPrev(1)">Próximo</button>

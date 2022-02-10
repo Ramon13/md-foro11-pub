@@ -102,7 +102,7 @@ p.ranks{
 }
 
 #drawForm div.cancelDraw a{
-  position: absolute;
+  float: left;
   margin-top: 40px;
   color: red;
   text-decoration: underline;

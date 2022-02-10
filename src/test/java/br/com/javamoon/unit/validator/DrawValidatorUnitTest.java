@@ -1,15 +1,19 @@
 package br.com.javamoon.unit.validator;
 
 import static br.com.javamoon.util.Constants.DEFAULT_COUNCIl_SIZE;
+import static br.com.javamoon.util.Constants.DEFAULT_REPLACE_SOLDIER_ID;
 import static br.com.javamoon.util.Constants.DEFAULT_SELECTED_RANKS;
 import static br.com.javamoon.util.TestDataCreator.getJusticeCouncil;
 import static br.com.javamoon.util.TestDataCreator.newDrawDTO;
 import static br.com.javamoon.validator.ValidationConstants.DRAW_SELECTED_RANKS;
+import static br.com.javamoon.validator.ValidationConstants.DRAW_SOLDIERS;
 import static br.com.javamoon.validator.ValidationConstants.RANK_LIST_INVALID_SIZE;
+import static br.com.javamoon.validator.ValidationConstants.REPLACE_SOLDIER_IS_NOT_IN_THE_LIST;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import java.util.ArrayList;
+import java.util.stream.IntStream;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -22,6 +26,7 @@ import br.com.javamoon.domain.draw.JusticeCouncil;
 import br.com.javamoon.domain.soldier.MilitaryRankRepository;
 import br.com.javamoon.exception.DrawValidationException;
 import br.com.javamoon.mapper.DrawDTO;
+import br.com.javamoon.mapper.SoldierDTO;
 import br.com.javamoon.util.TestDataCreator;
 import br.com.javamoon.validator.DrawValidator;
 import br.com.javamoon.validator.ValidationConstants;
@@ -78,5 +83,39 @@ public class DrawValidatorUnitTest {
 		assertEquals(
 				new ValidationError(DRAW_SELECTED_RANKS, RANK_LIST_INVALID_SIZE),
 				exception.getValidationErrors().getError(0));
+	}
+	
+	@Test
+	void testReplaceSoldierValidationSuccessfully() {
+		DrawDTO drawDTO = TestDataCreator.newDrawDTO();
+		IntStream.range(0, 5).forEach(i -> {
+			SoldierDTO soldierDTO = new SoldierDTO();
+			soldierDTO.setId(i);
+			drawDTO.getSoldiers().add(soldierDTO);
+		});
+		Mockito.when(rankRepository.findAllIdsByArmiesIn(drawDTO.getArmy())).thenReturn(DEFAULT_SELECTED_RANKS);
+		
+		victim.replaceSoldierValidation(drawDTO);
+	}
+	
+	@Test
+	void testReplaceSoldierValidationWhenReplaceSoldierNotBelongsToSoldierList() {
+		DrawDTO drawDTO = TestDataCreator.newDrawDTO();
+		IntStream.range(0, 5).forEach(i -> {
+			SoldierDTO soldierDTO = new SoldierDTO();
+			soldierDTO.setId(i);
+			drawDTO.getSoldiers().add(soldierDTO);
+		});
+		
+		drawDTO.setReplaceSoldier(DEFAULT_REPLACE_SOLDIER_ID + 10);
+		Mockito.when(rankRepository.findAllIdsByArmiesIn(drawDTO.getArmy())).thenReturn(DEFAULT_SELECTED_RANKS);
+		
+		DrawValidationException exception = 
+				assertThrows(DrawValidationException.class, () -> victim.replaceSoldierValidation(drawDTO));
+		
+		assertEquals(
+			new ValidationError(DRAW_SOLDIERS, REPLACE_SOLDIER_IS_NOT_IN_THE_LIST),
+			exception.getValidationErrors().getError(0)
+		);
 	}
 }
