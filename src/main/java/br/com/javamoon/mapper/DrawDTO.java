@@ -57,8 +57,6 @@ public class DrawDTO{
 	private List<Integer> selectedRanks = new ArrayList<Integer>(0);
 	
 	private Integer replaceSoldier;
-	
-	private Integer replaceRank;
 
 	public DrawDTO(
 			ArmyService armyService, 

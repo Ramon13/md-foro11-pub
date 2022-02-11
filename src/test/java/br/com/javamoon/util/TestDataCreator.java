@@ -361,7 +361,6 @@ public final class TestDataCreator {
 		drawDTO.getSelectedRanks().addAll(Constants.DEFAULT_SELECTED_RANKS);
 		drawDTO.setArmy(newArmy());
 		drawDTO.setJusticeCouncil(getJusticeCouncil());
-		drawDTO.setReplaceRank(Constants.DEFAULT_REPLACE_RANK_ID);
 		drawDTO.setReplaceSoldier(DEFAULT_REPLACE_SOLDIER_ID);
 		return drawDTO;
 	}
