@@ -75,7 +75,7 @@
               </option>
             </select>
           </div>
-          
+            
           <div th:if="${!drawDTO.isCPJ()}">
             <label>Nº do Processo:</label><br/>
             <div th:if="${#fields.hasErrors('processNumber')}">
@@ -138,11 +138,15 @@
           <h1 th:text="*{justiceCouncil.name}"></h1>
           
           <h2>Militares sorteados:</h2>
-          <div th:if="${#fields.hasErrors('soldiers')}">
-            <span class="error" th:errors="*{soldiers}" data-tabid="3"></span>
-          </div>
               
           <div class="soldiers" th:each="soldier : *{soldiers}">
+            <input type="hidden" class="sdId" name="soldiers" th:value="${soldier.id}">          
+            
+            <button class="replaceSoldier" type="button" title="substituir" 
+                th:attr="data-replaceurl=@{/cjm/dw/sdrand/replace}">
+              <img th:src="@{/images/refresh.svg}">
+            </button>
+                
             <button type="button" class="accordion" 
               th:text="${soldier.name} + ' ' + ${soldier.impedimentStatusAsText}"
               th:classappend="${soldier.hasImpediment() ? 'highlight-impediment' : ''}"></button>
@@ -188,7 +192,7 @@
         
         <div style="overflow:auto;width: 100%;">
           <div class="cancelDraw" th:if="${!editMode}">
-            <a th:href="@{/cjm/dw/home(complete=true)}">cancelar sorteio</a>
+            <a th:href="@{/cjm/dw/reset}">cancelar sorteio</a>
           </div>
           <div id="multipleFormBtns">
             <button type="button" id="prevBtn" class="app-gray-btn" onclick="nextPrev(-1)">Voltar</button>
@@ -220,6 +224,13 @@
       const randAllBtn = document.querySelector("button#randAll");
       if (randAllBtn)
     	  randAllBtn.addEventListener('click', function(){randAll(this)});
+      
+      const randSoldierBtn = document.querySelectorAll("button.replaceSoldier");
+      for (let i = 0; i < randSoldierBtn.length; i++){
+    	  randSoldierBtn[i].addEventListener('click', function(){
+    		  replaceSoldier(this, i);
+  		  });
+      }
         
       function setTabFocus(){
         const tabs = document.querySelectorAll("div.tab");
@@ -311,6 +322,13 @@
     	  form.method = method;
     	  form.action = action;
     	  return form;
+      }
+      
+      function replaceSoldier(htmlButton, index){
+        let ranksSelect = document.querySelectorAll("select.ranks")[index];
+        let soldierId = document.querySelectorAll("input.sdId")[index].value;
+        let rankId = ranksSelect.options[ranksSelect.selectedIndex].value;
+        location.href = htmlButton.dataset.replaceurl + "?replaceSoldierId=" + soldierId + "&replaceRankId=" + rankId; 
       }
     </script>
   </body>  

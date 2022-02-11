@@ -31,6 +31,15 @@ public final class ValidationUtils {
     }
     
     public static boolean validateRequired(String fieldValue, String fieldName, ValidationErrors validationErrors) {
+    	if (StringUtils.isEmpty(fieldValue)) {
+    		validationErrors.add(fieldName, ValidationConstants.REQUIRED_FIELD);
+    		return false;
+    	}
+    	
+    	return true;
+    }
+    
+    public static boolean validateRequired(Object fieldValue, String fieldName, ValidationErrors validationErrors) {
     	if (Objects.isNull(fieldValue)) {
     		validationErrors.add(fieldName, ValidationConstants.REQUIRED_FIELD);
     		return false;

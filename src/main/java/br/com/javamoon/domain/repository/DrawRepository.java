@@ -7,14 +7,15 @@ import br.com.javamoon.domain.draw.JusticeCouncil;
 import br.com.javamoon.domain.soldier.Army;
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Optional;
+
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
 public interface DrawRepository extends JpaRepository<Draw, Integer>{
 
-	@Deprecated
-	Draw findByProcessNumber(String processNumber);
+	Optional<Draw> findByProcessNumber(String processNumber);
 	
 	@Deprecated
 	@Query("from Draw d join d.soldiers s where s.id = :soldierId and d.justiceCouncil.id = 2")

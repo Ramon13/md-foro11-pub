@@ -43,4 +43,5 @@ public final class Constants {
     
     public static final List<Integer> DEFAULT_SELECTED_RANKS = List.of(1,2,3,4,5);
     public static final Integer DEFAULT_REPLACE_SOLDIER_ID = 1;
+    public static final Integer DEFAULT_REPLACE_RANK_ID = 1;
 }

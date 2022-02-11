@@ -20,6 +20,11 @@ public class ArmyService {
 		this.armyRepository = armyRepository;
 	}
 
+	public Army getArmy(Integer armyId) {
+		return armyRepository.findById(armyId).orElseThrow(() -> 
+			new ArmyNotFoundException("The army cannot be found: " + armyId));
+	}
+	
 	public Army getByAlias(String alias) {
 		return armyRepository.findByAlias(alias).orElseThrow(() -> 
 			new ArmyNotFoundException("The army cannot be found: " + alias));

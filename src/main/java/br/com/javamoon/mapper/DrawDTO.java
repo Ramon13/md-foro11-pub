@@ -41,6 +41,8 @@ public class DrawDTO{
 	
 	private JusticeCouncil justiceCouncil;
 	
+	private JusticeCouncil defaultJusticeCouncil;
+	
 	private Soldier substitute;
 	
 //	@NotEmpty(message = "Trimestre não selecionado")
@@ -49,6 +51,10 @@ public class DrawDTO{
 	
 	private Integer selectedDrawList;
 	
+	private Integer replaceSoldierId;
+	
+	private Integer replaceRankId;
+	
 	@ToString.Exclude
 	private List<SoldierDTO> soldiers = new ArrayList<SoldierDTO>(0);
 	
@@ -56,8 +62,6 @@ public class DrawDTO{
 	
 	private List<Integer> selectedRanks = new ArrayList<Integer>(0);
 	
-	private Integer replaceSoldier;
-
 	public DrawDTO(
 			ArmyService armyService, 
 			JusticeCouncilService councilService,
@@ -65,13 +69,15 @@ public class DrawDTO{
 		
 		this.army = armyService.getByAlias(drawConfigProperties.getDefaultProperty(PROPERTY_ARMY_ALIAS));
 		this.selectedYearQuarter = DateUtils.toQuarterFormat(LocalDate.now());
-		setJusticeCouncil(councilService.getByAlias(drawConfigProperties.getDefaultProperty(PROPERTY_COUNCIL_ALIAS)));
+		this.defaultJusticeCouncil = councilService.getByAlias(drawConfigProperties.getDefaultProperty(PROPERTY_COUNCIL_ALIAS));
+		setJusticeCouncil(defaultJusticeCouncil);
 	}
 	
 	public DrawDTO() {}
 	
 	public void setJusticeCouncil(JusticeCouncil justiceCouncil) {
-		selectedRanks = IntStream.range(0, justiceCouncil.getCouncilSize())
+		int councilSize = Objects.isNull(justiceCouncil) ? defaultJusticeCouncil.getCouncilSize() : justiceCouncil.getCouncilSize();
+		selectedRanks = IntStream.range(0, councilSize)
 			.mapToObj(i -> 0)
 			.collect(Collectors.toList());
 		
@@ -101,5 +107,14 @@ public class DrawDTO{
 //					? String.format("%s (%s) - %s", justiceCouncil.getName(), drawList.getYearQuarter(), army.getName())
 //					: String.format("%s (%s) - %s", justiceCouncil.getName(), processNumber, army.getName());
 		return null;
+	}
+	
+	public void clearRandomSoldiers() {
+		soldiers.clear();
+		drawnSoldiers.clear();
+	}
+	
+	public void clearSelectedRanks() {
+		selectedRanks.clear();
 	}
 }

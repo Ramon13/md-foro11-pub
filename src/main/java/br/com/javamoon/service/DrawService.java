@@ -21,6 +21,7 @@ import br.com.javamoon.domain.repository.DrawRepository;
 import br.com.javamoon.domain.repository.SoldierRepository;
 import br.com.javamoon.domain.soldier.Soldier;
 import br.com.javamoon.log.Alert;
+import br.com.javamoon.mapper.DrawDTO;
 import br.com.javamoon.util.DateUtils;
 import br.com.javamoon.util.StringUtils;
 import net.sf.jasperreports.engine.data.JRBeanCollectionDataSource;
@@ -28,20 +29,29 @@ import net.sf.jasperreports.engine.data.JRBeanCollectionDataSource;
 @Service
 public class DrawService {
 
-	@Autowired
 	private PdfService pdfService;
 	
-	@Autowired
 	private DrawRepository drawRepository;
 	
-	@Autowired
 	private SoldierRepository soldierRepository;
 	
-	@Autowired
 	private SoldierService soldierSvc;
 	
+	public DrawService(
+		PdfService pdfService,
+		DrawRepository drawRepository,
+		SoldierRepository soldierRepository,
+		SoldierService soldierSvc) {
+		
+		this.pdfService = pdfService;
+		this.drawRepository = drawRepository;
+		this.soldierRepository = soldierRepository;
+		this.soldierSvc = soldierSvc;
+	}
+
+
 	@Transactional
-	public void save(Draw draw) throws ValidationException, ApplicationServiceException {
+	public void saveOld(Draw draw) throws ValidationException, ApplicationServiceException {
 		CouncilType councilType = CouncilType.fromAlias(draw.getJusticeCouncil().getAlias());
 		
 		validateSoldiersAmount(councilType, draw.getSoldiers());
@@ -60,6 +70,11 @@ public class DrawService {
 		}
 		
 		drawRepository.save(draw);
+	}
+	
+	
+	public void save(DrawDTO drawDTO) {
+		
 	}
 	
 	public Alert generateUnfinishedCEJAlert(Auditorship auditorship){

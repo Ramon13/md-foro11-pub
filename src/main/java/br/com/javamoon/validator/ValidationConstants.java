@@ -32,9 +32,16 @@ public final class ValidationConstants {
     public static final String DRAW_EXCLUSION_END_DATE = "endDate";
     public static final Integer DRAW_EXCLUSION_MAX_LEN = 1024;
     
-    public static final String DRAW_SOLDIERS = "soldiers";
+    public static final String DRAW_SELECTED_RANKS = "selectedRanks";
+    public static final String DRAW_JUSTICE_COUNCIL = "justiceCouncil";
+    public static final String DRAW_YEAR_QUARTER = "selectedYearQuarter";
+    public static final String DRAW_PROCESS_NUMBER = "processNumber";
     public static final String NO_AVALIABLE_SOLDIERS = "Não há militares disponíveis para o posto: ";
+    public static final String PROCESS_NUMBER_EXCEEDS_MAX_LEN = "O número do processo não pode ter mais que 64 caracteres";
+    public static final String PROCESS_NUMBER_ALREADY_EXISTS = "Processo já cadastrado em outro sorteio";
     public static final String REPLACE_SOLDIER_IS_NOT_IN_THE_LIST = "O militar a ser substituído não encontra-se na lista";
+    public static final String RANK_LIST_INVALID_SIZE = "A lista de postos não corresponde ao tamanho do conselho.";
+    public static final String DRAW_QUARTER_YEAR_OUT_OF_BOUNDS = "Trimestre inválido. O trimestre não pode ser selecionado.";
     
     public static final String EQUALS_DATES = "Datas iguais";
     public static final String IN_THE_PAST = "A data deve ser posterior a data atual";
@@ -51,8 +58,5 @@ public final class ValidationConstants {
     public static final String DRAW_LIST_SELECTED_SOLDIERS_BELOW_MIN_LEN = "A lista deve ser composta por no mínimo 5 militares";
     
     public static final String NO_PERMISSION = "You do not have permision to edit this property.";
-    
-    public static final String DRAW_SELECTED_RANKS = "selectedRanks";
-    public static final String RANK_LIST_INVALID_SIZE = "A lista de postos não corresponde ao tamanho do conselho.";
     private ValidationConstants() {}
 }

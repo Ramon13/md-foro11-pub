@@ -1,5 +1,6 @@
 package br.com.javamoon.unit.mapper;
 
+import static br.com.javamoon.util.TestDataCreator.newSoldierDTO;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -81,6 +82,9 @@ public class DrawDTOUnitTest {
 		JusticeCouncil newJusticeCouncil = TestDataCreator.getJusticeCouncil();
 		newJusticeCouncil.setCouncilSize(4);
 		
+		victim.setJusticeCouncil(null);
+		assertEquals(victim.getDefaultJusticeCouncil().getCouncilSize(), victim.getSelectedRanks().size());
+		
 		victim.setJusticeCouncil(newJusticeCouncil);
 		assertEquals(4, victim.getSelectedRanks().size());
 	}
@@ -90,7 +94,7 @@ public class DrawDTOUnitTest {
 		assertTrue(victim.isNeverDrawn());
 		
 		victim.setSelectedDrawList(1);
-		victim.getSoldiers().addAll(TestDataCreator.newSoldierList(null, null, null, null, 3));
+		victim.getSoldiers().add(newSoldierDTO());
 		
 		assertFalse(victim.isNeverDrawn());
 	}

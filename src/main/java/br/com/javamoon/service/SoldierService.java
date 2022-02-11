@@ -1,5 +1,14 @@
 package br.com.javamoon.service;
 
+import java.util.List;
+import java.util.Objects;
+import java.util.stream.Collectors;
+
+import javax.transaction.Transactional;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
 import br.com.javamoon.domain.cjm_user.CJM;
 import br.com.javamoon.domain.entity.GroupUser;
 import br.com.javamoon.domain.repository.DrawRepository;
@@ -14,12 +23,6 @@ import br.com.javamoon.infrastructure.web.model.SoldiersPagination;
 import br.com.javamoon.mapper.EntityMapper;
 import br.com.javamoon.mapper.SoldierDTO;
 import br.com.javamoon.validator.SoldierValidator;
-import java.util.List;
-import java.util.Objects;
-import java.util.stream.Collectors;
-import javax.transaction.Transactional;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
 
 @Service
 public class SoldierService{
@@ -44,6 +47,11 @@ public class SoldierService{
 	
 	public Soldier getSoldier(Integer id, Army army, CJM cjm) {
 		return getSoldierOrElseThrow(id, army , cjm);
+	}
+	
+	public Soldier getSoldier(Integer id, Integer drawListId) {
+		return soldierRepository.findActiveByDrawList(id, drawListId)
+			.orElseThrow(() -> new SoldierNotFoundException("soldier not found: " + id));
 	}
 	
 	public Soldier getSoldierByCjm(Integer id, CJM cjm) {

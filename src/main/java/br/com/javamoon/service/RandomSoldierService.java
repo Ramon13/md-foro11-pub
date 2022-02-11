@@ -1,12 +1,21 @@
 package br.com.javamoon.service;
 
-import static br.com.javamoon.validator.ValidationConstants.DRAW_SOLDIERS;
+import static br.com.javamoon.validator.ValidationConstants.DRAW_SELECTED_RANKS;
 import static br.com.javamoon.validator.ValidationConstants.NO_AVALIABLE_SOLDIERS;
 import static br.com.javamoon.validator.ValidationConstants.REPLACE_SOLDIER_IS_NOT_IN_THE_LIST;
+
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
+import java.util.stream.Collectors;
+
+import org.springframework.stereotype.Service;
+
 import br.com.javamoon.domain.cjm_user.CJM;
 import br.com.javamoon.domain.draw_exclusion.DrawExclusion;
 import br.com.javamoon.domain.repository.SoldierRepositoryImpl;
 import br.com.javamoon.domain.soldier.Army;
+import br.com.javamoon.domain.soldier.MilitaryRank;
 import br.com.javamoon.domain.soldier.NoAvaliableSoldierException;
 import br.com.javamoon.domain.soldier.Soldier;
 import br.com.javamoon.exception.DrawValidationException;
@@ -15,31 +24,31 @@ import br.com.javamoon.mapper.EntityMapper;
 import br.com.javamoon.mapper.SoldierDTO;
 import br.com.javamoon.validator.DrawValidator;
 import br.com.javamoon.validator.ValidationErrors;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
-import java.util.stream.Collectors;
-import org.springframework.stereotype.Service;
 
 @Service
 public class RandomSoldierService {
 
-	private SoldierService soldierService;
 	private DrawExclusionService drawExclusionService;
 	private SoldierRepositoryImpl soldierRepositoryImpl;
 	private DrawValidator drawValidator;
 	private final DrawListService drawListService;
 	private final MilitaryRankService militaryRankService;
+	private final SoldierService soldierService;
 
-	public RandomSoldierService(SoldierService soldierService, DrawExclusionService drawExclusionService,
-			SoldierRepositoryImpl soldierRepositoryImpl, DrawValidator drawValidator, DrawListService drawListService,
-			MilitaryRankService militaryRankService) {
-		this.soldierService = soldierService;
+	public RandomSoldierService(
+		DrawExclusionService drawExclusionService,
+		SoldierRepositoryImpl soldierRepositoryImpl,
+		DrawValidator drawValidator,
+		DrawListService drawListService,
+		MilitaryRankService militaryRankService,
+		SoldierService soldierService) {
+		
 		this.drawExclusionService = drawExclusionService;
 		this.soldierRepositoryImpl = soldierRepositoryImpl;
 		this.drawValidator = drawValidator;
 		this.drawListService = drawListService;
 		this.militaryRankService = militaryRankService;
+		this.soldierService = soldierService;
 	}
 
 	public void randomAllSoldiers(DrawDTO drawDTO, CJM cjm) throws DrawValidationException{
@@ -65,7 +74,7 @@ public class RandomSoldierService {
 				ValidationErrors errors = new ValidationErrors();
 				throw new DrawValidationException(
 					errors.add(
-						DRAW_SOLDIERS, 
+						DRAW_SELECTED_RANKS, 
 						NO_AVALIABLE_SOLDIERS + militaryRankService.getById(ranks.get(i)).getAlias())
 				);
 			}
@@ -84,15 +93,17 @@ public class RandomSoldierService {
 		}
 	}
 	
-	public int replaceRandomSoldier(DrawDTO drawDTO) {
-		Integer selectedIndex = getSelectedIndex(drawDTO.getSoldiers(), drawDTO.getReplaceSoldier());
+	public int replaceRandomSoldier(DrawDTO drawDTO) throws DrawValidationException{
+		Integer selectedIndex = getSelectedIndex(drawDTO.getSoldiers(), drawDTO.getReplaceSoldierId());
 		drawValidator.replaceSoldierValidation(drawDTO, selectedIndex);
+		soldierService.getSoldier(drawDTO.getReplaceSoldierId(), drawDTO.getSelectedDrawList());		// validate if soldier belongs to list		
 		
 		Soldier randomSoldier;
-		Integer selectedRankId = drawDTO.getSelectedRanks().get(selectedIndex);
+		MilitaryRank replaceRank = militaryRankService.getById(drawDTO.getReplaceRankId());
+		
 		try {
 			randomSoldier = getRandomSoldier(
-				selectedRankId,
+				replaceRank.getId(),
 				drawDTO.getArmy(),
 				drawDTO.getSelectedDrawList(),
 				drawDTO.getDrawnSoldiers()
@@ -102,12 +113,13 @@ public class RandomSoldierService {
 			ValidationErrors errors = new ValidationErrors();
 			throw new DrawValidationException(
 				errors.add(
-					DRAW_SOLDIERS, 
-					NO_AVALIABLE_SOLDIERS + militaryRankService.getById(selectedRankId).getAlias())
+					DRAW_SELECTED_RANKS, 
+					NO_AVALIABLE_SOLDIERS + replaceRank.getAlias())
 			);
 		} 
 		
 		drawDTO.getSoldiers().set(selectedIndex, EntityMapper.fromEntityToDTO(randomSoldier));
+		drawDTO.getSelectedRanks().set(selectedIndex, replaceRank.getId());
 		drawDTO.getDrawnSoldiers().add(randomSoldier.getId());
 		
 		if (randomSoldier.equals(drawDTO.getSubstitute()))					//TODO: no tested code
@@ -116,19 +128,17 @@ public class RandomSoldierService {
 		return selectedIndex;
 	}
 	
+	private Soldier getRandomSoldier( Integer rankId, Army army, Integer drawListId, List<Integer> drawnSoldierIds) 
+			throws NoAvaliableSoldierException{
+		
+		return soldierRepositoryImpl.randomByDrawList(rankId, army, drawListId, drawnSoldierIds);
+	}
+	
 	private int getSelectedIndex(List<SoldierDTO> soldiers, Integer replaceSoldierId) {
 		for (int i = 0; i < soldiers.size(); i++)
 			if (soldiers.get(i).getId().equals(replaceSoldierId))
 				return i;
 		
 		throw new IllegalStateException(REPLACE_SOLDIER_IS_NOT_IN_THE_LIST);
-	}
-	
-	public Soldier getRandomSoldier(
-		Integer rankId, 
-		Army army,
-		Integer drawListId,
-		List<Integer> drawnSoldierIds) throws NoAvaliableSoldierException{		
-		return soldierRepositoryImpl.randomByDrawList(rankId, army, drawListId, drawnSoldierIds);
 	}
 }

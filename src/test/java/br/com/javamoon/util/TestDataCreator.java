@@ -16,6 +16,7 @@ import static br.com.javamoon.util.Constants.DEFAULT_ORGANIZATION_NAME;
 import static br.com.javamoon.util.Constants.DEFAULT_RANK_ALIAS;
 import static br.com.javamoon.util.Constants.DEFAULT_RANK_NAME;
 import static br.com.javamoon.util.Constants.DEFAULT_RANK_WEIGHT;
+import static br.com.javamoon.util.Constants.DEFAULT_REPLACE_RANK_ID;
 import static br.com.javamoon.util.Constants.DEFAULT_REPLACE_SOLDIER_ID;
 import static br.com.javamoon.util.Constants.DEFAULT_SOLDIER_NAME;
 import static br.com.javamoon.util.Constants.DEFAULT_USER_EMAIL;
@@ -358,10 +359,11 @@ public final class TestDataCreator {
 	
 	public static DrawDTO newDrawDTO() {
 		DrawDTO drawDTO = new DrawDTO();
-		drawDTO.getSelectedRanks().addAll(Constants.DEFAULT_SELECTED_RANKS);
-		drawDTO.setArmy(newArmy());
 		drawDTO.setJusticeCouncil(getJusticeCouncil());
-		drawDTO.setReplaceSoldier(DEFAULT_REPLACE_SOLDIER_ID);
+		drawDTO.setArmy(newArmy());
+		drawDTO.setReplaceSoldierId(DEFAULT_REPLACE_SOLDIER_ID);
+		drawDTO.setReplaceRankId(DEFAULT_REPLACE_RANK_ID);
+		drawDTO.setSelectedYearQuarter(Constants.DEFAULT_DRAW_LIST_QUARTER_YEAR);
 		return drawDTO;
 	}
 }

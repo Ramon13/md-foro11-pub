@@ -1,15 +1,15 @@
 package br.com.javamoon.unit.service;
 
-import static br.com.javamoon.util.Constants.DEFAULT_REPLACE_RANK_ID;
 import static br.com.javamoon.util.Constants.DEFAULT_REPLACE_SOLDIER_ID;
 import static br.com.javamoon.util.TestDataCreator.newDrawDTO;
-import static br.com.javamoon.validator.ValidationConstants.DRAW_SOLDIERS;
+import static br.com.javamoon.validator.ValidationConstants.DRAW_SELECTED_RANKS;
 import static br.com.javamoon.validator.ValidationConstants.INCONSISTENT_DATA;
 import static br.com.javamoon.validator.ValidationConstants.NO_AVALIABLE_SOLDIERS;
 import static br.com.javamoon.validator.ValidationConstants.REPLACE_SOLDIER_IS_NOT_IN_THE_LIST;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
+import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -168,7 +168,7 @@ public class RandomSoldierServiceUnitTest {
 		DrawDTO drawDTO = newDrawDTO();
 		setupDrawDTOToRandomize(drawList, drawDTO, true, true);
 		
-		drawDTO.setReplaceSoldier(DEFAULT_REPLACE_SOLDIER_ID + 10);
+		drawDTO.setReplaceSoldierId(DEFAULT_REPLACE_SOLDIER_ID + 10);
 		
 		IllegalStateException exception = 
 				assertThrows(IllegalStateException.class, () -> victim.replaceRandomSoldier(drawDTO));
@@ -210,7 +210,7 @@ public class RandomSoldierServiceUnitTest {
 		
 		String rankAlias = militaryRankRepository.findById(1).get().getAlias();
 		assertEquals(
-			new ValidationError(DRAW_SOLDIERS, NO_AVALIABLE_SOLDIERS + rankAlias), 
+			new ValidationError(DRAW_SELECTED_RANKS, NO_AVALIABLE_SOLDIERS + rankAlias), 
 			exception.getValidationErrors().getError(0)
 		);
 	}
@@ -231,8 +231,7 @@ public class RandomSoldierServiceUnitTest {
 		}
 			
     	drawDTO.setArmy(drawList.getArmy());
-    	drawDTO.setSelectedRanks(List.of(1,1,1,1,1));
-    	drawDTO.setReplaceSoldier(DEFAULT_REPLACE_SOLDIER_ID);
+    	drawDTO.setSelectedRanks(Arrays.asList(1,1,1,1,1));
     	drawDTO.setSelectedDrawList(drawList.getId());
 	}
 	

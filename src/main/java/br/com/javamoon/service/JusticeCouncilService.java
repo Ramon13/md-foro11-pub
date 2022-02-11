@@ -24,4 +24,9 @@ public class JusticeCouncilService {
 	public List<JusticeCouncil> list(){
 		return councilRepository.findAll(); 
 	}
+	
+	public JusticeCouncil getJusticeCouncil(Integer councilId) {
+		return councilRepository.findById(councilId)
+		.orElseThrow(() -> new JusticeCouncilNotFoundException("The justice council cannot be found:" + councilId));
+	}
 }

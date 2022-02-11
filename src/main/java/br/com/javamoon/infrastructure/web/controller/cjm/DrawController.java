@@ -32,6 +32,7 @@ import br.com.javamoon.validator.ValidationUtils;
 
 import java.io.IOException;
 import java.time.LocalDate;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
@@ -44,6 +45,7 @@ import org.springframework.validation.Errors;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.SessionAttributes;
@@ -104,38 +106,18 @@ public class DrawController {
 		return new DrawDTO(armyService, councilService, drawConfigProperties);
 	}
 	
-	@GetMapping("/old/home")
-	public String drawPage(@ModelAttribute("draw") Draw draw,
-			@RequestParam(required = false) Boolean complete,
-			@RequestParam(required = false) String successMsg,
-			SessionStatus sessionStatus, Model model) {
-		
-		if (BooleanUtils.isTrue(complete)) {
-			sessionStatus.setComplete();
-			return "redirect:/mngmt/dw/home";
-		}
-		
-		model.addAttribute("successMsg", successMsg);
-		setDefaultPageAttributes(draw, model);
-		return "management/draw-home";
-	}
-	
 	@GetMapping("/home")
-	public String home(
-			@ModelAttribute("drawDTO") DrawDTO drawDTO,
-			Model model,
-			@RequestParam(required = false) Boolean complete,
-			SessionStatus sessionStatus) {
-		
-		if (BooleanUtils.isTrue(complete)) {
-			sessionStatus.setComplete();
-			return "redirect:/cjm/dw/home";
-		}
-		
+	public String home( @ModelAttribute("drawDTO") DrawDTO drawDTO, Model model) {
+		drawDTO.clearRandomSoldiers();
 		setDefaultHomeAttributes(model, drawDTO);
 		return "cjm/draw/home";
 	}
 	
+	@GetMapping("/reset")
+	public String reset(SessionStatus sessionStatus) {
+		sessionStatus.setComplete();
+		return "redirect:/cjm/dw/home";
+	}
 	
 	@GetMapping("/sdrand/all")
 	public String drawAll(@Valid @ModelAttribute("drawDTO") DrawDTO drawDTO, Errors errors, Model model) {
@@ -148,108 +130,39 @@ public class DrawController {
 			ValidationUtils.rejectValues(errors, e.getValidationErrors());
 		}
 		
-		System.out.println(drawDTO);
 		setDefaultHomeAttributes(model, drawDTO);
 		return "cjm/draw/home";
 	}
 	
-	@GetMapping("/old//sdrand/all")
-	public String drawAll(@Valid @ModelAttribute("draw") Draw draw, Errors errors, Model model) {
-		
-		if (!errors.hasErrors()) {
-			try {
-				if (draw.getDrawList().getId() == null)
-					throw new ValidationException("drawList.id", "Selecione uma lista para prosseguir.");
-				
-				CouncilType councilType = CouncilType.fromAlias(draw.getJusticeCouncil().getAlias());
-				if (councilType == CouncilType.CEJ) 
-					drawSvc.validateProcessNumber(draw.getProcessNumber(), draw.getId());
-				
-				String quarterYear = draw.getDrawList().getYearQuarter();
-				MilitaryRank[] ranks = draw.getRanks().toArray(new MilitaryRank[0]);
-				
-				if (DateUtils.isSelectableQuarter(quarterYear)
-						&& armySvc.isMilitaryRankBelongsToArmy( draw.getArmy(), ranks)) {
-					
-					randomSoldierSvc.randomAllSoldiers(draw);
-					
-					randomSoldierSvc.setSoldierExclusionMessages(draw);
-				}
-			
-			}catch(NoAvaliableSoldierException e) {
-				errors.rejectValue(
-						"ranks",
-						null,
-						String.format("Sem disponibilidade de militares para o posto: %s", e.getMessage()));
-				e.printStackTrace();
-			
-			}catch(ValidationException e) {
-				errors.rejectValue(e.getFieldName(), null, e.getMessage());
-				e.printStackTrace();
-			}
+	@GetMapping("/sdrand/replace")
+	public String replaceSoldier(
+			@ModelAttribute("drawDTO") DrawDTO drawDTO,
+			Errors errors,
+ 			Model model) {
+	
+		try {
+			int replacedIndex = randomSoldierService.replaceRandomSoldier(drawDTO);
+			randomSoldierService.setSoldierExclusionMessages(
+				Arrays.asList(drawDTO.getSoldiers().get(replacedIndex)),
+				drawDTO.getSelectedYearQuarter()
+			);
+		} catch (DrawValidationException e) {
+			e.printStackTrace();
+			ValidationUtils.rejectValues(errors, e.getValidationErrors());
 		}
-		
-		setDefaultPageAttributes(draw, model);
-		return "management/draw-home";
+
+		setDefaultHomeAttributes(model, drawDTO);
+		return "cjm/draw/home";
 	}
 	
-	@GetMapping("/sdrand/replace")
-	public String replaceSoldier() {
+	@PostMapping("/save")
+	public String save(
+			@Valid @ModelAttribute("draw") Draw draw,
+			Errors errors,
+			Model model) throws IOException {
+		
 		
 		return null;
-	}
-	
-	@GetMapping("/sdrand/replace/{replaceRankId}/{replaceSoldierId}")
-	public String replaceDrawSoldier(@Valid @ModelAttribute("draw") Draw draw, Errors errors,
-			@PathVariable Integer replaceRankId,
-			@PathVariable Integer replaceSoldierId,
-			Model model) {
-		
-		try {
-			Soldier replaceSoldier = soldierRepo.findById(replaceSoldierId).orElseThrow();
-			MilitaryRank replaceRank = rankRepo.findById(replaceRankId).orElseThrow();
-			
-			if (armySvc.isMilitaryRankBelongsToArmy(draw.getArmy(), replaceRank)) {
-				
-				Soldier newSoldier = 
-						randomSoldierSvc.replaceRandomSoldier(replaceSoldier, draw, replaceRank);
-				
-				randomSoldierSvc.setSoldierExclusionMessages(newSoldier, draw);
-			}
-		}catch(NoAvaliableSoldierException e) {
-			errors.rejectValue(
-					"ranks",
-					null,
-					String.format("Sem disponibilidade de militares para o posto: %s", e.getMessage()));
-			e.printStackTrace();
-		}
-	
-		setDefaultPageAttributes(draw, model);
-		
-		if (draw.getId() != null)
-			ControllerHelper.setEditMode(model, true);
-		
-		return "management/draw-home";
-	}
-	
-	@GetMapping("/save")
-	public String saveDraw(@Valid @ModelAttribute("draw") Draw draw, Errors errors,
-			Model model, SessionStatus sessionStatus) throws IOException {
-		
-		try {
-			draw.setCjmUser(SecurityUtils.cjmUser());
-			drawSvc.save(draw);
-			
-			sessionStatus.setComplete();
-			return ControllerHelper.getRedirectURL(
-					"/mngmt/dw/home",
-					Collections.singletonMap("successMsg", "O sorteio foi salvo"));
-		} catch(Exception e) {
-			e.printStackTrace();
-		}
-		
-		setDefaultPageAttributes(draw, model);
-		return "management/draw-home";
 	}
 	
 	@GetMapping("/edit/{drawId}")

@@ -62,6 +62,9 @@ public interface SoldierRepository extends JpaRepository<Soldier, Integer>{
 			+ " WHERE dl.id = :drawListId AND s.active = true ORDER BY s.name")
 	List<Soldier> findAllActiveByDrawList(@Param("drawListId") Integer drawListId);
 	
+	@Query("SELECT s FROM DrawList dl JOIN dl.soldiers s WHERE s.id = :soldierId AND dl.id = :drawListId")
+	Optional<Soldier> findActiveByDrawList(@Param("soldierId") Integer soldierId, @Param("drawListId") Integer drawListId);
+	
 	@Query(
 		"FROM Soldier s LEFT JOIN FETCH s.militaryOrganization " + 
 	    "WHERE s.active = true AND s.army = :army AND s.cjm = :cjm AND s.id IN :ids"
