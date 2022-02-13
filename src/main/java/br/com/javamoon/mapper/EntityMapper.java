@@ -7,6 +7,7 @@ import br.com.javamoon.domain.entity.DrawList;
 import br.com.javamoon.domain.entity.GroupUser;
 import br.com.javamoon.domain.soldier.Soldier;
 import br.com.javamoon.infrastructure.web.security.Role;
+import java.util.stream.Collectors;
 
 public final class EntityMapper {
 
@@ -131,6 +132,9 @@ public final class EntityMapper {
     	drawDTO.setArmy(draw.getArmy());
     	drawDTO.setJusticeCouncil(draw.getJusticeCouncil());
     	drawDTO.setSelectedDrawList(draw.getDrawList().getId());
+    	drawDTO.setSelectedYearQuarter(draw.getDrawList().getYearQuarter());
+    	drawDTO.setSoldiers(draw.getSoldiers().stream().map(s -> fromEntityToDTO(s)).collect(Collectors.toList()));
+    	drawDTO.setSelectedRanks(draw.getSoldiers().stream().map(s -> s.getMilitaryRank().getId()).collect(Collectors.toList()));
     	return drawDTO;
     }
 }

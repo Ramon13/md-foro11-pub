@@ -11,6 +11,7 @@ public final class Constants {
 	public static final String DEFAULT_USER_PASSWORD = "QWE123qwe";
 	public static final String DEFAULT_USER_EMAIL = "john@contact.com";
 	
+	public static final Integer DEFAULT_ARMY_ID = 1;
 	public static final String DEFAULT_ARMY_NAME = "Exército";
 	public static final String DEFAULT_ARMY_ALIAS = "EB";
 	
@@ -21,8 +22,10 @@ public final class Constants {
 	public static final String DEFAULT_AUDITORSHIP_NAME = "1ª Auditoria da 1ª CJM";
 	
 	public static final String DEFAULT_COUNCIl_ALIAS = "CPJ";
-	public static final String DEFAULT_COUNCIl_NAME = "Conselho Especial De Justiça";
-	public static final int DEFAULT_COUNCIl_SIZE = 5;
+	public static final String CEJ_COUNCIl_ALIAS = "CEJ";
+	public static final String DEFAULT_COUNCIl_NAME = "Conselho Permanente De Justiça";
+	public static final Integer DEFAULT_COUNCIL_ID = 1;
+	public static final Integer DEFAULT_COUNCIL_SIZE = 5;
 	
 	public static final String PASSWORD_NO_UPPERCASE = "qwe123qwe";
 	public static final String PASSWORD_NO_LOWER = "QWE123QWE";
@@ -39,9 +42,15 @@ public final class Constants {
     public static final String DEFAULT_EXCLUSION_MESSAGE = "Férias em acapulco";
 
     public static final String DEFAULT_DRAW_LIST_DESCRIPTION = "Primeira lista exército 4º trimestre de 2021";
+    public static final Integer DEFAULT_DRAW_LIST_ID = 1;
     public static final String DEFAULT_DRAW_LIST_QUARTER_YEAR = DateUtils.toQuarterFormat(LocalDate.now());
     
     public static final List<Integer> DEFAULT_SELECTED_RANKS = List.of(1,2,3,4,5);
+    public static final List<Integer> DEFAULT_SELECTED_SOLDIERS = List.of(1,2,3,4,5);
     public static final Integer DEFAULT_REPLACE_SOLDIER_ID = 1;
     public static final Integer DEFAULT_REPLACE_RANK_ID = 1;
+    
+    public static final String DEFAULT_PROCESS_NUMBER = "0000000000-0";
 }
+
+

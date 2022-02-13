@@ -15,6 +15,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import br.com.javamoon.domain.cjm_user.Auditorship;
+import br.com.javamoon.domain.cjm_user.CJM;
 import br.com.javamoon.domain.draw.CouncilType;
 import br.com.javamoon.domain.draw.Draw;
 import br.com.javamoon.domain.repository.DrawRepository;
@@ -24,6 +25,7 @@ import br.com.javamoon.log.Alert;
 import br.com.javamoon.mapper.DrawDTO;
 import br.com.javamoon.util.DateUtils;
 import br.com.javamoon.util.StringUtils;
+import br.com.javamoon.validator.DrawValidator;
 import net.sf.jasperreports.engine.data.JRBeanCollectionDataSource;
 
 @Service
@@ -35,18 +37,18 @@ public class DrawService {
 	
 	private SoldierRepository soldierRepository;
 	
-	private SoldierService soldierSvc;
+	private DrawValidator drawValidator;
 	
 	public DrawService(
 		PdfService pdfService,
 		DrawRepository drawRepository,
 		SoldierRepository soldierRepository,
-		SoldierService soldierSvc) {
+		DrawValidator drawValidator) {
 		
 		this.pdfService = pdfService;
 		this.drawRepository = drawRepository;
 		this.soldierRepository = soldierRepository;
-		this.soldierSvc = soldierSvc;
+		this.drawValidator = drawValidator;
 	}
 
 
@@ -72,9 +74,8 @@ public class DrawService {
 		drawRepository.save(draw);
 	}
 	
-	
-	public void save(DrawDTO drawDTO) {
-		
+	public void save(DrawDTO drawDTO, CJM cjm) {
+		drawValidator.saveDrawValidation(drawDTO, cjm);
 	}
 	
 	public Alert generateUnfinishedCEJAlert(Auditorship auditorship){

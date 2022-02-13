@@ -41,6 +41,8 @@ public final class ValidationConstants {
     public static final String PROCESS_NUMBER_ALREADY_EXISTS = "Processo já cadastrado em outro sorteio";
     public static final String REPLACE_SOLDIER_IS_NOT_IN_THE_LIST = "O militar a ser substituído não encontra-se na lista";
     public static final String RANK_LIST_INVALID_SIZE = "A lista de postos não corresponde ao tamanho do conselho.";
+    public static final String SOLDIER_LIST_INVALID_SIZE = "A lista de militares não corresponde ao tamanho do conselho.";
+    public static final String SOLDIER_LIST_INVALID_RANK = "O posto selecionado não corresponde ao militar sorteado.";
     public static final String DRAW_QUARTER_YEAR_OUT_OF_BOUNDS = "Trimestre inválido. O trimestre não pode ser selecionado.";
     
     public static final String EQUALS_DATES = "Datas iguais";

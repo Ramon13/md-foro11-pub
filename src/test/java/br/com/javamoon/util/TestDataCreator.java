@@ -6,9 +6,10 @@ import static br.com.javamoon.util.Constants.DEFAULT_AUDITORSHIP_NAME;
 import static br.com.javamoon.util.Constants.DEFAULT_CJM_ALIAS;
 import static br.com.javamoon.util.Constants.DEFAULT_CJM_NAME;
 import static br.com.javamoon.util.Constants.DEFAULT_CJM_REGIONS;
+import static br.com.javamoon.util.Constants.DEFAULT_COUNCIL_ID;
+import static br.com.javamoon.util.Constants.DEFAULT_COUNCIL_SIZE;
 import static br.com.javamoon.util.Constants.DEFAULT_COUNCIl_ALIAS;
 import static br.com.javamoon.util.Constants.DEFAULT_COUNCIl_NAME;
-import static br.com.javamoon.util.Constants.DEFAULT_COUNCIl_SIZE;
 import static br.com.javamoon.util.Constants.DEFAULT_DRAW_LIST_QUARTER_YEAR;
 import static br.com.javamoon.util.Constants.DEFAULT_EXCLUSION_MESSAGE;
 import static br.com.javamoon.util.Constants.DEFAULT_ORGANIZATION_ALIAS;
@@ -24,14 +25,6 @@ import static br.com.javamoon.util.Constants.DEFAULT_USER_PASSWORD;
 import static br.com.javamoon.util.Constants.DEFAULT_USER_USERNAME;
 import static br.com.javamoon.validator.ValidationConstants.SOLDIER_EMAIL_MAX_LEN;
 import static br.com.javamoon.validator.ValidationConstants.SOLDIER_NAME_MAX_LEN;
-
-import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.stream.Collectors;
-
-import org.apache.commons.lang3.StringUtils;
-
 import br.com.javamoon.domain.cjm_user.Auditorship;
 import br.com.javamoon.domain.cjm_user.AuditorshipRepository;
 import br.com.javamoon.domain.cjm_user.CJM;
@@ -44,6 +37,7 @@ import br.com.javamoon.domain.entity.DrawList;
 import br.com.javamoon.domain.entity.GroupUser;
 import br.com.javamoon.domain.repository.CJMUserRepository;
 import br.com.javamoon.domain.repository.DrawListRepository;
+import br.com.javamoon.domain.repository.DrawRepository;
 import br.com.javamoon.domain.repository.GroupUserRepository;
 import br.com.javamoon.domain.repository.SoldierRepository;
 import br.com.javamoon.domain.soldier.Army;
@@ -60,11 +54,19 @@ import br.com.javamoon.mapper.DrawListDTO;
 import br.com.javamoon.mapper.EntityMapper;
 import br.com.javamoon.mapper.SoldierDTO;
 import br.com.javamoon.mapper.UserDTO;
+import br.com.javamoon.service.ArmyService;
+import br.com.javamoon.service.DrawListService;
+import br.com.javamoon.service.JusticeCouncilService;
 import br.com.javamoon.validator.DrawExclusionValidator;
 import br.com.javamoon.validator.DrawListValidator;
 import br.com.javamoon.validator.DrawValidator;
 import br.com.javamoon.validator.SoldierValidator;
 import br.com.javamoon.validator.UserAccountValidator;
+import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.stream.Collectors;
+import org.apache.commons.lang3.StringUtils;
 
 public final class TestDataCreator {
 
@@ -83,8 +85,13 @@ public final class TestDataCreator {
 		return new SoldierValidator(soldierRepository, organizationRepository, militaryRankRepository);
 	}
 	
-	public static DrawValidator newDrawValidator(MilitaryRankRepository rankRepository) {
-		return new DrawValidator(rankRepository);
+	public static DrawValidator newDrawValidator(
+			MilitaryRankRepository militaryRankRepository,
+			DrawRepository drawRepository,
+			JusticeCouncilService justiceCouncilService,
+			ArmyService amryService,
+			DrawListService drawListService) {
+		return new DrawValidator(militaryRankRepository, drawRepository, justiceCouncilService, amryService, drawListService);
 	}
 	
 	public static DrawExclusionValidator newExclusionValidator() {
@@ -351,9 +358,10 @@ public final class TestDataCreator {
 	
 	public static JusticeCouncil getJusticeCouncil() {
 		JusticeCouncil justiceCouncil = new JusticeCouncil();
+		justiceCouncil.setId(DEFAULT_COUNCIL_ID);
 		justiceCouncil.setAlias(DEFAULT_COUNCIl_ALIAS);
 		justiceCouncil.setName(DEFAULT_COUNCIl_NAME);
-		justiceCouncil.setCouncilSize(DEFAULT_COUNCIl_SIZE);
+		justiceCouncil.setCouncilSize(DEFAULT_COUNCIL_SIZE);
 		return justiceCouncil;
 	}
 	

@@ -16,6 +16,6 @@ public enum CouncilType {
 	}
 	
 	public static CouncilType fromAlias(String alias) {
-		return alias.equals(CPJ.toString()) ? CPJ : CEJ;
+		return CPJ.toString().equals(alias) ? CPJ : CEJ;
 	}
 }
