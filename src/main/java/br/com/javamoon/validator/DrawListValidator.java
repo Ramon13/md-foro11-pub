@@ -8,9 +8,9 @@ import static br.com.javamoon.validator.ValidationConstants.DRAW_LIST_QUARTER_YE
 import static br.com.javamoon.validator.ValidationConstants.DRAW_LIST_QUARTER_YEAR_OUT_OF_BOUNDS;
 import static br.com.javamoon.validator.ValidationConstants.DRAW_LIST_SELECTED_SOLDIERS_BELOW_MIN_LEN;
 import br.com.javamoon.domain.cjm_user.CJM;
+import br.com.javamoon.domain.entity.Army;
 import br.com.javamoon.domain.entity.DrawList;
 import br.com.javamoon.domain.repository.DrawListRepository;
-import br.com.javamoon.domain.soldier.Army;
 import br.com.javamoon.exception.DrawListValidationException;
 import br.com.javamoon.mapper.DrawListDTO;
 import br.com.javamoon.util.DateUtils;

@@ -1,7 +1,7 @@
 package br.com.javamoon.domain.draw_exclusion;
 
 import br.com.javamoon.domain.entity.GroupUser;
-import br.com.javamoon.domain.soldier.Soldier;
+import br.com.javamoon.domain.entity.Soldier;
 import br.com.javamoon.util.DateUtils;
 import java.io.Serializable;
 import java.time.LocalDate;

@@ -1,8 +1,8 @@
 package br.com.javamoon.service;
 
-import br.com.javamoon.domain.soldier.Army;
-import br.com.javamoon.domain.soldier.MilitaryOrganization;
-import br.com.javamoon.domain.soldier.MilitaryOrganizationRepository;
+import br.com.javamoon.domain.entity.Army;
+import br.com.javamoon.domain.entity.MilitaryOrganization;
+import br.com.javamoon.domain.repository.MilitaryOrganizationRepository;
 import java.util.List;
 import org.springframework.stereotype.Service;
 

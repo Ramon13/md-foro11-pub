@@ -1,7 +1,7 @@
 package br.com.javamoon.mapper;
 
 import br.com.javamoon.domain.cjm_user.CJM;
-import br.com.javamoon.domain.soldier.Army;
+import br.com.javamoon.domain.entity.Army;
 import br.com.javamoon.infrastructure.web.security.Role;
 import br.com.javamoon.util.StringUtils;
 import java.util.ArrayList;

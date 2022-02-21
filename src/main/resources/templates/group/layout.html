@@ -1,50 +1,52 @@
 <!-- TODO test recaptchav3 on localhost -->
 <!DOCTYPE html>
-<html
-  xmlns="http://www.w3.org/1999/xhtml"
+<html xmlns="http://www.w3.org/1999/xhtml"
   xmlns:th="http://www.thymeleaf.org">
-  <head>
-    <meta charset="utf-8" />
-    <title>Sorteio de Juízes Militares</title>
-    <link th:href="@{/styles/global.css}" type="text/css" rel="stylesheet" />
-    <link th:href="@{/styles/pagination-search-list.css}" type="text/css" rel="stylesheet" />
-    <link th:href="@{/styles/dropdown.css}" type="text/css" rel="stylesheet" />
-    <script type="text/javascript" th:src="@{/scripts/global.js}"></script>
-    <script src="https://www.google.com/recaptcha/api.js" async defer></script>
-    <style layout:fragment="style"></style>
-    <style>
-      body{
-        width: 65% !important;
-      }
-    </style>
-  </head>
-  <body>
-    <header>
-      <div id="appHBar">
-        <a id="appTitle" th:href="@{/gp/home}">Sorteio de Juízes Militares</a>
-        <span id="spanLoggedUser" th:text="${#authentication.principal.user.username}"></span>
-      </div>
-    </header>
-    <!-- end header -->
-    <!-- content -->
-    <div id="vMenu">
-      <ul>
-        <li class="vMenu-sub" th:if="${session.accountScope}">
-          <span>Gerenciamento de acesso</span>
-          <ul>
-            <li class="vMenu-link"><a th:href="@{/gp/accounts/list/home}">Usuários cadastrados</a></li>
-            <li class="vMenu-link"><a th:href="@{/gp/accounts/register/home}">Novo usuário</a></li>
-          </ul>
-        </li>
-        <li class="vMenu-sub">
-          <span>Sorteios</span>
-          <ul>
-            <li class="vMenu-link"><a th:href="@{/gp/dw/list}">Listas</a></li>
-            <li class="vMenu-link"><a th:href="@{/gp/sd/list/home}">Militares Cadastrados</a></li>
-            <li class="vMenu-link"><a th:href="@{/gp/cjm/dw}">Sorteios Realizados</a></li>
-            <li class="vMenu-link"><a th:href="@{/logout}">Sair</a></li>
-          </ul> 
-          <!--
+<head>
+<meta charset="utf-8" />
+<title>Sorteio de Juízes Militares</title>
+<link th:href="@{/styles/global.css}" type="text/css" rel="stylesheet" />
+<link th:href="@{/styles/pagination-search-list.css}" type="text/css"
+  rel="stylesheet" />
+<link th:href="@{/styles/dropdown.css}" type="text/css" rel="stylesheet" />
+<script type="text/javascript" th:src="@{/scripts/global.js}"></script>
+<script src="https://www.google.com/recaptcha/api.js" async defer></script>
+<style layout:fragment="style"></style>
+<style>
+body {
+	width: 65% !important;
+}
+</style>
+</head>
+<body>
+  <header>
+    <div id="appHBar">
+      <a id="appTitle" th:href="@{/gp/home}">Sorteio de Juízes
+        Militares</a> <span id="spanLoggedUser"
+        th:text="${#authentication.principal.user.username}"></span>
+    </div>
+  </header>
+  <!-- end header -->
+  <!-- content -->
+  <div id="vMenu">
+    <ul>
+      <li class="vMenu-sub" th:if="${session.accountScope}"><span>Gerenciamento
+          de acesso</span>
+        <ul>
+          <li class="vMenu-link"><a
+            th:href="@{/gp/accounts/list/home}">Usuários cadastrados</a></li>
+          <li class="vMenu-link"><a
+            th:href="@{/gp/accounts/register/home}">Novo usuário</a></li>
+        </ul></li>
+      <li class="vMenu-sub"><span>Sorteios</span>
+        <ul>
+          <li class="vMenu-link"><a th:href="@{/gp/dw/list}">Listas</a></li>
+          <li class="vMenu-link"><a th:href="@{/gp/sd/list/home}">Militares
+              Cadastrados</a></li>
+          <li class="vMenu-link"><a th:href="@{/gp/cjm/dw}">Sorteios
+              Realizados</a></li>
+          <li class="vMenu-link"><a th:href="@{/logout}">Sair</a></li>
+        </ul> <!--
           <li class="vMenu-sub">
             <span>Conta</span>
             <ul>
@@ -52,10 +54,10 @@
             </ul>
           </li>
           -->
-      </ul>
-    </div>
-    <div id="content" layout:fragment="content"></div>
-    <script layout:fragment="page-script"></script>
-    <!-- footer -->
-  </body>
+    </ul>
+  </div>
+  <div id="content" layout:fragment="content"></div>
+  <script layout:fragment="page-script"></script>
+  <!-- footer -->
+</body>
 </html>

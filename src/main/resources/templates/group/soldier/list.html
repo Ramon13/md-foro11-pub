@@ -1,66 +1,72 @@
 <!DOCTYPE html>
-<html
-  xmlns="http://www.w3.org/1999/xhtml"
+<html xmlns="http://www.w3.org/1999/xhtml"
   xmlns:th="http://www.thymeleaf.org" layout:decorate="~{group/layout}">
-  
-  <style layout:fragment="style">    
-    tbody.soldier:hover{
-      cursor: pointer;
-    }
-  </style>
-  <body>
-    <div layout:fragment="content">
-      <h1>Militares Cadastrados</h1>
-      <hr />
-       
-      <div id="paginationSearchMenu">
-        <form method="GET" id="paginationForm">
-	        <input id="selectedPage" name="selectedPage" type="hidden" th:value="${filter.selectedPage}"/>
-	        <input id="firstResult" name="firstResult" type="hidden" th:value="${filter.firstResult}"/>
-	        <input id="lastResult" name="lastResult" type="hidden" th:value="${filter.lastResult}"/>
-	        <input id="total" name="total" type="hidden" th:value="${filter.total}"/>
-	        
-	        <div id="pages" class="pages">
-	        </div>  
-	        <div id="search">
-	          <input id="searchInput" class="app-txtinput" name="key" th:value='${filter.key}' type="text" placeholder="Pesquisar...">
-	          <input id="searchBtn" type="submit" value="buscar" class="app-green-btn">
-	        </div>
-	      </form>
-        
-        <script type="text/javascript" th:src="@{/scripts/pagination-search-list.js}"></script>
-      </div>
-      <br/><br/>
-      
-      <div th:if="${session.listScope}" id="newSoldier">
-        <a th:href="@{/gp/sd/register/home}">Novo Militar</a>
-      </div>
-      <br/><br/>    
-      
-      <table id="soldiers">
-        <thead>
-          <tr>
-            <th>Nome</th>
-            <th>OM</th>
-            <th>Posto</th>
-          </tr>
-        </thead>
-        <tbody th:each="soldier : ${soldiersPagination.soldiers}"
-          th:classappend="${session.listScope} ? 'soldier' : ''"
-          th:attr="data-sdprofile=${session.listScope} ? @{/gp/sd/profile/home/} + ${soldier.id} : ''">
-          <tr>
-            <td><span th:text="${soldier.getIdInfoAsText()}"></span></td>
-            
-            <td><span th:text="${soldier.militaryOrganization.alias}"></span></td>
-            
-            <td><span th:text="${soldier.militaryRank.alias}"></span></td>     
-          </tr>
-          
-        </tbody>
-      </table>
+
+<style layout:fragment="style">
+tbody.soldier:hover {
+	cursor: pointer;
+}
+</style>
+<body>
+  <div layout:fragment="content">
+    <h1>Militares Cadastrados</h1>
+    <hr />
+
+    <div id="paginationSearchMenu">
+      <form method="GET" id="paginationForm">
+        <input id="selectedPage" name="selectedPage" type="hidden"
+          th:value="${filter.selectedPage}" /> <input id="firstResult"
+          name="firstResult" type="hidden"
+          th:value="${filter.firstResult}" /> <input id="lastResult"
+          name="lastResult" type="hidden"
+          th:value="${filter.lastResult}" /> <input id="total"
+          name="total" type="hidden" th:value="${filter.total}" />
+
+        <div id="pages" class="pages"></div>
+        <div id="search">
+          <input id="searchInput" class="app-txtinput" name="key"
+            th:value='${filter.key}' type="text"
+            placeholder="Pesquisar..."> <input id="searchBtn"
+            type="submit" value="buscar" class="app-green-btn">
+        </div>
+      </form>
+
+      <script type="text/javascript"
+        th:src="@{/scripts/pagination-search-list.js}"></script>
     </div>
-    
-    <script layout:fragment="page-script" th:inline="javascript">
+    <br />
+    <br />
+
+    <div th:if="${session.listScope}" id="newSoldier">
+      <a th:href="@{/gp/sd/register/home}">Novo Militar</a>
+    </div>
+    <br />
+    <br />
+
+    <table id="soldiers">
+      <thead>
+        <tr>
+          <th>Nome</th>
+          <th>OM</th>
+          <th>Posto</th>
+        </tr>
+      </thead>
+      <tbody th:each="soldier : ${soldiersPagination.soldiers}"
+        th:classappend="${session.listScope} ? 'soldier' : ''"
+        th:attr="data-sdprofile=${session.listScope} ? @{/gp/sd/profile/home/} + ${soldier.id} : ''">
+        <tr>
+          <td><span th:text="${soldier.getIdInfoAsText()}"></span></td>
+
+          <td><span th:text="${soldier.militaryOrganization.alias}"></span></td>
+
+          <td><span th:text="${soldier.militaryRank.alias}"></span></td>
+        </tr>
+
+      </tbody>
+    </table>
+  </div>
+
+  <script layout:fragment="page-script" th:inline="javascript">
       historyPush();
       const soldiers = document.querySelectorAll("tbody.soldier");
       
@@ -71,5 +77,5 @@
         });	
       }
     </script>
-  </body>
+</body>
 </html>

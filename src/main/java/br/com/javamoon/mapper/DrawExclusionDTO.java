@@ -1,11 +1,10 @@
 package br.com.javamoon.mapper;
 
 import br.com.javamoon.domain.entity.GroupUser;
-import br.com.javamoon.domain.soldier.Soldier;
+import br.com.javamoon.domain.entity.Soldier;
 import br.com.javamoon.util.DateUtils;
 import java.time.LocalDate;
 import java.util.Objects;
-
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import org.hibernate.validator.constraints.Length;

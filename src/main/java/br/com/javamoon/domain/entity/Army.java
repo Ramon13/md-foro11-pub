@@ -1,7 +1,6 @@
-package br.com.javamoon.domain.soldier;
+package br.com.javamoon.domain.entity;
 
 import br.com.javamoon.domain.draw.Draw;
-import br.com.javamoon.domain.entity.GroupUser;
 import java.io.Serializable;
 import java.util.HashSet;
 import java.util.Set;

@@ -4,11 +4,10 @@ import br.com.javamoon.domain.cjm_user.Auditorship;
 import br.com.javamoon.domain.cjm_user.CJM;
 import br.com.javamoon.domain.draw.Draw;
 import br.com.javamoon.domain.draw.JusticeCouncil;
-import br.com.javamoon.domain.soldier.Army;
+import br.com.javamoon.domain.entity.Army;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
-
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -66,4 +65,10 @@ public interface DrawRepository extends JpaRepository<Draw, Integer>{
 		@Param("councilAlias") String councilAlias,
 		@Param("soldierId") Integer soldierId
 	);
+	
+	@Query("FROM Draw d WHERE d.cjmUser.auditorship.id = :auditorshipId")
+	List<Draw> findAllByAuditorship(@Param("auditorshipId") Integer auditorshipId);
+	
+	@Query("FROM Draw d WHERE d.id = :drawId AND d.cjmUser.auditorship.id = :auditorshipId")
+	Optional<Draw> findByIdAndAuditorship(@Param("drawId") Integer drawId, @Param("auditorshipId") Integer auditorshipId);
 }

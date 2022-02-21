@@ -5,7 +5,8 @@ import br.com.javamoon.domain.draw_exclusion.DrawExclusion;
 import br.com.javamoon.domain.entity.CJMUser;
 import br.com.javamoon.domain.entity.DrawList;
 import br.com.javamoon.domain.entity.GroupUser;
-import br.com.javamoon.domain.soldier.Soldier;
+import br.com.javamoon.domain.entity.MilitaryRank;
+import br.com.javamoon.domain.entity.Soldier;
 import br.com.javamoon.infrastructure.web.security.Role;
 import java.util.stream.Collectors;
 
@@ -116,6 +117,7 @@ public final class EntityMapper {
     
     public static DrawList fromDTOToEntity(DrawListDTO drawListDTO) {
     	DrawList drawList = new DrawList();
+    	drawList.setId(drawListDTO.getId());
     	drawList.setDescription(drawListDTO.getDescription());
     	drawList.setYearQuarter(drawListDTO.getYearQuarter());
     	drawList.setEnableForDraw(drawListDTO.getEnableForDraw());
@@ -135,6 +137,22 @@ public final class EntityMapper {
     	drawDTO.setSelectedYearQuarter(draw.getDrawList().getYearQuarter());
     	drawDTO.setSoldiers(draw.getSoldiers().stream().map(s -> fromEntityToDTO(s)).collect(Collectors.toList()));
     	drawDTO.setSelectedRanks(draw.getSoldiers().stream().map(s -> s.getMilitaryRank().getId()).collect(Collectors.toList()));
+    	drawDTO.setSubstitute(draw.getSubstitute());
+    	drawDTO.getDrawnSoldiers().addAll(draw.getSoldiers().stream().map(s -> s.getId()).collect(Collectors.toList()));
     	return drawDTO;
+    }
+    
+    public static Draw fromDTOToEntity(DrawDTO drawDTO) {
+    	Draw draw = new Draw();
+    	draw.setId(drawDTO.getId());
+    	draw.setArmy(drawDTO.getArmy());
+    	draw.setJusticeCouncil(drawDTO.getJusticeCouncil());
+    	draw.setSoldiers(drawDTO.getSoldiers().stream().map(s -> fromDTOToEntity(s)).collect(Collectors.toList()));
+    	draw.setProcessNumber(drawDTO.getProcessNumber());
+    	return draw;
+    }
+    
+    public static MilitaryRankDTO fromEntityToDTO(MilitaryRank rank) {
+    	return new MilitaryRankDTO(rank.getId(), rank.getName());
     }
 }

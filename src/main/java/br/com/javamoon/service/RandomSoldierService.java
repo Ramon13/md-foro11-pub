@@ -3,27 +3,24 @@ package br.com.javamoon.service;
 import static br.com.javamoon.validator.ValidationConstants.DRAW_SELECTED_RANKS;
 import static br.com.javamoon.validator.ValidationConstants.NO_AVALIABLE_SOLDIERS;
 import static br.com.javamoon.validator.ValidationConstants.REPLACE_SOLDIER_IS_NOT_IN_THE_LIST;
-
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
-import java.util.stream.Collectors;
-
-import org.springframework.stereotype.Service;
-
 import br.com.javamoon.domain.cjm_user.CJM;
 import br.com.javamoon.domain.draw_exclusion.DrawExclusion;
+import br.com.javamoon.domain.entity.Army;
+import br.com.javamoon.domain.entity.MilitaryRank;
+import br.com.javamoon.domain.entity.Soldier;
 import br.com.javamoon.domain.repository.SoldierRepositoryImpl;
-import br.com.javamoon.domain.soldier.Army;
-import br.com.javamoon.domain.soldier.MilitaryRank;
-import br.com.javamoon.domain.soldier.NoAvaliableSoldierException;
-import br.com.javamoon.domain.soldier.Soldier;
 import br.com.javamoon.exception.DrawValidationException;
+import br.com.javamoon.exception.NoAvaliableSoldierException;
 import br.com.javamoon.mapper.DrawDTO;
 import br.com.javamoon.mapper.EntityMapper;
 import br.com.javamoon.mapper.SoldierDTO;
 import br.com.javamoon.validator.DrawValidator;
 import br.com.javamoon.validator.ValidationErrors;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
+import java.util.stream.Collectors;
+import org.springframework.stereotype.Service;
 
 @Service
 public class RandomSoldierService {

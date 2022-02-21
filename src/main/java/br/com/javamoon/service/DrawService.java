@@ -1,31 +1,33 @@
 package br.com.javamoon.service;
 
-import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.TreeMap;
-
-import javax.transaction.Transactional;
-
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-
 import br.com.javamoon.domain.cjm_user.Auditorship;
 import br.com.javamoon.domain.cjm_user.CJM;
 import br.com.javamoon.domain.draw.CouncilType;
 import br.com.javamoon.domain.draw.Draw;
+import br.com.javamoon.domain.draw.JusticeCouncil;
+import br.com.javamoon.domain.entity.Army;
+import br.com.javamoon.domain.entity.CJMUser;
+import br.com.javamoon.domain.entity.Soldier;
 import br.com.javamoon.domain.repository.DrawRepository;
 import br.com.javamoon.domain.repository.SoldierRepository;
-import br.com.javamoon.domain.soldier.Soldier;
-import br.com.javamoon.log.Alert;
+import br.com.javamoon.exception.DrawNotFoundException;
+import br.com.javamoon.exception.DrawValidationException;
 import br.com.javamoon.mapper.DrawDTO;
+import br.com.javamoon.mapper.EntityMapper;
+import br.com.javamoon.mapper.SoldierDTO;
 import br.com.javamoon.util.DateUtils;
-import br.com.javamoon.util.StringUtils;
 import br.com.javamoon.validator.DrawValidator;
+import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import java.util.TreeMap;
+import java.util.stream.Collectors;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import net.sf.jasperreports.engine.data.JRBeanCollectionDataSource;
 
 @Service
@@ -39,51 +41,56 @@ public class DrawService {
 	
 	private DrawValidator drawValidator;
 	
+	private DrawListService drawListService;
+	
+	private AuditorshipService auditorshipService;
+	
 	public DrawService(
 		PdfService pdfService,
 		DrawRepository drawRepository,
 		SoldierRepository soldierRepository,
-		DrawValidator drawValidator) {
+		DrawValidator drawValidator,
+		DrawListService drawListService,
+		AuditorshipService auditorshipService) {
 		
 		this.pdfService = pdfService;
 		this.drawRepository = drawRepository;
 		this.soldierRepository = soldierRepository;
 		this.drawValidator = drawValidator;
+		this.drawListService = drawListService;
+		this.auditorshipService = auditorshipService;
 	}
-
-
+	
 	@Transactional
-	public void saveOld(Draw draw) throws ValidationException, ApplicationServiceException {
-		CouncilType councilType = CouncilType.fromAlias(draw.getJusticeCouncil().getAlias());
-		
-		validateSoldiersAmount(councilType, draw.getSoldiers());
-		
-		List<Soldier> selectedSoldiers = getSelectedSoldiers(draw, councilType);
-		draw.setSoldiers(selectedSoldiers);
-		
-		if (councilType == CouncilType.CEJ) {
-			draw.setFinished(Boolean.FALSE);
-		}
-	
-		if (councilType == CouncilType.CPJ) {
-			if (draw.getSubstitute() == null) {
-				draw.setSubstitute(draw.getSoldiers().get(1)); //the substitute soldiers always comes in the second position
-			}
-		}
-		
-		drawRepository.save(draw);
-	}
-	
-	public void save(DrawDTO drawDTO, CJM cjm) {
+	public void save(DrawDTO drawDTO, CJMUser loggedUser) throws DrawValidationException{
+		CJM cjm = loggedUser.getAuditorship().getCjm();
 		drawValidator.saveDrawValidation(drawDTO, cjm);
+		
+		Draw newDraw = EntityMapper.fromDTOToEntity(drawDTO);
+		newDraw.setCjmUser(loggedUser);
+		newDraw.setDrawList(EntityMapper.fromDTOToEntity(drawListService.getList(drawDTO.getSelectedDrawList(), cjm)));
+		
+		drawRepository.save(newDraw);
 	}
 	
-	public Alert generateUnfinishedCEJAlert(Auditorship auditorship){
-		int size = drawRepository.findUnfinishedByAuditorship(auditorship.getId()).size();
+	public void edit(DrawDTO drawDTO, Auditorship auditorship) throws DrawValidationException{
+		CJM cjm = auditorship.getCjm();
+		drawValidator.editDrawValidation(drawDTO, cjm);
 		
-		if (size > 0)
-			return new Alert("Existem CEJ em andamento. Os militares que compõem esses conselhos não poderão ser selecionados em sorteios futuros");
-		return null;
+		Draw editDraw = getDrawOrElseThrow(drawDTO.getId(), auditorship);
+		
+		editDraw.setDrawList(
+			EntityMapper.fromDTOToEntity(drawListService.getList(drawDTO.getSelectedDrawList(), cjm))
+		);
+		editDraw.setSoldiers(drawDTO.getSoldiers().stream().map(s -> EntityMapper.fromDTOToEntity(s)).collect(Collectors.toList()));
+		
+		drawRepository.save(editDraw);
+	}
+	
+	public DrawDTO get(Integer drawId, Auditorship auditorship) {
+		Draw draw = getDrawOrElseThrow(drawId, auditorship);
+		
+		return EntityMapper.fromEntityToDTO(draw);
 	}
 
 	public Map<String, List<Draw>> getMapAnnualQuarterDraw(List<Draw> drawList){
@@ -105,6 +112,32 @@ public class DrawService {
 		return quarterDrawMap;
 	}
 
+	public List<Draw> listByAuditorship(Integer auditorshipId){
+		auditorshipService.getAuditorship(auditorshipId);
+		
+		return drawRepository.findAllByAuditorship(auditorshipId);
+	}
+	
+	public Map<String, List<DrawDTO>> mapListByQuarter(List<Draw> drawList){
+		Map<String, List<DrawDTO>> quarterLists = new TreeMap<>(Collections.reverseOrder());
+		
+		List<DrawDTO> list;
+		String yearQuarter;
+		for (Draw draw : drawList) {
+			yearQuarter = draw.getDrawList().getYearQuarter();
+			
+			list = quarterLists.get(yearQuarter);
+			
+			if (Objects.isNull(list))
+				list = new ArrayList<DrawDTO>();
+			
+			list.add(EntityMapper.fromEntityToDTO(draw));
+			quarterLists.put(yearQuarter, list);
+		}
+		
+		return quarterLists;
+	}
+	
 	/**
 	 * Select the first n soldiers in Draw.soldiers list, where n is the council size
 	 */
@@ -123,34 +156,6 @@ public class DrawService {
 //		}
 //		
 //		return selectedSoldiers;
-	}
-	
-	private void validateSoldiersAmount(CouncilType councilType, Collection<Soldier> soldiers) throws ApplicationServiceException{
-		if (soldiers.size() < councilType.getCouncilSize())
-			throw new ApplicationServiceException("Incorrect soldiers amount");
-	}
-	
-	public void validateProcessNumber(String processNumber, Integer drawId) throws ValidationException{
-		if (StringUtils.isEmpty(processNumber))
-			throw new ValidationException("processNumber", "O número do processo deve ser preenchido");
-		if (processNumberAlreadyExists(processNumber, drawId))
-			throw new ValidationException("processNumber", "O número do processo já foi utilizado em outro sorteio");
-	}
-	
-	/**
-	 * Check if the process number belong to another draw
-	 */
-	private boolean processNumberAlreadyExists(String processNumber, Integer drawId) {
-		Draw drawDB = drawRepository.findByProcessNumber(processNumber);
-		if (drawDB != null) {
-			//recheck if its an edit
-			if (drawDB.getId().equals(drawId)) {	
-				return false;
-			}
-			return true;
-		}
-		
-		return false;
 	}
 
 	public byte[] generateDrawReport(Draw draw) {
@@ -184,5 +189,12 @@ public class DrawService {
 	
 	public boolean isAuditorshipOwner(Draw draw, Auditorship auditorship) {
 		return draw.getCjmUser().getAuditorship().getId().equals(auditorship.getId());
+	}
+	
+	private Draw getDrawOrElseThrow(Integer drawId, Auditorship auditorship) {
+		Objects.nonNull(drawId);
+		
+		return drawRepository.findByIdAndAuditorship(drawId, auditorship.getId())
+		 .orElseThrow(() -> new DrawNotFoundException("Draw not found: " + drawId));
 	}
 }

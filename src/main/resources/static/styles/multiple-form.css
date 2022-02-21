@@ -1,19 +1,19 @@
 .multipleForm .tab {
-  margin: auto;
-  display: none;
+	margin: auto;
+	display: none;
 }
 
-.multipleForm .step{
-  height: 15px;
-  width: 15px;
-  margin: 0 2px;
-  background: #888888;
-  border: none;
-  border-radius: 50%;
-  display: inline-block;
-  opacity: 0.5;
+.multipleForm .step {
+	height: 15px;
+	width: 15px;
+	margin: 0 2px;
+	background: #888888;
+	border: none;
+	border-radius: 50%;
+	display: inline-block;
+	opacity: 0.5;
 }
 
 .multipleForm .step.active {
-  opacity: 1;
+	opacity: 1;
 }

@@ -1,12 +1,14 @@
 package br.com.javamoon.mapper;
 
-import br.com.javamoon.domain.soldier.Army;
-import br.com.javamoon.domain.soldier.MilitaryOrganization;
-import br.com.javamoon.domain.soldier.MilitaryRank;
+import br.com.javamoon.domain.entity.Army;
+import br.com.javamoon.domain.entity.MilitaryOrganization;
+import br.com.javamoon.domain.entity.MilitaryRank;
+import br.com.javamoon.domain.entity.Soldier;
 import br.com.javamoon.util.StringUtils;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Objects;
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
@@ -77,8 +79,11 @@ public class SoldierDTO{
 				: "";
 	}
 	
-
 	public boolean hasImpediment() {
 		return !exclusions.isEmpty();
+	}
+	
+	public String getNameForDrawHeader(Soldier substitute) {
+		return String.format("%s %s", name, ( !Objects.isNull(substitute) && id.equals(substitute.getId()) ) ? "( Suplente )" : "");
 	}
 }

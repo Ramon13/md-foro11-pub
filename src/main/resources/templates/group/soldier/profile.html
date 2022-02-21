@@ -1,153 +1,154 @@
 <!DOCTYPE html>
-<html
-  xmlns="http://www.w3.org/1999/xhtml"
+<html xmlns="http://www.w3.org/1999/xhtml"
   xmlns:th="http://www.thymeleaf.org" layout:decorate="~{group/layout}">
-  <style layout:fragment="style">
-    div.label-content span{
-      font-size: 14px;
-      color: #5f6368;
-    }
-    
-    div#sdProfile{
-      margin-bottom: 45px;
-    }
-    
-    div.label-content{
-      margin-bottom: 10px;
-    }
-    
-    form{
-      text-align: unset;
-      margin: unset;
-      width: 100%;
-    }
-    
-    input[type=date].app-dateinput {
-      width: 20% !important;
-      padding: 2px !important;
-    }
-    
-     div#content textarea {
-      font-family: "Roboto", sans-serif;
-      width: 99%;
-      height: 70px;
-      border-color: #c5c7cb;
-      font-size: 18px;
-    }
-    
-     button.add-impediments {
-      float: right;
-    }
-    
-    div#exclusions{
-      margin-top: 50px;
-    }
-    
-    div.no-exclusions{
-      text-align: center;
-      padding: 50px 0;
-    }
-    
-    div.no-exclusions span{
-        font-family: 'Roboto';
-        font-size: 24px;
-        color: gray;
-    }
-    
-    div.impediment-header{
-      width: 100%;
-    }
-    
-    div.impediment {
-      float: left;
-      padding: 10px;
-      text-align: left;
-      width: 97%;
-      background-color: #E7E9EB;
-      margin: 10px 0;
-    }
-    
-    div.impediment span {
-      font-style: italic;
-      font-size: 12px;
-    }
-    
-    div.impediment p {
-      margin: 3px;
-    }
-    
-    img.remove-exclusion{
-      float: right;
-      margin: 0 5px;
-    }
-  </style>
-  <body>
-    <div layout:fragment="content">
-      <h1 th:text="${soldier.name}"></h1>
-      <hr />
-      
-      <div id="sdProfile">
-        <div class="input-label">        
-          <label>OM</label>
-        </div>
-        <div class="label-content">        
-          <span th:text="${soldier.militaryOrganization.name}"></span>
-        </div>
-        <div class="input-label">        
-          <label>Posto</label>
-        </div>
-        <div class="label-content">        
-          <span th:text="${soldier.militaryRank.name}"></span>
-        </div>
-        <div class="input-label">        
-          <label>Telefone</label>
-        </div>
-        <div class="label-content">        
-          <span th:text="${soldier.phone}"></span>
-        </div>
-        <div class="input-label">        
-          <label>Email</label>
-        </div>
-        <div class="label-content">        
-          <span th:text="${soldier.email}"></span>
-        </div>
-        <div>
-          <a id="editSoldier" href="#" th:attr="data-url=@{/gp/sd/register/home/} + ${soldier.id}">alterar</a>
-          <span>|</span>
-          <a id="deleteSoldier" href="#" th:attr="data-url=@{/gp/sd/register/delete/} + ${soldier.id}">excluir</a>
-        </div>
-        <br />
-        <div>
-          <button type="button" id="back" class="app-gray-btn">
-            <span>Voltar</span>
-          </button>     
-        </div>
+<style layout:fragment="style">
+div.label-content span {
+	font-size: 14px;
+	color: #5f6368;
+}
+
+div#sdProfile {
+	margin-bottom: 45px;
+}
+
+div.label-content {
+	margin-bottom: 10px;
+}
+
+form {
+	text-align: unset;
+	margin: unset;
+	width: 100%;
+}
+
+input[type=date].app-dateinput {
+	width: 20% !important;
+	padding: 2px !important;
+}
+
+div#content textarea {
+	font-family: "Roboto", sans-serif;
+	width: 99%;
+	height: 70px;
+	border-color: #c5c7cb;
+	font-size: 18px;
+}
+
+button.add-impediments {
+	float: right;
+}
+
+div#exclusions {
+	margin-top: 50px;
+}
+
+div.no-exclusions {
+	text-align: center;
+	padding: 50px 0;
+}
+
+div.no-exclusions span {
+	font-family: 'Roboto';
+	font-size: 24px;
+	color: gray;
+}
+
+div.impediment-header {
+	width: 100%;
+}
+
+div.impediment {
+	float: left;
+	padding: 10px;
+	text-align: left;
+	width: 97%;
+	background-color: #E7E9EB;
+	margin: 10px 0;
+}
+
+div.impediment span {
+	font-style: italic;
+	font-size: 12px;
+}
+
+div.impediment p {
+	margin: 3px;
+}
+
+img.remove-exclusion {
+	float: right;
+	margin: 0 5px;
+}
+</style>
+<body>
+  <div layout:fragment="content">
+    <h1 th:text="${soldier.name}"></h1>
+    <hr />
+
+    <div id="sdProfile">
+      <div class="input-label">
+        <label>OM</label>
       </div>
-      
-      <hr />
-      <div id="exclusions">
-        <h2>Impedimentos</h2>
-        <div class="no-exclusions" th:if="${#lists.isEmpty(exclusions)}">
-          <span>
-            Este usuário não possui impedimentos registrados
-          </span>
-        </div>
-          
-        <div class="impediment" th:each="exclusion : ${exclusions}">
-          <div class="impediment-header">
-            <span th:text="'De:' + ${#temporals.format(exclusion.startDate, 'dd/MM/yyyy')} + ';   Até:' + ${#temporals.format(exclusion.endDate, 'dd/MM/yyyy')}"></span>
-            
-            <form method="post" th:action="@{/gp/sd/exclusion/delete/} + ${exclusion.id}">
-              <img class="remove-exclusion" th:src="@{/images/delete.svg}" />
-            </form>
-          </div>
-          
-          <p th:text="${exclusion.message}"></p><br/>
-        </div>
+      <div class="label-content">
+        <span th:text="${soldier.militaryOrganization.name}"></span>
+      </div>
+      <div class="input-label">
+        <label>Posto</label>
+      </div>
+      <div class="label-content">
+        <span th:text="${soldier.militaryRank.name}"></span>
+      </div>
+      <div class="input-label">
+        <label>Telefone</label>
+      </div>
+      <div class="label-content">
+        <span th:text="${soldier.phone}"></span>
+      </div>
+      <div class="input-label">
+        <label>Email</label>
+      </div>
+      <div class="label-content">
+        <span th:text="${soldier.email}"></span>
+      </div>
+      <div>
+        <a id="editSoldier" href="#"
+          th:attr="data-url=@{/gp/sd/register/home/} + ${soldier.id}">alterar</a>
+        <span>|</span> <a id="deleteSoldier" href="#"
+          th:attr="data-url=@{/gp/sd/register/delete/} + ${soldier.id}">excluir</a>
+      </div>
+      <br />
+      <div>
+        <button type="button" id="back" class="app-gray-btn">
+          <span>Voltar</span>
+        </button>
       </div>
     </div>
-  </body>
-  <script layout:fragment="page-script" th:inline="javascript">
+
+    <hr />
+    <div id="exclusions">
+      <h2>Impedimentos</h2>
+      <div class="no-exclusions" th:if="${#lists.isEmpty(exclusions)}">
+        <span> Este usuário não possui impedimentos registrados </span>
+      </div>
+
+      <div class="impediment" th:each="exclusion : ${exclusions}">
+        <div class="impediment-header">
+          <span
+            th:text="'De:' + ${#temporals.format(exclusion.startDate, 'dd/MM/yyyy')} + ';   Até:' + ${#temporals.format(exclusion.endDate, 'dd/MM/yyyy')}"></span>
+
+          <form method="post"
+            th:action="@{/gp/sd/exclusion/delete/} + ${exclusion.id}">
+            <img class="remove-exclusion" th:src="@{/images/delete.svg}" />
+          </form>
+        </div>
+
+        <p th:text="${exclusion.message}"></p>
+        <br />
+      </div>
+    </div>
+  </div>
+</body>
+<script layout:fragment="page-script" th:inline="javascript">
     const backBtn = document.querySelector("button#back");
     const removeExclusions = document.querySelectorAll("img.remove-exclusion");
     const deleteSoldier = document.querySelector("a#deleteSoldier");

@@ -1,51 +1,53 @@
 <!-- TODO test recaptchav3 on localhost -->
 <!DOCTYPE html>
-<html
-  xmlns="http://www.w3.org/1999/xhtml"
+<html xmlns="http://www.w3.org/1999/xhtml"
   xmlns:th="http://www.thymeleaf.org">
-  <head>
-    <meta charset="utf-8" />
-    <title>Sorteio de Juízes Militares</title>
-    <link th:href="@{/styles/global.css}" type="text/css" rel="stylesheet" />
-    <link th:href="@{/styles/multiple-form.css}" type="text/css" rel="stylesheet" />
-    <link th:href="@{/styles/pagination-search-list.css}" type="text/css" rel="stylesheet" />
-    <link th:href="@{/styles/management/draw-home.css}" type="text/css" rel="stylesheet" />
-    <script src="https://www.google.com/recaptcha/api.js" async defer></script>
-    <style layout:fragment="style"></style>
-  </head>
-  <body>
-    <header>
-      <div id="appHBar">
-        <a id="appTitle" th:href="@{/mngmt/home}">Sorteio de Juízes Militares</a>
-        <span id="spanLoggedUser" th:text="${#authentication.principal.user.username}"></span>
-      </div>
-    </header>
-    <!-- end header -->
-    <!-- content -->
-    <div id="vMenu">
-      <ul>
-        <!-- <li class="vMenu-sub" th:if="${session.accountScope}"> -->
-        <li class="vMenu-sub">
-          <span>Gerenciamento de acesso</span>
-          <ul>
-            <li class="vMenu-link"><a th:href="@{/cjm/accounts/list/home}">Usuários cadastrados</a></li>
-            <li class="vMenu-link"><a th:href="@{/cjm/accounts/register/home}">Novo usuário</a></li>
-          </ul>
-        </li>
-        <li class="vMenu-sub">
-          <span>Sorteio</span>
-          <ul>
-            <li class="vMenu-link"><a id="newSoldier" th:href="@{/cjm/dw/home}">Realizar Sorteio</a></li>
-            <li class="vMenu-link"><a id="newSoldier" th:href="@{/mngmt/dw/list/0}">Sorteios Finalizados</a></li>
-          </ul>
-        </li>
-        <li class="vMenu-sub">
-          <span>Militares Cadastrados</span>
-          <ul>
-            <li class="vMenu-link"><a th:href="@{/cjm/dw/lists/list}">Listas</a></li>
-          </ul>
-        </li>
-        <!-- 
+<head>
+<meta charset="utf-8" />
+<title>Sorteio de Juízes Militares</title>
+<link th:href="@{/styles/global.css}" type="text/css" rel="stylesheet" />
+<link th:href="@{/styles/multiple-form.css}" type="text/css"
+  rel="stylesheet" />
+<link th:href="@{/styles/pagination-search-list.css}" type="text/css"
+  rel="stylesheet" />
+<link th:href="@{/styles/management/draw-home.css}" type="text/css"
+  rel="stylesheet" />
+<script src="https://www.google.com/recaptcha/api.js" async defer></script>
+<style layout:fragment="style"></style>
+</head>
+<body>
+  <header>
+    <div id="appHBar">
+      <a id="appTitle" th:href="@{/mngmt/home}">Sorteio de Juízes
+        Militares</a> <span id="spanLoggedUser"
+        th:text="${#authentication.principal.user.username}"></span>
+    </div>
+  </header>
+  <!-- end header -->
+  <!-- content -->
+  <div id="vMenu">
+    <ul>
+      <!-- <li class="vMenu-sub" th:if="${session.accountScope}"> -->
+      <li class="vMenu-sub"><span>Gerenciamento de acesso</span>
+        <ul>
+          <li class="vMenu-link"><a
+            th:href="@{/cjm/accounts/list/home}">Usuários
+              cadastrados</a></li>
+          <li class="vMenu-link"><a
+            th:href="@{/cjm/accounts/register/home}">Novo usuário</a></li>
+        </ul></li>
+      <li class="vMenu-sub"><span>Sorteio</span>
+        <ul>
+          <li class="vMenu-link"><a id="newSoldier"
+            th:href="@{/cjm/dw/home}">Realizar Sorteio</a></li>
+          <li class="vMenu-link"><a id="newSoldier"
+            th:href="@{/cjm/dw/list/0}">Sorteios Finalizados</a></li>
+        </ul></li>
+      <li class="vMenu-sub"><span>Militares Cadastrados</span>
+        <ul>
+          <li class="vMenu-link"><a th:href="@{/cjm/dw/lists/list}">Listas</a></li>
+        </ul></li>
+      <!-- 
         <li class="vMenu-sub">
           <span>Conta</span>
           <ul>
@@ -53,20 +55,18 @@
           </ul>
         </li>
          -->
-        <li class="vMenu-sub">
-          <span>Sistema</span>
-          <ul>
-            <li class="vMenu-link"><a th:href="@{/logout}">Sair</a></li>
-          </ul>
-        </li>
-      </ul>
-    </div>
-    <div layout:fragment="content" id="content"></div>
-    
-    <script type="text/javascript" th:src="@{/scripts/global.js}"></script>
-    <script type="text/javascript" th:src="@{/scripts/multiple-form.js}"></script>
-    
-    <script layout:fragment="page-script"></script>
-    <!-- footer -->
-  </body>
+      <li class="vMenu-sub"><span>Sistema</span>
+        <ul>
+          <li class="vMenu-link"><a th:href="@{/logout}">Sair</a></li>
+        </ul></li>
+    </ul>
+  </div>
+  <div layout:fragment="content" id="content"></div>
+
+  <script type="text/javascript" th:src="@{/scripts/global.js}"></script>
+  <script type="text/javascript" th:src="@{/scripts/multiple-form.js}"></script>
+
+  <script layout:fragment="page-script"></script>
+  <!-- footer -->
+</body>
 </html>

@@ -1,58 +1,60 @@
 <!DOCTYPE html>
-<html
-  xmlns="http://www.w3.org/1999/xhtml"
+<html xmlns="http://www.w3.org/1999/xhtml"
   xmlns:th="http://www.thymeleaf.org" layout:decorate="~{group/layout}">
-  
-  <style layout:fragment="style">
-    h1{
-      font-family: "Roboto", sans-serif;
-      color: #4e4848;
-      font-size: 20px;
-      font-weight: bold;
-    }
-  </style>
-  
-  <body>
-    <div layout:fragment="content">
-      <h1 th:text="${cjm.name} + ' - Sorteios'"></h1>
-      
-      <hr />
-      
-      <div class="draw-list" th:each="drawMap : ${quarterDrawMap}">
-        <div class="quarter">
-          <span th:text="${drawMap.key}"></span>
+
+<style layout:fragment="style">
+h1 {
+	font-family: "Roboto", sans-serif;
+	color: #4e4848;
+	font-size: 20px;
+	font-weight: bold;
+}
+</style>
+
+<body>
+  <div layout:fragment="content">
+    <h1 th:text="${cjm.name} + ' - Sorteios'"></h1>
+
+    <hr />
+
+    <div class="draw-list" th:each="drawMap : ${quarterDrawMap}">
+      <div class="quarter">
+        <span th:text="${drawMap.key}"></span>
+      </div>
+      <div th:each="draw : ${drawMap.value}">
+        <button
+          th:text="${draw.cjmUser.auditorship.name} + ' (' + ${draw.justiceCouncil.name} + ')'"
+          class="accordion"></button>
+
+        <div class="panel">
+          <table>
+            <thead>
+              <tr>
+                <th>Nome</th>
+                <th>OM</th>
+                <th>Posto</th>
+                <th>Arma</th>
+              </tr>
+            </thead>
+            <tbody th:each="soldier : ${draw.soldiers}"
+              th:classappend="${draw.substitute != null and draw.substitute.id eq soldier.id ? 'highlight-sup': ''}">
+              <tr>
+                <td><span
+                  th:text="${soldier.name} + ${draw.substitute != null and draw.substitute.id eq soldier.id ? ' (SUPLENTE)': ''}"></span></td>
+                <td><span
+                  th:text="${soldier.militaryOrganization.alias}"></span></td>
+                <td><span th:text="${soldier.militaryRank.alias}"></span></td>
+                <td><span th:text="${soldier.army.alias}"></span></td>
+              </tr>
+            </tbody>
+          </table>
         </div>
-        <div th:each="draw : ${drawMap.value}">
-          <button th:text="${draw.cjmUser.auditorship.name} + ' (' + ${draw.justiceCouncil.name} + ')'"
-              class="accordion" ></button>
-              
-          <div class="panel">
-            <table>
-              <thead>
-                <tr>
-                  <th>Nome</th>
-                  <th>OM</th>
-                  <th>Posto</th>
-                  <th>Arma</th>
-                </tr>
-              </thead>
-              <tbody th:each="soldier : ${draw.soldiers}" 
-                th:classappend="${draw.substitute != null and draw.substitute.id eq soldier.id ? 'highlight-sup': ''}">
-                <tr>
-                  <td><span th:text="${soldier.name} + ${draw.substitute != null and draw.substitute.id eq soldier.id ? ' (SUPLENTE)': ''}"></span></td>
-                  <td><span th:text="${soldier.militaryOrganization.alias}"></span></td>
-                  <td><span th:text="${soldier.militaryRank.alias}"></span></td>
-                  <td><span th:text="${soldier.army.alias}"></span></td>
-                </tr>
-              </tbody>
-            </table>
-          </div>    
-        </div>        
       </div>
     </div>
-    
-    <script layout:fragment="page-script" th:inline="javascript">
+  </div>
+
+  <script layout:fragment="page-script" th:inline="javascript">
     	accordion(document.getElementsByClassName("accordion"));
     </script>
-  </body>
+</body>
 </html>

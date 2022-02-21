@@ -1,9 +1,9 @@
 package br.com.javamoon.domain.repository;
 
 import br.com.javamoon.domain.cjm_user.CJM;
-import br.com.javamoon.domain.soldier.Army;
-import br.com.javamoon.domain.soldier.NoAvaliableSoldierException;
-import br.com.javamoon.domain.soldier.Soldier;
+import br.com.javamoon.domain.entity.Army;
+import br.com.javamoon.domain.entity.Soldier;
+import br.com.javamoon.exception.NoAvaliableSoldierException;
 import br.com.javamoon.infrastructure.web.model.PaginationSearchFilter;
 import java.util.List;
 import java.util.Objects;

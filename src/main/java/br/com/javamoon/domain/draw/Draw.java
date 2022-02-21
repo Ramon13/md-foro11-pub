@@ -1,10 +1,13 @@
 package br.com.javamoon.domain.draw;
 
+import br.com.javamoon.domain.entity.Army;
+import br.com.javamoon.domain.entity.CJMUser;
+import br.com.javamoon.domain.entity.DrawList;
+import br.com.javamoon.domain.entity.Soldier;
 import java.io.Serializable;
 import java.time.LocalDate;
 import java.util.LinkedList;
 import java.util.List;
-
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -15,22 +18,15 @@ import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
+import javax.persistence.PrePersist;
 import javax.persistence.Table;
-
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
-
-import br.com.javamoon.domain.entity.CJMUser;
-import br.com.javamoon.domain.entity.DrawList;
-import br.com.javamoon.domain.soldier.Army;
-import br.com.javamoon.domain.soldier.Soldier;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
 
-//TODO: add finishedDraw when justice council is CPJ
-@SuppressWarnings("serial")
 @Getter
 @Setter
 @ToString
@@ -38,6 +34,8 @@ import lombok.ToString;
 @Entity
 @Table(name="DRAW")
 public class Draw implements Serializable{
+
+	private static final long serialVersionUID = 1L;
 
 	@EqualsAndHashCode.Include
 	@Id
@@ -56,7 +54,7 @@ public class Draw implements Serializable{
 	private String processNumber;
 	
 	@Column(name = "finished", nullable = false)
-	private Boolean finished = true;
+	private Boolean finished;
 	
 	@ToString.Exclude
 	@ManyToOne
@@ -88,4 +86,20 @@ public class Draw implements Serializable{
 	@ManyToOne
 	@JoinColumn(name="draw_list_id", nullable = true)
 	private DrawList drawList;
+	
+	@PrePersist
+	private void prePersist() {
+		CouncilType councilType = CouncilType.fromAlias(justiceCouncil.getAlias());
+		
+		if (councilType == CouncilType.CPJ) {
+			processNumber = null;
+			finished = true;
+			substitute = soldiers.get(1);
+		}
+		
+		if (councilType == CouncilType.CEJ) {
+			substitute = null;
+			finished = false;
+		}	
+	}
 }

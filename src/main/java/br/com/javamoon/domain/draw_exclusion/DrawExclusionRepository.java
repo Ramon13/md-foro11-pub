@@ -1,6 +1,6 @@
 package br.com.javamoon.domain.draw_exclusion;
 
-import br.com.javamoon.domain.soldier.Soldier;
+import br.com.javamoon.domain.entity.Soldier;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;

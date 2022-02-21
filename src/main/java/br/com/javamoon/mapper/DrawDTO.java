@@ -5,8 +5,8 @@ import static br.com.javamoon.config.properties.DrawConfigProperties.PROPERTY_CO
 import br.com.javamoon.config.properties.DrawConfigProperties;
 import br.com.javamoon.domain.draw.CouncilType;
 import br.com.javamoon.domain.draw.JusticeCouncil;
-import br.com.javamoon.domain.soldier.Army;
-import br.com.javamoon.domain.soldier.Soldier;
+import br.com.javamoon.domain.entity.Army;
+import br.com.javamoon.domain.entity.Soldier;
 import br.com.javamoon.service.ArmyService;
 import br.com.javamoon.service.JusticeCouncilService;
 import br.com.javamoon.util.DateUtils;
@@ -100,13 +100,14 @@ public class DrawDTO{
 		return yearQuarter.equals(selectedYearQuarter);
 	}
 	
-	public String getManagementListHeader() {
-//		councilType = CouncilType.fromAlias(justiceCouncil.getAlias());
-//		
-//		return (councilType == CouncilType.CPJ)
-//					? String.format("%s (%s) - %s", justiceCouncil.getName(), drawList.getYearQuarter(), army.getName())
-//					: String.format("%s (%s) - %s", justiceCouncil.getName(), processNumber, army.getName());
-		return null;
+	public boolean isSameDrawList(Integer listId) {
+		return listId.equals(selectedDrawList);
+	}
+	
+	public String getCJMListHeader() {
+		return (getCouncilType() == CouncilType.CPJ)
+					? String.format("%s (%s) - %s", justiceCouncil.getName(), selectedYearQuarter, army.getName())
+					: String.format("%s (%s) - %s", justiceCouncil.getName(), processNumber, army.getName());
 	}
 	
 	public void clearRandomSoldiers() {
@@ -116,5 +117,9 @@ public class DrawDTO{
 	
 	public void clearSelectedRanks() {
 		selectedRanks.clear();
+	}
+	
+	public CouncilType getCouncilType() {
+		return CouncilType.fromAlias(justiceCouncil.getAlias());
 	}
 }

@@ -1,7 +1,5 @@
 package br.com.javamoon.domain.entity;
 
-import br.com.javamoon.domain.soldier.Army;
-import br.com.javamoon.domain.soldier.Soldier;
 import java.time.LocalDate;
 import java.util.HashSet;
 import java.util.Objects;

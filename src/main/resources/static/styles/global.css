@@ -1,390 +1,404 @@
 @font-face {
-  font-family: Roboto;
-  src: url('Roboto-Regular.ttf') format('truetype');
+	font-family: Roboto;
+	src: url('Roboto-Regular.ttf') format('truetype');
 }
 
 @font-face {
 	font-family: NanumGothic;
-  src: url('NanumGothic-Regular.ttf') format('truetype');
+	src: url('NanumGothic-Regular.ttf') format('truetype');
 }
 
 legend {
-    background-color: #fff;
-    color: #000;
-    padding: 3px 6px;
+	background-color: #fff;
+	color: #000;
+	padding: 3px 6px;
 }
 
-span, p, legend, div{
-  font-family: "Roboto", sans-serif;
+span, p, legend, div {
+	font-family: "Roboto", sans-serif;
 }
 
-button{
-  font-family: "Roboto", sans-serif;
-  padding: 5px;
-  border-radius: 4px;
-  display: inline-flex;
+button {
+	font-family: "Roboto", sans-serif;
+	padding: 5px;
+	border-radius: 4px;
+	display: inline-flex;
 }
 
 button.app-green-btn, input[type=submit].app-green-btn {
-  color: #ffffff;
-  background-color: #2EA44F;
-  font-family: "Roboto", sans-serif;
+	color: #ffffff;
+	background-color: #2EA44F;
+	font-family: "Roboto", sans-serif;
 }
 
 button.app-gray-btn {
-  color: #ffffff;
-  background-color: #858585;
+	color: #ffffff;
+	background-color: #858585;
 }
 
 body {
-  width: 70%;
-  margin: 0 auto;
-  background-color: #FFFFFF;
-  padding: 0 20px 20px 20px;
+	width: 70%;
+	margin: 0 auto;
+	background-color: #FFFFFF;
+	padding: 0 20px 20px 20px;
 }
 
 html {
-  background-color: #FFFFFF;
+	background-color: #FFFFFF;
 }
 
 label, h1, h2 {
-  font-family: "Roboto", sans-serif;
+	font-family: "Roboto", sans-serif;
 }
 
-h1{
-  font-family: "Roboto", sans-serif;
-  color: #4e4848;
-  font-size: 20px;
-  font-weight: bold;
+h1 {
+	font-family: "Roboto", sans-serif;
+	color: #4e4848;
+	font-size: 20px;
+	font-weight: bold;
 }
 
-h2{
-  color: #4e4848;
-  font-size: 16px;
-  font-weight: bold;	
+h2 {
+	color: #4e4848;
+	font-size: 16px;
+	font-weight: bold;
 }
 
 form {
-  text-align: center;
-  width: 30%;
-  margin: auto;
+	text-align: center;
+	width: 30%;
+	margin: auto;
 }
 
-div.centered-page{
+div.centered-page {
 	text-align: center;
 }
 
-table.searchableTb{
-  font-family: Roboto, sans-serif;
-  border-collapse: collapse;
-  width: 100%;
+table.searchableTb {
+	font-family: Roboto, sans-serif;
+	border-collapse: collapse;
+	width: 100%;
 }
 
-table.searchableTb td{
-  font-size: 14px;
+table.searchableTb td {
+	font-size: 14px;
 }
 
-table.searchableTb th{
-  padding-top: 12px;
-  padding-bottom: 12px;
-  text-align: left;
-  background-color: #ffffff;
-  color: #808080;
-  font-weight: bold;
+table.searchableTb th {
+	padding-top: 12px;
+	padding-bottom: 12px;
+	text-align: left;
+	background-color: #ffffff;
+	color: #808080;
+	font-weight: bold;
 }
 
 table.searchableTb td, table.searchableTb th {
-  border: 1px solid #ddd;
-  padding: 8px;
+	border: 1px solid #ddd;
+	padding: 8px;
 }
 
-table.searchableTb tr:nth-child(even){background-color: #f2f2f2;}
+table.searchableTb tr:nth-child(even) {
+	background-color: #f2f2f2;
+}
 
-table.searchableTb tr:hover {background-color: #ddd;}
+table.searchableTb tr:hover {
+	background-color: #ddd;
+}
 
 div#appHBar {
-  padding: 20px;
-  background-color: #1A88FF;
+	padding: 20px;
+	background-color: #1A88FF;
 }
 
 a#appTitle {
-  font-family: "Roboto", sans-serif;
-  text-decoration: none;
-  color: #FFFFFF;
-  font-size: 20px;
-  float: left;
-  font-weight: bold;
-  margin: -12px;
+	font-family: "Roboto", sans-serif;
+	text-decoration: none;
+	color: #FFFFFF;
+	font-size: 20px;
+	float: left;
+	font-weight: bold;
+	margin: -12px;
 }
 
 div#vMenu {
-  height: 95vh;
-  border-right: 2px solid #CCCCCC;
-  width: 15%;
-  float: left;
-  margin: 0;
+	height: 95vh;
+	border-right: 2px solid #CCCCCC;
+	width: 15%;
+	float: left;
+	margin: 0;
 }
 
 div#vMenu ul {
-  list-style-type: none;
-  padding: 0 10px;
+	list-style-type: none;
+	padding: 0 10px;
 }
 
 div#vMenu .vMenu-sub span {
-  font-family: 'Roboto', sans-serif;
-  font-weight: bold;
-  font-size: 13px;
-  color: #5f6368;
+	font-family: 'Roboto', sans-serif;
+	font-weight: bold;
+	font-size: 13px;
+	color: #5f6368;
 }
 
-a{
-  font-family: 'Roboto', sans-serif;
-  color: #000;
+a {
+	font-family: 'Roboto', sans-serif;
+	color: #000;
 }
 
 li.vMenu-link {
 	padding: 5px 0;
 }
 
-div#vMenu .vMenu-link a{
-  font-family: 'Roboto', sans-serif;
-  font-size: 13px;
-  color: #5f6368;
+div#vMenu .vMenu-link a {
+	font-family: 'Roboto', sans-serif;
+	font-size: 13px;
+	color: #5f6368;
 }
 
-div#content{
-  height: 90vh;
-  overflow: auto;
-  padding: 10px;
+div#content {
+	height: 90vh;
+	overflow: auto;
+	padding: 10px;
 }
 
-input[type=text], input[type=password], input[type=date], select.app-select {
-  font-family: "Roboto", sans-serif;
-  width: 100%;
-  padding: 6px;
-  margin: 8px 0;
-  display: inline-block;
-  border: 1px solid #ccc;
-  border-radius: 4px;
-  box-sizing: border-box;
-  background-color: #fff;
+input[type=text], input[type=password], input[type=date], select.app-select
+	{
+	font-family: "Roboto", sans-serif;
+	width: 100%;
+	padding: 6px;
+	margin: 8px 0;
+	display: inline-block;
+	border: 1px solid #ccc;
+	border-radius: 4px;
+	box-sizing: border-box;
+	background-color: #fff;
 }
 
-div.error span, span.error{
-  color: #FF0000;
+div.error span, span.error {
+	color: #FF0000;
 }
 
-div.error input, input.error, select.error, textarea.error{
-  border: 1px solid #FF0000 !important;
+div.error input, input.error, select.error, textarea.error {
+	border: 1px solid #FF0000 !important;
 }
 
- div.successMsg {
-  background-color: #47ab5b;
-  width: 50%;
-  margin: auto;
-  color: #ffffff;
-  text-align: center;
-  font-family: "Roboto", sans-serif;
-  border-radius: 4px;
-  margin-bottom: 20px;
+div.successMsg {
+	background-color: #47ab5b;
+	width: 50%;
+	margin: auto;
+	color: #ffffff;
+	text-align: center;
+	font-family: "Roboto", sans-serif;
+	border-radius: 4px;
+	margin-bottom: 20px;
 }
 
-.accordion{
-  background-color: #eee;
-  color: #444;
-  cursor: pointer;
-  padding: 18px;
-  width: 100%;
-  border: none;
-  text-align: left;
-  outline: none;
-  font-size: 15px;
-  transition: 0.4s;
-  margin: 2px 0;
+.accordion {
+	background-color: #eee;
+	color: #444;
+	cursor: pointer;
+	padding: 18px;
+	width: 100%;
+	border: none;
+	text-align: left;
+	outline: none;
+	font-size: 15px;
+	transition: 0.4s;
+	margin: 2px 0;
 }
 
-.active, .accordion:hover{
-  background-color: #ccc;
+.active, .accordion:hover {
+	background-color: #ccc;
 }
 
-.accordion:after{
-  content: '\002B';
-  color: #777;
-  font-weight: bold;
-  float: right;
-  margin-left: 5px;
+.accordion:after {
+	content: '\002B';
+	color: #777;
+	font-weight: bold;
+	float: right;
+	margin-left: 5px;
 }
 
-.active:after{
-  content: "\2212";
+.active:after {
+	content: "\2212";
 }
 
-.panel{
-  padding: 0 18px;
-  background-color: white;
-  max-height: 0;
-  overflow: hidden;
-  transition: max-height 0.2s ease-out;
+.panel {
+	padding: 0 18px;
+	background-color: white;
+	max-height: 0;
+	overflow: hidden;
+	transition: max-height 0.2s ease-out;
 }
 
 .panel table {
-  font-family: Roboto, sans-serif;
-  border-collapse: collapse;
-  width: 100%;
+	font-family: Roboto, sans-serif;
+	border-collapse: collapse;
+	width: 100%;
 }
 
 .panel table td {
-  font-size: 14px;
+	font-size: 14px;
 }
 
 .panel table td, .panel table soldiers th {
-  border: 1px solid #ddd;
-  padding: 8px;
+	border: 1px solid #ddd;
+	padding: 8px;
 }
 
 .panel table th {
-  padding-top: 12px;
-  padding-bottom: 12px;
-  text-align: left;
-  background-color: #ffffff;
-  color: #808080;
-  font-weight: bold;
+	padding-top: 12px;
+	padding-bottom: 12px;
+	text-align: left;
+	background-color: #ffffff;
+	color: #808080;
+	font-weight: bold;
 }
 
-.panel table tr:nth-child(even){background-color: #f2f2f2;}
-
-.panel table tr:hover {background-color: #ddd;}
-
-tbody.highlight-sup, button.highlight-sup, select.highlight-sup{
-  color: #4343ff !important;
+.panel table tr:nth-child(even) {
+	background-color: #f2f2f2;
 }
 
-div.empty-list{
-  text-align: center;
-  padding: 50px 0;
+.panel table tr:hover {
+	background-color: #ddd;
 }
 
-div.empty-list span{
-    font-family: 'Roboto';
-    font-size: 20px;
-    color: gray;
+tbody.highlight-sup, button.highlight-sup, select.highlight-sup {
+	color: #4343ff !important;
+}
+
+div.empty-list {
+	text-align: center;
+	padding: 50px 0;
+}
+
+div.empty-list span {
+	font-family: 'Roboto';
+	font-size: 20px;
+	color: gray;
 }
 
 span#spanLoggedUser {
-  font-family: "Roboto", sans-serif;
-  text-decoration: none;
-  color: #FFFFFF;
-  font-size: 14px;
-  float: right;
-  font-weight: bold;
-  margin: -12px;
+	font-family: "Roboto", sans-serif;
+	text-decoration: none;
+	color: #FFFFFF;
+	font-size: 14px;
+	float: right;
+	font-weight: bold;
+	margin: -12px;
 }
 
-div.disable-div{
-  pointer-events: none;
-  opacity: 0.4;
+div.disable-div {
+	pointer-events: none;
+	opacity: 0.4;
 }
 
 div.quarter {
-    padding: 15px 5px;
-    background-color: #4e4848;
-    color: white;
-    width: 200px;
-    margin: 20px 0 10px 0;
+	padding: 15px 5px;
+	background-color: #4e4848;
+	color: white;
+	width: 200px;
+	margin: 20px 0 10px 0;
 }
 
 div.draw-list .quarter span {
-    font-weight: bold;
-    padding: 0 25px;
+	font-weight: bold;
+	padding: 0 25px;
 }
 
 table#soldiers, table.default-app-table {
-  font-family: Roboto, sans-serif;
-  border-collapse: collapse;
-  width: 100%;
+	font-family: Roboto, sans-serif;
+	border-collapse: collapse;
+	width: 100%;
 }
 
 table#soldiers td, table.default-app-table td {
-  font-size: 14px;
+	font-size: 14px;
 }
 
-table#soldiers td, table#soldiers th, table.default-app-table td, table.default-app-table th {
-  border: 1px solid #ddd;
-  padding: 8px;
+table#soldiers td, table#soldiers th, table.default-app-table td, table.default-app-table th
+	{
+	border: 1px solid #ddd;
+	padding: 8px;
 }
 
 table#soldiers th, table.default-app-table th {
-  padding-top: 12px;
-  padding-bottom: 12px;
-  text-align: left;
-  background-color: #ffffff;
-  color: #808080;
-  font-weight: bold;
+	padding-top: 12px;
+	padding-bottom: 12px;
+	text-align: left;
+	background-color: #ffffff;
+	color: #808080;
+	font-weight: bold;
 }
 
-#soldiers tr:nth-child(even){background-color: #f2f2f2;}
-
-#soldiers tr:hover {background-color: #ddd;}
-
-div#paginationSearchMenu div{
-  display: inline;
+#soldiers tr:nth-child(even) {
+	background-color: #f2f2f2;
 }
 
-div#paginationSearchMenu #search{
-  float: right;
+#soldiers tr:hover {
+	background-color: #ddd;
 }
 
-div#paginationSearchMenu form{
+div#paginationSearchMenu div {
+	display: inline;
+}
+
+div#paginationSearchMenu #search {
+	float: right;
+}
+
+div#paginationSearchMenu form {
 	text-align: justify;
 	width: auto;
 }
 
-div#paginationSearchMenu #searchBtn{
-  padding: 6px;
-  border-radius: 10%;
+div#paginationSearchMenu #searchBtn {
+	padding: 6px;
+	border-radius: 10%;
 }
 
-div#paginationSearchMenu div#search{
-  width: 400px;
-}
-    
-div#paginationSearchMenu #searchInput{
-  width: 83%;
+div#paginationSearchMenu div#search {
+	width: 400px;
 }
 
-div .list-header{
-  font-family: "Roboto", sans-serif;
-  color: #4e4848;
-  font-size: 20px;
-  font-weight: bold;
-  margin-bottom: 15px;
+div#paginationSearchMenu #searchInput {
+	width: 83%;
 }
 
-div .list-info{
-  color: #606060;
-  font-size: 12px;
+div .list-header {
+	font-family: "Roboto", sans-serif;
+	color: #4e4848;
+	font-size: 20px;
+	font-weight: bold;
+	margin-bottom: 15px;
 }
 
-div .draw-soldier-list{
-  margin: auto;
-  background-color: #eee;
-  padding: 15px;
-  margin-bottom: 15px;  
-  width: 92%;
-  transition: 0.3s;
-  box-shadow: 0px 3px 6px 3px #ddd;
+div .list-info {
+	color: #606060;
+	font-size: 12px;
 }
 
-div.form-step{
-  margin-bottom: 20px;
+div .draw-soldier-list {
+	margin: auto;
+	background-color: #eee;
+	padding: 15px;
+	margin-bottom: 15px;
+	width: 92%;
+	transition: 0.3s;
+	box-shadow: 0px 3px 6px 3px #ddd;
 }
 
-div.form-step .input-label{
-  font-weight: bold;
+div.form-step {
+	margin-bottom: 20px;
 }
 
-div.form-step .label-desc{
-  font-style: italic;
-  font-size: 14px;
-  color: #57606a;
+div.form-step .input-label {
+	font-weight: bold;
+}
+
+div.form-step .label-desc {
+	font-style: italic;
+	font-size: 14px;
+	color: #57606a;
 }

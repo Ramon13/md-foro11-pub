@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+  xmlns:th="http://www.thymeleaf.org"
+  layout:decorate="~{cjm/layout}">
+
+<style layout:fragment="style">
+  select.app-select {
+    font-size: 20px;
+    border: none;
+    width: 40%;
+    color: #505050;
+  }
+</style>
+
+  <body>
+    <div layout:fragment="content">
+      <select id="auditorship" class="app-select">
+        <option th:each="auditorship : ${auditorships}" 
+          th:value="${auditorship.id}" 
+          th:text="${auditorship.name}"
+          th:selected="${selectedAuditorship eq auditorship.id}" 
+          th:attr="data-url=@{/cjm/dw/list/} + ${auditorship.id}"></option>
+      </select>
+    
+      <hr />
+      
+      <div class="draw-list" th:each="drawMap : ${quarterDrawMap}">
+        <div class="quarter">
+          <span th:text="${drawMap.key}"></span>
+        </div>
+        <div th:each="draw : ${drawMap.value}">
+          <button th:text="${draw.CJMListHeader}" class="accordion"></button>
+          
+          <div class="panel">
+            <table>
+              <thead>
+                <tr>
+                  <th>Nome</th>
+                  <th>OM</th>
+                  <th>Posto</th>
+                  <th>Arma</th>
+                </tr>
+              </thead>
+              <tbody th:each="soldier : ${draw.soldiers}">
+                <tr>
+                  <td><span th:text="${soldier.getNameForDrawHeader(draw.substitute)}"></span></td>
+                  <td><span th:text="${soldier.militaryOrganization.alias}"></span></td>
+                  <td><span th:text="${soldier.militaryRank.alias}"></span></td>
+                  <td><span th:text="${soldier.army.alias}"></span></td>
+                </tr>
+              </tbody>
+            </table>
+            
+            <br />
+            <div class="dw-options">
+              <a href="#" th:if="${userAuditorship} eq ${selectedAuditorship}" class="edit-draw" 
+                th:attr="data-url=@{/cjm/dw/edit/} + ${draw.id}">editar</a>
+              <span> | </span> 
+              <a href="#" class="exportPdf" th:attr="data-drawid=${draw.id}">gerar pdf</a>
+            </div>
+          </div>
+        </div>
+      </div>
+  
+    </div>
+
+    <script layout:fragment="page-script" th:inline="javascript">
+      accordion(document.getElementsByClassName("accordion"));
+      
+      const auditorshipSelect = document.querySelector('select#auditorship');
+      auditorshipSelect.addEventListener('change', function(){
+        let selectedAuditorship = auditorshipSelect.options[auditorshipSelect.selectedIndex];
+        location.href = selectedAuditorship.dataset.url;
+      });
+      
+      const editDrawList = document.querySelectorAll("a.edit-draw");
+      for (let i = 0; i < editDrawList.length; i++){
+    	  editDrawList[i].addEventListener('click', function(){
+    		  location.href = this.dataset.url;
+    	  });
+      }
+    </script>
+  </body>
+</html>

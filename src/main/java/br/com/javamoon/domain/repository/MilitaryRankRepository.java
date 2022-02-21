@@ -1,8 +1,9 @@
-package br.com.javamoon.domain.soldier;
+package br.com.javamoon.domain.repository;
 
+import br.com.javamoon.domain.entity.Army;
+import br.com.javamoon.domain.entity.MilitaryRank;
 import java.util.List;
 import java.util.Optional;
-
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;

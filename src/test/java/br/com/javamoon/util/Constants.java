@@ -25,7 +25,8 @@ public final class Constants {
 	public static final String CEJ_COUNCIl_ALIAS = "CEJ";
 	public static final String DEFAULT_COUNCIl_NAME = "Conselho Permanente De Justiça";
 	public static final Integer DEFAULT_COUNCIL_ID = 1;
-	public static final Integer DEFAULT_COUNCIL_SIZE = 5;
+	public static final Integer DEFAULT_CPJ_COUNCIL_SIZE = 5;
+	public static final Integer DEFAULT_CEJ_COUNCIL_SIZE = 5;
 	
 	public static final String PASSWORD_NO_UPPERCASE = "qwe123qwe";
 	public static final String PASSWORD_NO_LOWER = "QWE123QWE";
@@ -45,8 +46,10 @@ public final class Constants {
     public static final Integer DEFAULT_DRAW_LIST_ID = 1;
     public static final String DEFAULT_DRAW_LIST_QUARTER_YEAR = DateUtils.toQuarterFormat(LocalDate.now());
     
-    public static final List<Integer> DEFAULT_SELECTED_RANKS = List.of(1,2,3,4,5);
-    public static final List<Integer> DEFAULT_SELECTED_SOLDIERS = List.of(1,2,3,4,5);
+    public static final List<Integer> DEFAULT_CPJ_RANKS = List.of(1,2,3,4,5);
+    public static final List<Integer> DEFAULT_CEJ_RANKS = List.of(1,2,3,4);
+    public static final List<Integer> DEFAULT_CPJ_SOLDIERS = List.of(1,2,3,4,5);
+    public static final List<Integer> DEFAULT_CEJ_SOLDIERS = List.of(1,2,3,4);
     public static final Integer DEFAULT_REPLACE_SOLDIER_ID = 1;
     public static final Integer DEFAULT_REPLACE_RANK_ID = 1;
     

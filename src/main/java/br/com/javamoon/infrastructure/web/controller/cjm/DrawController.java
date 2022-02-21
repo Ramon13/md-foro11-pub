@@ -7,17 +7,15 @@ import br.com.javamoon.domain.cjm_user.CJM;
 import br.com.javamoon.domain.draw.CouncilType;
 import br.com.javamoon.domain.draw.Draw;
 import br.com.javamoon.domain.entity.CJMUser;
-import br.com.javamoon.domain.entity.DrawList;
+import br.com.javamoon.domain.entity.Soldier;
 import br.com.javamoon.domain.repository.DrawRepository;
 import br.com.javamoon.domain.repository.SoldierRepository;
-import br.com.javamoon.domain.soldier.MilitaryRank;
-import br.com.javamoon.domain.soldier.NoAvaliableSoldierException;
-import br.com.javamoon.domain.soldier.Soldier;
 import br.com.javamoon.exception.DrawValidationException;
 import br.com.javamoon.infrastructure.web.controller.ControllerHelper;
 import br.com.javamoon.infrastructure.web.repository.DrawRepositoryImpl;
 import br.com.javamoon.mapper.DrawDTO;
 import br.com.javamoon.mapper.DrawListDTO;
+import br.com.javamoon.mapper.EntityMapper;
 import br.com.javamoon.service.ArmyService;
 import br.com.javamoon.service.AuditorshipService;
 import br.com.javamoon.service.DrawListService;
@@ -25,19 +23,16 @@ import br.com.javamoon.service.DrawService;
 import br.com.javamoon.service.JusticeCouncilService;
 import br.com.javamoon.service.MilitaryRankService;
 import br.com.javamoon.service.RandomSoldierService;
-import br.com.javamoon.service.ValidationException;
 import br.com.javamoon.util.DateUtils;
 import br.com.javamoon.util.SecurityUtils;
 import br.com.javamoon.validator.ValidationUtils;
-
 import java.io.IOException;
-import java.time.LocalDate;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
+import java.util.stream.Collectors;
 import javax.validation.Valid;
-import org.apache.commons.lang3.BooleanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -60,9 +55,6 @@ public class DrawController {
 	private DrawService drawSvc;
 	
 	@Autowired
-	private ArmyService armySvc;
-	
-	@Autowired
 	private SoldierRepository soldierRepo;
 	
 	@Autowired
@@ -73,9 +65,6 @@ public class DrawController {
 	
 	@Autowired
 	private AuditorshipRepository auditorshipRepo;
-	
-	@Autowired
-	private AuditorshipService auditorshipSvc;
 	
 	private ArmyService armyService;
 	
@@ -89,16 +78,27 @@ public class DrawController {
 	
 	private DrawConfigProperties drawConfigProperties;
 	
-	public DrawController(ArmyService armyService, JusticeCouncilService councilService,
-	        DrawListService drawListService, MilitaryRankService rankService,
+	private DrawService drawService;
+	
+	private AuditorshipService auditorshipService;
+	
+	public DrawController(
+			ArmyService armyService,
+			JusticeCouncilService councilService,
+	        DrawListService drawListService,
+	        MilitaryRankService rankService,
 	        RandomSoldierService randomSoldierService,
-	        DrawConfigProperties drawConfigProperties) {
+	        DrawConfigProperties drawConfigProperties,
+	        DrawService drawService,
+	        AuditorshipService auditorshipService) {
 		this.armyService = armyService;
 		this.councilService = councilService;
 		this.drawListService = drawListService;
 		this.rankService = rankService;
 		this.randomSoldierService = randomSoldierService;
 		this.drawConfigProperties = drawConfigProperties;
+		this.drawService = drawService;
+		this.auditorshipService = auditorshipService;
 	}
 
 	@ModelAttribute("drawDTO")
@@ -107,9 +107,12 @@ public class DrawController {
 	}
 	
 	@GetMapping("/home")
-	public String home( @ModelAttribute("drawDTO") DrawDTO drawDTO, Model model) {
+	public String home( @ModelAttribute("drawDTO") DrawDTO drawDTO, Model model,
+			@RequestParam(name = "sucessCreated", required = false) boolean successCreated) {
 		drawDTO.clearRandomSoldiers();
+		
 		setDefaultHomeAttributes(model, drawDTO);
+		model.addAttribute("sucessMsg", successCreated ? "O sorteio foi salvo" : null);
 		return "cjm/draw/home";
 	}
 	
@@ -119,7 +122,7 @@ public class DrawController {
 		return "redirect:/cjm/dw/home";
 	}
 	
-	@GetMapping("/sdrand/all")
+	@PostMapping("/sdrand/all")
 	public String drawAll(@Valid @ModelAttribute("drawDTO") DrawDTO drawDTO, Errors errors, Model model) {
 		try {
 			CJMUser loggedUser = SecurityUtils.cjmUser();
@@ -152,20 +155,61 @@ public class DrawController {
 		}
 
 		setDefaultHomeAttributes(model, drawDTO);
+		ControllerHelper.setEditMode(model, !Objects.isNull(drawDTO.getId()));
 		return "cjm/draw/home";
 	}
 	
 	@PostMapping("/save")
 	public String save(
-			@Valid @ModelAttribute("draw") Draw draw,
+			@ModelAttribute("drawDTO") DrawDTO drawDTO, 
 			Errors errors,
-			Model model) throws IOException {
+			Model model,
+			SessionStatus sessionStatus) throws IOException {
+		try {
+			CJMUser loggedUser = SecurityUtils.cjmUser();
+			drawService.save(drawDTO, loggedUser);
+			
+			sessionStatus.setComplete();
+			return "redirect:/cjm/dw/home?sucessCreated=true";
+		} catch (DrawValidationException e) {
+			e.printStackTrace();
+			ValidationUtils.rejectValues(errors, e.getValidationErrors());
+		}
 		
-		
-		return null;
+		setDefaultHomeAttributes(model, drawDTO);
+		return "cjm/draw/home";
 	}
 	
 	@GetMapping("/edit/{drawId}")
+	public String editHome(@PathVariable Integer drawId,
+			@ModelAttribute("drawDTO") DrawDTO drawDTO,
+			Model model) {
+		CJMUser loggedUser = SecurityUtils.cjmUser();
+		drawDTO = drawService.get(drawId, loggedUser.getAuditorship());
+		randomSoldierService.setSoldierExclusionMessages(drawDTO.getSoldiers(), drawDTO.getSelectedYearQuarter());
+		
+		model.addAttribute("drawDTO", drawDTO);
+		
+		setDefaultHomeAttributes(model, drawDTO);
+		ControllerHelper.setEditMode(model, true);
+		return "cjm/draw/home";
+	}
+	
+	@PostMapping("/edit")
+	public String edit(@ModelAttribute("drawDTO") DrawDTO drawDTO, Errors errors, Model model) {
+		try {
+			CJMUser loggedUser = SecurityUtils.cjmUser();
+			drawService.edit(drawDTO, loggedUser.getAuditorship());
+			return "redirect:/cjm/dw/home?sucessModified=true";
+		} catch (DrawValidationException e) {
+			e.printStackTrace();
+			ValidationUtils.rejectValues(errors, e.getValidationErrors());
+		}
+		
+		return "redirect:/cjm/dw/edit/" + drawDTO.getId();
+	}
+	
+	@GetMapping("/old/edit/{drawId}")
 	public String editDrawHome(@PathVariable Integer drawId, Model model) {
 		Draw draw = drawRepo.findById(drawId).orElseThrow();
 		CJMUser loggedUser = SecurityUtils.cjmUser();
@@ -190,32 +234,24 @@ public class DrawController {
 	}
 	
 	@GetMapping("/list/{auditorshipId}")
-	public String listAll(@PathVariable Integer auditorshipId, Model model) {
+	public String list(@PathVariable Integer auditorshipId, Model model) {
+		
 		CJMUser loggedUser = SecurityUtils.cjmUser();
 		Auditorship userAuditorship = loggedUser.getAuditorship();
 		CJM userCJM = loggedUser.getAuditorship().getCjm();
 		
-		Auditorship selectedAuditorship = userAuditorship;
-		
-		if (auditorshipId != 0) {
-			selectedAuditorship = auditorshipRepo.findById(auditorshipId).orElseThrow();
-			
-			if ( !auditorshipSvc.isAuditorshipBelongsToCJM(selectedAuditorship, userCJM) )
-				selectedAuditorship = userAuditorship;
-		}
-			
+		Integer selectedAuditorship = (auditorshipId == 0) ? userAuditorship.getId() : auditorshipId;
 		model.addAttribute("selectedAuditorship", selectedAuditorship);
-		model.addAttribute("userAuditorship", userAuditorship);
+		model.addAttribute("userAuditorship", userAuditorship.getId());
 		
-		List<Draw> drawList = drawRepoImpl.listByAuditorship(selectedAuditorship);
-		Map<String, List<Draw>> quarterDrawMap = drawSvc.getMapAnnualQuarterDraw(drawList);
-		
+		List<Draw> drawList = drawService.listByAuditorship(selectedAuditorship);
+		Map<String, List<DrawDTO>> quarterDrawMap = drawService.mapListByQuarter(drawList);
 		model.addAttribute("quarterDrawMap", quarterDrawMap);
 		
-		List<Auditorship> auditorships = auditorshipRepo.findByCjm(userCJM);
+		List<Auditorship> auditorships = auditorshipService.listByCJM(userCJM.getId());
 		model.addAttribute("auditorships", auditorships);
 		
-		return "management/draw-list";
+		return "cjm/draw/list";
 	}
 	 
 	private void setDefaultHomeAttributes(Model model, DrawDTO drawDTO) {
@@ -230,7 +266,7 @@ public class DrawController {
 		model.addAttribute("quarters", DateUtils.getSelectableQuarters());
 		model.addAttribute("councils", councilService.list());
 		model.addAttribute("armies", armyService.list());
-		model.addAttribute("ranks", rankService.listRanksByArmy(drawDTO.getArmy()));
+		model.addAttribute("ranks", rankService.listRanksByArmy(drawDTO.getArmy()).stream().map(r -> EntityMapper.fromEntityToDTO(r)).collect(Collectors.toList()));
 		ControllerHelper.setEditMode(model, false);
 	}
 }

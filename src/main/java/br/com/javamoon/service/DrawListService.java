@@ -1,11 +1,11 @@
 package br.com.javamoon.service;
 
 import br.com.javamoon.domain.cjm_user.CJM;
+import br.com.javamoon.domain.entity.Army;
 import br.com.javamoon.domain.entity.DrawList;
 import br.com.javamoon.domain.entity.GroupUser;
+import br.com.javamoon.domain.entity.Soldier;
 import br.com.javamoon.domain.repository.DrawListRepository;
-import br.com.javamoon.domain.soldier.Army;
-import br.com.javamoon.domain.soldier.Soldier;
 import br.com.javamoon.exception.DrawListNotFoundException;
 import br.com.javamoon.mapper.DrawListDTO;
 import br.com.javamoon.mapper.DrawListsDTO;

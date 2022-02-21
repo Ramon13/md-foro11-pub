@@ -1,195 +1,195 @@
 <!DOCTYPE html>
-<html
-  xmlns="http://www.w3.org/1999/xhtml"
+<html xmlns="http://www.w3.org/1999/xhtml"
   xmlns:th="http://www.thymeleaf.org" layout:decorate="~{group/layout}">
-  
-  <style layout:fragment="style">
-    form{
-      text-align: inherit;
-      width: 100%;
-      margin: auto;
-    }
-    
-    input#listDescription{
-      font-size: 20px;
-    }
-    
-    #searchInputs{
-      overflow: auto;
-    }
-    
-    #searchInputs #left{
-      width: 43%;
-      float: left;
-    }
-    
-     #searchInputs #right{
-      width: 43%;
-      float: right;
-    }
-  
-    div#pickList{
-      margin: 0;
-      overflow: auto;
-    }
-    
-    div#pickOptions{
-      display: inline-block;
-      margin: 5px;
-      width: 8%;
-      text-align: center;
-      font-family: "NanumGothic", sans-serif;
-    }
-    
-    div#pickOptions button{
-      padding: 5px 25px;
-      background-color: #1A88FF;
-      color: #FFF;
-      
-    }
-    
-    div#pickList .left{
-      width: 45%;
-      float: left;
-      height: 500px;
-      border: 1px solid #eee;
-      overflow: auto;
-    }
-    
-    div#pickList .left p, .right p{
-      background-color: #f7f7f7;
-      padding: 5px;
-      border: 1px solid #eee;
-      text-align: center;
-    }
-    
-    div#pickList .right{
-      width: 45%;
-      float: right;
-      height: 500px;
-      border: 1px solid #eee;
-      overflow: auto;
-    }
-    
-    div#pickList .soldier{
-      padding: 10px 10px;
-    }
-    
-    div#pickList .soldier:hover{
-      background-color: #eee;
-    }
-    
-    div#pickList .soldier label{
-      font-size: 12px;
-    }
-    
-    button#saveList{
-      float: right;
-      background-color: #2EA44F;
-      color: #eee;
-    }
-    
-    button#saveList img{
-      width: 20px;
-    }
-    
-    label{
-      word-wrap: break-word;
-    }
-    
-    select.app-select{
-      width: 30%;
-    }
-    
-    div#quarter{
-      display: inline;
-      float: left;
-      width: 50%;
-    }
-    
-    div#enableForDraw{
-      display: inline;
-      float: right; 
-    }
-  </style>
-  
-  <body>
-    <div layout:fragment="content">
-      <form id="formList" method="get" th:action="@{/gp/dw/list/new/save}" th:object="${drawList}">
-        <input id="listId" name="id" type="hidden" th:field="*{id}" />
-          
-        <div id="listInfo">
-          <span class="error" style="display: none"></span>
-          <br/>
-          
-          <label>Descrição:</label><br/>
-          <input id="listDescription" th:field="*{description}" 
-          	class="app-txtinput" type="text" placeholder="nome ou descrição..."/>
-          
-          <br /> <br />
-  	      
-          <div style="margin-bottom: 100px">
-            <div id="quarter" th:if="${quarters != null}">
-        	      <label>Trimestre:</label><br/>
-        	      <select class="app-select" th:field="*{quarterYear}">
-        	        <option th:each="quarter : ${quarters}" th:value="${quarter.toShortFormat()}"
-        	           th:text="${quarter.description}"></option>
-        	      </select>
-            </div>
-            
-            <div id="enableForDraw">
-                <input type="checkbox" th:field="*{enableForDraw}"/> <span>Habilitar para sorteio</span>
-            </div>
+
+<style layout:fragment="style">
+form {
+	text-align: inherit;
+	width: 100%;
+	margin: auto;
+}
+
+input#listDescription {
+	font-size: 20px;
+}
+
+#searchInputs {
+	overflow: auto;
+}
+
+#searchInputs #left {
+	width: 43%;
+	float: left;
+}
+
+#searchInputs #right {
+	width: 43%;
+	float: right;
+}
+
+div#pickList {
+	margin: 0;
+	overflow: auto;
+}
+
+div#pickOptions {
+	display: inline-block;
+	margin: 5px;
+	width: 8%;
+	text-align: center;
+	font-family: "NanumGothic", sans-serif;
+}
+
+div#pickOptions button {
+	padding: 5px 25px;
+	background-color: #1A88FF;
+	color: #FFF;
+}
+
+div#pickList .left {
+	width: 45%;
+	float: left;
+	height: 500px;
+	border: 1px solid #eee;
+	overflow: auto;
+}
+
+div#pickList .left p, .right p {
+	background-color: #f7f7f7;
+	padding: 5px;
+	border: 1px solid #eee;
+	text-align: center;
+}
+
+div#pickList .right {
+	width: 45%;
+	float: right;
+	height: 500px;
+	border: 1px solid #eee;
+	overflow: auto;
+}
+
+div#pickList .soldier {
+	padding: 10px 10px;
+}
+
+div#pickList .soldier:hover {
+	background-color: #eee;
+}
+
+div#pickList .soldier label {
+	font-size: 12px;
+}
+
+button#saveList {
+	float: right;
+	background-color: #2EA44F;
+	color: #eee;
+}
+
+button#saveList img {
+	width: 20px;
+}
+
+label {
+	word-wrap: break-word;
+}
+
+select.app-select {
+	width: 30%;
+}
+
+div#quarter {
+	display: inline;
+	float: left;
+	width: 50%;
+}
+
+div#enableForDraw {
+	display: inline;
+	float: right;
+}
+</style>
+
+<body>
+  <div layout:fragment="content">
+    <form id="formList" method="get" th:action="@{/gp/dw/list/new/save}"
+      th:object="${drawList}">
+      <input id="listId" name="id" type="hidden" th:field="*{id}" />
+
+      <div id="listInfo">
+        <span class="error" style="display: none"></span> <br /> <label>Descrição:</label><br />
+        <input id="listDescription" th:field="*{description}"
+          class="app-txtinput" type="text"
+          placeholder="nome ou descrição..." /> <br /> <br />
+
+        <div style="margin-bottom: 100px">
+          <div id="quarter" th:if="${quarters != null}">
+            <label>Trimestre:</label><br /> <select class="app-select"
+              th:field="*{quarterYear}">
+              <option th:each="quarter : ${quarters}"
+                th:value="${quarter.toShortFormat()}"
+                th:text="${quarter.description}"></option>
+            </select>
+          </div>
+
+          <div id="enableForDraw">
+            <input type="checkbox" th:field="*{enableForDraw}" /> <span>Habilitar
+              para sorteio</span>
           </div>
         </div>
-        
-        <hr />
-      
-	      <div id="pickList">
-	        <div id="searchInputs">
-	          <input id="left" class="app-txtinput" type="text" placeholder="buscar por nome..."/>
-	          <input id="right" class="app-txtinput" type="text" placeholder="buscar por nome..."/>
-	        </div>
-	        
-	        <div class="left">
-	          <p>Disponível</p>
-	          <div class="soldier" th:each="soldier : ${soldiers}">
-	            <input class="sid" type="hidden" th:value="${soldier.id}"/>
-	            <input type="checkbox"/>
-	  		      <label class="soldierInfo" th:text="${soldier.getIdInfoAsText()}"></label>
-	          </div>
-	        </div>
-	        
-	        <div id="pickOptions">
-	          <button id="toRight" type="button"> > </button>
-	          <br/><br/>
-	      	  <button id="toLeft" type="button"> < </button>
-	        </div>
-	        
-	        <div id="rightList" class="right">
-	          <p>Selecionado</p>
-	           <div class="soldier" th:each="soldier : ${drawListSoldiers}">
-	            <input class="sid" type="hidden" th:value="${soldier.id}"/>
-	            <input type="checkbox"/> 
-	            <label th:text="${soldier.getIdInfoAsText()}"></label>
-	          </div>
-	        </div>
-	      </div>
-        <br />
-	      
-	      <div >
-	        <button type="button" id="back" class="app-gray-btn">
-	          <span>Voltar</span>
-	        </button>
-	        <button type="button" id="saveList">
-	          <span>Salvar</span>
-	          <img id="loadCircle" th:src="@{/images/load-green.gif}" alt="carregando..." />
-	        </button>
-	      </div>
-	   </form>    
-    </div>
-    
-    <script layout:fragment="page-script" th:inline="javascript">
+      </div>
+
+      <hr />
+
+      <div id="pickList">
+        <div id="searchInputs">
+          <input id="left" class="app-txtinput" type="text"
+            placeholder="buscar por nome..." /> <input id="right"
+            class="app-txtinput" type="text"
+            placeholder="buscar por nome..." />
+        </div>
+
+        <div class="left">
+          <p>Disponível</p>
+          <div class="soldier" th:each="soldier : ${soldiers}">
+            <input class="sid" type="hidden" th:value="${soldier.id}" />
+            <input type="checkbox" /> <label class="soldierInfo"
+              th:text="${soldier.getIdInfoAsText()}"></label>
+          </div>
+        </div>
+
+        <div id="pickOptions">
+          <button id="toRight" type="button">></button>
+          <br />
+          <br />
+          <button id="toLeft" type="button"><</button>
+        </div>
+
+        <div id="rightList" class="right">
+          <p>Selecionado</p>
+          <div class="soldier" th:each="soldier : ${drawListSoldiers}">
+            <input class="sid" type="hidden" th:value="${soldier.id}" />
+            <input type="checkbox" /> <label
+              th:text="${soldier.getIdInfoAsText()}"></label>
+          </div>
+        </div>
+      </div>
+      <br />
+
+      <div>
+        <button type="button" id="back" class="app-gray-btn">
+          <span>Voltar</span>
+        </button>
+        <button type="button" id="saveList">
+          <span>Salvar</span> <img id="loadCircle"
+            th:src="@{/images/load-green.gif}" alt="carregando..." />
+        </button>
+      </div>
+    </form>
+  </div>
+
+  <script layout:fragment="page-script" th:inline="javascript">
 	    setSoldierCheckboxListeners();
 	    setPickListArrowsListeners();
 	    setInputListFilterListeners();
@@ -369,5 +369,5 @@
 	      hideLoadStatus();
 	    }
     </script>
-  </body>
+</body>
 </html>

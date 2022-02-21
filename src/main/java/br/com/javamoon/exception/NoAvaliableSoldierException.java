@@ -1,4 +1,4 @@
-package br.com.javamoon.domain.soldier;
+package br.com.javamoon.exception;
 
 @SuppressWarnings("serial")
 public class NoAvaliableSoldierException extends Exception {

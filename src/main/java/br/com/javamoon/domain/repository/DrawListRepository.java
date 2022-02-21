@@ -1,5 +1,8 @@
 package br.com.javamoon.domain.repository;
 
+import br.com.javamoon.domain.cjm_user.CJM;
+import br.com.javamoon.domain.entity.Army;
+import br.com.javamoon.domain.entity.DrawList;
 import java.util.List;
 import java.util.Optional;
 import org.springframework.data.domain.Pageable;
@@ -7,10 +10,6 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
-
-import br.com.javamoon.domain.cjm_user.CJM;
-import br.com.javamoon.domain.entity.DrawList;
-import br.com.javamoon.domain.soldier.Army;
 
 public interface DrawListRepository extends JpaRepository<DrawList, Integer>{
 

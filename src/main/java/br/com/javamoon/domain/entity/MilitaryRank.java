@@ -1,4 +1,4 @@
-package br.com.javamoon.domain.soldier;
+package br.com.javamoon.domain.entity;
 
 import java.io.Serializable;
 import java.util.HashSet;

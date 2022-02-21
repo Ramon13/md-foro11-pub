@@ -1,40 +1,42 @@
 <!DOCTYPE html>
-<html
-  xmlns="http://www.w3.org/1999/xhtml"
+<html xmlns="http://www.w3.org/1999/xhtml"
   xmlns:th="http://www.thymeleaf.org" layout:decorate="~{group/layout}">
-  
-  <style layout:fragment="style">
-    
-  </style>
-  
-  <body>
-    <div layout:fragment="content">
-      <h1>Usuários Ativos</h1>
-      <hr />
-      <div id="users">
-        <table class="default-app-table">
-          <thead>
-            <tr>
-              <th>usuario</th>
-              <th>permissões</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr th:each="account : ${accounts}">
-              <td><span th:text="${account.prettyPrintUsernameAndEmail()}"></span></td>
-              <td><span th:text="${account.prettyPrintEnabledAccessScopes()}"></span></td>
-              <td>
-                <div>
-                  <a href="#" th:attr="data-deleteurl=@{/gp/accounts/delete/} + ${account.id}" class="delete-account">delete this account</a>
-                </div>
-              </td>
-            </tr>
-          </tbody>
-        </table>
-      </div>    
+
+<style layout:fragment="style">
+</style>
+
+<body>
+  <div layout:fragment="content">
+    <h1>Usuários Ativos</h1>
+    <hr />
+    <div id="users">
+      <table class="default-app-table">
+        <thead>
+          <tr>
+            <th>usuario</th>
+            <th>permissões</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr th:each="account : ${accounts}">
+            <td><span
+              th:text="${account.prettyPrintUsernameAndEmail()}"></span></td>
+            <td><span
+              th:text="${account.prettyPrintEnabledAccessScopes()}"></span></td>
+            <td>
+              <div>
+                <a href="#"
+                  th:attr="data-deleteurl=@{/gp/accounts/delete/} + ${account.id}"
+                  class="delete-account">delete this account</a>
+              </div>
+            </td>
+          </tr>
+        </tbody>
+      </table>
     </div>
-    
-    <script layout:fragment="page-script" th:inline="javascript">
+  </div>
+
+  <script layout:fragment="page-script" th:inline="javascript">
       const deleteAccountBtns = document.querySelectorAll("a.delete-account");
       
       addDeleteAccountEventListeners();
@@ -59,5 +61,5 @@
     	  return confirm("[Atenção] Após a exclusão o usuário não terá mais acesso ao sistema. Prosseguir com a exclusão da conta?");
       }
     </script>
-  </body>
+</body>
 </html>

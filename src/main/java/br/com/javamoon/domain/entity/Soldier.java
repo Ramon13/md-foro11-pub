@@ -1,10 +1,12 @@
-package br.com.javamoon.domain.soldier;
+package br.com.javamoon.domain.entity;
 
+import br.com.javamoon.domain.cjm_user.CJM;
+import br.com.javamoon.domain.draw.Draw;
+import br.com.javamoon.domain.draw_exclusion.DrawExclusion;
 import java.io.Serializable;
 import java.util.HashSet;
 import java.util.Objects;
 import java.util.Set;
-
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -16,11 +18,6 @@ import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.PrePersist;
 import javax.persistence.Table;
-
-import br.com.javamoon.domain.cjm_user.CJM;
-import br.com.javamoon.domain.draw.Draw;
-import br.com.javamoon.domain.draw_exclusion.DrawExclusion;
-import br.com.javamoon.domain.entity.DrawList;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;

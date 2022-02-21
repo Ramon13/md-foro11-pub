@@ -1,7 +1,6 @@
 package br.com.javamoon.domain.entity;
 
 import br.com.javamoon.domain.cjm_user.CJM;
-import br.com.javamoon.domain.soldier.Army;
 import javax.persistence.Entity;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
