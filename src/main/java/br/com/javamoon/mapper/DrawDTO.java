@@ -6,6 +6,8 @@ import br.com.javamoon.config.properties.DrawConfigProperties;
 import br.com.javamoon.domain.draw.CouncilType;
 import br.com.javamoon.domain.draw.JusticeCouncil;
 import br.com.javamoon.domain.entity.Army;
+import br.com.javamoon.domain.entity.CJMUser;
+import br.com.javamoon.domain.entity.DrawList;
 import br.com.javamoon.domain.entity.Soldier;
 import br.com.javamoon.service.ArmyService;
 import br.com.javamoon.service.JusticeCouncilService;

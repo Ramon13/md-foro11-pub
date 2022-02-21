@@ -56,7 +56,7 @@
               <a href="#" th:if="${userAuditorship} eq ${selectedAuditorship}" class="edit-draw" 
                 th:attr="data-url=@{/cjm/dw/edit/} + ${draw.id}">editar</a>
               <span> | </span> 
-              <a href="#" class="exportPdf" th:attr="data-drawid=${draw.id}">gerar pdf</a>
+              <a th:href="@{/cjm/dw/export/pdf/} + ${draw.id}" class="exportPdf">gerar pdf</a>
             </div>
           </div>
         </div>

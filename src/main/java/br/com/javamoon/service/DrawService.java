@@ -1,22 +1,5 @@
 package br.com.javamoon.service;
 
-import br.com.javamoon.domain.cjm_user.Auditorship;
-import br.com.javamoon.domain.cjm_user.CJM;
-import br.com.javamoon.domain.draw.CouncilType;
-import br.com.javamoon.domain.draw.Draw;
-import br.com.javamoon.domain.draw.JusticeCouncil;
-import br.com.javamoon.domain.entity.Army;
-import br.com.javamoon.domain.entity.CJMUser;
-import br.com.javamoon.domain.entity.Soldier;
-import br.com.javamoon.domain.repository.DrawRepository;
-import br.com.javamoon.domain.repository.SoldierRepository;
-import br.com.javamoon.exception.DrawNotFoundException;
-import br.com.javamoon.exception.DrawValidationException;
-import br.com.javamoon.mapper.DrawDTO;
-import br.com.javamoon.mapper.EntityMapper;
-import br.com.javamoon.mapper.SoldierDTO;
-import br.com.javamoon.util.DateUtils;
-import br.com.javamoon.validator.DrawValidator;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -26,8 +9,23 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.TreeMap;
 import java.util.stream.Collectors;
+
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import br.com.javamoon.domain.cjm_user.Auditorship;
+import br.com.javamoon.domain.cjm_user.CJM;
+import br.com.javamoon.domain.draw.Draw;
+import br.com.javamoon.domain.entity.CJMUser;
+import br.com.javamoon.domain.entity.Soldier;
+import br.com.javamoon.domain.repository.DrawRepository;
+import br.com.javamoon.domain.repository.SoldierRepository;
+import br.com.javamoon.exception.DrawNotFoundException;
+import br.com.javamoon.exception.DrawValidationException;
+import br.com.javamoon.mapper.DrawDTO;
+import br.com.javamoon.mapper.EntityMapper;
+import br.com.javamoon.util.DateUtils;
+import br.com.javamoon.validator.DrawValidator;
 import net.sf.jasperreports.engine.data.JRBeanCollectionDataSource;
 
 @Service
@@ -91,8 +89,8 @@ public class DrawService {
 		Draw draw = getDrawOrElseThrow(drawId, auditorship);
 		
 		return EntityMapper.fromEntityToDTO(draw);
-	}
-
+	} 
+	
 	public Map<String, List<Draw>> getMapAnnualQuarterDraw(List<Draw> drawList){
 		Map<String, List<Draw>> quarterDrawMap = new TreeMap<>(Collections.reverseOrder());
 		
@@ -137,26 +135,6 @@ public class DrawService {
 		
 		return quarterLists;
 	}
-	
-	/**
-	 * Select the first n soldiers in Draw.soldiers list, where n is the council size
-	 */
-	@Deprecated
-	private List<Soldier> getSelectedSoldiers(Draw draw, CouncilType councilType) {
-		return null;
-//		int councilSize = councilType.getCouncilSize();
-//		List<Soldier> selectedSoldiers = new ArrayList<>();
-//		
-//		for (int i = 0; i < councilSize; i++) {
-//			if ( soldierSvc.isValidArmy(draw.getArmy(), draw.getSoldiers().get(i)) == Boolean.FALSE ) {
-//				throw new IllegalStateException("The soldier does not belong to this army");
-//			}
-//			
-//			selectedSoldiers.add(draw.getSoldiers().get(i));
-//		}
-//		
-//		return selectedSoldiers;
-	}
 
 	public byte[] generateDrawReport(Draw draw) {
 		List<Soldier> soldiers =soldierRepository.findAllByDraw(draw.getId());
@@ -191,7 +169,7 @@ public class DrawService {
 		return draw.getCjmUser().getAuditorship().getId().equals(auditorship.getId());
 	}
 	
-	private Draw getDrawOrElseThrow(Integer drawId, Auditorship auditorship) {
+	public Draw getDrawOrElseThrow(Integer drawId, Auditorship auditorship) {
 		Objects.nonNull(drawId);
 		
 		return drawRepository.findByIdAndAuditorship(drawId, auditorship.getId())

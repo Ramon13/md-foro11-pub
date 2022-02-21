@@ -38,8 +38,7 @@ div#multipleFormBtns {
 
 <body>
   <div layout:fragment="content">
-    <input th:if="${sucessMsg}" type="hidden" id="sucessCreated"
-      th:value="${sucessMsg}" />
+    <input th:if="${sucessMsg}" type="hidden" id="sucessMsg" th:value="${sucessMsg}" />
 
     <form id="drawForm" class="multipleForm">
       <div class="tab tab1" th:if="${!editMode}">
@@ -239,7 +238,7 @@ div#multipleFormBtns {
 
   <script layout:fragment="page-script" th:inline="javascript">
       accordion(document.getElementsByClassName("accordion"));
-      showCreatedMsg();
+      showSuccessMsg();
       setTabFocus();
       
       const councilSelect = document.querySelector('select#councilSelect');
@@ -379,9 +378,9 @@ div#multipleFormBtns {
     	  form.submit();
       }
       
-      function showCreatedMsg(){
-    	  const sucessCreated = document.querySelector("input[type=hidden]#sucessCreated");
-    	  (sucessCreated != null) ? alert(sucessCreated.value) : '';
+      function showSuccessMsg(){
+    	  const sucessMsg = document.querySelector("input[type=hidden]#sucessMsg");
+    	  (sucessMsg != null) ? alert(sucessMsg.value) : '';
       }
     </script>
 </body>

@@ -1,18 +1,36 @@
 package br.com.javamoon.infrastructure.web.controller.cjm;
 
+import java.io.IOException;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import java.util.stream.Collectors;
+
+import javax.servlet.http.HttpServletResponse;
+import javax.validation.Valid;
+
+import org.springframework.http.MediaType;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.validation.Errors;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.SessionAttributes;
+import org.springframework.web.bind.support.SessionStatus;
+
 import br.com.javamoon.config.properties.DrawConfigProperties;
 import br.com.javamoon.domain.cjm_user.Auditorship;
-import br.com.javamoon.domain.cjm_user.AuditorshipRepository;
 import br.com.javamoon.domain.cjm_user.CJM;
-import br.com.javamoon.domain.draw.CouncilType;
 import br.com.javamoon.domain.draw.Draw;
 import br.com.javamoon.domain.entity.CJMUser;
-import br.com.javamoon.domain.entity.Soldier;
-import br.com.javamoon.domain.repository.DrawRepository;
-import br.com.javamoon.domain.repository.SoldierRepository;
 import br.com.javamoon.exception.DrawValidationException;
 import br.com.javamoon.infrastructure.web.controller.ControllerHelper;
-import br.com.javamoon.infrastructure.web.repository.DrawRepositoryImpl;
 import br.com.javamoon.mapper.DrawDTO;
 import br.com.javamoon.mapper.DrawListDTO;
 import br.com.javamoon.mapper.EntityMapper;
@@ -26,45 +44,11 @@ import br.com.javamoon.service.RandomSoldierService;
 import br.com.javamoon.util.DateUtils;
 import br.com.javamoon.util.SecurityUtils;
 import br.com.javamoon.validator.ValidationUtils;
-import java.io.IOException;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-import java.util.stream.Collectors;
-import javax.validation.Valid;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
-import org.springframework.validation.Errors;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.SessionAttributes;
-import org.springframework.web.bind.support.SessionStatus;
 
 @Controller
 @RequestMapping(path = "/cjm/dw")
 @SessionAttributes("drawDTO")
 public class DrawController {
-
-	@Autowired
-	private DrawService drawSvc;
-	
-	@Autowired
-	private SoldierRepository soldierRepo;
-	
-	@Autowired
-	private DrawRepository drawRepo;
-	
-	@Autowired
-	private DrawRepositoryImpl drawRepoImpl;
-	
-	@Autowired
-	private AuditorshipRepository auditorshipRepo;
 	
 	private ArmyService armyService;
 	
@@ -108,11 +92,12 @@ public class DrawController {
 	
 	@GetMapping("/home")
 	public String home( @ModelAttribute("drawDTO") DrawDTO drawDTO, Model model,
-			@RequestParam(name = "sucessCreated", required = false) boolean successCreated) {
+			@RequestParam(name = "sucessCreated", required = false) boolean successCreated,
+			@RequestParam(name = "sucessModified", required = false) boolean successModified) {
 		drawDTO.clearRandomSoldiers();
 		
 		setDefaultHomeAttributes(model, drawDTO);
-		model.addAttribute("sucessMsg", successCreated ? "O sorteio foi salvo" : null);
+		addSuccessMsg(successCreated, successModified, model);
 		return "cjm/draw/home";
 	}
 	
@@ -131,6 +116,7 @@ public class DrawController {
 			
 		} catch (DrawValidationException e) {
 			ValidationUtils.rejectValues(errors, e.getValidationErrors());
+			drawDTO.clearRandomSoldiers();
 		}
 		
 		setDefaultHomeAttributes(model, drawDTO);
@@ -196,10 +182,12 @@ public class DrawController {
 	}
 	
 	@PostMapping("/edit")
-	public String edit(@ModelAttribute("drawDTO") DrawDTO drawDTO, Errors errors, Model model) {
+	public String edit(@ModelAttribute("drawDTO") DrawDTO drawDTO, Errors errors, Model model, SessionStatus sessionStatus) {
 		try {
 			CJMUser loggedUser = SecurityUtils.cjmUser();
 			drawService.edit(drawDTO, loggedUser.getAuditorship());
+			
+			sessionStatus.setComplete();
 			return "redirect:/cjm/dw/home?sucessModified=true";
 		} catch (DrawValidationException e) {
 			e.printStackTrace();
@@ -207,30 +195,6 @@ public class DrawController {
 		}
 		
 		return "redirect:/cjm/dw/edit/" + drawDTO.getId();
-	}
-	
-	@GetMapping("/old/edit/{drawId}")
-	public String editDrawHome(@PathVariable Integer drawId, Model model) {
-		Draw draw = drawRepo.findById(drawId).orElseThrow();
-		CJMUser loggedUser = SecurityUtils.cjmUser();
-		
-		if ( drawSvc.isAuditorshipOwner(draw, loggedUser.getAuditorship()) ) {
-			draw.setSoldiers(soldierRepo.findAllByDraw(drawId));
-			draw.setCouncilType( CouncilType.fromAlias(draw.getJusticeCouncil().getAlias()) );
-			
-			for (Soldier s : draw.getSoldiers())
-				draw.getRanks().add(s.getMilitaryRank());
-			
-			randomSoldierSvc.setSoldierExclusionMessages(draw);
-			
-			model.addAttribute("draw", draw);
-			setDefaultPageAttributes(draw, model);
-			ControllerHelper.setEditMode(model, true);
-	
-			return "management/draw-home";
-		}
-		
-		throw new IllegalStateException("Unauthorized operation. You have no permissions to edit this draw");
 	}
 	
 	@GetMapping("/list/{auditorshipId}")
@@ -254,6 +218,20 @@ public class DrawController {
 		return "cjm/draw/list";
 	}
 	 
+	@GetMapping(path="/export/pdf/{drawId}", produces=MediaType.APPLICATION_PDF_VALUE)
+	@ResponseBody
+	public byte[] generateDrawPdf(@PathVariable Integer drawId, HttpServletResponse response) {
+		CJMUser loggedUser = SecurityUtils.cjmUser();
+		
+		Draw draw = drawService.getDrawOrElseThrow(drawId, loggedUser.getAuditorship());
+		
+		response.setHeader(
+			"Content-disposition", 
+			String.format("inline; filename=%s.pdf", draw.getJusticeCouncil().getName())
+		);
+		return drawService.generateDrawReport(draw);
+	}
+	
 	private void setDefaultHomeAttributes(Model model, DrawDTO drawDTO) {
 		CJMUser loggedUser = SecurityUtils.cjmUser();
 		
@@ -268,5 +246,12 @@ public class DrawController {
 		model.addAttribute("armies", armyService.list());
 		model.addAttribute("ranks", rankService.listRanksByArmy(drawDTO.getArmy()).stream().map(r -> EntityMapper.fromEntityToDTO(r)).collect(Collectors.toList()));
 		ControllerHelper.setEditMode(model, false);
+	}
+	
+	private void addSuccessMsg(boolean successCreated, boolean successModified, Model model) {
+		if (successCreated)
+			model.addAttribute("sucessMsg", "O sorteio foi salvo");
+		if (successModified)
+			model.addAttribute("sucessMsg", "Edição realizada com sucesso");
 	}
 }

@@ -150,7 +150,7 @@ insert into DRAW_LIST (id, creation_date, update_date, army_id, year_quarter, de
 		
 insert into DRAW_LIST_HAS_SOLDIER (draw_list_id, soldier_id)
 	values
-		(1, 1), (1, 2), (1, 3), (1, 4), (1, 5);			
+		(1, 1), (1, 2), (1, 3), (1, 4), (1, 5), (1, 6), (1, 7), (1, 8), (1, 9), (1, 10); 			
 
 insert into DRAW_LIST (id, creation_date, update_date, army_id, year_quarter, description, creation_user_id, active, enable_for_draw)
 	values
