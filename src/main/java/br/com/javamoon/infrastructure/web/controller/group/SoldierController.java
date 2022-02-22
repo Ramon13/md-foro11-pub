@@ -1,9 +1,9 @@
 package br.com.javamoon.infrastructure.web.controller.group;
 
 import br.com.javamoon.domain.cjm_user.CJM;
+import br.com.javamoon.domain.entity.Army;
 import br.com.javamoon.domain.entity.GroupUser;
-import br.com.javamoon.domain.soldier.Army;
-import br.com.javamoon.domain.soldier.Soldier;
+import br.com.javamoon.domain.entity.Soldier;
 import br.com.javamoon.exception.SoldierValidationException;
 import br.com.javamoon.infrastructure.web.controller.ControllerHelper;
 import br.com.javamoon.infrastructure.web.model.PaginationSearchFilter;

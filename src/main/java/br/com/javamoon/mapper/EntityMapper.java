@@ -139,7 +139,6 @@ public final class EntityMapper {
     	drawDTO.setSelectedRanks(draw.getSoldiers().stream().map(s -> s.getMilitaryRank().getId()).collect(Collectors.toList()));
     	drawDTO.setSubstitute(draw.getSubstitute());
     	drawDTO.getDrawnSoldiers().addAll(draw.getSoldiers().stream().map(s -> s.getId()).collect(Collectors.toList()));
-    	drawDTO.setCjmUser(draw.getCjmUser());
     	return drawDTO;
     }
     
@@ -148,7 +147,6 @@ public final class EntityMapper {
     	draw.setId(drawDTO.getId());
     	draw.setArmy(drawDTO.getArmy());
     	draw.setJusticeCouncil(drawDTO.getJusticeCouncil());
-    	draw.setCjmUser(drawDTO.getCjmUser());
     	draw.setSoldiers(drawDTO.getSoldiers().stream().map(s -> fromDTOToEntity(s)).collect(Collectors.toList()));
     	draw.setProcessNumber(drawDTO.getProcessNumber());
     	return draw;

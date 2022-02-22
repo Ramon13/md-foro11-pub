@@ -175,4 +175,11 @@ public class DrawService {
 		return drawRepository.findByIdAndAuditorship(drawId, auditorship.getId())
 		 .orElseThrow(() -> new DrawNotFoundException("Draw not found: " + drawId));
 	}
+	
+	public Draw getDrawOrElseThrow(Integer drawId) {
+		Objects.nonNull(drawId);
+		
+		return drawRepository.findById(drawId)
+		 .orElseThrow(() -> new DrawNotFoundException("Draw not found: " + drawId));
+	}
 }

@@ -19,7 +19,7 @@ import static br.com.javamoon.validator.ValidationConstants.STRING_EXCEEDS_MAX_L
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import br.com.javamoon.domain.draw.JusticeCouncil;
-import br.com.javamoon.domain.soldier.MilitaryRankRepository;
+import br.com.javamoon.domain.repository.MilitaryRankRepository;
 import br.com.javamoon.exception.DrawValidationException;
 import br.com.javamoon.mapper.DrawDTO;
 import br.com.javamoon.mapper.SoldierDTO;

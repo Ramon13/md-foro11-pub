@@ -1,7 +1,7 @@
 package br.com.javamoon.infrastructure.web.controller.cjm;
 
 import br.com.javamoon.domain.entity.CJMUser;
-import br.com.javamoon.domain.soldier.Soldier;
+import br.com.javamoon.domain.entity.Soldier;
 import br.com.javamoon.mapper.EntityMapper;
 import br.com.javamoon.service.DrawExclusionService;
 import br.com.javamoon.service.SoldierService;

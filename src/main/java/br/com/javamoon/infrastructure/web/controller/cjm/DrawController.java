@@ -221,13 +221,12 @@ public class DrawController {
 	@GetMapping(path="/export/pdf/{drawId}", produces=MediaType.APPLICATION_PDF_VALUE)
 	@ResponseBody
 	public byte[] generateDrawPdf(@PathVariable Integer drawId, HttpServletResponse response) {
-		CJMUser loggedUser = SecurityUtils.cjmUser();
-		
-		Draw draw = drawService.getDrawOrElseThrow(drawId, loggedUser.getAuditorship());
+		Draw draw = drawService.getDrawOrElseThrow(drawId);
 		
 		response.setHeader(
 			"Content-disposition", 
-			String.format("inline; filename=%s.pdf", draw.getJusticeCouncil().getName())
+			String.format("inline; filename=%s-%s-%s.pdf", 
+					draw.getJusticeCouncil().getAlias(), draw.getArmy().getAlias(), draw.getDrawList().getYearQuarter())
 		);
 		return drawService.generateDrawReport(draw);
 	}

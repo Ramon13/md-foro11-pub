@@ -8,32 +8,20 @@ import static br.com.javamoon.validator.ValidationConstants.NO_AVALIABLE_SOLDIER
 import static br.com.javamoon.validator.ValidationConstants.REPLACE_SOLDIER_IS_NOT_IN_THE_LIST;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
-
-import java.util.Arrays;
-import java.util.List;
-import java.util.stream.Collectors;
-
-import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.annotation.DirtiesContext;
-import org.springframework.test.annotation.DirtiesContext.ClassMode;
-import org.springframework.test.context.ActiveProfiles;
-
 import br.com.javamoon.domain.cjm_user.CJM;
 import br.com.javamoon.domain.cjm_user.CJMRepository;
+import br.com.javamoon.domain.entity.Army;
 import br.com.javamoon.domain.entity.DrawList;
+import br.com.javamoon.domain.entity.Soldier;
+import br.com.javamoon.domain.repository.ArmyRepository;
 import br.com.javamoon.domain.repository.DrawListRepository;
 import br.com.javamoon.domain.repository.GroupUserRepository;
+import br.com.javamoon.domain.repository.MilitaryOrganizationRepository;
+import br.com.javamoon.domain.repository.MilitaryRankRepository;
 import br.com.javamoon.domain.repository.SoldierRepository;
-import br.com.javamoon.domain.soldier.Army;
-import br.com.javamoon.domain.soldier.ArmyRepository;
-import br.com.javamoon.domain.soldier.MilitaryOrganizationRepository;
-import br.com.javamoon.domain.soldier.MilitaryRankRepository;
-import br.com.javamoon.domain.soldier.NoAvaliableSoldierException;
-import br.com.javamoon.domain.soldier.Soldier;
 import br.com.javamoon.exception.DrawListNotFoundException;
 import br.com.javamoon.exception.DrawValidationException;
+import br.com.javamoon.exception.NoAvaliableSoldierException;
 import br.com.javamoon.mapper.DrawDTO;
 import br.com.javamoon.mapper.EntityMapper;
 import br.com.javamoon.mapper.SoldierDTO;
@@ -41,6 +29,15 @@ import br.com.javamoon.service.RandomSoldierService;
 import br.com.javamoon.util.Constants;
 import br.com.javamoon.util.TestDataCreator;
 import br.com.javamoon.validator.ValidationError;
+import java.util.Arrays;
+import java.util.List;
+import java.util.stream.Collectors;
+import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.annotation.DirtiesContext;
+import org.springframework.test.annotation.DirtiesContext.ClassMode;
+import org.springframework.test.context.ActiveProfiles;
 
 @SpringBootTest
 @ActiveProfiles("test")

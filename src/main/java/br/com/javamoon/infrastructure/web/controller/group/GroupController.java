@@ -18,15 +18,17 @@ import org.springframework.web.bind.annotation.RequestMapping;
 @RequestMapping(path = "/gp")
 public class GroupController {
 	
-	@Autowired
-	private DrawRepository drawRepo;
+	private DrawService drawService;
 	
-	@Autowired
-	private DrawService drawSvc;
-	
+	public GroupController(DrawService drawService) {
+		this.drawService = drawService;
+	}
+
 	@GetMapping("/cjm/dw")
 	public String listCJMCompletedDraw(Model model) {
 		GroupUser loggedUser = SecurityUtils.groupUser();
+		
+		drawService
 		
 		List<Draw> drawList = ControllerHelper
 				.listDrawByCJMAndArmy(drawRepo, loggedUser.getCjm(), loggedUser.getArmy());
