@@ -46,4 +46,10 @@ public class DrawExclusionDTO {
 						DateUtils.convertToFormat(endDate, format))
 				: "";
 	}
+
+	@Override
+	public String toString() {
+		return "DrawExclusionDTO [id=" + id + ", startDate=" + startDate + ", endDate=" + endDate + ", message="
+				+ message + ", soldier=" + soldier + ", groupUser=" + groupUser + "]";
+	}	
 }

@@ -51,17 +51,23 @@ label, h1, h2 {
 	font-family: "Roboto", sans-serif;
 }
 
-h1 {
+h1, h2, h3{
 	font-family: "Roboto", sans-serif;
 	color: #4e4848;
 	font-size: 20px;
 	font-weight: bold;
 }
 
-h2 {
-	color: #4e4848;
-	font-size: 16px;
-	font-weight: bold;
+h1{
+    font-size: 20px;	
+}
+
+h2{
+    font-size: 18px;    
+}
+
+h3{
+    font-size: 15px;    
 }
 
 form {

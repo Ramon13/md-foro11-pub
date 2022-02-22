@@ -31,15 +31,11 @@ div#content textarea {
 	width: 99%;
 	height: 70px;
 	border-color: #c5c7cb;
-	font-size: 18px;
+	font-size: 14px;
 }
 
 button.add-impediments {
 	float: right;
-}
-
-div#exclusions {
-	margin-top: 50px;
 }
 
 div.no-exclusions {
@@ -79,6 +75,10 @@ img.remove-exclusion {
 	float: right;
 	margin: 0 5px;
 }
+
+  h2{
+    font-size: 15px;
+  }
 </style>
 <body>
   <div layout:fragment="content">
@@ -126,11 +126,47 @@ img.remove-exclusion {
 
     <hr />
     <div id="exclusions">
-      <h2>Impedimentos</h2>
+      <h2>Adicionar Impedimentos</h2>
+      
       <div class="no-exclusions" th:if="${#lists.isEmpty(exclusions)}">
         <span> Este usuário não possui impedimentos registrados </span>
       </div>
+      
+      <div>
+        <form method="post" th:action="@{/gp/sd/exclusion/save}" th:object="${exclusionDTO}">
+          <input type="hidden" name="soldier.id" th:value="${soldier.id}">
         
+          <div th:if="${#fields.hasErrors('startDate')}">
+            <span class="error" th:errors="*{startDate}"></span>
+          </div>
+          <div th:if="${#fields.hasErrors('endDate')}">
+            <span class="error" th:errors="*{endDate}"></span>
+          </div>
+          <span>De: </span>
+          <input type="date" class="app-dateinput" th:field="*{startDate}"
+            th:classappend="${#fields.hasErrors('startDate') ? 'error' : ''}"/>
+          
+          <span>Até: </span>
+          <input type="date" class="app-dateinput" th:field="*{endDate}"
+            th:classappend="${#fields.hasErrors('endDate') ? 'error' : ''}"/><br/>
+          
+          <div th:if="${#fields.hasErrors('message')}">
+            <span class="error" th:errors="*{message}"></span>
+          </div>
+          <div>
+            <textarea rows="5" cols="50" placeholder="Adicionar novo impedimento..." th:field="*{message}"></textarea>
+            <br/>
+          </div>
+          
+          <div id="controlBtns">
+            <button type="submit" class="add-impediments app-green-btn">
+              <span>Adicionar</span>
+            </button>          
+          </div>
+        </form>
+      </div>
+      
+      <br/><br/>
       <div class="impediment" th:each="exclusion : ${exclusions}">
         <div class="impediment-header">
           <span

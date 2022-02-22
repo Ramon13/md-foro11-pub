@@ -33,7 +33,7 @@ public class DrawExclusionController {
 
 	@PostMapping("/save")
 	public String save(
-			@Valid @ModelAttribute("exclusion") DrawExclusionDTO exclusionDTO, 
+			@Valid @ModelAttribute("exclusionDTO") DrawExclusionDTO exclusionDTO, 
 			Errors errors,
 			Model model) {
 		GroupUser loggedUser = SecurityUtils.groupUser();

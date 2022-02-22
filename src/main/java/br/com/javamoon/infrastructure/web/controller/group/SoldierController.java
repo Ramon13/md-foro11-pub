@@ -124,7 +124,7 @@ public class SoldierController {
 		exclusionDTO.setEndDate(DateUtils.getEndQuarterDate(nextQuarter));
 		
 		model.addAttribute("exclusions", drawExclusionService.listBySoldier(soldier));
-		model.addAttribute("exclusion", exclusionDTO);
+		model.addAttribute("exclusionDTO", exclusionDTO);
 		model.addAttribute("soldier", EntityMapper.fromEntityToDTO(soldier));
 		return "group/soldier/profile";
 	}
