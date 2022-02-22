@@ -35,7 +35,7 @@ tbody.soldier:hover {
   <div layout:fragment="content">
     <div id="listInfo">
       <span
-        th:text="'[' + ${drawList.quarterYear} + ']' + ' ' + ${drawList.description}"></span>
+        th:text="'[' + ${drawList.yearQuarter} + ']' + ' ' + ${drawList.description}"></span>
     </div>
     <br />
     <div th:if="${session.listScope}">

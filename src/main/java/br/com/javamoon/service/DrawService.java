@@ -116,6 +116,10 @@ public class DrawService {
 		return drawRepository.findAllByAuditorship(auditorshipId);
 	}
 	
+	public List<Draw> list(Integer armyId, Integer cjmId){
+		return drawRepository.findAllByArmyAndCJM(armyId, cjmId);
+	}
+	
 	public Map<String, List<DrawDTO>> mapListByQuarter(List<Draw> drawList){
 		Map<String, List<DrawDTO>> quarterLists = new TreeMap<>(Collections.reverseOrder());
 		
@@ -181,5 +185,5 @@ public class DrawService {
 		
 		return drawRepository.findById(drawId)
 		 .orElseThrow(() -> new DrawNotFoundException("Draw not found: " + drawId));
-	}
+	}	
 }

@@ -1,10 +1,10 @@
 package br.com.javamoon.mapper;
 
 import br.com.javamoon.domain.draw.CouncilType;
-import groovy.transform.ToString;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
+import lombok.ToString;
 
 @Getter
 @Setter

@@ -69,7 +69,7 @@ public class DrawListController {
 		DrawListDTO drawList = new DrawListDTO();
 		drawList.setYearQuarter(DateUtils.toQuarterFormat(LocalDate.now()));
 		
-		model.addAttribute("quarters", DateUtils.getSelectableQuarters()); //TODO: fix this attribute on template <expect annual quarter obj>
+		model.addAttribute("quarters", DateUtils.getSelectableQuarters());
 		model.addAttribute("drawList", drawList);
 		model.addAttribute("soldiers", soldierService.listAll(loggedUser.getArmy(), loggedUser.getCjm()));
 		

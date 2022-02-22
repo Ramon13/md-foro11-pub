@@ -4,42 +4,19 @@
 
 <style layout:fragment="style">
 form {
-	width: 100%;
-}
-
-input[type=text], input[type=password] {
-	width: 30%;
-}
-
-div#scope-access div {
-	border: 1px solid #cecece;
-	padding: 15px;
-}
-
-div#scope-access .label-desc {
-	float: right;
-	width: 70%;
-}
-
-button#createUser {
-	float: right;
+	width: 40%;
 }
 
 button#createUser img {
 	width: 20px;
 }
 
-div#scope-access, div#form-btns {
-	width: 75%;
-	margin: auto;
+button#back{
+    float: left;
 }
 
-div#form-btns #back {
-	float: left;
-}
-
-div#scope-access input[type=checkbox] {
-	margin-right: 14px;
+button#createUser{
+    float: right;
 }
 </style>
 
@@ -106,22 +83,7 @@ div#scope-access input[type=checkbox] {
           </div>
         </div>
       </div>
-
-      <div class="form-step">
-        <div class="input-label">
-          <label>Permissões de acesso</label>
-        </div>
-        <br />
-        <div id="scope-access">
-          <div th:each="role : ${user.permissionRoles}">
-            <input type="checkbox" name="selectedRoles"
-              th:value="${role.scopeName}" th:text="${role.name}">
-            <span class="label-desc" th:text="${role.description}"></span>
-          </div>
-        </div>
-
-      </div>
-
+      
       <div id="form-btns">
         <button type="button" id="back" class="app-gray-btn">
           <span>Voltar</span>

@@ -56,7 +56,6 @@ public class Draw implements Serializable{
 	@Column(name = "finished", nullable = false)
 	private Boolean finished;
 	
-	@ToString.Exclude
 	@ManyToOne
 	@JoinColumn(name = "justice_council_id", nullable = false)
 	private JusticeCouncil justiceCouncil;
@@ -83,6 +82,7 @@ public class Draw implements Serializable{
     )
 	private List<Soldier> soldiers = new LinkedList<>();
 	
+	@ToString.Exclude
 	@ManyToOne
 	@JoinColumn(name="draw_list_id", nullable = true)
 	private DrawList drawList;

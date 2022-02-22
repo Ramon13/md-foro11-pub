@@ -126,10 +126,8 @@ div#enableForDraw {
         <div style="margin-bottom: 100px">
           <div id="quarter" th:if="${quarters != null}">
             <label>Trimestre:</label><br /> <select class="app-select"
-              th:field="*{quarterYear}">
-              <option th:each="quarter : ${quarters}"
-                th:value="${quarter.toShortFormat()}"
-                th:text="${quarter.description}"></option>
+              th:field="*{yearQuarter}">
+              <option th:each="quarter : ${quarters}" th:value="${quarter}" th:text="${quarter}"></option>
             </select>
           </div>
 

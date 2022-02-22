@@ -74,7 +74,7 @@ button#newList:hover, img.more:hover {
       <div class="draw-list">
         <div class="list-header">
           <span
-            th:text="'[' + ${drawList.quarterYear} + ']' + ' ' + ${drawList.description}"></span>
+            th:text="'[' + ${drawList.yearQuarter} + ']' + ' ' + ${drawList.description}"></span>
 
           <div class="dropdown" th:if="${session.listScope}">
             <img class="more dropdown" th:src="@{/images/hmore.svg}" />

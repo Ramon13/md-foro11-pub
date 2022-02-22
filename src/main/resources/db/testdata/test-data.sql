@@ -1,4 +1,4 @@
-use md_foro11;
+use md_foro11_test;
 
 #CJM
 insert into CJM (id, cjm_name, alias, regions) 
@@ -133,7 +133,7 @@ insert into GROUP_USER (id, username, email, user_password, active, credentials_
 #group_user MB 1cjm		
 insert into GROUP_USER (id, username, email, user_password, active, credentials_expired, cjm_id, army_id, permission_level)
 	values
-		(2, 'mbadmin', 'mb@mb.com', '{bcrypt}$2a$10$IgXSs3978BKQMSyrIRF/ROA8V7f/v.G.Zr0F2l1yLJGamjGbYBjXe', 1, 0, 1, 2, 1);
+		(2, 'mbadmin', 'mb@mb.com', '{bcrypt}$2a$10$IgXSs3978BKQMSyrIRF/ROA8V7f/v.G.Zr0F2l1yLJGamjGbYBjXe', 1, 0, 1, 2, 7);
 		
 #group_user FAB 2cjm		
 insert into GROUP_USER (id, username, email, user_password, active, credentials_expired, cjm_id, army_id, permission_level)

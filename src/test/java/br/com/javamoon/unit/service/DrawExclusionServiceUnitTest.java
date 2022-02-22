@@ -1,5 +1,6 @@
 package br.com.javamoon.unit.service;
 
+import static br.com.javamoon.util.Constants.CEJ_COUNCIl_ALIAS;
 import static br.com.javamoon.util.Constants.DEFAULT_ARMY_ALIAS;
 import static br.com.javamoon.util.Constants.DEFAULT_ARMY_NAME;
 import static br.com.javamoon.util.TestDataCreator.getPersistedArmy;
@@ -16,11 +17,21 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+
+import java.time.LocalDate;
+import java.util.List;
+
+import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.annotation.DirtiesContext;
+import org.springframework.test.annotation.DirtiesContext.ClassMode;
+import org.springframework.test.context.ActiveProfiles;
+
 import br.com.javamoon.domain.cjm_user.AuditorshipRepository;
 import br.com.javamoon.domain.cjm_user.CJM;
 import br.com.javamoon.domain.cjm_user.CJMRepository;
 import br.com.javamoon.domain.draw.Draw;
-import br.com.javamoon.domain.draw.JusticeCouncil;
 import br.com.javamoon.domain.draw.JusticeCouncilRepository;
 import br.com.javamoon.domain.draw_exclusion.DrawExclusion;
 import br.com.javamoon.domain.draw_exclusion.DrawExclusionRepository;
@@ -47,14 +58,6 @@ import br.com.javamoon.service.ServiceConstants;
 import br.com.javamoon.util.DateUtils;
 import br.com.javamoon.util.TestDataCreator;
 import br.com.javamoon.validator.ValidationError;
-import java.time.LocalDate;
-import java.util.List;
-import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.annotation.DirtiesContext;
-import org.springframework.test.annotation.DirtiesContext.ClassMode;
-import org.springframework.test.context.ActiveProfiles;
 
 @SpringBootTest
 @ActiveProfiles("test")
@@ -306,19 +309,14 @@ public class DrawExclusionServiceUnitTest {
 	
 	@Test
 	void testListByUnfinishedCejDraw() {
-		JusticeCouncil council = TestDataCreator.getJusticeCouncil();
-		council.setAlias("CEJ");
-		justiceCouncilRepository.saveAndFlush(council);
-		
 		Draw draw = getPersistedDraw();
-		draw.setJusticeCouncil(council);
-		drawRepository.saveAndFlush(draw);
 		
 		Soldier soldier = draw.getDrawList().getSoldiers().stream().findFirst().get();
-		
 		assertEquals(0, victim.generateByUnfinishedCejDraw(soldier.getId()).size());
 		
+		draw.getJusticeCouncil().setAlias(CEJ_COUNCIl_ALIAS);
 		draw.setFinished(false);
+		justiceCouncilRepository.save(draw.getJusticeCouncil());
 		drawRepository.saveAndFlush(draw);
 		
 		assertEquals(1, victim.generateByUnfinishedCejDraw(soldier.getId()).size());

@@ -1,5 +1,6 @@
 package br.com.javamoon.service;
 
+import static br.com.javamoon.infrastructure.web.security.Role.GroupRole.GROUP_EDIT_LIST_SCOPE;
 import static br.com.javamoon.infrastructure.web.security.Role.GroupRole.GROUP_USER;
 import br.com.javamoon.domain.cjm_user.Auditorship;
 import br.com.javamoon.domain.cjm_user.CJM;
@@ -25,6 +26,7 @@ import org.springframework.stereotype.Service;
 public class UserAccountService {
 
 	public static final Integer DEFAULT_CJM_USER_PERMISSION_LEVEL = 1;
+	private final List<String> defaultRoles = List.of( GROUP_USER.toString(), GROUP_EDIT_LIST_SCOPE.toString());
 	
     private UserAccountValidator userAccountValidator;
     private GroupUserRepository groupUserRepository;
@@ -43,10 +45,8 @@ public class UserAccountService {
     public GroupUserDTO createGroupUserAccount(GroupUserDTO userDTO, Army army, CJM cjm) throws AccountValidationException {
         userAccountValidator.validateCreateGroupUserAccount(userDTO);
         
-        userDTO.getSelectedRoles().add(GROUP_USER.toString());
-        
         GroupUser user = EntityMapper.fromDTOToEntity(userDTO);
-        user.setPermissionLevel(Role.calcPermissionLevel(userDTO.getSelectedRoles()));
+        user.setPermissionLevel(Role.calcPermissionLevel(defaultRoles));
         user.setArmy(army);
         user.setCjm(cjm);
         user.encryptPassword();
