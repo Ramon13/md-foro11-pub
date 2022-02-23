@@ -41,6 +41,7 @@ public class UserAccountService {
 	private final String FORGOT_PASSWORD_SUBJECT = "Recuperação de senha";
 	private final String FORGOT_PASSWORD_SENDER = "no-reply@srvforo11.com";
 	private final String FORGOT_PASSWORD_HTML_TEMPLATE = "email/password-recovery";
+	private final String FORGOT_PASSWORD_RECOVERY_ENDPOINT = "/public/forgot-password/new";
 	
 	@Value("${md-foro11.server.dns}")
 	private String SERVER_DNS;
@@ -134,8 +135,8 @@ public class UserAccountService {
 		String recoveryToken = RandomStringUtils.randomAlphanumeric(32);
 		
 		user.setRecoveryToken(recoveryToken);
-		String recoverAddress = String.format( "%s%s/public/forgot-password/new?username=%s&recoveryToken=%s",
-				SERVER_DNS, CONTEXT_PATH, user.getUsername(), recoveryToken);
+		String recoverAddress = String.format( "%s%s%s?username=%s&recoveryToken=%s",
+				SERVER_DNS, CONTEXT_PATH, FORGOT_PASSWORD_RECOVERY_ENDPOINT, user.getUsername(), recoveryToken);
 		
 		emailSender.send(
 			emailInfoBuilder.createEmailInfo(
