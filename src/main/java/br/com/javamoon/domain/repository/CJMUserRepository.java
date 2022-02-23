@@ -27,5 +27,5 @@ public interface CJMUserRepository extends JpaRepository<CJMUser, Integer>{
 	void disableAccount(@Param("id") Integer id);
 	
 	@Query("FROM CJMUser c WHERE c.active = true AND c.email = :email")
-	Optional<CJMUser> findActiveByEmail(@Param("email") String email);
+	Optional<User> findActiveByEmail(@Param("email") String email);
 }

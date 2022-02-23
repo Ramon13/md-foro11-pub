@@ -111,118 +111,53 @@ insert into SOLDIER (id, email, soldier_name, phone, army_id, cjm_id, military_b
 		(30, null, 'MARCO AURÉLIO LEITE DE PAULA', '61 98179-1248', 3, 2, 15, 5, null, 1);
 
 #cjm_user 1aud1cjm
-insert into CJM_USER (id, username, email, user_password, active, credentials_expired, auditorship_id, permission_level)
+insert into CJM_USER (id, username, email, user_password, active, credentials_expired, auditorship_id, permission_level, recovery_token)
 	values
-		(1, 'admin1aud1', null, '{bcrypt}$2a$10$IgXSs3978BKQMSyrIRF/ROA8V7f/v.G.Zr0F2l1yLJGamjGbYBjXe', 1, 0, 1, 3);
-
-#cjm_user 2aud1cjm
-insert into CJM_USER (id, username, email, user_password, active, credentials_expired, auditorship_id, permission_level)
-	values
-		(2, 'admin2aud1', null, '{bcrypt}$2a$10$IgXSs3978BKQMSyrIRF/ROA8V7f/v.G.Zr0F2l1yLJGamjGbYBjXe', 1, 0, 2, 1);		
-		
-#cjm_user 1aud2cjm		
-insert into CJM_USER (id, username, email, user_password, active, credentials_expired, auditorship_id, permission_level)
-	values
-		(3, 'admin1aud2', null, '{bcrypt}$2a$10$IgXSs3978BKQMSyrIRF/ROA8V7f/v.G.Zr0F2l1yLJGamjGbYBjXe', 1, 0, 3, 1);		
+		(1, 'admin1aud1', null, '{bcrypt}$2a$10$IgXSs3978BKQMSyrIRF/ROA8V7f/v.G.Zr0F2l1yLJGamjGbYBjXe', 1, 0, 1, 3, null),
+		(2, 'admin2aud1', null, '{bcrypt}$2a$10$IgXSs3978BKQMSyrIRF/ROA8V7f/v.G.Zr0F2l1yLJGamjGbYBjXe', 1, 0, 2, 1, null),
+        (3, 'admin1aud2', null, '{bcrypt}$2a$10$IgXSs3978BKQMSyrIRF/ROA8V7f/v.G.Zr0F2l1yLJGamjGbYBjXe', 1, 0, 3, 1, null);				
 
 #group_user EB 1cjm		
-insert into GROUP_USER (id, username, email, user_password, active, credentials_expired, cjm_id, army_id, permission_level)
+insert into GROUP_USER (id, username, email, user_password, active, credentials_expired, cjm_id, army_id, permission_level, recovery_token)
 	values
-		(1, 'ebadmin', 'eb@eb.com', '{bcrypt}$2a$10$IgXSs3978BKQMSyrIRF/ROA8V7f/v.G.Zr0F2l1yLJGamjGbYBjXe', 1, 0, 1, 1, 7);		
-
-#group_user MB 1cjm		
-insert into GROUP_USER (id, username, email, user_password, active, credentials_expired, cjm_id, army_id, permission_level)
-	values
-		(2, 'mbadmin', 'mb@mb.com', '{bcrypt}$2a$10$IgXSs3978BKQMSyrIRF/ROA8V7f/v.G.Zr0F2l1yLJGamjGbYBjXe', 1, 0, 1, 2, 7);
-		
-#group_user FAB 2cjm		
-insert into GROUP_USER (id, username, email, user_password, active, credentials_expired, cjm_id, army_id, permission_level)
-	values
-		(3, 'fabadmin', 'fab@fab.com', '{bcrypt}$2a$10$IgXSs3978BKQMSyrIRF/ROA8V7f/v.G.Zr0F2l1yLJGamjGbYBjXe', 1, 0, 2, 3, 3);
-
-		
-		
+		(1, 'ebadmin', 'eb@eb.com', '{bcrypt}$2a$10$IgXSs3978BKQMSyrIRF/ROA8V7f/v.G.Zr0F2l1yLJGamjGbYBjXe', 1, 0, 1, 1, 7, null),
+		(2, 'mbadmin', 'mb@mb.com', '{bcrypt}$2a$10$IgXSs3978BKQMSyrIRF/ROA8V7f/v.G.Zr0F2l1yLJGamjGbYBjXe', 1, 0, 1, 2, 7, null),
+        (3, 'fabadmin', 'fab@fab.com', '{bcrypt}$2a$10$IgXSs3978BKQMSyrIRF/ROA8V7f/v.G.Zr0F2l1yLJGamjGbYBjXe', 1, 0, 2, 3, 3, null);				
 		
 #Draw List------------------------------------------------------------------------------------------------------		
 insert into DRAW_LIST (id, creation_date, update_date, army_id, year_quarter, description, creation_user_id, active, enable_for_draw)
 	values
-		(1, '2021-10-13', '2021-10-13', 1, '2021\'4', 'Primeira lista exército 4º trimestre de 2021', 1, 1, 0);
+		(1, '2021-10-13', '2021-10-13', 1, '2021\'4', 'Primeira lista exército 4º trimestre de 2021', 1, 1, 0),
+		(2, '2021-10-13', '2021-10-13', 2, '2022\'1', 'Primeira lista marinha 4º trimestre de 2021', 1, 1, 0),
+        (3, '2021-10-13', '2021-10-13', 3, '2021\'4', 'Primeira lista aeronáutica 4º trimestre de 2021', 3, 1, 0),
+        (4, '2021-10-14', '2021-10-14', 1, '2021\'4', 'Lista de atualização exército 4º trimestre de 2021', 1, 1, 0),
+        (5, '2022-01-01', '2022-01-01', 1, '2022\'1', 'Primeira lista exército 1º trimestre de 2022', 1, 1, 0);        		
 		
 insert into DRAW_LIST_HAS_SOLDIER (draw_list_id, soldier_id)
 	values
-		(1, 1), (1, 2), (1, 3), (1, 4), (1, 5), (1, 6), (1, 7), (1, 8), (1, 9), (1, 10); 			
-
-insert into DRAW_LIST (id, creation_date, update_date, army_id, year_quarter, description, creation_user_id, active, enable_for_draw)
-	values
-		(2, '2021-10-13', '2021-10-13', 2, '2022\'1', 'Primeira lista marinha 4º trimestre de 2021', 1, 1, 0);
-		
-insert into DRAW_LIST_HAS_SOLDIER (draw_list_id, soldier_id)
-	values
-		(2, 11), (2, 12), (2, 13), (2, 14), (2, 15), (2, 16), (2, 18);		
-
-insert into DRAW_LIST (id, creation_date, update_date, army_id, year_quarter, description, creation_user_id, active, enable_for_draw)
-	values
-		(3, '2021-10-13', '2021-10-13', 3, '2021\'4', 'Primeira lista aeronáutica 4º trimestre de 2021', 3, 1, 0);
-		
-insert into DRAW_LIST_HAS_SOLDIER (draw_list_id, soldier_id)
-	values
-		(3, 21), (3, 22), (3, 23), (3, 24), (3, 25), (3, 26), (3, 28);
-		
-insert into DRAW_LIST (id, creation_date, update_date, army_id, year_quarter, description, creation_user_id, active, enable_for_draw)
-  values
-    (4, '2021-10-14', '2021-10-14', 1, '2021\'4', 'Lista de atualização exército 4º trimestre de 2021', 1, 1, 0);
-    
-insert into DRAW_LIST_HAS_SOLDIER (draw_list_id, soldier_id)
-  values
-    (4, 1), (4, 2), (4, 3), (4, 4), (4, 5);
-        
-insert into DRAW_LIST (id, creation_date, update_date, army_id, year_quarter, description, creation_user_id, active, enable_for_draw)
-  values
-    (5, '2022-01-01', '2022-01-01', 1, '2022\'1', 'Primeira lista exército 1º trimestre de 2022', 1, 1, 0);
-    
-insert into DRAW_LIST_HAS_SOLDIER (draw_list_id, soldier_id)
-  values
-    (5, 1), (5, 2), (5, 3), (5, 4), (5, 5);
+		(1, 1), (1, 2), (1, 3), (1, 4), (1, 5), (1, 6), (1, 7), (1, 8), (1, 9), (1, 10),
+		(2, 11), (2, 12), (2, 13), (2, 14), (2, 15), (2, 16), (2, 18),
+        (3, 21), (3, 22), (3, 23), (3, 24), (3, 25), (3, 26), (3, 28),
+        (4, 1), (4, 2), (4, 3), (4, 4), (4, 5),
+        (5, 1), (5, 2), (5, 3), (5, 4), (5, 5);        
 		
 #draw----------------------------------------------------------------------------------------------------------------
 #cpj 0 EB 1aud1cjm
 insert into DRAW (id, creation_date, update_date, process_number, army_id, cjm_user_id, justice_council_id, soldier_substitute_id, draw_list_id, finished)
 	values
-		(1, '2021-12-08', '2021-12-08', null, 1, 1, 1, 1, 1, 1);
-		
+		(1, '2021-12-08', '2021-12-08', null, 1, 1, 1, 1, 1, 1),
+		(2, '2021-12-08', '2021-12-08', 1232133-33, 2, 1, 2, null, 1, 0),
+        (3, '2021-12-08', '2021-12-08', null, 3, 3, 1, 21, 1, 1),		
+        (4, '2021-12-08', '2021-12-08', null, 1, 2, 1, 4, 1, 0); 
+        
+        		
 insert into DRAW_HAS_SOLDIER (draw_id, soldier_id)
 	values
-		(1, 1), (1, 2), (1, 3), (1, 4), (1, 5);
-		
-		
-#cej 0 MB 1aud1CJM
-insert into DRAW (id, creation_date, update_date, process_number, army_id, cjm_user_id, justice_council_id, soldier_substitute_id, draw_list_id, finished)
-	values
-		(2, '2021-12-08', '2021-12-08', 1232133-33, 2, 1, 2, null, 1, 0);
-		
-insert into DRAW_HAS_SOLDIER (draw_id, soldier_id)
-	values
-		(2, 11), (2, 12), (2, 13), (2, 14);
-
-#cpj 1 fab 1aud2cjm
-insert into DRAW (id, creation_date, update_date, process_number, army_id, cjm_user_id, justice_council_id, soldier_substitute_id, draw_list_id, finished)
-	values
-		(3, '2021-12-08', '2021-12-08', null, 3, 3, 1, 21, 1, 1);
-		
-insert into DRAW_HAS_SOLDIER (draw_id, soldier_id)
-	values
-		(3, 21), (3, 22), (3, 23), (3, 24), (3, 25);				
-						
-#cpj 2 EB 2aud1CJM
-insert into DRAW (id, creation_date, update_date, process_number, army_id, cjm_user_id, justice_council_id, soldier_substitute_id, draw_list_id, finished)
-	values
-		(4, '2021-12-08', '2021-12-08', null, 1, 2, 1, 4, 1, 0);
-		
-insert into DRAW_HAS_SOLDIER (draw_id, soldier_id)
-	values
-		(4, 4), (4, 5), (4, 6), (4, 7), (4, 10);
-
-		
+		(1, 1), (1, 2), (1, 3), (1, 4), (1, 5),
+		(2, 11), (2, 12), (2, 13), (2, 14),
+        (3, 21), (3, 22), (3, 23), (3, 24), (3, 25),
+        (4, 4), (4, 5), (4, 6), (4, 7), (4, 10);        
+        				
 #DRAW_EXCLUSIONS--------------------------------------------------------------------------------------->
 insert into DRAW_EXCLUSION (id, start_date, end_date, creation_date, message, group_user_id, soldier_id)
   values

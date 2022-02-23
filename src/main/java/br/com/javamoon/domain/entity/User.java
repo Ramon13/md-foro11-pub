@@ -41,6 +41,9 @@ public class User implements Serializable{
 	@Column(name="credentials_expired", nullable = false)
 	private Boolean credentialsExpired;
 	
+	@Column(name="recovery_token", nullable=true)
+	private String recoveryToken;
+	
 	@Column(name="active", nullable = false)
 	private Boolean active;
 	

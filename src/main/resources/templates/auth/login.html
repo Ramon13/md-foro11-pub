@@ -40,6 +40,10 @@ span#sysVersion {
 	float: right;
 	color: gray;
 }
+
+body{
+    width: 50%;
+}
 </style>
 <body>
   <script layout:fragment="head-script"
@@ -53,26 +57,27 @@ span#sysVersion {
           <div class="error" th:if="${msg != null}">
             <span style="border: none !important;" th:text="${msg}"></span>
           </div>
-          <label for="username">Usuário</label> <br /> <input
-            name="username" autocomplete="username" type="text"
-            class="app-txtinput" /> <br />
-          <br /> <label for="password">Senha</label> <br /> <input
-            name="password" autocomplete="password" type="password"
-            class="app-txtinput" /> <br />
-          <br />
-          <br />
-          <button id="loginBtn" class="login-btn g-recaptcha"
-            data-sitekey="6LdGL3caAAAAALkTW_IF10N1e3B68ASrAOiECT6Y"
-            data-callback='onSubmit'>
-            <span>Entrar</span> <img id="loadCircle"
-              th:src="@{/images/load-circle.gif}" alt="carregando..." />
+          <label for="username">Usuário</label> 
+          <br /> 
+          <input name="username" autocomplete="username" type="text" class="app-txtinput" /> 
+          
+          <br /> <br /> 
+          <label for="password">Senha</label> <br /> 
+          <input name="password" autocomplete="password" type="password" class="app-txtinput" /> 
+          
+          <br /><br /><br />
+          
+          <button id="loginBtn" class="login-btn g-recaptcha" data-sitekey="6LdGL3caAAAAALkTW_IF10N1e3B68ASrAOiECT6Y" data-callback='onSubmit'>
+            <span>Entrar</span> <img id="loadCircle" th:src="@{/images/load-circle.gif}" alt="carregando..." />
           </button>
-          <br />
-          <br /> <a th:href="@{/public/forgot-password}">Esqueci
-            minha senha</a> <br /> <a th:href="@{/public/forgot-password}">Fale
-            conosco</a> <br />
-          <br />
-          <br /> <span id="sysVersion">Versão: 1.0-release</span>
+          <br /> <br /> 
+          
+          <a th:href="@{/public/forgot-password}">Esqueci minha senha</a>
+           <br />
+          <a th:href="@{/public/forgot-password}">Fale conosco</a> 
+          <br /> <br /> <br />
+          
+          <span id="sysVersion">Versão: 1.0-release</span>
         </form>
       </fieldset>
     </div>

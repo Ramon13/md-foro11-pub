@@ -26,4 +26,7 @@ public interface GroupUserRepository extends JpaRepository<GroupUser, Integer>{
 	@Modifying(clearAutomatically = true, flushAutomatically = true)
 	@Query("UPDATE FROM GroupUser gp SET gp.active = false WHERE gp.id = :id")
 	public void delete(@Param("id") Integer id);
+	
+	@Query("FROM GroupUser g WHERE g.active = true AND g.email = :email")
+	Optional<User> findActiveByEmail(@Param("email") String email);
 }
