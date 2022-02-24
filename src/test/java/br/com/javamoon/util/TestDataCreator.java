@@ -103,7 +103,7 @@ public final class TestDataCreator {
 	}
 	
 	public static UserDTO newUserDTO() {
-		return new UserDTO(DEFAULT_USER_USERNAME, DEFAULT_USER_EMAIL, DEFAULT_USER_PASSWORD);
+		return new UserDTO(DEFAULT_USER_USERNAME, DEFAULT_USER_EMAIL, DEFAULT_USER_PASSWORD, null);
 	}
 	
 	public static CJMUserDTO newCJMUserDTO() {

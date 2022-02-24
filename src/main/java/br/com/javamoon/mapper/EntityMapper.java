@@ -7,6 +7,7 @@ import br.com.javamoon.domain.entity.DrawList;
 import br.com.javamoon.domain.entity.GroupUser;
 import br.com.javamoon.domain.entity.MilitaryRank;
 import br.com.javamoon.domain.entity.Soldier;
+import br.com.javamoon.domain.entity.User;
 import br.com.javamoon.infrastructure.web.security.Role;
 import java.util.stream.Collectors;
 
@@ -22,6 +23,14 @@ public final class EntityMapper {
         user.setArmy(userDTO.getArmy());
         user.setCjm(userDTO.getCjm());
         return user;
+    }
+    
+    public static UserDTO fromEntityToDTO(User user) {
+    	UserDTO userDTO = new UserDTO();
+    	userDTO.setUsername(user.getUsername());
+    	userDTO.setEmail(user.getEmail());
+    	userDTO.setRecoveryToken(user.getRecoveryToken());
+    	return userDTO;
     }
     
     public static CJMUser fromDTOToEntity(CJMUserDTO userDTO) {

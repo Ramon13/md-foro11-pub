@@ -7,11 +7,13 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import lombok.ToString;
 
 @Getter
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
+@ToString
 public class UserDTO{
 	
 	@NotBlank(message = "O nome de usuário não pode ser vazio")
@@ -26,6 +28,8 @@ public class UserDTO{
 	@NotBlank(message = "A senha deve conter no mínimo 8 caracteres")
 	@Size(min = 8, max = 32, message = "A senha deve conter entre 8 e 32 caracteres")
 	private String password;
+	
+	private String recoveryToken;
 	
 	public String prettyPrintUsernameAndEmail() {
     	return String.format("%s<%s>", getUsername(), getEmail());

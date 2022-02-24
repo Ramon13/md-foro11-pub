@@ -33,7 +33,7 @@ public class AccountController {
         
     @GetMapping(path="/password/reset")
 	public String resetCredentials(Model model){
-		model.addAttribute("user", SecurityUtils.loggedUser());
+		model.addAttribute("user", new UserDTO());
 		return "auth/login-reset-credentials";
 	}
     

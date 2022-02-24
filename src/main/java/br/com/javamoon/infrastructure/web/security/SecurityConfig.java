@@ -23,7 +23,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter{
 	protected void configure(HttpSecurity http) throws Exception {
 		http.csrf().disable()
 			.authorizeRequests()
-			.antMatchers("/images/**", "/styles/**", "/scripts/**", "/public/**").permitAll()
+			.antMatchers("/images/**", "/styles/**", "/scripts/**", "/public/**", "/credentials/**").permitAll()
 			//
 			// Group user core role
 			.antMatchers(

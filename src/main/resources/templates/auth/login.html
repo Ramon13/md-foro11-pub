@@ -50,6 +50,8 @@ body{
     th:if="${@environment.getActiveProfiles()[0] eq 'prod'}"
     src="https://www.google.com/recaptcha/api.js"></script>
   <div layout:fragment="content">
+    <input type="hidden" id="redefinedPass" th:if="${redefinedPass}"/>
+    
     <div>
       <fieldset>
         <legend>Entrar no sistema</legend>
@@ -85,6 +87,10 @@ body{
   <script layout:fragment="footer-script">
     	var loadCircle = document.getElementById("loadCircle");
     	loadCircle.style.display = "none";
+    	
+    	const redefinedPass = document.querySelector("input#redefinedPass");
+    	if (redefinedPass)
+    	  alert("Credenciais alteradas com sucesso");
     	
     	function onSubmit(token) {
     		  document.getElementById("loginForm").submit();

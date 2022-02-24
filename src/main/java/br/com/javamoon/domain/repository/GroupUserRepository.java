@@ -29,4 +29,7 @@ public interface GroupUserRepository extends JpaRepository<GroupUser, Integer>{
 	
 	@Query("FROM GroupUser g WHERE g.active = true AND g.email = :email")
 	Optional<User> findActiveByEmail(@Param("email") String email);
+	
+	@Query("FROM GroupUser g WHERE g.active = true AND g.recoveryToken = :recoveryToken")
+	Optional<User> findActiveByRecoveryToken(@Param("recoveryToken") String recoveryToken);
 }

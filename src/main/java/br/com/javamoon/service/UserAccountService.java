@@ -2,17 +2,6 @@ package br.com.javamoon.service;
 
 import static br.com.javamoon.infrastructure.web.security.Role.GroupRole.GROUP_EDIT_LIST_SCOPE;
 import static br.com.javamoon.infrastructure.web.security.Role.GroupRole.GROUP_USER;
-
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-
-import javax.transaction.Transactional;
-
-import org.apache.commons.lang3.RandomStringUtils;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.stereotype.Service;
-
 import br.com.javamoon.config.email.EmailInfoBuilder;
 import br.com.javamoon.config.email.EmailSender;
 import br.com.javamoon.domain.cjm_user.Auditorship;
@@ -32,22 +21,17 @@ import br.com.javamoon.mapper.CJMUserDTO;
 import br.com.javamoon.mapper.EntityMapper;
 import br.com.javamoon.mapper.GroupUserDTO;
 import br.com.javamoon.validator.UserAccountValidator;
+import java.util.List;
+import java.util.Optional;
+import javax.transaction.Transactional;
+import org.apache.commons.lang3.RandomStringUtils;
+import org.springframework.stereotype.Service;
 
 @Service
 public class UserAccountService {
 
 	public static final Integer DEFAULT_CJM_USER_PERMISSION_LEVEL = 1;
 	private final List<String> defaultRoles = List.of( GROUP_USER.toString(), GROUP_EDIT_LIST_SCOPE.toString());
-	private final String FORGOT_PASSWORD_SUBJECT = "Recuperação de senha";
-	private final String FORGOT_PASSWORD_SENDER = "no-reply@srvforo11.com";
-	private final String FORGOT_PASSWORD_HTML_TEMPLATE = "email/password-recovery";
-	private final String FORGOT_PASSWORD_RECOVERY_ENDPOINT = "/public/forgot-password/new";
-	
-	@Value("${md-foro11.server.dns}")
-	private String SERVER_DNS;
-	
-	@Value("${server.servlet.context-path}")
-	private String CONTEXT_PATH;
 	
     private UserAccountValidator userAccountValidator;
     private GroupUserRepository groupUserRepository;
@@ -120,13 +104,25 @@ public class UserAccountService {
     }
     
     @Transactional
-	public void editPassword(User loggedUser, String newPassword) throws AccountValidationException{
+	public void editPassword(User user, String newPassword) throws AccountValidationException{
 		userAccountValidator.editPasswordValidate(newPassword);
 		
-		loggedUser.setCredentialsExpired(!loggedUser.getCredentialsExpired());
-		loggedUser.setPassword(newPassword);
-		loggedUser.encryptPassword();
-		userRepository.save(loggedUser);
+		user.setCredentialsExpired(!user.getCredentialsExpired());
+		user.setPassword(newPassword);
+		
+		user.encryptPassword();
+		userRepository.save(user);
+	}
+    
+    @Transactional
+	public void editPassword(String recoveryToken, String newPassword) throws AccountValidationException{
+    	User user = findUserByRecoveryToken(recoveryToken).orElseThrow();
+		userAccountValidator.editPasswordValidate(newPassword);
+		
+		user.setPassword(newPassword);
+		user.setRecoveryToken(null);
+		user.encryptPassword();
+		userRepository.save(user);
 	}
     
     @Transactional
@@ -135,18 +131,8 @@ public class UserAccountService {
 		String recoveryToken = RandomStringUtils.randomAlphanumeric(32);
 		
 		user.setRecoveryToken(recoveryToken);
-		String recoverAddress = String.format( "%s%s%s?username=%s&recoveryToken=%s",
-				SERVER_DNS, CONTEXT_PATH, FORGOT_PASSWORD_RECOVERY_ENDPOINT, user.getUsername(), recoveryToken);
 		
-		emailSender.send(
-			emailInfoBuilder.createEmailInfo(
-					FORGOT_PASSWORD_SENDER,
-					email,
-					FORGOT_PASSWORD_SUBJECT,
-					FORGOT_PASSWORD_HTML_TEMPLATE,
-					Map.of("recoveryAddress", recoverAddress)
-				)
-			);
+		emailSender.send( emailInfoBuilder.getRedefinePasswordEmailInfo(user.getUsername(), email, recoveryToken) );
     }
     
     private User findByEmailOrElseThrow(String email) throws EmailNotFoundException{
@@ -157,4 +143,13 @@ public class UserAccountService {
     	return cjmUserRepository.findActiveByEmail(email)
     			.orElseThrow(() -> new EmailNotFoundException("E-mail not found: " + email));
     }
+    
+    public Optional<User> findUserByRecoveryToken(String recoveryToken){
+		Optional<User> user = groupUserRepository.findActiveByRecoveryToken(recoveryToken);
+		
+		if (user.isPresent())
+			return user;
+		
+		return cjmUserRepository.findActiveByRecoveryToken(recoveryToken);
+	}
 }
