@@ -137,11 +137,11 @@ public class SoldierServiceUnitTest {
 		
 		soldierRepository.saveAllAndFlush(soldiers);
 		
-		assertEquals(3, soldierRepository.findAllActiveByArmyAndCjm(army, cjm).size());
+		assertEquals(3, soldierRepository.findAllActiveByArmyAndCjm(army, cjm, null).size());
 		
 		victim.delete(soldiers.get(0).getId(), army, cjm);
 		
-		List<Soldier> soldiersDB = soldierRepository.findAllActiveByArmyAndCjm(army, cjm);
+		List<Soldier> soldiersDB = soldierRepository.findAllActiveByArmyAndCjm(army, cjm, null);
 		assertEquals(2, soldiersDB.size());
 		assertEquals(soldiers.get(1).getName(), soldiersDB.get(0).getName());
 		assertEquals(soldiers.get(2).getName(), soldiersDB.get(1).getName());

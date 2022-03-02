@@ -6,6 +6,7 @@ import br.com.javamoon.domain.entity.Army;
 import br.com.javamoon.domain.entity.Soldier;
 import java.util.List;
 import java.util.Optional;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
@@ -48,8 +49,15 @@ public interface SoldierRepository extends JpaRepository<Soldier, Integer>{
 	void delete(@Param("id") Integer soldierId);
 	
 	
-	@Query("FROM Soldier s LEFT JOIN FETCH s.militaryOrganization WHERE s.active = true AND s.army = :army AND s.cjm = :cjm ORDER BY s.name")
-	List<Soldier> findAllActiveByArmyAndCjm(@Param("army") Army army, @Param("cjm") CJM cjm);
+	@Query("FROM Soldier s "
+			+ "LEFT JOIN FETCH s.militaryOrganization "
+			+ "WHERE s.active = true "
+			+ "AND s.army = :army "
+			+ "AND s.cjm = :cjm ORDER BY s.name")
+	List<Soldier> findAllActiveByArmyAndCjm(
+			@Param("army") Army army,
+			@Param("cjm") CJM cjm,
+			Pageable pageable);
 	
 	@Query("select s from Draw d join d.soldiers s where d.id = :drawId order by s.militaryRank.rankWeight asc")
 	List<Soldier> findAllByDrawOrderByRank(@Param("drawId") Integer drawId);
@@ -57,10 +65,14 @@ public interface SoldierRepository extends JpaRepository<Soldier, Integer>{
 	@Query("select s from Draw d join d.soldiers s where d.id = :drawId")
 	List<Soldier> findAllByDraw(@Param("drawId") Integer drawId);
 	
-	@Query("SELECT s FROM DrawList dl JOIN dl.soldiers s"
-			+ " LEFT JOIN FETCH s.militaryOrganization"
-			+ " WHERE dl.id = :drawListId AND s.active = true ORDER BY s.name")
-	List<Soldier> findAllActiveByDrawList(@Param("drawListId") Integer drawListId);
+	@Query("SELECT s FROM Soldier s "
+			+ "JOIN s.drawList dl "
+			+ "LEFT JOIN FETCH s.militaryOrganization "
+			+ "WHERE dl.id = :drawListId "
+			+ "AND s.active = true")
+	List<Soldier> findAllActiveByDrawList(
+			@Param("drawListId") Integer drawListId,
+			Pageable pageable);
 	
 	@Query("SELECT s FROM DrawList dl JOIN dl.soldiers s WHERE s.id = :soldierId AND dl.id = :drawListId")
 	Optional<Soldier> findActiveByDrawList(@Param("soldierId") Integer soldierId, @Param("drawListId") Integer drawListId);

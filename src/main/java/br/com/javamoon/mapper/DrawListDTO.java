@@ -8,6 +8,7 @@ import br.com.javamoon.domain.entity.Army;
 import br.com.javamoon.domain.entity.GroupUser;
 import br.com.javamoon.domain.entity.Soldier;
 import br.com.javamoon.util.DateUtils;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -46,30 +47,37 @@ public class DrawListDTO {
 	
 	private List<Integer> deselectedSoldiers = new ArrayList<>(0);
 	
+	@JsonIgnore
 	public String getListPhase() {
 		return enableForDraw ? READY_PHASE : EDIT_PHASE;
 	}
 	
+	@JsonIgnore
 	public String getListPhaseDescription() {
 		return enableForDraw ? READY_PHASE_DESCRIPTION : EDIT_PHASE_DESCRIPTION;
 	}
 	
+	@JsonIgnore
 	public String getFormattedCreationDate() {
 		return DateUtils.format(creationDate);
 	}
 	
+	@JsonIgnore
 	public String getFormattedUpdateDate() {
 		return DateUtils.format(updateDate);
 	}
 	
+	@JsonIgnore
 	public String prettyPrintQuarterYear() {
 		return String.format("%s/%s", yearQuarter.split("'")[1], yearQuarter.split("'")[0]);
 	}
 	
+	@JsonIgnore
 	public String prettyPrintListTitle() {
 		return String.format("[%s] %s", prettyPrintQuarterYear(), description);
 	}
 	
+	@JsonIgnore
 	public String prettyPrintListInfo(){
 		return String.format("criado em: %s | por: %s | última modificação: %s", 
 				getFormattedCreationDate(),

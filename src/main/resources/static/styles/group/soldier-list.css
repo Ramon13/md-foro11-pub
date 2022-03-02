@@ -1,0 +1,69 @@
+form {
+  text-align: inherit;
+  width: 100%;
+  margin: auto;
+}
+
+input#listDescription {
+  font-size: 20px;
+}
+
+button#saveList {
+  float: right;
+  background-color: #2EA44F;
+  color: #eee;
+}
+
+button#saveList img {
+  width: 20px;
+}
+
+label {
+  word-wrap: break-word;
+}
+
+select.app-select {
+  width: 30%;
+}
+
+div#quarter {
+  display: inline;
+  float: left;
+  width: 100%;
+  margin-top: 10px;
+}
+
+div#quarter label, div#quarter select{
+  display: inline-block;
+  width: 100%;
+}
+
+div#quarter select{
+  width: 20%;
+}
+
+div#addSoldiers{
+  width: 100%;
+  text-align: right;
+}
+
+form#soldierSearch input[type=text]{
+	width: 94%;
+	padding: 10px;
+	float: left;
+	margin: 0;
+	border-radius: 0;
+	border: none;
+	border-bottom: 1px solid #ddd;
+}
+
+form#soldierSearch input[type=text]:focus{
+	outline: none;
+}
+
+form#soldierSearch button{
+	padding: 12px 12px;
+	border: none;
+	background-color: #ddd;
+	border-radius: 0;
+}

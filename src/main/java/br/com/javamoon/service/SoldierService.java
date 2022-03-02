@@ -1,14 +1,5 @@
 package br.com.javamoon.service;
 
-import java.util.List;
-import java.util.Objects;
-import java.util.stream.Collectors;
-
-import javax.transaction.Transactional;
-
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-
 import br.com.javamoon.domain.cjm_user.CJM;
 import br.com.javamoon.domain.entity.Army;
 import br.com.javamoon.domain.entity.GroupUser;
@@ -22,7 +13,16 @@ import br.com.javamoon.infrastructure.web.model.PaginationSearchFilter;
 import br.com.javamoon.infrastructure.web.model.SoldiersPagination;
 import br.com.javamoon.mapper.EntityMapper;
 import br.com.javamoon.mapper.SoldierDTO;
+import br.com.javamoon.util.PageableUtils;
 import br.com.javamoon.validator.SoldierValidator;
+import java.util.List;
+import java.util.Objects;
+import java.util.stream.Collectors;
+import javax.transaction.Transactional;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.data.domain.Pageable;
+import org.springframework.stereotype.Service;
 
 @Service
 public class SoldierService{
@@ -35,8 +35,13 @@ public class SoldierService{
 	
 	private SoldierValidator soldierValidator;
 	private SoldierRepositoryImpl soldierRepositoryImpl;
+	private final int maxLImit;
 	
-	public SoldierService(SoldierValidator soldierValidator, SoldierRepositoryImpl soldierRepositoryImpl) {
+	public SoldierService(
+			SoldierValidator soldierValidator,
+			SoldierRepositoryImpl soldierRepositoryImpl,
+			@Value("${md-foro11.drawList.defaultProperties.soldier.maxLimit}") int maxLimit) {
+		this.maxLImit = maxLimit;
 		this.soldierValidator = soldierValidator;
 		this.soldierRepositoryImpl = soldierRepositoryImpl;
 	}
@@ -119,7 +124,9 @@ public class SoldierService{
 	}
 	
 	public List<SoldierDTO> listAll(Army army, CJM cjm){
-		return soldierRepository.findAllActiveByArmyAndCjm(army, cjm)
+		Pageable pageable = PageableUtils.newPageable(0, null, maxLImit, "id", Soldier.SORTABLE_FIELDS);
+		
+		return soldierRepository.findAllActiveByArmyAndCjm(army, cjm, pageable)
 				.stream()
 				.map(r -> EntityMapper.fromEntityToDTO(r))
 				.collect(Collectors.toList());
@@ -130,7 +137,9 @@ public class SoldierService{
 	}
 	
 	public List<SoldierDTO> listByDrawList(Integer listId){
-		return soldierRepository.findAllActiveByDrawList(listId)
+		Pageable pageable = PageableUtils.newPageable(0, null, maxLImit, "-militaryRank.rankWeight", Soldier.SORTABLE_FIELDS);
+		
+		return soldierRepository.findAllActiveByDrawList(listId, pageable)
 				.stream()
 				.map(r -> EntityMapper.fromEntityToDTO(r))
 				.collect(Collectors.toList());

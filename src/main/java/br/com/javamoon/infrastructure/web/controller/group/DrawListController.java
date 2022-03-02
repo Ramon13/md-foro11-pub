@@ -103,15 +103,10 @@ public class DrawListController {
 		CJM cjm = SecurityUtils.groupUser().getCjm();
 		
 		DrawListDTO drawList = drawListService.getList(listId, army, cjm);
-		
-		List<SoldierDTO> drawListSoldiers = soldierService.listByDrawList(drawList.getId());
-		List<SoldierDTO> allSoldiers = soldierService.listAll(army, cjm);
-		
-		allSoldiers.removeAll(drawListSoldiers);
+		List<SoldierDTO> soldiers = soldierService.listByDrawList(drawList.getId());
 			
 		model.addAttribute("drawList", drawList);
-		model.addAttribute("drawListSoldiers", drawListSoldiers);
-		model.addAttribute("soldiers", allSoldiers);
+		model.addAttribute("soldiers", soldiers);
 		model.addAttribute("quarters", DateUtils.getSelectableQuarters()); //TODO: fix this attribute on template <expect annual quarter obj>
 			
 		return "group/draw-list/soldier-list";

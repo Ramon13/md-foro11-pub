@@ -5,6 +5,7 @@ import br.com.javamoon.domain.draw.Draw;
 import br.com.javamoon.domain.draw_exclusion.DrawExclusion;
 import java.io.Serializable;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Objects;
 import java.util.Set;
 import javax.persistence.Column;
@@ -31,6 +32,8 @@ import lombok.ToString;
 @Table(name = "SOLDIER")
 public class Soldier implements Serializable, Comparable<Soldier>{
 
+	public static final List<String> SORTABLE_FIELDS = List.of("id", "militaryRank.rankWeight");
+	
 	@EqualsAndHashCode.Include
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)

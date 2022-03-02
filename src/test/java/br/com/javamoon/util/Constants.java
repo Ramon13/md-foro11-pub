@@ -54,6 +54,11 @@ public final class Constants {
     public static final Integer DEFAULT_REPLACE_RANK_ID = 1;
     
     public static final String DEFAULT_PROCESS_NUMBER = "0000000000-0";
+    
+    public static final String DEFAULT_PAGEABLE_DESC_ORDER_FIELD = "-field0";
+    public static final String DEFAULT_PAGEABLE_ASC_ORDER_FIELD = "-field0";
+    public static final List<String> DEFAULT_SORTABLE_FIELDS = List.of("field0", "field1", "field2");
+    public static final Integer DEFAULT_PAGEABLE_MAX_LIMIT = 50;
 }
 
 

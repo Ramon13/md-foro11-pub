@@ -1,371 +1,148 @@
 <!DOCTYPE html>
-<html xmlns="http://www.w3.org/1999/xhtml"
-  xmlns:th="http://www.thymeleaf.org" layout:decorate="~{group/layout}">
-
-<style layout:fragment="style">
-form {
-	text-align: inherit;
-	width: 100%;
-	margin: auto;
-}
-
-input#listDescription {
-	font-size: 20px;
-}
-
-#searchInputs {
-	overflow: auto;
-}
-
-#searchInputs #left {
-	width: 43%;
-	float: left;
-}
-
-#searchInputs #right {
-	width: 43%;
-	float: right;
-}
-
-div#pickList {
-	margin: 0;
-	overflow: auto;
-}
-
-div#pickOptions {
-	display: inline-block;
-	margin: 5px;
-	width: 8%;
-	text-align: center;
-	font-family: "NanumGothic", sans-serif;
-}
-
-div#pickOptions button {
-	padding: 5px 25px;
-	background-color: #1A88FF;
-	color: #FFF;
-}
-
-div#pickList .left {
-	width: 45%;
-	float: left;
-	height: 500px;
-	border: 1px solid #eee;
-	overflow: auto;
-}
-
-div#pickList .left p, .right p {
-	background-color: #f7f7f7;
-	padding: 5px;
-	border: 1px solid #eee;
-	text-align: center;
-}
-
-div#pickList .right {
-	width: 45%;
-	float: right;
-	height: 500px;
-	border: 1px solid #eee;
-	overflow: auto;
-}
-
-div#pickList .soldier {
-	padding: 10px 10px;
-}
-
-div#pickList .soldier:hover {
-	background-color: #eee;
-}
-
-div#pickList .soldier label {
-	font-size: 12px;
-}
-
-button#saveList {
-	float: right;
-	background-color: #2EA44F;
-	color: #eee;
-}
-
-button#saveList img {
-	width: 20px;
-}
-
-label {
-	word-wrap: break-word;
-}
-
-select.app-select {
-	width: 30%;
-}
-
-div#quarter {
-	display: inline;
-	float: left;
-	width: 50%;
-}
-
-div#enableForDraw {
-	display: inline;
-	float: right;
-}
-</style>
-
-<body>
-  <div layout:fragment="content">
-    <form id="formList" method="get" th:action="@{/gp/dw/list/new/save}"
-      th:object="${drawList}">
-      <input id="listId" name="id" type="hidden" th:field="*{id}" />
-
-      <div id="listInfo">
-        <span class="error" style="display: none"></span> <br /> <label>Descrição:</label><br />
-        <input id="listDescription" th:field="*{description}"
-          class="app-txtinput" type="text"
-          placeholder="nome ou descrição..." /> <br /> <br />
-
-        <div style="margin-bottom: 100px">
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org" layout:decorate="~{group/layout}">
+  <head>
+    <link th:href="@{/styles/group/soldier-list.css}" type="text/css" rel="stylesheet">
+    <link th:href="@{/styles/modal-box.css}" type="text/css" rel="stylesheet">
+  </head>
+  <body>
+    <div layout:fragment="content">
+      <form id="formList" method="get" th:action="@{/gp/dw/list/new/save}" th:object="${drawList}">
+        <input id="listId" name="id" type="hidden" th:field="*{id}" />
+  
+        <div id="listInfo">
+          <div>
+            <span class="error" style="display: none"></span> <br />
+             <label>Descrição:</label><br />
+            <input id="listDescription" th:field="*{description}" class="app-txtinput" type="text" placeholder="nome ou descrição..." />
+          </div>
+          
           <div id="quarter" th:if="${quarters != null}">
-            <label>Trimestre:</label><br /> <select class="app-select"
-              th:field="*{yearQuarter}">
+            <label>Trimestre:</label>
+            <select class="app-select" th:field="*{yearQuarter}">
               <option th:each="quarter : ${quarters}" th:value="${quarter}" th:text="${quarter}"></option>
             </select>
           </div>
-
-          <div id="enableForDraw">
-            <input type="checkbox" th:field="*{enableForDraw}" /> <span>Habilitar
-              para sorteio</span>
-          </div>
         </div>
-      </div>
-
-      <hr />
-
-      <div id="pickList">
-        <div id="searchInputs">
-          <input id="left" class="app-txtinput" type="text"
-            placeholder="buscar por nome..." /> <input id="right"
-            class="app-txtinput" type="text"
-            placeholder="buscar por nome..." />
+  
+        <div id="addSoldiers">
+          <button type="button" id="openModalBtn" class="app-green-btn">+ Adicionar Militar</button>
         </div>
-
-        <div class="left">
-          <p>Disponível</p>
-          <div class="soldier" th:each="soldier : ${soldiers}">
-            <input class="sid" type="hidden" th:value="${soldier.id}" />
-            <input type="checkbox" /> <label class="soldierInfo"
-              th:text="${soldier.getIdInfoAsText()}"></label>
-          </div>
-        </div>
-
-        <div id="pickOptions">
-          <button id="toRight" type="button">></button>
-          <br />
-          <br />
-          <button id="toLeft" type="button"><</button>
-        </div>
-
-        <div id="rightList" class="right">
-          <p>Selecionado</p>
-          <div class="soldier" th:each="soldier : ${drawListSoldiers}">
-            <input class="sid" type="hidden" th:value="${soldier.id}" />
-            <input type="checkbox" /> <label
-              th:text="${soldier.getIdInfoAsText()}"></label>
-          </div>
-        </div>
-      </div>
-      <br />
-
-      <div>
-        <button type="button" id="back" class="app-gray-btn">
-          <span>Voltar</span>
-        </button>
-        <button type="button" id="saveList">
-          <span>Salvar</span> <img id="loadCircle"
-            th:src="@{/images/load-green.gif}" alt="carregando..." />
-        </button>
-      </div>
-    </form>
-  </div>
-
-  <script layout:fragment="page-script" th:inline="javascript">
-	    setSoldierCheckboxListeners();
-	    setPickListArrowsListeners();
-	    setInputListFilterListeners();
-	    
-	    const backBtn = document.querySelector("button#back");
-      backBtn.addEventListener("click", function(){
-        window.history.back();
-      });
-	    
-      const saveListBtn = document.querySelector("button#saveList");
-      saveListBtn.addEventListener("click", saveList);
-      hideLoadStatus();
+        <hr />
+        
+        <div>
+          <table id="soldiers">
+            <thead>
+              <tr>
+                <th>Nome</th>
+                <th>OM</th>
+                <th>Posto</th>
+              </tr>
+            </thead>
+            <tbody th:each="soldier : ${soldiers}"
+              th:classappend="${session.listScope} ? 'soldier' : ''"
+              th:attr="data-sdprofile=${session.listScope} ? @{/gp/sd/profile/home/} + ${soldier.id} : ''">
+              <tr>
+                <td><span th:text="${soldier.getIdInfoAsText()}"></span></td>
       
-     	listDescription.focus();
-     	
-     	function sendToList(fromList, toList){
-     		let soldiers = fromList.querySelectorAll(".soldier");
-     		let checkbox, soldierId;
-     		for (let i = 0; i < soldiers.length; i++){
-   				checkbox = soldiers[i].querySelector("input[type=checkbox]");
-   				
-   				if (checkbox.checked){
-   					toList.append(soldiers[i]);
-   					checkbox.checked = !checkbox.checked;
-   					
-   					soldierId = soldiers[i].querySelector(".sid");
-   					soldierId.disabled = false
-   					
-   					fromList.id === 'rightList' ? toggleName(soldierId, 'deselectedSoldiers') : toggleName(soldierId, 'selectedSoldiers');
-   				}	
-     		}
-     	}
-     	
-     	function hideAllSoldiers(fromList){
-     		const soldiers = fromList.querySelectorAll(".soldier");
-     			
-     		for (let i = 0; i < soldiers.length; ++i)
-     			soldiers[i].style.display = "none";     		
-     	}
-     	
-     	function showAllSoldiers(fromList){
-     		const soldiers = fromList.querySelectorAll(".soldier");
- 			
-     		for (let i = 0; i < soldiers.length; ++i){
-     			soldiers[i].style.display = "";
-     			removeNotFoundSoldier(soldiers[i]);		
-     		}
-     	}
-     	
-     	function removeNotFoundSoldier(soldier){
-     		if (soldier.classList.contains("notFound"))
-     			soldier.remove();			
-     	}
-     	
-     	function searchOnList(fromList, searchKey){
-   			let label, soldiers, key;
-   			
-     		soldiers = fromList.querySelectorAll(".soldier");
-     		hideAllSoldiers(fromList);
-     		
-     		let found = false;
-     		var keys = searchKey.split(",");
-     		
-     		if (searchKey){
-     			for (let i = 0; i < keys.length; i++){
-     				found = false;
-       			key = keys[i].trim();
-         			
-       			for (let j = 0; j < soldiers.length; j++){
-       				label = soldiers[j].querySelector(".soldierInfo");
-       				if(label){
-       					if (label.textContent.indexOf(key) > -1){
-  	     					soldiers[j].style.display = "";
-  	     					found = true;
-  	     				}
-       				}
-       			}
-         			
-       			if (!found){
- 	            let sdDiv = document.createElement("div");
- 	            sdDiv.className = "soldier notFound";
- 	            
- 	            let sdName = document.createElement("label");
- 	            sdName.style.color = "red";
- 	            sdName.textContent = key;
- 	            
- 	            sdDiv.append(sdName);
- 	            fromList.append(sdDiv);
-       			}
-         				
-       		}	
-     		
-     		}else{
-     			showAllSoldiers(fromList);	
-     		}
-	  	}
-     	
-     	function setSoldierCheckboxListeners(){
-     	   const soldiers = document.querySelectorAll("div.soldier");
-          let checkbox;
-          for (let i = 0; i < soldiers.length; i++){
-            soldiers[i].addEventListener('click', function(){
-              checkbox = this.querySelector("input[type=checkbox]");
-              checkbox.checked = !checkbox.checked;
-            });
-          }
+                <td><span th:text="${soldier.militaryOrganization.alias}"></span></td>
+      
+                <td><span th:text="${soldier.militaryRank.alias}"></span></td>
+              </tr>
+      
+            </tbody>
+          </table>
+        </div>
+        
+        <br />
+  
+        <div>
+          <button type="button" id="back" class="app-gray-btn">
+            <span>Voltar</span>
+          </button>
+          <button type="button" id="saveList">
+            <span>Salvar</span> <img id="loadCircle"
+              th:src="@{/images/load-green.gif}" alt="carregando..." />
+          </button>
+        </div>
+      </form>
+      
+      
+      <div id="appModal" class="modal">
+        <div class="modal-content">
+          <span class="close">&times;</span>
+          <h1>Lista Trimestral - Adição de Militares</h1>
+          <hr />
+          <form id="soldierSearch" method="post" th:action="@{/gp/sd/search}">
+            <input name="key" type="text" placeholder="Nome do militar..."/>
+            <button id=>
+              <img th:src="@{/images/search.svg}"/>
+            </button>
+          </form>
+        </div>
+      </div>
+      
+      <script type="text/javascript" th:src="@{/scripts/modal-box.js}"></script>
+    </div>
+  
+    <script layout:fragment="page-script" th:inline="javascript">    
+  	    const backBtn = document.querySelector("button#back");
+        backBtn.addEventListener("click", function(){
+          window.history.back();
+        });
+  	    
+        const saveListBtn = document.querySelector("button#saveList");
+        saveListBtn.addEventListener("click", saveList);
+        hideLoadStatus();
+        
+        const searchForm = document.querySelector("form#soldierSearch");
+        searchForm.onsubmit = function(){
+        	searchSoldier(this);
+        	return false;
+        }
+        
+       	listDescription.focus();
+       	
+       	function saveList(){
+          const form = document.querySelector("#formList");
+          showLoadStatus();
           
-          const checkboxes = document.querySelectorAll("div.soldier input[type=checkbox]");
-          for (let i = 0; i < checkboxes.length; i++){
-            checkboxes[i].addEventListener('click', function(event){
-              event.stopPropagation();
-            })
-          }	
-     	}
-     	
-     	function setInputListFilterListeners(){
-   		  const rightDiv = document.querySelector(".right");
-        const leftDiv = document.querySelector(".left");
-        
-     		const leftFilter = document.querySelector("#searchInputs #left");
-        leftFilter.addEventListener("keyup", function(){
-          searchOnList(leftDiv, leftFilter.value.toUpperCase());
-        });
-        
-        const rightFilter = document.querySelector("#searchInputs #right");
-        rightFilter.addEventListener("keyup", function(){
-          searchOnList(rightDiv, rightFilter.value.toUpperCase());
-        });
-     	}
-     	
-     	function setPickListArrowsListeners(){
-     		const rightDiv = document.querySelector(".right");
-        const leftDiv = document.querySelector(".left");
-        
-     		const btnToRight = document.querySelector("#toRight");
-        btnToRight.addEventListener('click', function(){
-          sendToList(leftDiv, rightDiv);
-        });
-        
-        const btnToLeft = document.querySelector("#toLeft");
-        btnToLeft.addEventListener('click', function(){
-          sendToList(rightDiv, leftDiv);
-        });
-     	}
-     	
-     	function saveList(){
-        const form = document.querySelector("#formList");
-        showLoadStatus();
-        
-        sendAjaxRequest(
-            'POST', 
-            form.action, 
-            new FormData(form), 
-            runSavedListSuccessTasks,
-            runSavedListFailedTasks);
-      }
-     	
-     	function showLoadStatus(){
-     		saveListBtn.querySelector('#loadCircle').style.display = '';
-     		saveListBtn.disabled = true;
-     	}
-     	
-     	function hideLoadStatus(){
-     		saveListBtn.querySelector('#loadCircle').style.display = 'none';
-     	}
-     	
-   	  function runSavedListSuccessTasks(responseText){
-   		  alert(responseText);
-        window.location = '[(@{/gp/dw/list})]';
-      }
-          
-	    function runSavedListFailedTasks(responseText){
-	      let spanError = document.querySelector(".error");
-	      spanError.textContent = responseText;
-	      spanError.style.display = "";
-	      saveListBtn.disabled = false;
-	      hideLoadStatus();
-	    }
-    </script>
-</body>
+          sendAjaxRequest(
+              'POST', 
+              form.action, 
+              new FormData(form), 
+              runSavedListSuccessTasks,
+              runSavedListFailedTasks);
+        }
+       	
+       	function searchSoldier(form){
+            sendAjaxRequest(form.method, form.action, new FormData(form), showSearchSoldierResults, function(){});	
+       	}
+       	
+       	function showLoadStatus(){
+       		saveListBtn.querySelector('#loadCircle').style.display = '';
+       		saveListBtn.disabled = true;
+       	}
+       	
+       	function hideLoadStatus(){
+       		saveListBtn.querySelector('#loadCircle').style.display = 'none';
+       	}
+       	
+     	  function runSavedListSuccessTasks(responseText){
+     		  alert(responseText);
+          window.location = '[(@{/gp/dw/list})]';
+        }
+            
+  	    function runSavedListFailedTasks(responseText){
+  	      let spanError = document.querySelector(".error");
+  	      spanError.textContent = responseText;
+  	      spanError.style.display = "";
+  	      saveListBtn.disabled = false;
+  	      hideLoadStatus();
+  	    }
+  	    
+  	    function showSearchSoldierResults(responseText){
+  	      console.log(responseText);
+  	    }
+      </script>
+  </body>
 </html>
