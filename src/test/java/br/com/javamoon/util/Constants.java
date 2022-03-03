@@ -33,6 +33,9 @@ public final class Constants {
 	public static final String PASSWORD_NO_NUMBER = "QWEqweQWE";
 	
 	public static final String DEFAULT_SOLDIER_NAME = "John Marston";
+	public static final String DEFAULT_SOLDIER_EMAIL = DEFAULT_USER_EMAIL;
+	public static final String DEFAULT_SOLDIER_NAME_NON_CONTAINING_KEY = "e";
+	public static final String DEFAULT_SOLDIER_EMAIL_NON_CONTAINING_KEY = "e";
 	
     public static final String DEFAULT_ORGANIZATION_NAME = "11ª Região Militar";
     public static final String DEFAULT_ORGANIZATION_ALIAS = "11ª RM";

@@ -109,11 +109,16 @@ public class SoldierService{
 				.orElseThrow(() -> new SoldierNotFoundException("soldier not found: " + soldierId));
 	}
 	
+	@Deprecated
 	public SoldiersPagination listPagination(Army army, CJM cjm, PaginationSearchFilter filter) {
 		return new SoldiersPagination(
 			soldierRepositoryImpl.findActiveByArmyAndCJMPaginable(army, cjm, filter),
 			soldierRepositoryImpl.countActiveByArmyAndCJMPaginable(army, cjm, filter)
 		);	
+	}
+	
+	public Integer count(Army army, CJM cjm, String key, Integer listId) {
+		return soldierRepository.countActiveByArmyAndCjmContaining(listId, key, army.getId(), cjm.getId());
 	}
 	
 	public SoldiersPagination listPagination(Integer drawListId, PaginationSearchFilter filter) {
@@ -143,6 +148,10 @@ public class SoldierService{
 				.stream()
 				.map(r -> EntityMapper.fromEntityToDTO(r))
 				.collect(Collectors.toList());
+	}
+	
+	public List<Soldier> listSoldierContaining(String key, Army army, CJM cjm){
+		return soldierRepository.findActiveByArmyAndCJMContaining(key, army.getId(), cjm.getId());
 	}
 	
 	public boolean validateLoggedUserPermission(Soldier soldier, GroupUser groupUser) {

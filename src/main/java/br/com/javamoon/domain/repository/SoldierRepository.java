@@ -43,6 +43,18 @@ public interface SoldierRepository extends JpaRepository<Soldier, Integer>{
 	@Query("FROM Soldier s WHERE s.active = true AND s.id = :soldierId AND s.cjm.id = :cjmId")
 	Optional<Soldier> findActiveByIdAndCJM(@Param("soldierId") Integer soldierId, @Param("cjmId") Integer cjmId);
 	
+	@Query(
+		"FROM Soldier s "
+		+ "WHERE s.active = true "
+		+ "AND ( s.name like %:key% OR s.email like %:key% ) "
+		+ "AND s.army.id = :armyId "
+		+ "AND s.cjm.id = :cjmId "
+	)
+	List<Soldier> findActiveByArmyAndCJMContaining(
+		@Param("key") String key,
+		@Param("armyId") Integer armyId,
+		@Param("cjmId") Integer cjmId
+	);
 	
 	@Modifying(flushAutomatically = true, clearAutomatically = true)
 	@Query("UPDATE Soldier s SET s.active = false WHERE s.id = :id")
@@ -93,4 +105,20 @@ public interface SoldierRepository extends JpaRepository<Soldier, Integer>{
 	
 	@Query("select count(s) from Soldier s")
 	Integer getSoldiersNum();
+	
+	@Query(
+		"SELECT COUNT(s) FROM Soldier s "
+		+ "JOIN s.drawList dl "
+		+ "WHERE dl.id = :drawListId "
+		+ "AND s.active = true "
+		+ "AND ( :key IS NULL OR s.name like %:key% OR s.email like %:key% ) "
+		+ "AND s.army.id = :armyId "
+		+ "AND s.cjm.id = :cjmId "
+	)
+	Integer countActiveByArmyAndCjmContaining(
+		@Param("drawListId") Integer drawListId,
+		@Param("key") String key,
+		@Param("armyId") Integer armyId,
+		@Param("cjmId") Integer cjmId
+	);
 }

@@ -1,9 +1,64 @@
-div#pages input[type=button] {
+div.pagination-menu{
+	display: inline-block;
+	position: relative;
+	width: 100%;
+}
+
+div.pages input[type=button] {
 	margin: 5px;
 	border-radius: 50%;
 	border: 0;
 }
 
-div#pages span {
+div.pages span {
+	font-size: 14px;
+}
+
+/*===== Page Count =====*/
+div.page-count{
+	position: absolute;
+	left: 0;
+	top: 10px;
+}
+
+div.page-count span{
 	font-size: 13px;
+}
+	
+div.page-count button{
+    margin: 2px;
+    padding: 0px 6px 2px 6px;
+    border-radius: 50%;
+    border: 0;
+}
+
+/*===== Form =====*/
+form.pagination-form {
+    width: 100%;
+}
+
+/*===== Search Bar =====*/
+div.search-bar {
+    width: 400px;
+    float: right;
+    position: relative;
+}
+
+div.search-bar .search-btn {
+  padding: 9.5px 11px;
+  border: none;
+  background-color: #ddd;
+  border-radius: 0;
+  position: absolute;
+  right: 0;
+  top: 8px;
+}
+
+div.search-bar .search-btn img{
+	width: 12px;
+}
+
+div.search-bar .search-input {
+    width: 83%;
+    border-radius: 0;
 }

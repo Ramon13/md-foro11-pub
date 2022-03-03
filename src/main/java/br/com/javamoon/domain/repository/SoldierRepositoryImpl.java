@@ -73,6 +73,7 @@ public class SoldierRepositoryImpl {
 		return query.getResultList();
 	}
 	
+	@Deprecated
 	public Long countActiveByArmyAndCJMPaginable(Army army, CJM cjm, PaginationSearchFilter filter){
 		StringBuilder hql = new StringBuilder();
 		hql.append("SELECT COUNT(s) FROM Soldier s WHERE s.active = true");

@@ -5,6 +5,9 @@ import br.com.javamoon.domain.entity.MilitaryOrganization;
 import br.com.javamoon.domain.entity.MilitaryRank;
 import br.com.javamoon.domain.entity.Soldier;
 import br.com.javamoon.util.StringUtils;
+
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -38,22 +41,28 @@ public class SoldierDTO{
 	@Email(message = "O e-mail é inválido")
 	private String email;
 	
+	@JsonIgnore
 	@NotNull(message = "É necessário selecionar uma OM.")
 	private MilitaryOrganization militaryOrganization;
 	
+	@JsonIgnore
 	@NotNull(message = "É necessário selecionar um posto.")
 	private MilitaryRank militaryRank;
 	
+	@JsonIgnore
 	private Army army;
 	
+	@JsonIgnore
 	private Boolean active;
 	
+	@JsonIgnore
 	private List<DrawExclusionDTO> exclusions = new ArrayList<>(0);
 	
 	public void capitalizeName() {
 		name = name.toUpperCase();
 	}
 	
+	@JsonIgnore
 	public String getInfoAsText() {
 		return StringUtils.concatenate("\n", Arrays.asList(email, 
 				phone,
@@ -66,6 +75,11 @@ public class SoldierDTO{
 				(email == null) ? "Não enviado" : email);
 	}
 	
+	public String getOMAndRankAsText() {
+		return String.format("Posto: %s | OM: %s", militaryRank.getAlias(), militaryOrganization.getAlias());
+	}
+	
+	@JsonIgnore
 	public String getImpedimentStatusAsText() {
 		char s = exclusions.size() > 1 ? 's' : ' ';
 		return exclusions.isEmpty()
@@ -73,17 +87,28 @@ public class SoldierDTO{
 				: String.format("(%d impedimento%c encontrado%c)", exclusions.size(), s, s);
 	}
 	
+	@JsonIgnore
 	public String getOmAliasAndName() {
 		return militaryOrganization != null
 				? String.format("%s - %s", militaryOrganization.getAlias(), militaryOrganization.getName())
 				: "";
 	}
 	
+	@JsonIgnore
 	public boolean hasImpediment() {
 		return !exclusions.isEmpty();
 	}
 	
+	@JsonIgnore
 	public String getNameForDrawHeader(Soldier substitute) {
 		return String.format("%s %s", name, ( !Objects.isNull(substitute) && id.equals(substitute.getId()) ) ? "( Suplente )" : "");
+	}
+	
+	public String getMilitaryOrganizationAlias() {
+		return militaryOrganization.getAlias();
+	}
+	
+	public String getMilitaryRankAlias() {
+		return militaryRank.getAlias();
 	}
 }

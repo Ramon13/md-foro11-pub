@@ -32,7 +32,7 @@ import lombok.ToString;
 @Table(name = "SOLDIER")
 public class Soldier implements Serializable, Comparable<Soldier>{
 
-	public static final List<String> SORTABLE_FIELDS = List.of("id", "militaryRank.rankWeight");
+	public static final List<String> SORTABLE_FIELDS = List.of("id", "militaryRank.rankWeight", "name");
 	
 	@EqualsAndHashCode.Include
 	@Id
@@ -42,12 +42,9 @@ public class Soldier implements Serializable, Comparable<Soldier>{
 	@Column(name="soldier_name", length = 64, nullable = false, unique = true)
 	private String name;
 	
-	//TODO: fix this regex!
-	//@Pattern(regexp = "[0-9]{0,11}{10,11}", message="O telefone possui o formato inválido")
 	@Column(length = 32, nullable = true)
 	private String phone;
 	
-	//@NotBlank(message="O campo email deve ser preenchido")
 	@Column(length = 64, nullable = true, unique = true)
 	private String email;
 	
@@ -92,6 +89,7 @@ public class Soldier implements Serializable, Comparable<Soldier>{
 			active = true;
 	}
 	
+	//TODO: remove this transient field
 	private transient Set<DrawExclusion> customExclusions = new HashSet<>(0);
 
 	@Override

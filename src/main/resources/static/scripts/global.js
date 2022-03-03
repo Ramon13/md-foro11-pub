@@ -117,3 +117,7 @@ function toggleName(element, value){
   } 
   element.toggleAttribute("name");
 }
+
+function clearChilds(element) {
+  element.innerHTML = "";
+}

@@ -1,28 +1,13 @@
 package br.com.javamoon.infrastructure.web.controller.group;
 
-import br.com.javamoon.domain.cjm_user.CJM;
-import br.com.javamoon.domain.entity.Army;
-import br.com.javamoon.domain.entity.GroupUser;
-import br.com.javamoon.domain.entity.Soldier;
-import br.com.javamoon.exception.SoldierValidationException;
-import br.com.javamoon.infrastructure.web.controller.ControllerHelper;
-import br.com.javamoon.infrastructure.web.model.PaginationSearchFilter;
-import br.com.javamoon.infrastructure.web.model.SoldiersPagination;
-import br.com.javamoon.mapper.DrawExclusionDTO;
-import br.com.javamoon.mapper.DrawListDTO;
-import br.com.javamoon.mapper.EntityMapper;
-import br.com.javamoon.mapper.SoldierDTO;
-import br.com.javamoon.service.DrawExclusionService;
-import br.com.javamoon.service.MilitaryOrganizationService;
-import br.com.javamoon.service.MilitaryRankService;
-import br.com.javamoon.service.SoldierService;
-import br.com.javamoon.util.DateUtils;
-import br.com.javamoon.util.SecurityUtils;
-import br.com.javamoon.validator.ValidationUtils;
 import java.time.LocalDate;
+import java.util.List;
 import java.util.Objects;
+import java.util.stream.Collectors;
+
 import javax.servlet.http.HttpSession;
 import javax.validation.Valid;
+
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -36,7 +21,25 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
+
+import br.com.javamoon.domain.cjm_user.CJM;
+import br.com.javamoon.domain.entity.Army;
+import br.com.javamoon.domain.entity.GroupUser;
+import br.com.javamoon.domain.entity.Soldier;
+import br.com.javamoon.exception.SoldierValidationException;
+import br.com.javamoon.infrastructure.web.controller.ControllerHelper;
+import br.com.javamoon.infrastructure.web.model.PaginationSearchFilter;
+import br.com.javamoon.infrastructure.web.model.SoldiersPagination;
+import br.com.javamoon.mapper.DrawExclusionDTO;
+import br.com.javamoon.mapper.EntityMapper;
+import br.com.javamoon.mapper.SoldierDTO;
+import br.com.javamoon.service.DrawExclusionService;
+import br.com.javamoon.service.MilitaryOrganizationService;
+import br.com.javamoon.service.MilitaryRankService;
+import br.com.javamoon.service.SoldierService;
+import br.com.javamoon.util.DateUtils;
+import br.com.javamoon.util.SecurityUtils;
+import br.com.javamoon.validator.ValidationUtils;
 
 @Controller
 @RequestMapping("/gp/sd")
@@ -74,8 +77,17 @@ public class SoldierController {
 	}
 	
 	@RequestMapping(method = RequestMethod.POST, path = "/search", produces = MediaType.APPLICATION_JSON_VALUE)
-	public ResponseEntity<DrawListDTO> search(@RequestParam("key") String key) {
-		return ResponseEntity.status(HttpStatus.OK).body(new DrawListDTO());
+	public ResponseEntity<List<SoldierDTO>> search(@RequestParam("key") String key) {
+		GroupUser loggedUser = SecurityUtils.groupUser();
+		
+		List<SoldierDTO> foundSoldiers = soldierService.listSoldierContaining(key, loggedUser.getArmy(), loggedUser.getCjm())
+		.stream()
+		.map(s -> EntityMapper.fromEntityToDTO(s))
+		.collect(Collectors.toList());
+		
+		return ResponseEntity
+				.status(HttpStatus.OK)
+				.body(foundSoldiers);
 	}
 	
 	@PostMapping("/register/save")

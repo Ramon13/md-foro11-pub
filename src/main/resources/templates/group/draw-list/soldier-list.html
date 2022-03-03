@@ -3,13 +3,13 @@
   <head>
     <link th:href="@{/styles/group/soldier-list.css}" type="text/css" rel="stylesheet">
     <link th:href="@{/styles/modal-box.css}" type="text/css" rel="stylesheet">
+    <link th:href="@{/styles/pagination-search-list.css}" type="text/css" rel="stylesheet"/>
   </head>
   <body>
     <div layout:fragment="content">
-      <form id="formList" method="get" th:action="@{/gp/dw/list/new/save}" th:object="${drawList}">
-        <input id="listId" name="id" type="hidden" th:field="*{id}" />
-  
-        <div id="listInfo">
+      <div id="listInfo">
+        <form id="formList" method="get" th:action="@{/gp/dw/list/new/save}" th:object="${drawList}">
+          <input id="listId" name="id" type="hidden" th:field="*{id}" />          
           <div>
             <span class="error" style="display: none"></span> <br />
              <label>Descrição:</label><br />
@@ -21,40 +21,27 @@
             <select class="app-select" th:field="*{yearQuarter}">
               <option th:each="quarter : ${quarters}" th:value="${quarter}" th:text="${quarter}"></option>
             </select>
-          </div>
-        </div>
-  
+          </div>  
+        </form>
+      </div>
+      
+      <div id="soldiersList">
         <div id="addSoldiers">
           <button type="button" id="openModalBtn" class="app-green-btn">+ Adicionar Militar</button>
-        </div>
+        </div>  
+        <div th:replace="fragments/pagination-menu :: pagination"></div>
+        
         <hr />
-        
-        <div>
-          <table id="soldiers">
-            <thead>
-              <tr>
-                <th>Nome</th>
-                <th>OM</th>
-                <th>Posto</th>
-              </tr>
-            </thead>
-            <tbody th:each="soldier : ${soldiers}"
-              th:classappend="${session.listScope} ? 'soldier' : ''"
-              th:attr="data-sdprofile=${session.listScope} ? @{/gp/sd/profile/home/} + ${soldier.id} : ''">
-              <tr>
-                <td><span th:text="${soldier.getIdInfoAsText()}"></span></td>
-      
-                <td><span th:text="${soldier.militaryOrganization.alias}"></span></td>
-      
-                <td><span th:text="${soldier.militaryRank.alias}"></span></td>
-              </tr>
-      
-            </tbody>
-          </table>
+        <div id="soldiers">
+          <div th:each="soldier : ${soldiers}" class="app-div-list soldier-info">
+            <input class="soldier-id" type="hidden" th:value="${soldier.id}"/>
+            <p class="list-header" th:text="${soldier.idInfoAsText}"></p>
+            <br />
+            <p class="list-info" th:text="${soldier.oMAndRankAsText}"></p>
+            <button class="remove-soldier">----</button>
+          </div>
         </div>
-        
         <br />
-  
         <div>
           <button type="button" id="back" class="app-gray-btn">
             <span>Voltar</span>
@@ -64,85 +51,30 @@
               th:src="@{/images/load-green.gif}" alt="carregando..." />
           </button>
         </div>
-      </form>
-      
+      </div>
       
       <div id="appModal" class="modal">
         <div class="modal-content">
           <span class="close">&times;</span>
           <h1>Lista Trimestral - Adição de Militares</h1>
           <hr />
-          <form id="soldierSearch" method="post" th:action="@{/gp/sd/search}">
-            <input name="key" type="text" placeholder="Nome do militar..."/>
-            <button id=>
-              <img th:src="@{/images/search.svg}"/>
-            </button>
-          </form>
+          <div>
+            <form id="soldierSearch" method="post" th:action="@{/gp/sd/search}">
+              <input name="key" type="text" placeholder="nome ou email do militar..."/>
+              <button type="button">
+                <img th:src="@{/images/search.svg}"/>
+              </button>
+            </form>
+          </div>
+          <br />
+          <div id="foundSoldiers">
+          </div>
         </div>
       </div>
       
       <script type="text/javascript" th:src="@{/scripts/modal-box.js}"></script>
+      <script type="text/javascript" th:src="@{/scripts/group/soldier-list.js}"></script>
+      <script type="text/javascript" th:src="@{/scripts/pagination-search-list.js}"></script>
     </div>
-  
-    <script layout:fragment="page-script" th:inline="javascript">    
-  	    const backBtn = document.querySelector("button#back");
-        backBtn.addEventListener("click", function(){
-          window.history.back();
-        });
-  	    
-        const saveListBtn = document.querySelector("button#saveList");
-        saveListBtn.addEventListener("click", saveList);
-        hideLoadStatus();
-        
-        const searchForm = document.querySelector("form#soldierSearch");
-        searchForm.onsubmit = function(){
-        	searchSoldier(this);
-        	return false;
-        }
-        
-       	listDescription.focus();
-       	
-       	function saveList(){
-          const form = document.querySelector("#formList");
-          showLoadStatus();
-          
-          sendAjaxRequest(
-              'POST', 
-              form.action, 
-              new FormData(form), 
-              runSavedListSuccessTasks,
-              runSavedListFailedTasks);
-        }
-       	
-       	function searchSoldier(form){
-            sendAjaxRequest(form.method, form.action, new FormData(form), showSearchSoldierResults, function(){});	
-       	}
-       	
-       	function showLoadStatus(){
-       		saveListBtn.querySelector('#loadCircle').style.display = '';
-       		saveListBtn.disabled = true;
-       	}
-       	
-       	function hideLoadStatus(){
-       		saveListBtn.querySelector('#loadCircle').style.display = 'none';
-       	}
-       	
-     	  function runSavedListSuccessTasks(responseText){
-     		  alert(responseText);
-          window.location = '[(@{/gp/dw/list})]';
-        }
-            
-  	    function runSavedListFailedTasks(responseText){
-  	      let spanError = document.querySelector(".error");
-  	      spanError.textContent = responseText;
-  	      spanError.style.display = "";
-  	      saveListBtn.disabled = false;
-  	      hideLoadStatus();
-  	    }
-  	    
-  	    function showSearchSoldierResults(responseText){
-  	      console.log(responseText);
-  	    }
-      </script>
   </body>
 </html>

@@ -1,20 +1,10 @@
 package br.com.javamoon.infrastructure.web.controller.group;
 
-import br.com.javamoon.domain.cjm_user.CJM;
-import br.com.javamoon.domain.entity.Army;
-import br.com.javamoon.domain.entity.GroupUser;
-import br.com.javamoon.exception.DrawListValidationException;
-import br.com.javamoon.infrastructure.web.model.PaginationSearchFilter;
-import br.com.javamoon.infrastructure.web.model.SoldiersPagination;
-import br.com.javamoon.mapper.DrawListDTO;
-import br.com.javamoon.mapper.SoldierDTO;
-import br.com.javamoon.service.DrawListService;
-import br.com.javamoon.service.SoldierService;
-import br.com.javamoon.util.DateUtils;
-import br.com.javamoon.util.SecurityUtils;
 import java.time.LocalDate;
 import java.util.List;
+
 import javax.validation.Valid;
+
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
@@ -27,17 +17,36 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.servlet.ModelAndView;
 
+import br.com.javamoon.config.properties.PaginationConfigProperties;
+import br.com.javamoon.domain.cjm_user.CJM;
+import br.com.javamoon.domain.entity.Army;
+import br.com.javamoon.domain.entity.GroupUser;
+import br.com.javamoon.exception.DrawListValidationException;
+import br.com.javamoon.infrastructure.web.model.PaginationFilter;
+import br.com.javamoon.infrastructure.web.model.PaginationSearchFilter;
+import br.com.javamoon.infrastructure.web.model.SoldiersPagination;
+import br.com.javamoon.mapper.DrawListDTO;
+import br.com.javamoon.mapper.SoldierDTO;
+import br.com.javamoon.service.DrawListService;
+import br.com.javamoon.service.SoldierService;
+import br.com.javamoon.util.DateUtils;
+import br.com.javamoon.util.SecurityUtils;
+
 @Controller
 @RequestMapping(path="/gp/dw")
 public class DrawListController {
 	
 	private DrawListService drawListService;
-	
 	private SoldierService soldierService;
+	private PaginationConfigProperties paginationConfigProperties;
 	
-	public DrawListController(DrawListService drawListService, SoldierService soldierService) {
+	public DrawListController(
+			DrawListService drawListService,
+			SoldierService soldierService,
+			PaginationConfigProperties paginationConfigProperties) {
 		this.drawListService = drawListService;
 		this.soldierService = soldierService;
+		this.paginationConfigProperties = paginationConfigProperties;
 	}
 
 	@GetMapping("/list")
@@ -98,16 +107,23 @@ public class DrawListController {
 	}
 	
 	@GetMapping("/list/edit/{listId}")
-	public String editHome(@PathVariable Integer listId,Model model) {
+	public String editHome(
+			@ModelAttribute("paginationFilter") PaginationFilter paginationFilter,
+			@PathVariable Integer listId,
+			Model model) {
 		Army army = SecurityUtils.groupUser().getArmy();
 		CJM cjm = SecurityUtils.groupUser().getCjm();
 		
 		DrawListDTO drawList = drawListService.getList(listId, army, cjm);
+		
 		List<SoldierDTO> soldiers = soldierService.listByDrawList(drawList.getId());
-			
+		
+		paginationFilter.setTotal(soldierService.count(army, cjm, paginationFilter.getKey(), drawList.getId()));
+		paginationFilter.setMaxLimit(paginationConfigProperties.getMaxLimit());
 		model.addAttribute("drawList", drawList);
 		model.addAttribute("soldiers", soldiers);
-		model.addAttribute("quarters", DateUtils.getSelectableQuarters()); //TODO: fix this attribute on template <expect annual quarter obj>
+		model.addAttribute("paginationFilter", paginationFilter);
+		model.addAttribute("quarters", DateUtils.getSelectableQuarters());
 			
 		return "group/draw-list/soldier-list";
 	}

@@ -181,7 +181,7 @@ input[type=text], input[type=password], input[type=date], select.app-select
 	background-color: #fff;
 }
 
-div.error span, span.error {
+div.error span, span.error, p.error {
 	color: #FF0000;
 }
 
@@ -346,32 +346,6 @@ table#soldiers th, table.default-app-table th {
 	background-color: #ddd;
 }
 
-div#paginationSearchMenu div {
-	display: inline;
-}
-
-div#paginationSearchMenu #search {
-	float: right;
-}
-
-div#paginationSearchMenu form {
-	text-align: justify;
-	width: auto;
-}
-
-div#paginationSearchMenu #searchBtn {
-	padding: 6px;
-	border-radius: 10%;
-}
-
-div#paginationSearchMenu div#search {
-	width: 400px;
-}
-
-div#paginationSearchMenu #searchInput {
-	width: 83%;
-}
-
 div .list-header {
 	font-family: "Roboto", sans-serif;
 	color: #4e4848;
@@ -407,4 +381,32 @@ div.form-step .label-desc {
 	font-style: italic;
 	font-size: 14px;
 	color: #57606a;
+}
+
+div.app-div-list{
+  margin: auto;
+  background-color: #eee;
+  padding: 15px;
+  margin-bottom: 15px;
+  width: 92%;
+  transition: 0.3s;
+  box-shadow: 0px 3px 6px 3px #ddd;
+  position: relative;
+}
+
+div.app-div-list:hover{
+	background-color: #ddd;
+}
+
+div.app-div-list p{
+	display: inline;
+}
+
+div.app-div-list p.list-info{
+  color: #606060;
+  font-size: 12px;
+}
+
+div.app-div-list p.list-header{
+  font-size: 14px;
 }

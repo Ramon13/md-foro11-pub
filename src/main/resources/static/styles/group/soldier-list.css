@@ -1,11 +1,17 @@
-form {
+div#listInfo {
+    display: inline-block;
+    width: 100%;
+    margin-bottom: 10px;
+}
+
+div#listInfo form, div.modal-content form {
   text-align: inherit;
   width: 100%;
   margin: auto;
 }
 
 input#listDescription {
-  font-size: 20px;
+  font-size: 16px;
 }
 
 button#saveList {
@@ -62,8 +68,48 @@ form#soldierSearch input[type=text]:focus{
 }
 
 form#soldierSearch button{
-	padding: 12px 12px;
+	padding: 11px 11px;
 	border: none;
 	background-color: #ddd;
 	border-radius: 0;
+}
+
+div.app-div-list:hover{
+    background-color: #eee;
+}
+
+div#soldiers{
+	height: 56vh;
+	overflow: auto;
+}
+
+div#foundSoldiers {
+    height: 400px;
+    overflow: auto;
+}
+
+button.remove-soldier{
+	position: absolute;
+    right: 5px;
+    top: 30%;
+    border: none;
+    border-radius: 50%;
+    background-color: #d75b49;
+    color: #fff;
+    width: 25px;
+    height: 25px;
+    padding-left: 5px;
+    padding-top: 3px;
+}
+
+div.soldier-info:hover{
+	background-color: #ddd;
+}
+
+button.remove-soldier:hover{
+	background-color: #d53720;
+}
+
+p.error{
+	margin: 0;
 }

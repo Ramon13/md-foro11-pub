@@ -1,4 +1,4 @@
-package br.com.javamoon.unit.service;
+package br.com.javamoon.integration.service;
 
 import static br.com.javamoon.util.Constants.DEFAULT_ARMY_ALIAS;
 import static br.com.javamoon.util.Constants.DEFAULT_ARMY_NAME;
@@ -9,7 +9,10 @@ import static br.com.javamoon.util.Constants.DEFAULT_ORGANIZATION_ALIAS;
 import static br.com.javamoon.util.Constants.DEFAULT_ORGANIZATION_NAME;
 import static br.com.javamoon.util.Constants.DEFAULT_RANK_ALIAS;
 import static br.com.javamoon.util.Constants.DEFAULT_RANK_NAME;
+import static br.com.javamoon.util.Constants.DEFAULT_SOLDIER_EMAIL;
+import static br.com.javamoon.util.Constants.DEFAULT_SOLDIER_EMAIL_NON_CONTAINING_KEY;
 import static br.com.javamoon.util.Constants.DEFAULT_SOLDIER_NAME;
+import static br.com.javamoon.util.Constants.DEFAULT_SOLDIER_NAME_NON_CONTAINING_KEY;
 import static br.com.javamoon.util.TestDataCreator.getPersistedArmy;
 import static br.com.javamoon.util.TestDataCreator.getPersistedCJM;
 import static br.com.javamoon.util.TestDataCreator.getPersistedGroupUserList;
@@ -25,6 +28,19 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+
+import java.util.List;
+import java.util.Optional;
+import java.util.stream.Collectors;
+
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.annotation.DirtiesContext;
+import org.springframework.test.annotation.DirtiesContext.ClassMode;
+import org.springframework.test.context.ActiveProfiles;
+
 import br.com.javamoon.domain.cjm_user.CJM;
 import br.com.javamoon.domain.cjm_user.CJMRepository;
 import br.com.javamoon.domain.entity.Army;
@@ -47,16 +63,6 @@ import br.com.javamoon.service.SoldierService;
 import br.com.javamoon.service.ValidationException;
 import br.com.javamoon.util.TestDataCreator;
 import br.com.javamoon.validator.ValidationError;
-import java.util.List;
-import java.util.Optional;
-import java.util.stream.Collectors;
-import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.annotation.DirtiesContext;
-import org.springframework.test.annotation.DirtiesContext.ClassMode;
-import org.springframework.test.context.ActiveProfiles;
 
 @SpringBootTest
 @ActiveProfiles("test")
@@ -366,6 +372,46 @@ public class SoldierServiceUnitTest {
 				() -> victim.getSoldier(soldiers.get(0).getId(), army, cjm));
 		
 		assertEquals("soldier not found: " + soldiers.get(0).getId(), exception.getMessage());
+	}
+	
+	@Test
+	void testListSoldierContainingWhenSoldierNameContainsKey() {
+		List<Soldier> persistedSoldiers = getPersistedSoldiers(10);
+		Army army = persistedSoldiers.get(0).getArmy();
+		CJM cjm = persistedSoldiers.get(0).getCjm();
+		
+		List<Soldier> containingSoldiers = victim.listSoldierContaining(DEFAULT_SOLDIER_NAME, army, cjm);
+		
+		assertNotNull(containingSoldiers);
+		assertEquals(persistedSoldiers.size(), containingSoldiers.size());
+		
+		containingSoldiers = victim.listSoldierContaining(DEFAULT_SOLDIER_NAME_NON_CONTAINING_KEY, army, cjm);
+		assertEquals(0, containingSoldiers.size());
+	}
+	
+	@Test
+	void testListSoldierContainingWhenSoldierEmailContainsKey() {
+		List<Soldier> persistedSoldiers = getPersistedSoldiers(10);
+		Army army = persistedSoldiers.get(0).getArmy();
+		CJM cjm = persistedSoldiers.get(0).getCjm();
+		
+		List<Soldier> containingSoldiers = victim.listSoldierContaining(DEFAULT_SOLDIER_EMAIL, army, cjm);
+		
+		assertNotNull(containingSoldiers);
+		assertEquals(persistedSoldiers.size(), containingSoldiers.size());
+		
+		containingSoldiers = victim.listSoldierContaining(DEFAULT_SOLDIER_EMAIL_NON_CONTAINING_KEY, army, cjm);
+		assertEquals(0, containingSoldiers.size());
+	}
+	
+	private List<Soldier> getPersistedSoldiers(int listSize){
+		Army army = getPersistedArmy(armyRepository);
+		CJM cjm = getPersistedCJM(cjmRepository);
+		MilitaryOrganization organization = getPersistedMilitaryOrganization(army, organizationRepository);
+		MilitaryRank rank = getPersistedMilitaryRank(army, rankRepository, armyRepository);
+		
+		List<Soldier> soldiers = TestDataCreator.newSoldierList(army, cjm, organization, rank, listSize);
+		return soldierRepository.saveAllAndFlush(soldiers);
 	}
 }
 
