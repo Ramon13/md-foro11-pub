@@ -1,7 +1,6 @@
 package br.com.javamoon.infrastructure.web.model;
 
-import org.springframework.stereotype.Component;
-
+import br.com.javamoon.util.PageableUtils;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
@@ -9,16 +8,16 @@ import lombok.ToString;
 @Getter
 @Setter
 @ToString
-@Component
 public class PaginationFilter {
 
-	private int page = 0;
+	private int page = PageableUtils.DEFAULT_PAGE;
 	private Integer total;
 	private Integer maxLimit;
 	private String key;
-
+	
 	public Integer getFirstResult() {
-		return page * 0 + 1;
+		int plus = (total == 0) ? 0 : 1;
+		return page * maxLimit + plus;
 	}
 	
 	public Integer getLastResult() {

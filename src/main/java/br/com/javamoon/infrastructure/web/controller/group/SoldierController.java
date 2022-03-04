@@ -36,6 +36,7 @@ import br.com.javamoon.mapper.SoldierDTO;
 import br.com.javamoon.service.DrawExclusionService;
 import br.com.javamoon.service.MilitaryOrganizationService;
 import br.com.javamoon.service.MilitaryRankService;
+import br.com.javamoon.service.RandomSoldierService;
 import br.com.javamoon.service.SoldierService;
 import br.com.javamoon.util.DateUtils;
 import br.com.javamoon.util.SecurityUtils;
@@ -49,14 +50,19 @@ public class SoldierController {
 	private MilitaryRankService militaryRankService;
 	private SoldierService soldierService;
 	private DrawExclusionService drawExclusionService;
+	private RandomSoldierService randomSoldierService;
 
-	public SoldierController(MilitaryOrganizationService militaryOrganizationService,
-	        MilitaryRankService militaryRankService, SoldierService soldierService,
-	        DrawExclusionService drawExclusionService) {
+	public SoldierController(
+			MilitaryOrganizationService militaryOrganizationService,
+	        MilitaryRankService militaryRankService,
+	        SoldierService soldierService,
+	        DrawExclusionService drawExclusionService,
+	        RandomSoldierService randomSoldierService) {
 		this.militaryOrganizationService = militaryOrganizationService;
 		this.militaryRankService = militaryRankService;
 		this.soldierService = soldierService;
 		this.drawExclusionService = drawExclusionService;
+		this.randomSoldierService = randomSoldierService;
 	}
 
 	@GetMapping(value = {"/register/home", "/register/home/{soldierId}"})
@@ -77,13 +83,23 @@ public class SoldierController {
 	}
 	
 	@RequestMapping(method = RequestMethod.POST, path = "/search", produces = MediaType.APPLICATION_JSON_VALUE)
-	public ResponseEntity<List<SoldierDTO>> search(@RequestParam("key") String key) {
+	public ResponseEntity<List<SoldierDTO>> search(
+			@RequestParam("key") String key,
+			@RequestParam(name = "yearQuarter", required = false) String yearQuarter,
+			@RequestParam(name = "listId", required = false) Integer listId) {
+		
 		GroupUser loggedUser = SecurityUtils.groupUser();
 		
-		List<SoldierDTO> foundSoldiers = soldierService.listSoldierContaining(key, loggedUser.getArmy(), loggedUser.getCjm())
-		.stream()
-		.map(s -> EntityMapper.fromEntityToDTO(s))
-		.collect(Collectors.toList());
+		List<SoldierDTO> foundSoldiers = soldierService
+			.listSoldierContaining(key, loggedUser.getArmy(), loggedUser.getCjm())
+			.stream()
+			.map(s -> EntityMapper.fromEntityToDTO(s))
+			.collect(Collectors.toList());
+		
+		if (Objects.nonNull(yearQuarter))
+			randomSoldierService.setSoldierExclusionMessages(foundSoldiers, yearQuarter, true);
+		if (Objects.nonNull(listId))
+			soldierService.generateExclusionIfSoldierAlreadyInList(foundSoldiers, listId);
 		
 		return ResponseEntity
 				.status(HttpStatus.OK)

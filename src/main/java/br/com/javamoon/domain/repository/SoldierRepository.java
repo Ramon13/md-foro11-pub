@@ -81,13 +81,12 @@ public interface SoldierRepository extends JpaRepository<Soldier, Integer>{
 			+ "JOIN s.drawList dl "
 			+ "LEFT JOIN FETCH s.militaryOrganization "
 			+ "WHERE dl.id = :drawListId "
-			+ "AND s.active = true")
+			+ "AND s.active = true "
+			+ "AND ( :key IS NULL OR s.name like %:key% OR s.email like %:key% ) ")
 	List<Soldier> findAllActiveByDrawList(
 			@Param("drawListId") Integer drawListId,
+			@Param("key") String key,
 			Pageable pageable);
-	
-	@Query("SELECT s FROM DrawList dl JOIN dl.soldiers s WHERE s.id = :soldierId AND dl.id = :drawListId")
-	Optional<Soldier> findActiveByDrawList(@Param("soldierId") Integer soldierId, @Param("drawListId") Integer drawListId);
 	
 	@Query(
 		"FROM Soldier s LEFT JOIN FETCH s.militaryOrganization " + 
@@ -121,4 +120,16 @@ public interface SoldierRepository extends JpaRepository<Soldier, Integer>{
 		@Param("armyId") Integer armyId,
 		@Param("cjmId") Integer cjmId
 	);
+	
+	@Query(
+			"SELECT s FROM Soldier s "
+			+ "JOIN s.drawList dl "
+			+ "WHERE dl.id = :drawListId "
+			+ "AND s.active = true "
+			+ "AND s.id = :soldierId"
+		)
+		Optional<Soldier> findActiveByDrawList(
+		    @Param("soldierId") Integer soldierId,
+			@Param("drawListId") Integer drawListId
+		);
 }

@@ -33,6 +33,14 @@
         
         <hr />
         <div id="soldiers">
+          <div id="baseSoldierInfo" class="app-div-list" style="display: none">
+            <input class="soldier-id" type="hidden"/>
+            <p class="list-header"></p>
+            <br />
+            <p class="list-info"></p>
+            <button class="remove-soldier">----</button>
+          </div>
+          
           <div th:each="soldier : ${soldiers}" class="app-div-list soldier-info">
             <input class="soldier-id" type="hidden" th:value="${soldier.id}"/>
             <p class="list-header" th:text="${soldier.idInfoAsText}"></p>
@@ -61,6 +69,8 @@
           <div>
             <form id="soldierSearch" method="post" th:action="@{/gp/sd/search}">
               <input name="key" type="text" placeholder="nome ou email do militar..."/>
+              <input id="selectedQuarter" name="yearQuarter" type="hidden" th:value="${drawList.yearQuarter}"/>
+              <input id="listId" name="listId" type="hidden" th:value="${drawList.id}"/>
               <button type="button">
                 <img th:src="@{/images/search.svg}"/>
               </button>

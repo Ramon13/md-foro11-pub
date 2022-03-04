@@ -39,6 +39,10 @@ public class DrawExclusion implements Serializable{
 		this.message = message;
 	}
 	
+	public DrawExclusion(String message) {
+		this.message = message;
+	}
+	
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	@EqualsAndHashCode.Include

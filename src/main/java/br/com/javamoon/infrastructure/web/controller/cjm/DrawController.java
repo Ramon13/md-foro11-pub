@@ -112,7 +112,7 @@ public class DrawController {
 		try {
 			CJMUser loggedUser = SecurityUtils.cjmUser();
 			randomSoldierService.randomAllSoldiers(drawDTO, loggedUser.getAuditorship().getCjm());
-			randomSoldierService.setSoldierExclusionMessages(drawDTO.getSoldiers(), drawDTO.getSelectedYearQuarter());
+			randomSoldierService.setSoldierExclusionMessages(drawDTO.getSoldiers(), drawDTO.getSelectedYearQuarter(), true);
 			
 		} catch (DrawValidationException e) {
 			ValidationUtils.rejectValues(errors, e.getValidationErrors());
@@ -133,7 +133,8 @@ public class DrawController {
 			int replacedIndex = randomSoldierService.replaceRandomSoldier(drawDTO);
 			randomSoldierService.setSoldierExclusionMessages(
 				Arrays.asList(drawDTO.getSoldiers().get(replacedIndex)),
-				drawDTO.getSelectedYearQuarter()
+				drawDTO.getSelectedYearQuarter(),
+				true
 			);
 		} catch (DrawValidationException e) {
 			e.printStackTrace();
@@ -172,7 +173,7 @@ public class DrawController {
 			Model model) {
 		CJMUser loggedUser = SecurityUtils.cjmUser();
 		drawDTO = drawService.get(drawId, loggedUser.getAuditorship());
-		randomSoldierService.setSoldierExclusionMessages(drawDTO.getSoldiers(), drawDTO.getSelectedYearQuarter());
+		randomSoldierService.setSoldierExclusionMessages(drawDTO.getSoldiers(), drawDTO.getSelectedYearQuarter(), true);
 		
 		model.addAttribute("drawDTO", drawDTO);
 		

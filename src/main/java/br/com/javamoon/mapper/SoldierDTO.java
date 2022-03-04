@@ -19,9 +19,11 @@ import javax.validation.constraints.Size;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
+import lombok.ToString;
 
 @Getter
 @Setter
+@ToString
 @EqualsAndHashCode(onlyExplicitlyIncluded = true)
 public class SoldierDTO{
    
@@ -110,5 +112,12 @@ public class SoldierDTO{
 	
 	public String getMilitaryRankAlias() {
 		return militaryRank.getAlias();
+	}
+	
+	public String getFirstExclusion() {
+		if (!exclusions.isEmpty())
+			return exclusions.get(exclusions.size() - 1).getMessage();
+		
+		return "";
 	}
 }

@@ -1,16 +1,20 @@
 package br.com.javamoon.util;
 
-import br.com.javamoon.exception.InvalidOrderByFieldException;
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
+
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 
+import br.com.javamoon.exception.InvalidOrderByFieldException;
+
 public class PageableUtils {
 
+	public static final Integer DEFAULT_PAGE = 0;
+	
 	public static Pageable newPageable(
 			Integer page,
 			Integer limit,

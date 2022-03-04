@@ -22,6 +22,18 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+
+import java.time.LocalDate;
+import java.util.List;
+import java.util.stream.Collectors;
+
+import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.annotation.DirtiesContext;
+import org.springframework.test.annotation.DirtiesContext.ClassMode;
+import org.springframework.test.context.ActiveProfiles;
+
 import br.com.javamoon.domain.cjm_user.CJM;
 import br.com.javamoon.domain.cjm_user.CJMRepository;
 import br.com.javamoon.domain.entity.Army;
@@ -46,15 +58,6 @@ import br.com.javamoon.util.Constants;
 import br.com.javamoon.util.DateUtils;
 import br.com.javamoon.util.TestDataCreator;
 import br.com.javamoon.validator.ValidationError;
-import java.time.LocalDate;
-import java.util.List;
-import java.util.stream.Collectors;
-import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.annotation.DirtiesContext;
-import org.springframework.test.annotation.DirtiesContext.ClassMode;
-import org.springframework.test.context.ActiveProfiles;
 
 @SpringBootTest
 @ActiveProfiles("test")
@@ -397,7 +400,7 @@ public class DrawListServiceUnitTest {
 		soldier.setEmail(DEFAULT_USER_EMAIL + "XX");
 		soldierRepository.saveAndFlush(soldier);
 		
-		assertEquals(6, soldierRepository.findAllActiveByDrawList(drawList.getId()).size());
+		assertEquals(6, soldierRepository.findAllActiveByDrawList(drawList.getId(), null, null).size());
 		
 		DrawListDTO drawListDTO = EntityMapper.fromEntityToDTO(drawList);
 		drawListDTO.getSelectedSoldiers().add(soldier.getId());
@@ -408,7 +411,7 @@ public class DrawListServiceUnitTest {
 			drawList.getCreationUser()
 		);
 		
-		assertEquals(7, soldierRepository.findAllActiveByDrawList(drawList.getId()).size());
+		assertEquals(7, soldierRepository.findAllActiveByDrawList(drawList.getId(), null, null).size());
 	}
 	
 	@Test
@@ -423,7 +426,7 @@ public class DrawListServiceUnitTest {
 				drawListRepository,
 				1, 6).get(0);
 		
-		assertEquals(6, soldierRepository.findAllActiveByDrawList(drawList.getId()).size());
+		assertEquals(6, soldierRepository.findAllActiveByDrawList(drawList.getId(), null, null).size());
 		
 		DrawListDTO drawListDTO = EntityMapper.fromEntityToDTO(drawList);
 		drawListDTO.getDeselectedSoldiers().add(1);				// remove soldier 1 from list
@@ -434,7 +437,7 @@ public class DrawListServiceUnitTest {
 			drawList.getCreationUser()
 		);
 		
-		assertEquals(5, soldierRepository.findAllActiveByDrawList(drawList.getId()).size());
+		assertEquals(5, soldierRepository.findAllActiveByDrawList(drawList.getId(), null, null).size());
 	}
 	
 	@Test

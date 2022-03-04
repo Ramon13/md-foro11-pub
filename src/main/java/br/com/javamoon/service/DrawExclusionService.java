@@ -6,11 +6,15 @@ import br.com.javamoon.domain.draw_exclusion.DrawExclusionRepository;
 import br.com.javamoon.domain.entity.GroupUser;
 import br.com.javamoon.domain.entity.Soldier;
 import br.com.javamoon.domain.repository.DrawRepository;
+import br.com.javamoon.domain.repository.SoldierRepository;
 import br.com.javamoon.exception.DrawExclusionNotFoundException;
 import br.com.javamoon.mapper.DrawExclusionDTO;
 import br.com.javamoon.mapper.EntityMapper;
 import br.com.javamoon.util.DateUtils;
 import br.com.javamoon.validator.DrawExclusionValidator;
+
+import static br.com.javamoon.service.ServiceConstants.GENERATED_SYSYEM_SOLDIER_ALREADY_IN_LIST;
+
 import java.time.LocalDate;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -22,16 +26,19 @@ public class DrawExclusionService {
 
 	private DrawRepository drawRepository;
 	private DrawExclusionRepository drawExclusionRepository;
+	private SoldierRepository soldierRepository;
 	
 	private DrawExclusionValidator drawExclusionValidator;
 
 	public DrawExclusionService(
 			DrawRepository drawRepository,
 			DrawExclusionRepository drawExclusionRepository,
-			DrawExclusionValidator drawExclusionValidator) {
+			DrawExclusionValidator drawExclusionValidator,
+			SoldierRepository soldierRepository) {
 		this.drawRepository = drawRepository;
 		this.drawExclusionRepository = drawExclusionRepository;
 		this.drawExclusionValidator = drawExclusionValidator;
+		this.soldierRepository = soldierRepository;
 	}
 
 	public List<DrawExclusionDTO> listBySoldier(Soldier soldier){
@@ -83,6 +90,13 @@ public class DrawExclusionService {
 	public List<DrawExclusion> generateByUnfinishedCejDraw(Integer soldierId){
 		List<Draw> unfinishedDrawList = drawRepository.findUnfinishedByCJM("CEJ", soldierId);
 		return generateSystemExclusionMessage(null, null, unfinishedDrawList);
+	}
+	
+	public DrawExclusion generateIfSoldierAlreadyInList(Integer soldierId, Integer listId) {
+		if ( soldierRepository.findActiveByDrawList(soldierId, listId).isPresent() )
+			return new DrawExclusion(GENERATED_SYSYEM_SOLDIER_ALREADY_IN_LIST);
+		
+		return null;
 	}
 	
 	public List<DrawExclusion> listBySelectableQuarterPeriod(Integer soldierId){

@@ -106,6 +106,8 @@ public class DrawListController {
 		return new ResponseEntity<String>(errorMsg, HttpStatus.BAD_REQUEST);
 	}
 	
+	//TODO: bug fix - clone node with empty list generates an error because the list has no elements to clone
+
 	@GetMapping("/list/edit/{listId}")
 	public String editHome(
 			@ModelAttribute("paginationFilter") PaginationFilter paginationFilter,
@@ -113,18 +115,19 @@ public class DrawListController {
 			Model model) {
 		Army army = SecurityUtils.groupUser().getArmy();
 		CJM cjm = SecurityUtils.groupUser().getCjm();
-		
+
 		DrawListDTO drawList = drawListService.getList(listId, army, cjm);
+		model.addAttribute("drawList", drawList);
 		
-		List<SoldierDTO> soldiers = soldierService.listByDrawList(drawList.getId());
+		List<SoldierDTO> soldiers = soldierService
+				.listByDrawList(drawList.getId(), paginationFilter.getPage(), paginationFilter.getKey());
+		model.addAttribute("soldiers", soldiers);
 		
 		paginationFilter.setTotal(soldierService.count(army, cjm, paginationFilter.getKey(), drawList.getId()));
 		paginationFilter.setMaxLimit(paginationConfigProperties.getMaxLimit());
-		model.addAttribute("drawList", drawList);
-		model.addAttribute("soldiers", soldiers);
 		model.addAttribute("paginationFilter", paginationFilter);
-		model.addAttribute("quarters", DateUtils.getSelectableQuarters());
-			
+	
+		model.addAttribute("quarters", DateUtils.getSelectableQuarters());		
 		return "group/draw-list/soldier-list";
 	}
 		

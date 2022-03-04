@@ -1,5 +1,22 @@
 package br.com.javamoon.service;
 
+import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import java.util.TreeMap;
+import java.util.stream.Collectors;
+
+import javax.transaction.Transactional;
+
+import org.hibernate.Hibernate;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort.Direction;
+import org.springframework.stereotype.Service;
+
 import br.com.javamoon.domain.cjm_user.CJM;
 import br.com.javamoon.domain.entity.Army;
 import br.com.javamoon.domain.entity.DrawList;
@@ -11,21 +28,8 @@ import br.com.javamoon.mapper.DrawListDTO;
 import br.com.javamoon.mapper.DrawListsDTO;
 import br.com.javamoon.mapper.EntityMapper;
 import br.com.javamoon.util.DateUtils;
+import br.com.javamoon.util.PageableUtils;
 import br.com.javamoon.validator.DrawListValidator;
-import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-import java.util.TreeMap;
-import java.util.stream.Collectors;
-import javax.transaction.Transactional;
-import org.hibernate.Hibernate;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Sort.Direction;
-import org.springframework.stereotype.Service;
 
 @Service
 public class DrawListService {
@@ -114,7 +118,7 @@ public class DrawListService {
 		
 		DrawListDTO copyOfDrawList = new DrawListDTO();
 		copyOfDrawList.getSelectedSoldiers().addAll(
-			soldierService.listByDrawList(listId)
+			soldierService.listByDrawList(listId, PageableUtils.DEFAULT_PAGE, null)
 				.stream()
 				.map(s -> s.getId())
 				.collect(Collectors.toList())

@@ -28,6 +28,8 @@ function saveList() {
 }
 
 function searchSoldier(form) {
+  let selectedQuarter = document.querySelector("select#yearQuarter");
+  form.querySelector("input[type=hidden]#selectedQuarter").value = selectedQuarter.value;
   sendAjaxRequest(
     form.method,
     form.action,
@@ -42,23 +44,22 @@ function showFoundSoldiers(soldiers) {
   let soldiersDiv = document.querySelector("div#foundSoldiers");
   clearChilds(soldiersDiv);
 
-  let soldierInfo = document.querySelectorAll("div.soldier-info")[0];
+  let baseSoldierInfo = document.querySelector("div#baseSoldierInfo");
   let newSoldierInfo;
   for (let i = 0; i < soldiers.length; i++) {
-    newSoldierInfo = soldierInfo.cloneNode(soldierInfo);
+    newSoldierInfo = baseSoldierInfo.cloneNode(baseSoldierInfo);
 
     newSoldierInfo.querySelector(".soldier-id").value = soldiers[i].id;
     newSoldierInfo.querySelector(".list-header").textContent = soldiers[i].idInfoAsText;
     newSoldierInfo.querySelector(".list-info").textContent = soldiers[i].omandRankAsText;
     newSoldierInfo.querySelector(".remove-soldier").style.display = "none";
+    newSoldierInfo.style.display = "block";
 
     soldiersDiv.append(newSoldierInfo);
-
-    if (isInList(soldiers[i].id)) {
-      let error = getErrorParagraph("militar já incluso na lista em edição.");
-      newSoldierInfo.append(error);
-
-    } else {
+   
+    if (soldiers[i].firstExclusion){
+      disableSoldierInfo(soldiers[i].firstExclusion, newSoldierInfo);
+    }else{
       newSoldierInfo.onclick = function() { addToList(this) };
     }
   }
@@ -88,18 +89,6 @@ function addToList(soldier) {
   soldier.onclick = function() { };
 }
 
-function isInList(soldierId) {
-  let ids = document.querySelectorAll("div#soldiers .soldier-id");
-  for (let i = 0; i < ids.length; i++) {
-    if (+ids[i].value === +soldierId) {
-      console.log(ids[i].value)
-      return true;
-    }
-  }
-
-  return false;
-}
-
 function getErrorParagraph(errorMsg) {
   let error = document.createElement("p");
   error.classList.add("error");
@@ -115,4 +104,10 @@ function showLoadStatus() {
 
 function hideLoadStatus() {
   saveListBtn.querySelector('#loadCircle').style.display = 'none';
+}
+
+function disableSoldierInfo(errorMsg, soldierInfoDiv){
+  let error = getErrorParagraph(errorMsg);
+  soldierInfoDiv.append(error);
+  soldierInfoDiv.classList.add("disable-div");
 }

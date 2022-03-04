@@ -78,10 +78,13 @@ public class RandomSoldierService {
 		}
 	}
 	
-	public void setSoldierExclusionMessages(Collection<SoldierDTO> soldiers, String selectedYearQuarter) {
+	public void setSoldierExclusionMessages(Collection<SoldierDTO> soldiers, String selectedYearQuarter, boolean systemOnly) {
 		for (SoldierDTO soldierDTO : soldiers) {
 			List<DrawExclusion> exclusions = new ArrayList<>(0);
-			exclusions.addAll(drawExclusionService.listByAnnualQuarter(selectedYearQuarter, soldierDTO.getId()));
+			
+			if (systemOnly == Boolean.FALSE)
+				exclusions.addAll(drawExclusionService.listByAnnualQuarter(selectedYearQuarter, soldierDTO.getId()));
+			
 			exclusions.addAll(drawExclusionService.listBySelectableQuarterPeriod(soldierDTO.getId()));
 			exclusions.addAll(drawExclusionService.generateByUnfinishedCejDraw(soldierDTO.getId()));
 			soldierDTO.getExclusions().addAll(
