@@ -46,7 +46,8 @@ function sendAjaxRequest(
 	action,
 	sendContent, 
 	successFunction,
-	errorFunction){
+	errorFunction,
+	contentType){
 	
 	let httpRequest = new XMLHttpRequest();
 	
@@ -64,7 +65,8 @@ function sendAjaxRequest(
 	}
 	
 	httpRequest.open(httpMethod, action, true);
-    httpRequest.send(sendContent);
+	httpRequest.setRequestHeader( "Content-type", (contentType || "text/plain;charset=UTF-8") );
+  httpRequest.send(sendContent);
 }
 
 function includeJs(jsFilePath){

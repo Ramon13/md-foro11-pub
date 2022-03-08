@@ -27,6 +27,7 @@ import br.com.javamoon.exception.DrawListNotFoundException;
 import br.com.javamoon.mapper.DrawListDTO;
 import br.com.javamoon.mapper.DrawListsDTO;
 import br.com.javamoon.mapper.EntityMapper;
+import br.com.javamoon.mapper.SoldierDTO;
 import br.com.javamoon.util.DateUtils;
 import br.com.javamoon.util.PageableUtils;
 import br.com.javamoon.validator.DrawListValidator;
@@ -35,19 +36,22 @@ import br.com.javamoon.validator.DrawListValidator;
 public class DrawListService {
 	
 	private DrawListRepository drawListRepo;
-	
 	private SoldierService soldierService;
-	
 	private DrawListValidator drawListValidator;
+	private RandomSoldierService randomSoldierService;
 	
 	private final int maxLists;
 	
-	public DrawListService(DrawListRepository drawListRepo, SoldierService soldierService,
+	public DrawListService(
+			DrawListRepository drawListRepo,
+			SoldierService soldierService,
 	        DrawListValidator drawListValidator,
+	        RandomSoldierService randomSoldierService,
 	        @Value("${md-foro11.drawList.defaultProperties.maxLists}") int maxLists) {
 		this.drawListRepo = drawListRepo;
 		this.soldierService = soldierService;
 		this.drawListValidator = drawListValidator;
+		this.randomSoldierService = randomSoldierService;
 		this.maxLists = maxLists;
 	}
 
@@ -143,6 +147,14 @@ public class DrawListService {
 				return new DrawListsDTO(key, listsByQuarter);
 			})
 			.collect(Collectors.toList());
+	}
+	
+	public void addSoldierToList(Integer listId, Integer soldierId, String yearQuarter, Army army, CJM cjm) {
+		SoldierDTO soldier = EntityMapper.fromEntityToDTO(soldierService.getSoldier(soldierId, army, cjm));
+		randomSoldierService.setSoldierExclusionMessages(List.of(soldier), yearQuarter, false);
+		soldierService.generateExclusionIfSoldierAlreadyInList(List.of(soldier), listId);
+		
+		drawListValidator.addSoldierToListValidation(soldier, listId, yearQuarter);
 	}
 	
 	private Map<String, List<DrawList>> mapListByQuarter(List<DrawList> lists){

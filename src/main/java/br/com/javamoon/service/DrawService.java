@@ -26,42 +26,51 @@ import br.com.javamoon.mapper.DrawDTO;
 import br.com.javamoon.mapper.EntityMapper;
 import br.com.javamoon.util.DateUtils;
 import br.com.javamoon.validator.DrawValidator;
+import br.com.javamoon.validator.SoldierValidator;
 import net.sf.jasperreports.engine.data.JRBeanCollectionDataSource;
 
 @Service
 public class DrawService {
 
 	private PdfService pdfService;
-	
 	private DrawRepository drawRepository;
-	
 	private SoldierRepository soldierRepository;
-	
 	private DrawValidator drawValidator;
-	
+	private SoldierValidator soldierValidator;
 	private DrawListService drawListService;
-	
+	private JusticeCouncilService justiceCouncilService;
+	private ArmyService armyService;
 	private AuditorshipService auditorshipService;
-	
+
 	public DrawService(
 		PdfService pdfService,
 		DrawRepository drawRepository,
 		SoldierRepository soldierRepository,
 		DrawValidator drawValidator,
+		SoldierValidator soldierValidator,
 		DrawListService drawListService,
-		AuditorshipService auditorshipService) {
-		
+		JusticeCouncilService justiceCouncilService,
+		ArmyService armyService,
+		AuditorshipService auditorshipService
+	) {
 		this.pdfService = pdfService;
 		this.drawRepository = drawRepository;
 		this.soldierRepository = soldierRepository;
 		this.drawValidator = drawValidator;
+		this.soldierValidator = soldierValidator;
 		this.drawListService = drawListService;
+		this.justiceCouncilService = justiceCouncilService;
+		this.armyService = armyService;
 		this.auditorshipService = auditorshipService;
 	}
-	
+
 	@Transactional
 	public void save(DrawDTO drawDTO, CJMUser loggedUser) throws DrawValidationException{
 		CJM cjm = loggedUser.getAuditorship().getCjm();
+		armyService.getArmy(drawDTO.getArmy().getId());
+		justiceCouncilService.getJusticeCouncil(drawDTO.getJusticeCouncil().getId());
+		drawListService.getList(drawDTO.getSelectedDrawList(), drawDTO.getArmy(), cjm);
+		
 		drawValidator.saveDrawValidation(drawDTO, cjm);
 		
 		Draw newDraw = EntityMapper.fromDTOToEntity(drawDTO);
@@ -73,7 +82,9 @@ public class DrawService {
 	
 	public void edit(DrawDTO drawDTO, Auditorship auditorship) throws DrawValidationException{
 		CJM cjm = auditorship.getCjm();
-		drawValidator.editDrawValidation(drawDTO, cjm);
+		soldierValidator.editDrawValidation(drawDTO, cjm);
+		drawValidator.editDrawValidation(drawDTO);
+		drawListService.getList(drawDTO.getSelectedDrawList(), cjm);
 		
 		Draw editDraw = getDrawOrElseThrow(drawDTO.getId(), auditorship);
 		

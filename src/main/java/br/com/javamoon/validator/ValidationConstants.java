@@ -58,6 +58,8 @@ public final class ValidationConstants {
     public static final Integer DRAW_LIST_QUARTER_YEAR_MAX_LEN = 7;
     public static final Integer DRAW_LIST_SELECTED_SOLDIERS_MIN_LEN = 5;
     public static final String DRAW_LIST_SELECTED_SOLDIERS_BELOW_MIN_LEN = "A lista deve ser composta por no mínimo 5 militares";
+    public static final String DRAW_LIST_SOLDIERS = "soldiers";
+    public static final String DRAW_LIST_SOLDIER_HAS_EXCLUSIONS = "Não foi possível adicionar o militar. O militar possui impedimentos gerados pelo sistema.";
     
     public static final String NO_PERMISSION = "You do not have permision to edit this property.";
     private ValidationConstants() {}

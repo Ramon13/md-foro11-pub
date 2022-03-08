@@ -91,7 +91,7 @@ public final class TestDataCreator {
 			JusticeCouncilService justiceCouncilService,
 			ArmyService amryService,
 			DrawListService drawListService) {
-		return new DrawValidator(militaryRankRepository, drawRepository, justiceCouncilService, amryService, drawListService);
+		return new DrawValidator(militaryRankRepository, drawRepository, justiceCouncilService, amryService);
 	}
 	
 	public static DrawExclusionValidator newExclusionValidator() {

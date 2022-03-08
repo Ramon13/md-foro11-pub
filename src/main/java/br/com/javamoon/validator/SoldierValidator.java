@@ -1,25 +1,31 @@
 package br.com.javamoon.validator;
 
 import static br.com.javamoon.validator.ValidationConstants.ACCOUNT_EMAIL_ALREADY_EXISTS;
+import static br.com.javamoon.validator.ValidationConstants.DRAW_LIST_SELECTED_SOLDIERS;
 import static br.com.javamoon.validator.ValidationConstants.INCONSISTENT_DATA;
 import static br.com.javamoon.validator.ValidationConstants.SOLDIER_EMAIL;
 import static br.com.javamoon.validator.ValidationConstants.SOLDIER_EMAIL_MAX_LEN;
+import static br.com.javamoon.validator.ValidationConstants.SOLDIER_LIST_INVALID_RANK;
 import static br.com.javamoon.validator.ValidationConstants.SOLDIER_NAME;
 import static br.com.javamoon.validator.ValidationConstants.SOLDIER_NAME_ALREADY_EXISTS;
 import static br.com.javamoon.validator.ValidationConstants.SOLDIER_NAME_MAX_LEN;
+
+import java.util.List;
+import java.util.Optional;
+
+import org.springframework.stereotype.Component;
+
 import br.com.javamoon.domain.cjm_user.CJM;
 import br.com.javamoon.domain.entity.Army;
 import br.com.javamoon.domain.entity.MilitaryOrganization;
-import br.com.javamoon.domain.entity.MilitaryRank;
 import br.com.javamoon.domain.entity.Soldier;
 import br.com.javamoon.domain.repository.MilitaryOrganizationRepository;
 import br.com.javamoon.domain.repository.MilitaryRankRepository;
 import br.com.javamoon.domain.repository.SoldierRepository;
+import br.com.javamoon.exception.DrawValidationException;
 import br.com.javamoon.exception.SoldierValidationException;
+import br.com.javamoon.mapper.DrawDTO;
 import br.com.javamoon.mapper.SoldierDTO;
-import java.util.List;
-import java.util.Optional;
-import org.springframework.stereotype.Component;
 
 @Component
 public class SoldierValidator {
@@ -52,7 +58,51 @@ public class SoldierValidator {
 		ValidationUtils.throwOnErrors(SoldierValidationException.class, validationErrors);
 		
 		validateIfOrganizationBelongsToArmy(soldierDTO.getMilitaryOrganization(), army, validationErrors);
-		validateIfRankBelongsToArmy(soldierDTO.getMilitaryRank(), army, validationErrors);
+		validateIfRankBelongsToArmy(army, List.of(soldierDTO.getMilitaryRank().getId()));
+	}
+	
+	public void randAllSoldiersValidation(DrawDTO drawDTO) throws DrawValidationException{
+		validateIfRankBelongsToArmy(drawDTO.getArmy(), drawDTO.getSelectedRanks());
+	}
+	
+	public void saveDrawValidation(DrawDTO drawDTO, CJM cjm) {
+		ValidationErrors validationErrors = new ValidationErrors();
+		
+		if (ValidationUtils.validateRequired(drawDTO.getSoldiers(), DRAW_LIST_SELECTED_SOLDIERS, validationErrors) &&
+			validateSoldierRank(validationErrors, drawDTO.getSelectedRanks(), drawDTO.getSoldiers()) ) {
+			
+			ValidationUtils.throwOnErrors(DrawValidationException.class, validationErrors);
+			validateIfRankBelongsToArmy(drawDTO.getArmy(), drawDTO.getSelectedRanks());
+		}
+		
+		ValidationUtils.throwOnErrors(DrawValidationException.class, validationErrors);
+	}
+	
+	public void editDrawValidation(DrawDTO drawDTO, CJM cjm) {
+		ValidationErrors validationErrors = new ValidationErrors();
+		
+		if (
+			ValidationUtils.validateRequired(drawDTO.getSoldiers(), DRAW_LIST_SELECTED_SOLDIERS, validationErrors) &&
+			validateSoldierRank(validationErrors, drawDTO.getSelectedRanks(), drawDTO.getSoldiers())
+		) {
+			ValidationUtils.throwOnErrors(DrawValidationException.class, validationErrors);
+			validateIfRankBelongsToArmy(drawDTO.getArmy(), drawDTO.getSelectedRanks());
+		}
+	}
+	
+	public void replaceSoldierValidation(DrawDTO drawDTO, int replaceIndex) throws DrawValidationException{
+		validateIfRankBelongsToArmy(drawDTO.getArmy(), List.of(drawDTO.getSelectedRanks().get(replaceIndex)));
+	}
+	
+	private boolean validateSoldierRank(ValidationErrors validationErrors, List<Integer> rankIds, List<SoldierDTO> soldiers) {
+		for (int i = 0; i < soldiers.size(); i++) {
+			if (soldiers.get(i).getMilitaryRank().getId().equals(rankIds.get(i)) == Boolean.FALSE) {
+				validationErrors.add(DRAW_LIST_SELECTED_SOLDIERS, SOLDIER_LIST_INVALID_RANK);
+				return false;
+			}
+		}
+				
+		return true;
 	}
 	
 	private boolean validateName(String name, ValidationErrors validationErrors) {
@@ -88,9 +138,10 @@ public class SoldierValidator {
 			throw new IllegalStateException(INCONSISTENT_DATA);
 	}
 	
-	private void validateIfRankBelongsToArmy(MilitaryRank rank, Army army, ValidationErrors validationErrors) {
-		List<MilitaryRank> ranks = militaryRankRepository.findAllByArmiesIn(army);
-		if (ranks.isEmpty() || !ranks.contains(rank))
+	public void validateIfRankBelongsToArmy(Army army, List<Integer> rankIds) {
+		List<Integer> rankIdsByArmy = militaryRankRepository.findAllIdsByArmiesIn(army);
+		
+		if (rankIdsByArmy.isEmpty() || !rankIdsByArmy.containsAll(rankIds))
 			throw new IllegalStateException(INCONSISTENT_DATA);		
 	}
 }

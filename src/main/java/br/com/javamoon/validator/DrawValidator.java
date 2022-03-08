@@ -5,51 +5,33 @@ import static br.com.javamoon.validator.ValidationConstants.DRAW_PROCESS_NUMBER;
 import static br.com.javamoon.validator.ValidationConstants.DRAW_QUARTER_YEAR_OUT_OF_BOUNDS;
 import static br.com.javamoon.validator.ValidationConstants.DRAW_SELECTED_RANKS;
 import static br.com.javamoon.validator.ValidationConstants.DRAW_YEAR_QUARTER;
-import static br.com.javamoon.validator.ValidationConstants.INCONSISTENT_DATA;
 import static br.com.javamoon.validator.ValidationConstants.PROCESS_NUMBER_ALREADY_EXISTS;
 import static br.com.javamoon.validator.ValidationConstants.RANK_LIST_INVALID_SIZE;
-import static br.com.javamoon.validator.ValidationConstants.SOLDIER_LIST_INVALID_RANK;
 import static br.com.javamoon.validator.ValidationConstants.SOLDIER_LIST_INVALID_SIZE;
+
+import java.util.List;
+import java.util.Objects;
+
+import org.springframework.stereotype.Component;
+
 import br.com.javamoon.domain.cjm_user.CJM;
 import br.com.javamoon.domain.draw.CouncilType;
 import br.com.javamoon.domain.draw.JusticeCouncil;
-import br.com.javamoon.domain.entity.Army;
 import br.com.javamoon.domain.repository.DrawRepository;
-import br.com.javamoon.domain.repository.MilitaryRankRepository;
 import br.com.javamoon.exception.ArmyNotFoundException;
 import br.com.javamoon.exception.DrawValidationException;
 import br.com.javamoon.exception.JusticeCouncilNotFoundException;
 import br.com.javamoon.mapper.DrawDTO;
 import br.com.javamoon.mapper.SoldierDTO;
-import br.com.javamoon.service.ArmyService;
-import br.com.javamoon.service.DrawListService;
-import br.com.javamoon.service.JusticeCouncilService;
 import br.com.javamoon.util.DateUtils;
-import java.util.List;
-import java.util.Objects;
-import org.springframework.stereotype.Component;
 
 @Component
 public class DrawValidator {
-
-	private MilitaryRankRepository militaryRankRepository;
+	
 	private DrawRepository drawRepository;
-	private JusticeCouncilService justiceCouncilService;
-	private ArmyService armyService;
-	private DrawListService drawListService;
 
-	public DrawValidator(
-		MilitaryRankRepository militaryRankRepository,
-		DrawRepository drawRepository,
-		JusticeCouncilService justiceCouncilService,
-		ArmyService armyService,
-		DrawListService drawListService) {
-		
-		this.militaryRankRepository = militaryRankRepository;
+	public DrawValidator(DrawRepository drawRepository) {
 		this.drawRepository = drawRepository;
-		this.justiceCouncilService = justiceCouncilService;
-		this.armyService = armyService;
-		this.drawListService = drawListService;
 	}
 
 	public void saveDrawValidation(DrawDTO drawDTO, CJM cjm) 
@@ -61,62 +43,55 @@ public class DrawValidator {
 		
 		if (
 			validateJusticeCouncil(justiceCouncil, validationErrors) &&
-			validateRanks(drawDTO.getSelectedRanks(), councilType.getCouncilSize(), validationErrors) &&
+			validateRankList(drawDTO.getSelectedRanks(), councilType.getCouncilSize(), validationErrors) &&
 			validateYearQuarter(drawDTO.getSelectedYearQuarter(), validationErrors) &&
 			validateProcessNumber(drawDTO.getProcessNumber(), councilType, validationErrors) && 
-			validateSoldiers(drawDTO.getSoldiers(), drawDTO.getSelectedRanks(), councilType, validationErrors)
-			) {
+			validateSoldierListSize(councilType.getCouncilSize(), validationErrors, drawDTO.getSoldiers())
+		) {
 			ValidationUtils.throwOnErrors(DrawValidationException.class, validationErrors);
 			
-			armyService.getArmy(drawDTO.getArmy().getId());
-			justiceCouncilService.getJusticeCouncil(justiceCouncil.getId());
-			drawListService.getList(drawDTO.getSelectedDrawList(), drawDTO.getArmy(), cjm);
-			
 			validateIfProcessNumberExists(drawDTO.getProcessNumber(), councilType, validationErrors);
-			validateIfRankBelongsToArmy(drawDTO.getArmy(), drawDTO.getSelectedRanks());
 		}
 		
 		ValidationUtils.throwOnErrors(DrawValidationException.class, validationErrors);
 	}
 	
-	public void editDrawValidation(DrawDTO drawDTO, CJM cjm) {
+	public void editDrawValidation(DrawDTO drawDTO) {
 		ValidationErrors validationErrors = new ValidationErrors();
 		
-		validateSoldiers(drawDTO.getSoldiers(), drawDTO.getSelectedRanks(), drawDTO.getCouncilType(), validationErrors);
-		validateIfRankBelongsToArmy(drawDTO.getArmy(), drawDTO.getSelectedRanks());
-		
-		drawListService.getList(drawDTO.getSelectedDrawList(), drawDTO.getArmy(), cjm);
+		validateRankList(drawDTO.getSelectedRanks(), drawDTO.getCouncilType().getCouncilSize(), validationErrors);
+		ValidationUtils.throwOnErrors(DrawValidationException.class, validationErrors);
+	}
+	
+	private boolean validateRankList(List<Integer> rankIds, int councilSize, ValidationErrors validationErrors) {
+		return (
+			ValidationUtils.validateRequired(rankIds, DRAW_SELECTED_RANKS, validationErrors) &&
+			validateRankListSize(rankIds, councilSize, validationErrors)
+		);
+	}
+	
+	private boolean validateRankListSize(List<Integer> rankIds, int councilSize, ValidationErrors validationErrors) {
+		if (rankIds.isEmpty() || rankIds.size() != councilSize) {
+			validationErrors.add(DRAW_SELECTED_RANKS, RANK_LIST_INVALID_SIZE);
+			return false;
+		}	
+		return true;
 	}
 	
 	public void randAllSoldiersValidation(DrawDTO drawDTO) throws DrawValidationException{
 		ValidationErrors validationErrors = new ValidationErrors();
 		
-		if (
-			validateRanks(drawDTO.getSelectedRanks(), drawDTO.getCouncilType().getCouncilSize(), validationErrors) &&
-			validateProcessNumber(drawDTO.getProcessNumber(), drawDTO.getCouncilType(), validationErrors)
-		) {
+		if (validateProcessNumber(drawDTO.getProcessNumber(), drawDTO.getCouncilType(), validationErrors)) {
 			ValidationUtils.throwOnErrors(DrawValidationException.class, validationErrors);
 		
     		validateIfProcessNumberExists(drawDTO.getProcessNumber(), drawDTO.getCouncilType(), validationErrors);
-    		validateIfRankBelongsToArmy(drawDTO.getArmy(), drawDTO.getSelectedRanks());
 		}
 		
 		ValidationUtils.throwOnErrors(DrawValidationException.class, validationErrors);
 	}
 	
-	public void replaceSoldierValidation(DrawDTO drawDTO, int replaceIndex) throws DrawValidationException{
-		validateIfRankBelongsToArmy(drawDTO.getArmy(), List.of(drawDTO.getSelectedRanks().get(replaceIndex)));
-	}
-	
 	private boolean validateJusticeCouncil(JusticeCouncil council, ValidationErrors validationErrors) {
 		return ValidationUtils.validateRequired(council, ValidationConstants.DRAW_JUSTICE_COUNCIL, validationErrors);
-	}
-	
-	private boolean validateRanks(List<Integer> rankIds, int councilSize, ValidationErrors validationErrors) {
-		return (
-			ValidationUtils.validateRequired(rankIds, DRAW_SELECTED_RANKS, validationErrors) &&
-			validateRankListSize(rankIds, councilSize, validationErrors)
-		);
 	}
 	
 	private boolean validateYearQuarter(String yearQuarter, ValidationErrors validationErrors) {
@@ -137,40 +112,12 @@ public class DrawValidator {
 		);
 	}
 	
-	private boolean validateSoldiers(List<SoldierDTO> soldiers, List<Integer> rankIds, CouncilType councilType, ValidationErrors validationErrors) {
-		return(
-			ValidationUtils.validateRequired(soldiers, DRAW_LIST_SELECTED_SOLDIERS, validationErrors) &&
-			validateSoldierListSize(councilType.getCouncilSize(), validationErrors, soldiers) &&
-			validateSoldierRank(validationErrors, rankIds, soldiers)
-		);
-	}
-	
-	private boolean validateRankListSize(List<Integer> rankIds, int councilSize, ValidationErrors validationErrors) {
-		if (rankIds.isEmpty() || rankIds.size() != councilSize) {
-			validationErrors.add(DRAW_SELECTED_RANKS, RANK_LIST_INVALID_SIZE);
-			return false;
-		}
-		
-		return true;
-	}
-	
 	private boolean validateSoldierListSize(int councilSize, ValidationErrors validationErrors, List<SoldierDTO> soldiers) {
 		if (soldiers.isEmpty() || soldiers.size() != councilSize) {
 			validationErrors.add(DRAW_LIST_SELECTED_SOLDIERS, SOLDIER_LIST_INVALID_SIZE);
 			return false;
 		}
 		
-		return true;
-	}
-	
-	private boolean validateSoldierRank(ValidationErrors validationErrors, List<Integer> rankIds, List<SoldierDTO> soldiers) {
-		for (int i = 0; i < soldiers.size(); i++) {
-			if (soldiers.get(i).getMilitaryRank().getId().equals(rankIds.get(i)) == Boolean.FALSE) {
-				validationErrors.add(DRAW_LIST_SELECTED_SOLDIERS, SOLDIER_LIST_INVALID_RANK);
-				return false;
-			}
-		}
-				
 		return true;
 	}
 	
@@ -181,13 +128,6 @@ public class DrawValidator {
 		}
 		
 		return true;	
-	}
-	
-	public void validateIfRankBelongsToArmy(Army army, List<Integer> rankIds) {
-		List<Integer> rankIdsByArmy = militaryRankRepository.findAllIdsByArmiesIn(army);
-		
-		if (rankIdsByArmy.isEmpty() || !rankIdsByArmy.containsAll(rankIds))
-			throw new IllegalStateException(INCONSISTENT_DATA);		
 	}
 	
 	public void validateIfProcessNumberExists(String processNumber, CouncilType councilType, ValidationErrors validationErrors) {

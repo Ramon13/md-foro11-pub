@@ -33,14 +33,6 @@
         
         <hr />
         <div id="soldiers">
-          <div id="baseSoldierInfo" class="app-div-list" style="display: none">
-            <input class="soldier-id" type="hidden"/>
-            <p class="list-header"></p>
-            <br />
-            <p class="list-info"></p>
-            <button class="remove-soldier">----</button>
-          </div>
-          
           <div th:each="soldier : ${soldiers}" class="app-div-list soldier-info">
             <input class="soldier-id" type="hidden" th:value="${soldier.id}"/>
             <p class="list-header" th:text="${soldier.idInfoAsText}"></p>
@@ -61,7 +53,14 @@
         </div>
       </div>
       
+      
+      
+      <!-- ======================================================================= -->
+      <!-- ================Found soldiers modal=================================== -->
+      <!-- ======================================================================= -->
       <div id="appModal" class="modal">
+        <input type="hidden" id="addSoldierEndpoint" th:value="@{/gp/dw/list/add}" />
+        
         <div class="modal-content">
           <span class="close">&times;</span>
           <h1>Lista Trimestral - Adição de Militares</h1>
@@ -80,6 +79,16 @@
           <div id="foundSoldiers">
           </div>
         </div>
+      </div>
+      
+      <!-- ======================================================================= -->
+      <!-- ================Base div to generate display found soldiers============ -->
+      <!-- ======================================================================= -->
+      <div id="baseSoldierInfo" class="app-div-list" style="display: none">
+        <input class="soldier-id" type="hidden"/>
+        <p class="list-header"></p>
+        <br />
+        <p class="list-info"></p>
       </div>
       
       <script type="text/javascript" th:src="@{/scripts/modal-box.js}"></script>

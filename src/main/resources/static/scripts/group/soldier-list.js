@@ -41,28 +41,52 @@ function searchSoldier(form) {
 
 // param:soldiers A list of soldiers in JSON format
 function showFoundSoldiers(soldiers) {
-  let soldiersDiv = document.querySelector("div#foundSoldiers");
-  clearChilds(soldiersDiv);
+  let foundSoldiers = document.querySelector("div#foundSoldiers");
+  clearFoundSoldiers(foundSoldiers);
 
-  let baseSoldierInfo = document.querySelector("div#baseSoldierInfo");
   let newSoldierInfo;
   for (let i = 0; i < soldiers.length; i++) {
-    newSoldierInfo = baseSoldierInfo.cloneNode(baseSoldierInfo);
-
-    newSoldierInfo.querySelector(".soldier-id").value = soldiers[i].id;
-    newSoldierInfo.querySelector(".list-header").textContent = soldiers[i].idInfoAsText;
-    newSoldierInfo.querySelector(".list-info").textContent = soldiers[i].omandRankAsText;
-    newSoldierInfo.querySelector(".remove-soldier").style.display = "none";
-    newSoldierInfo.style.display = "block";
-
-    soldiersDiv.append(newSoldierInfo);
+    newSoldierInfo = getSoldierInfo(soldiers[i]);
+    foundSoldiers.append(newSoldierInfo);
    
     if (soldiers[i].firstExclusion){
       disableSoldierInfo(soldiers[i].firstExclusion, newSoldierInfo);
-    }else{
-      newSoldierInfo.onclick = function() { addToList(this) };
     }
   }
+}
+
+function clearFoundSoldiers(foundSoldiers){
+  clearChilds(foundSoldiers);
+}
+
+function getSoldierInfo(soldier){
+  let baseSoldierInfo = document.querySelector("div#baseSoldierInfo");
+  let newSoldierInfo = baseSoldierInfo.cloneNode(baseSoldierInfo);
+
+  newSoldierInfo.querySelector(".soldier-id").value = soldier.id;
+  newSoldierInfo.querySelector(".list-header").textContent = soldier.idInfoAsText;
+  newSoldierInfo.querySelector(".list-info").textContent = soldier.omandRankAsText;
+  newSoldierInfo.style.display = "block";
+  newSoldierInfo.addEventListener('click', function(){
+    addToList(soldier.id);
+  });
+  
+  return newSoldierInfo;
+}
+
+addToList(32);
+function addToList(soldierId){
+  let addSoldierEndpoint = document.querySelector("input[type=hidden]#addSoldierEndpoint").value;
+  const params = {sdId: soldierId, yearQuarter: "2021'2"};
+   
+  sendAjaxRequest(
+    'POST',
+    addSoldierEndpoint,
+    JSON.stringify(params),
+    function(){ },
+    function(){ },
+    "application/json;charset=UTF-8"
+ );
 }
 
 function runSavedListSuccessTasks(responseText) {
@@ -81,12 +105,6 @@ function runSavedListFailedTasks(responseText) {
 function showSearchSoldierResults(responseText) {
   let soldiers = JSON.parse(responseText);
   showFoundSoldiers(soldiers);
-}
-
-function addToList(soldier) {
-  soldier.querySelector(".remove-soldier").style.display = "block";
-  document.querySelector("div#soldiers").prepend(soldier);
-  soldier.onclick = function() { };
 }
 
 function getErrorParagraph(errorMsg) {
