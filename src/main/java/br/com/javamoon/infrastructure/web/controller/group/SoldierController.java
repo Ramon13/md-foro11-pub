@@ -82,7 +82,7 @@ public class SoldierController {
 		return "group/soldier-register";
 	}
 	
-	@RequestMapping(method = RequestMethod.POST, path = "/search", produces = MediaType.APPLICATION_JSON_VALUE)
+	@PostMapping("/search")
 	public ResponseEntity<List<SoldierDTO>> search(
 			@RequestParam("key") String key,
 			@RequestParam(name = "yearQuarter", required = false) String yearQuarter,

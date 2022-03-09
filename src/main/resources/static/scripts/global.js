@@ -65,7 +65,8 @@ function sendAjaxRequest(
 	}
 	
 	httpRequest.open(httpMethod, action, true);
-	httpRequest.setRequestHeader( "Content-type", (contentType || "text/plain;charset=UTF-8") );
+	if (contentType)
+	 httpRequest.setRequestHeader( "Content-type", (contentType));
   httpRequest.send(sendContent);
 }
 
