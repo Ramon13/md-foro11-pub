@@ -1,5 +1,8 @@
 package br.com.javamoon.unit.validator;
 
+import static br.com.javamoon.util.Constants.DEFAULT_CPJ_RANKS;
+import static br.com.javamoon.util.Constants.DEFAULT_REPLACE_RANK_ID;
+import static br.com.javamoon.util.TestDataCreator.newDrawDTO;
 import static br.com.javamoon.validator.ValidationConstants.ACCOUNT_EMAIL_ALREADY_EXISTS;
 import static br.com.javamoon.validator.ValidationConstants.INCONSISTENT_DATA;
 import static br.com.javamoon.validator.ValidationConstants.REQUIRED_FIELD;
@@ -19,6 +22,7 @@ import br.com.javamoon.domain.repository.MilitaryOrganizationRepository;
 import br.com.javamoon.domain.repository.MilitaryRankRepository;
 import br.com.javamoon.domain.repository.SoldierRepository;
 import br.com.javamoon.exception.SoldierValidationException;
+import br.com.javamoon.mapper.DrawDTO;
 import br.com.javamoon.mapper.SoldierDTO;
 import br.com.javamoon.util.TestDataCreator;
 import br.com.javamoon.validator.SoldierValidator;
@@ -46,6 +50,9 @@ public class SoldierValidatorUnitTest {
 	
 	@Mock
 	private MilitaryOrganizationRepository organizationRepository;
+	
+	@Mock
+	private MilitaryRankRepository rankRepository;
 	
 	@BeforeEach
 	void setupEach() {
@@ -215,5 +222,15 @@ public class SoldierValidatorUnitTest {
 				() -> victim.saveSoldierValidation(soldierDTO, army, cjm));
 		
 		assertEquals(INCONSISTENT_DATA, exception.getMessage());
+	}
+	
+	@Test
+	void testReplaceSoldierValidationSuccessfully() {
+		DrawDTO drawDTO = newDrawDTO();
+		drawDTO.setSelectedRanks(DEFAULT_CPJ_RANKS);
+		
+		Mockito.when(rankRepository.findAllIdsByArmiesIn(drawDTO.getArmy())).thenReturn(DEFAULT_CPJ_RANKS);
+		
+		victim.replaceSoldierValidation(drawDTO, DEFAULT_REPLACE_RANK_ID);
 	}
 }

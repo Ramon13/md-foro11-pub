@@ -25,6 +25,14 @@ import static br.com.javamoon.util.Constants.DEFAULT_USER_PASSWORD;
 import static br.com.javamoon.util.Constants.DEFAULT_USER_USERNAME;
 import static br.com.javamoon.validator.ValidationConstants.SOLDIER_EMAIL_MAX_LEN;
 import static br.com.javamoon.validator.ValidationConstants.SOLDIER_NAME_MAX_LEN;
+
+import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.stream.Collectors;
+
+import org.apache.commons.lang3.StringUtils;
+
 import br.com.javamoon.domain.cjm_user.Auditorship;
 import br.com.javamoon.domain.cjm_user.AuditorshipRepository;
 import br.com.javamoon.domain.cjm_user.CJM;
@@ -54,19 +62,11 @@ import br.com.javamoon.mapper.DrawListDTO;
 import br.com.javamoon.mapper.EntityMapper;
 import br.com.javamoon.mapper.SoldierDTO;
 import br.com.javamoon.mapper.UserDTO;
-import br.com.javamoon.service.ArmyService;
-import br.com.javamoon.service.DrawListService;
-import br.com.javamoon.service.JusticeCouncilService;
 import br.com.javamoon.validator.DrawExclusionValidator;
 import br.com.javamoon.validator.DrawListValidator;
 import br.com.javamoon.validator.DrawValidator;
 import br.com.javamoon.validator.SoldierValidator;
 import br.com.javamoon.validator.UserAccountValidator;
-import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.stream.Collectors;
-import org.apache.commons.lang3.StringUtils;
 
 public final class TestDataCreator {
 
@@ -85,21 +85,16 @@ public final class TestDataCreator {
 		return new SoldierValidator(soldierRepository, organizationRepository, militaryRankRepository);
 	}
 	
-	public static DrawValidator newDrawValidator(
-			MilitaryRankRepository militaryRankRepository,
-			DrawRepository drawRepository,
-			JusticeCouncilService justiceCouncilService,
-			ArmyService amryService,
-			DrawListService drawListService) {
-		return new DrawValidator(militaryRankRepository, drawRepository, justiceCouncilService, amryService);
+	public static DrawValidator newDrawValidator(DrawRepository drawRepository) {
+		return new DrawValidator(drawRepository);
 	}
 	
 	public static DrawExclusionValidator newExclusionValidator() {
 		return new DrawExclusionValidator();
 	}
 	
-	public static DrawListValidator newDrawListValidator(DrawListRepository drawListRepository) {
-		return new DrawListValidator(drawListRepository);
+	public static DrawListValidator newDrawListValidator() {
+		return new DrawListValidator();
 	}
 	
 	public static UserDTO newUserDTO() {

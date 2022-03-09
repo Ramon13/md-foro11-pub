@@ -3,7 +3,6 @@ package br.com.javamoon.unit.validator;
 import static br.com.javamoon.util.Constants.CEJ_COUNCIl_ALIAS;
 import static br.com.javamoon.util.Constants.DEFAULT_CEJ_RANKS;
 import static br.com.javamoon.util.Constants.DEFAULT_CPJ_RANKS;
-import static br.com.javamoon.util.Constants.DEFAULT_REPLACE_RANK_ID;
 import static br.com.javamoon.util.TestDataCreator.getJusticeCouncil;
 import static br.com.javamoon.util.TestDataCreator.newDrawDTO;
 import static br.com.javamoon.validator.ValidationConstants.DRAW_JUSTICE_COUNCIL;
@@ -18,6 +17,20 @@ import static br.com.javamoon.validator.ValidationConstants.SOLDIER_LIST_INVALID
 import static br.com.javamoon.validator.ValidationConstants.STRING_EXCEEDS_MAX_LEN;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+
+import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.List;
+
+import org.apache.commons.lang3.StringUtils;
+import org.apache.logging.log4j.util.Strings;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.Mock;
+import org.mockito.Mockito;
+import org.mockito.junit.jupiter.MockitoExtension;
+
 import br.com.javamoon.domain.draw.JusticeCouncil;
 import br.com.javamoon.domain.repository.MilitaryRankRepository;
 import br.com.javamoon.exception.DrawValidationException;
@@ -29,17 +42,6 @@ import br.com.javamoon.util.TestDataCreator;
 import br.com.javamoon.validator.DrawValidator;
 import br.com.javamoon.validator.ValidationConstants;
 import br.com.javamoon.validator.ValidationError;
-import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.List;
-import org.apache.commons.lang3.StringUtils;
-import org.apache.logging.log4j.util.Strings;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.Mock;
-import org.mockito.Mockito;
-import org.mockito.junit.jupiter.MockitoExtension;
 
 @ExtendWith(MockitoExtension.class)
 public class DrawValidatorUnitTest {
@@ -52,7 +54,7 @@ public class DrawValidatorUnitTest {
 	
 	@BeforeEach
 	void setupEach() {
-		victim = TestDataCreator.newDrawValidator(rankRepository, null, null, null, null);
+		victim = TestDataCreator.newDrawValidator(null);
 	}
 	
 	@Test
@@ -123,16 +125,6 @@ public class DrawValidatorUnitTest {
 		assertEquals(
 				new ValidationError(DRAW_SELECTED_RANKS, RANK_LIST_INVALID_SIZE),
 				exception.getValidationErrors().getError(0));
-	}
-	
-	@Test
-	void testReplaceSoldierValidationSuccessfully() {
-		DrawDTO drawDTO = newDrawDTO();
-		drawDTO.setSelectedRanks(DEFAULT_CPJ_RANKS);
-		
-		Mockito.when(rankRepository.findAllIdsByArmiesIn(drawDTO.getArmy())).thenReturn(DEFAULT_CPJ_RANKS);
-		
-		victim.replaceSoldierValidation(drawDTO, DEFAULT_REPLACE_RANK_ID);
 	}
 	
 	@Test

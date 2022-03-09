@@ -7,8 +7,6 @@ import static br.com.javamoon.validator.ValidationConstants.DRAW_LIST_QUARTER_YE
 import static br.com.javamoon.validator.ValidationConstants.DRAW_LIST_QUARTER_YEAR_MAX_LEN;
 import static br.com.javamoon.validator.ValidationConstants.DRAW_LIST_QUARTER_YEAR_OUT_OF_BOUNDS;
 import static br.com.javamoon.validator.ValidationConstants.DRAW_LIST_SELECTED_SOLDIERS_BELOW_MIN_LEN;
-import static br.com.javamoon.validator.ValidationConstants.DRAW_LIST_SOLDIERS;
-import static br.com.javamoon.validator.ValidationConstants.DRAW_LIST_SOLDIER_HAS_EXCLUSIONS;
 
 import java.util.Objects;
 import java.util.Optional;
@@ -21,7 +19,6 @@ import br.com.javamoon.domain.entity.DrawList;
 import br.com.javamoon.domain.repository.DrawListRepository;
 import br.com.javamoon.exception.DrawListValidationException;
 import br.com.javamoon.mapper.DrawListDTO;
-import br.com.javamoon.mapper.SoldierDTO;
 import br.com.javamoon.util.DateUtils;
 
 @Component
@@ -42,19 +39,6 @@ public class DrawListValidator {
 		}
 		
 		ValidationUtils.throwOnErrors(DrawListValidationException.class, validationErrors);
-	}
-	
-	public void addSoldierToListValidation(SoldierDTO soldier, Integer listId, String yearQuarter) {
-		ValidationErrors validationErrors = new ValidationErrors();
-		
-		if (validateIfSoldierHasSystemExclusions(soldier, listId, yearQuarter))
-			validationErrors.add(DRAW_LIST_SOLDIERS, DRAW_LIST_SOLDIER_HAS_EXCLUSIONS);
-		
-		ValidationUtils.throwOnErrors(DrawListValidationException.class, validationErrors);
-	}
-	
-	private boolean validateIfSoldierHasSystemExclusions(SoldierDTO soldier, Integer listId, String yearQuarter) {
-		return !soldier.getExclusions().isEmpty();
 	}
 	
 	private boolean validateDescription(String description, ValidationErrors validationErrors) {

@@ -44,7 +44,7 @@ public class DrawListValidatorUnitTest {
 	
 	@BeforeEach
 	void setupEach() {
-		victim = TestDataCreator.newDrawListValidator(drawListRepository);
+		victim = TestDataCreator.newDrawListValidator();
 	}
 	
 	@Test
