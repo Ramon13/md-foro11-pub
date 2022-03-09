@@ -49,10 +49,14 @@ function getSoldierInfo(soldier){
   foundSoldier.querySelector(".list-info").textContent = soldier.omandRankAsText;
   foundSoldier.style.display = "block";
   
-  foundSoldier.addEventListener('click', function(){
+  foundSoldier.onclick = function(){
     appendToList(foundSoldier);
     addToLocalStorageList(soldier.id);
-  });
+  };
+  
+  foundSoldier.querySelector("button.remove-soldier").onclick = function(){
+    removeFromLocalList(foundSoldier);
+  }
   
   return foundSoldier;
 }
@@ -60,6 +64,10 @@ function getSoldierInfo(soldier){
 function appendToList(foundSoldier){
   document.querySelector("div#soldiers").prepend(foundSoldier);
   foundSoldier.querySelector(".remove-soldier").style.display = "block";
+  
+  foundSoldier.onclick = function(e){
+    e.stopPropagation();
+  };
 }
 
 function addToLocalStorageList(soldierId){

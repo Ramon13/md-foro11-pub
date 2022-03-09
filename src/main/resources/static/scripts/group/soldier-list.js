@@ -1,4 +1,5 @@
 listDescription.focus();
+clearSelectedSoldiers();
 
 const backBtn = document.querySelector("button#back");
 backBtn.addEventListener("click", function() {
@@ -8,6 +9,13 @@ backBtn.addEventListener("click", function() {
 const saveListBtn = document.querySelector("button#saveList");
 saveListBtn.addEventListener("click", saveList);
 hideLoadStatus();
+
+const removeSoldiers = document.querySelectorAll("button.remove-soldier");
+for (let i = 0; i < removeSoldiers.length; i++){
+  removeSoldiers[i].addEventListener('click', function(){
+    removeFromLocalList(removeSoldiers[i].parentElement);
+  });
+}
 
 function saveList() {
   const form = document.querySelector("#formList");
@@ -59,4 +67,14 @@ function disableSoldierInfo(errorMsg, soldierInfoDiv){
   let error = getErrorParagraph(errorMsg);
   soldierInfoDiv.append(error);
   soldierInfoDiv.classList.add("disable-div");
+}
+
+function clearSelectedSoldiers(){
+  localStorage.removeItem("selectedSoldiers");
+}
+
+function removeFromLocalList(selectedSoldier){
+  let soldierId = +selectedSoldier.querySelector("input[type=hidden].soldier-id").value;
+  selectedSoldier.remove();
+  addToLocalStorageList(soldierId * -1);
 }
