@@ -124,3 +124,9 @@ function toggleName(element, value){
 function clearChilds(element) {
   element.innerHTML = "";
 }
+
+function cloneNode(node){
+  let clonedNode = node.cloneNode(node);
+  clonedNode.id = "";
+  return clonedNode;
+}

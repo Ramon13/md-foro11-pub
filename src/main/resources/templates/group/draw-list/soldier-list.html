@@ -4,6 +4,7 @@
     <link th:href="@{/styles/group/soldier-list.css}" type="text/css" rel="stylesheet">
     <link th:href="@{/styles/modal-box.css}" type="text/css" rel="stylesheet">
     <link th:href="@{/styles/pagination-search-list.css}" type="text/css" rel="stylesheet"/>
+    <link th:href="@{/styles/snackbar.css}" type="text/css" rel="stylesheet"/>
   </head>
   <body>
     <div layout:fragment="content">
@@ -76,7 +77,7 @@
             </form>
           </div>
           <br />
-          <div id="foundSoldiers">
+          <div id="searchResultList">
           </div>
         </div>
       </div>
@@ -84,7 +85,7 @@
       <!-- ======================================================================= -->
       <!-- ================Base div to generate display found soldiers============ -->
       <!-- ======================================================================= -->
-      <div id="baseSoldierInfo" class="app-div-list" style="display: none">
+      <div id="baseListTuple" class="app-div-list" style="display: none">
         <input class="soldier-id" type="hidden"/>
         <p class="list-header"></p>
         <br />
@@ -92,7 +93,16 @@
         <button class="remove-soldier" style="display: none">----</button>
       </div>
       
+      <!-- ======================================================================= -->
+      <!-- ================Snack status bar======================================= -->
+      <!-- ======================================================================= -->
+      <div id="snackbar">Adicionando à lista...</div>
+      
+      <script th:inline="javascript">
+        const addSoldierEndpoint = '[(@{/gp/dw/list/add})]'; 
+      </script>      
       <script type="text/javascript" th:src="@{/scripts/modal-box.js}"></script>
+      <script type="text/javascript" th:src="@{/scripts/snackbar.js}"></script>
       <script type="text/javascript" th:src="@{/scripts/group/soldier-list.js}"></script>
       <script type="text/javascript" th:src="@{/scripts/pagination-search-list.js}"></script>
       <script type="text/javascript" th:src="@{/scripts/group/soldier-search.js}"></script>

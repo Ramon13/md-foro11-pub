@@ -29,10 +29,6 @@ function saveList() {
     runSavedListFailedTasks);
 }
 
-function clearFoundSoldiers(foundSoldiers){
-  clearChilds(foundSoldiers);
-}
-
 function runSavedListSuccessTasks(responseText) {
   alert(responseText);
   window.location = '[(@{/gp/dw/list})]';
@@ -44,14 +40,6 @@ function runSavedListFailedTasks(responseText) {
   spanError.style.display = "";
   saveListBtn.disabled = false;
   hideLoadStatus();
-}
-
-function getErrorParagraph(errorMsg) {
-  let error = document.createElement("p");
-  error.classList.add("error");
-  error.style.display = "block";
-  error.textContent = errorMsg;
-  return error;
 }
 
 function showLoadStatus() {
