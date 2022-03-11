@@ -1,6 +1,7 @@
 package br.com.javamoon.unit.validator;
 
 import static br.com.javamoon.util.Constants.DEFAULT_CPJ_RANKS;
+import static br.com.javamoon.util.Constants.DEFAULT_RANK_ID;
 import static br.com.javamoon.util.Constants.DEFAULT_REPLACE_RANK_ID;
 import static br.com.javamoon.util.TestDataCreator.newDrawDTO;
 import static br.com.javamoon.validator.ValidationConstants.ACCOUNT_EMAIL_ALREADY_EXISTS;
@@ -14,21 +15,10 @@ import static br.com.javamoon.validator.ValidationConstants.SOLDIER_NAME_MAX_LEN
 import static br.com.javamoon.validator.ValidationConstants.STRING_EXCEEDS_MAX_LEN;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
-import br.com.javamoon.domain.cjm_user.CJM;
-import br.com.javamoon.domain.entity.Army;
-import br.com.javamoon.domain.entity.MilitaryRank;
-import br.com.javamoon.domain.entity.Soldier;
-import br.com.javamoon.domain.repository.MilitaryOrganizationRepository;
-import br.com.javamoon.domain.repository.MilitaryRankRepository;
-import br.com.javamoon.domain.repository.SoldierRepository;
-import br.com.javamoon.exception.SoldierValidationException;
-import br.com.javamoon.mapper.DrawDTO;
-import br.com.javamoon.mapper.SoldierDTO;
-import br.com.javamoon.util.TestDataCreator;
-import br.com.javamoon.validator.SoldierValidator;
-import br.com.javamoon.validator.ValidationError;
+
 import java.util.List;
 import java.util.Optional;
+
 import org.apache.commons.lang3.StringUtils;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -36,6 +26,21 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
+
+import br.com.javamoon.domain.cjm_user.CJM;
+import br.com.javamoon.domain.entity.Army;
+import br.com.javamoon.domain.entity.Soldier;
+import br.com.javamoon.domain.repository.MilitaryOrganizationRepository;
+import br.com.javamoon.domain.repository.MilitaryRankRepository;
+import br.com.javamoon.domain.repository.SoldierRepository;
+import br.com.javamoon.exception.SoldierHasExclusionException;
+import br.com.javamoon.exception.SoldierValidationException;
+import br.com.javamoon.mapper.DrawDTO;
+import br.com.javamoon.mapper.DrawExclusionDTO;
+import br.com.javamoon.mapper.SoldierDTO;
+import br.com.javamoon.util.TestDataCreator;
+import br.com.javamoon.validator.SoldierValidator;
+import br.com.javamoon.validator.ValidationError;
 
 @ExtendWith(MockitoExtension.class)
 public class SoldierValidatorUnitTest {
@@ -50,9 +55,6 @@ public class SoldierValidatorUnitTest {
 	
 	@Mock
 	private MilitaryOrganizationRepository organizationRepository;
-	
-	@Mock
-	private MilitaryRankRepository rankRepository;
 	
 	@BeforeEach
 	void setupEach() {
@@ -140,8 +142,8 @@ public class SoldierValidatorUnitTest {
 		Mockito.when(organizationRepository.findByArmy(army))
 			.thenReturn(Optional.of(List.of(soldierDTO.getMilitaryOrganization()))); 				// necessary to pass through another
 																						     		// validations
-		Mockito.when(militaryRankRepository.findAllByArmiesIn(army))
-			.thenReturn(List.of(soldierDTO.getMilitaryRank()));
+		Mockito.when(militaryRankRepository.findAllIdsByArmiesIn(army))
+			.thenReturn(DEFAULT_CPJ_RANKS);
 		
 		victim.saveSoldierValidation(soldierDTO, army, cjm);
 	}
@@ -182,8 +184,8 @@ public class SoldierValidatorUnitTest {
 		Mockito.when(organizationRepository.findByArmy(army))
 			.thenReturn(Optional.of(List.of(soldierDTO.getMilitaryOrganization()))); 				// necessary to pass through another
 																						     		// validations
-		Mockito.when(militaryRankRepository.findAllByArmiesIn(army))
-			.thenReturn(List.of(soldierDTO.getMilitaryRank()));
+		Mockito.when(militaryRankRepository.findAllIdsByArmiesIn(army))
+			.thenReturn(DEFAULT_CPJ_RANKS);
 		
 		victim.saveSoldierValidation(soldierDTO, army, cjm);
 	}
@@ -207,8 +209,6 @@ public class SoldierValidatorUnitTest {
 	void testRankFromDifferentArmy() {
 		Army army = TestDataCreator.newArmy();
 		CJM cjm = TestDataCreator.newCjm();
-		MilitaryRank rank2 = TestDataCreator.newMilitaryRank();
-		rank2.setId(2);
 		
 		SoldierDTO soldierDTO = TestDataCreator.newSoldierDTO();
 		soldierDTO.getMilitaryOrganization().setId(1);
@@ -216,7 +216,7 @@ public class SoldierValidatorUnitTest {
 		Mockito.when(organizationRepository.findByArmy(army))				// Necessary to pass in the organization validatior
 			.thenReturn(Optional.of(List.of(soldierDTO.getMilitaryOrganization())));
 		
-		Mockito.when(militaryRankRepository.findAllByArmiesIn(army)).thenReturn(List.of(rank2));
+		Mockito.when(militaryRankRepository.findAllIdsByArmiesIn(army)).thenReturn(List.of(DEFAULT_RANK_ID + 1));
 		
 		IllegalStateException exception = assertThrows(IllegalStateException.class, 
 				() -> victim.saveSoldierValidation(soldierDTO, army, cjm));
@@ -229,8 +229,24 @@ public class SoldierValidatorUnitTest {
 		DrawDTO drawDTO = newDrawDTO();
 		drawDTO.setSelectedRanks(DEFAULT_CPJ_RANKS);
 		
-		Mockito.when(rankRepository.findAllIdsByArmiesIn(drawDTO.getArmy())).thenReturn(DEFAULT_CPJ_RANKS);
+		Mockito.when(militaryRankRepository.findAllIdsByArmiesIn(drawDTO.getArmy())).thenReturn(DEFAULT_CPJ_RANKS);
 		
 		victim.replaceSoldierValidation(drawDTO, DEFAULT_REPLACE_RANK_ID);
+	}
+	
+	@Test
+	void testAddToDrawListValidationSuccessfully() {
+		SoldierDTO soldierDTO = TestDataCreator.newSoldierDTO();
+		soldierDTO.getExclusions().clear();
+		
+		victim.addToDrawListValidation(soldierDTO);
+	}
+	
+	@Test
+	void testAddToDrawListValidationWhenSoldierHasExclusions() {
+		SoldierDTO soldierDTO = TestDataCreator.newSoldierDTO();
+		soldierDTO.getExclusions().add(new DrawExclusionDTO());
+		
+		assertThrows(SoldierHasExclusionException.class, () -> victim.addToDrawListValidation(soldierDTO));
 	}
 }

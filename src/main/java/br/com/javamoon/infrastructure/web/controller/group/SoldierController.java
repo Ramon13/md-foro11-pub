@@ -9,7 +9,6 @@ import javax.servlet.http.HttpSession;
 import javax.validation.Valid;
 
 import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -19,7 +18,6 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import br.com.javamoon.domain.cjm_user.CJM;
@@ -36,7 +34,6 @@ import br.com.javamoon.mapper.SoldierDTO;
 import br.com.javamoon.service.DrawExclusionService;
 import br.com.javamoon.service.MilitaryOrganizationService;
 import br.com.javamoon.service.MilitaryRankService;
-import br.com.javamoon.service.RandomSoldierService;
 import br.com.javamoon.service.SoldierService;
 import br.com.javamoon.util.DateUtils;
 import br.com.javamoon.util.SecurityUtils;
@@ -50,19 +47,16 @@ public class SoldierController {
 	private MilitaryRankService militaryRankService;
 	private SoldierService soldierService;
 	private DrawExclusionService drawExclusionService;
-	private RandomSoldierService randomSoldierService;
 
 	public SoldierController(
 			MilitaryOrganizationService militaryOrganizationService,
 	        MilitaryRankService militaryRankService,
 	        SoldierService soldierService,
-	        DrawExclusionService drawExclusionService,
-	        RandomSoldierService randomSoldierService) {
+	        DrawExclusionService drawExclusionService) {
 		this.militaryOrganizationService = militaryOrganizationService;
 		this.militaryRankService = militaryRankService;
 		this.soldierService = soldierService;
 		this.drawExclusionService = drawExclusionService;
-		this.randomSoldierService = randomSoldierService;
 	}
 
 	@GetMapping(value = {"/register/home", "/register/home/{soldierId}"})
@@ -96,10 +90,7 @@ public class SoldierController {
 			.map(s -> EntityMapper.fromEntityToDTO(s))
 			.collect(Collectors.toList());
 		
-		if (Objects.nonNull(yearQuarter))
-			randomSoldierService.setSoldierExclusionMessages(foundSoldiers, yearQuarter, true);
-		if (Objects.nonNull(listId))
-			soldierService.generateExclusionIfSoldierAlreadyInList(foundSoldiers, listId);
+		soldierService.setSystemOnlyExclusionMessages(foundSoldiers, yearQuarter, listId);
 		
 		return ResponseEntity
 				.status(HttpStatus.OK)

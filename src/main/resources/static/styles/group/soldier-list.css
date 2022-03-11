@@ -117,3 +117,8 @@ p.error{
 div.disable-div {
   opacity: 0.6;
 }
+
+div#searchResultList {
+    overflow: auto;
+    height: 60vh;
+}

@@ -9,13 +9,12 @@ import java.util.Objects;
 import java.util.TreeMap;
 import java.util.stream.Collectors;
 
-import javax.transaction.Transactional;
-
 import org.hibernate.Hibernate;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort.Direction;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import br.com.javamoon.domain.cjm_user.CJM;
 import br.com.javamoon.domain.entity.Army;
@@ -24,12 +23,14 @@ import br.com.javamoon.domain.entity.GroupUser;
 import br.com.javamoon.domain.entity.Soldier;
 import br.com.javamoon.domain.repository.DrawListRepository;
 import br.com.javamoon.exception.DrawListNotFoundException;
+import br.com.javamoon.mapper.AddSoldierToListDTO;
 import br.com.javamoon.mapper.DrawListDTO;
 import br.com.javamoon.mapper.DrawListsDTO;
 import br.com.javamoon.mapper.EntityMapper;
+import br.com.javamoon.mapper.SoldierDTO;
 import br.com.javamoon.util.DateUtils;
-import br.com.javamoon.util.PageableUtils;
 import br.com.javamoon.validator.DrawListValidator;
+import br.com.javamoon.validator.SoldierValidator;
 
 @Service
 public class DrawListService {
@@ -37,6 +38,7 @@ public class DrawListService {
 	private DrawListRepository drawListRepo;
 	private SoldierService soldierService;
 	private DrawListValidator drawListValidator;
+	private SoldierValidator soldierValidator;
 	
 	private final int maxLists;
 	
@@ -44,10 +46,12 @@ public class DrawListService {
 			DrawListRepository drawListRepo,
 			SoldierService soldierService,
 	        DrawListValidator drawListValidator,
+	        SoldierValidator soldierValidator,
 	        @Value("${md-foro11.drawList.defaultProperties.maxLists}") int maxLists) {
 		this.drawListRepo = drawListRepo;
 		this.soldierService = soldierService;
 		this.drawListValidator = drawListValidator;
+		this.soldierValidator = soldierValidator;
 		this.maxLists = maxLists;
 	}
 
@@ -118,7 +122,7 @@ public class DrawListService {
 		
 		DrawListDTO copyOfDrawList = new DrawListDTO();
 		copyOfDrawList.getSelectedSoldiers().addAll(
-			soldierService.listByDrawList(listId, PageableUtils.DEFAULT_PAGE, null)
+			soldierService.listAllByDrawList(listId)
 				.stream()
 				.map(s -> s.getId())
 				.collect(Collectors.toList())
@@ -143,6 +147,23 @@ public class DrawListService {
 				return new DrawListsDTO(key, listsByQuarter);
 			})
 			.collect(Collectors.toList());
+	}
+	
+	@Transactional
+	public void addSoldierToList(AddSoldierToListDTO soldierToListDTO, CJM cjm, Army army) {
+		DrawList drawList = getListOrElseThrow(soldierToListDTO.getListId(), army, cjm);
+		
+		Soldier soldier = soldierService.getSoldier(soldierToListDTO.getSoldierId(), army, cjm);
+		SoldierDTO soldierDTO = EntityMapper.fromEntityToDTO(soldier);
+		
+		soldierService.setSystemOnlyExclusionMessages(
+				List.of(soldierDTO),
+				soldierToListDTO.getYearQuarter(), soldierToListDTO.getListId());
+		
+		drawListValidator.addSoldierValidation(soldierToListDTO.getYearQuarter());
+		soldierValidator.addToDrawListValidation( soldierDTO );
+		
+		drawList.getSoldiers().add(soldier);
 	}
 	
 	private Map<String, List<DrawList>> mapListByQuarter(List<DrawList> lists){

@@ -39,6 +39,7 @@ public final class Constants {
 	
     public static final String DEFAULT_ORGANIZATION_NAME = "11ª Região Militar";
     public static final String DEFAULT_ORGANIZATION_ALIAS = "11ª RM";
+    public static final Integer DEFAULT_RANK_ID = 1;
     public static final String DEFAULT_RANK_NAME = "Coronel";
     public static final String DEFAULT_RANK_ALIAS = "CEL";
     public static final Integer DEFAULT_RANK_WEIGHT = 5;
@@ -48,6 +49,7 @@ public final class Constants {
     public static final String DEFAULT_DRAW_LIST_DESCRIPTION = "Primeira lista exército 4º trimestre de 2021";
     public static final Integer DEFAULT_DRAW_LIST_ID = 1;
     public static final String DEFAULT_DRAW_LIST_QUARTER_YEAR = DateUtils.toQuarterFormat(LocalDate.now());
+    public static final String OUT_OF_RANGE_YEAR_QUARTER = DateUtils.toQuarterFormat(LocalDate.now().plusMonths(6));
     
     public static final List<Integer> DEFAULT_CPJ_RANKS = List.of(1,2,3,4,5);
     public static final List<Integer> DEFAULT_CEJ_RANKS = List.of(1,2,3,4);

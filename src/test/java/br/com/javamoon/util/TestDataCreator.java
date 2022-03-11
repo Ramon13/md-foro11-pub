@@ -15,6 +15,7 @@ import static br.com.javamoon.util.Constants.DEFAULT_EXCLUSION_MESSAGE;
 import static br.com.javamoon.util.Constants.DEFAULT_ORGANIZATION_ALIAS;
 import static br.com.javamoon.util.Constants.DEFAULT_ORGANIZATION_NAME;
 import static br.com.javamoon.util.Constants.DEFAULT_RANK_ALIAS;
+import static br.com.javamoon.util.Constants.DEFAULT_RANK_ID;
 import static br.com.javamoon.util.Constants.DEFAULT_RANK_NAME;
 import static br.com.javamoon.util.Constants.DEFAULT_RANK_WEIGHT;
 import static br.com.javamoon.util.Constants.DEFAULT_REPLACE_RANK_ID;
@@ -37,6 +38,7 @@ import br.com.javamoon.domain.cjm_user.Auditorship;
 import br.com.javamoon.domain.cjm_user.AuditorshipRepository;
 import br.com.javamoon.domain.cjm_user.CJM;
 import br.com.javamoon.domain.cjm_user.CJMRepository;
+import br.com.javamoon.domain.draw.Draw;
 import br.com.javamoon.domain.draw.JusticeCouncil;
 import br.com.javamoon.domain.draw.JusticeCouncilRepository;
 import br.com.javamoon.domain.draw_exclusion.DrawExclusion;
@@ -93,8 +95,8 @@ public final class TestDataCreator {
 		return new DrawExclusionValidator();
 	}
 	
-	public static DrawListValidator newDrawListValidator() {
-		return new DrawListValidator();
+	public static DrawListValidator newDrawListValidator(DrawListRepository drawListRepository) {
+		return new DrawListValidator(drawListRepository);
 	}
 	
 	public static UserDTO newUserDTO() {
@@ -173,6 +175,7 @@ public final class TestDataCreator {
 	
 	public static MilitaryRank newMilitaryRank() {
 		MilitaryRank rank = new MilitaryRank();
+		rank.setId(DEFAULT_RANK_ID);
 		rank.setName(DEFAULT_RANK_NAME);
 		rank.setAlias(DEFAULT_RANK_ALIAS);
 		rank.setRankWeight(DEFAULT_RANK_WEIGHT);
@@ -265,6 +268,22 @@ public final class TestDataCreator {
 	
 	public static JusticeCouncil getPersistedJusticeCouncil(JusticeCouncilRepository councilRepository) {
 		return councilRepository.saveAndFlush(getJusticeCouncil());
+	}
+	
+	public static Draw getPersistedCPJDraw(
+			JusticeCouncil council,
+			CJMUser user,
+			Army army,
+			List<Soldier> soldiers,
+			DrawList drawList,
+			DrawRepository drawRepository) {
+		Draw draw = new Draw();
+		draw.setArmy(army);
+		draw.setCjmUser(user);
+		draw.setDrawList(drawList);
+		draw.setJusticeCouncil(council);
+		draw.getSoldiers().addAll(soldiers);
+		return drawRepository.saveAndFlush(draw);
 	}
 	
 	public static List<Soldier> newSoldierList(

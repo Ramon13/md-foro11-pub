@@ -63,19 +63,16 @@ function getErrorParagraph(errorMsg) {
 
 function addToServerList(listTuple, soldierId){
   let endpoint = addSoldierEndpoint;
-  let listId = document.querySelector("input[type=hidden]#listId").value;
-  let yearQuarter = document.querySelector("select#yearQuarter").value;
   
   let xhr = new XMLHttpRequest();
-  
   xhr.open("POST", endpoint, true);
   xhr.setRequestHeader("Content-Type", "application/json");
   
-  let addToListDTO = {soldierId: soldierId, listId: listId, yearQuarter: yearQuarter};
+  let addToListDTO = getAddtoListDTOObj(soldierId);
   xhr.send(JSON.stringify(addToListDTO));
   
-  const snackbar = document.querySelector("div#snackbar");
-  showSnackbar(snackbar);
+  showAddingSoldierSnackbar();
+  
   xhr.onreadystatechange = function(){
     if (xhr.readyState == XMLHttpRequest.DONE){
       if (xhr.status === 201){
@@ -87,6 +84,17 @@ function addToServerList(listTuple, soldierId){
       hideSnackbar(snackbar);
     }
   }
+}
+
+function getAddToListDTOObj(soldierId){
+  let listId = document.querySelector("input[type=hidden]#listId").value;
+  let yearQuarter = document.querySelector("select#yearQuarter").value;
+  return {soldierId: soldierId, listId: listId, yearQuarter: yearQuarter};
+}
+
+function showAddingSoldierSnackbar(){
+  const snackbar = document.querySelector("div#snackbar");
+  showSnackbar(snackbar);
 }
 
 function removeFromServerList(){}

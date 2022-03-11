@@ -2,6 +2,7 @@ package br.com.javamoon.unit.validator;
 
 import static br.com.javamoon.util.Constants.DEFAULT_DRAW_LIST_DESCRIPTION;
 import static br.com.javamoon.util.Constants.DEFAULT_DRAW_LIST_QUARTER_YEAR;
+import static br.com.javamoon.util.Constants.OUT_OF_RANGE_YEAR_QUARTER;
 import static br.com.javamoon.validator.ValidationConstants.DRAW_LIST_DESCRIPTION;
 import static br.com.javamoon.validator.ValidationConstants.DRAW_LIST_DESCRIPTION_ALREADY_EXISTS;
 import static br.com.javamoon.validator.ValidationConstants.DRAW_LIST_DESCRIPTION_MAX_LEN;
@@ -44,7 +45,7 @@ public class DrawListValidatorUnitTest {
 	
 	@BeforeEach
 	void setupEach() {
-		victim = TestDataCreator.newDrawListValidator();
+		victim = TestDataCreator.newDrawListValidator(drawListRepository);
 	}
 	
 	@Test
@@ -144,5 +145,23 @@ public class DrawListValidatorUnitTest {
 			new ValidationError(DRAW_LIST_SELECTED_SOLDIERS, DRAW_LIST_SELECTED_SOLDIERS_BELOW_MIN_LEN),
 			exception.getValidationErrors().getError(0)
 		);
+	}
+	
+	@Test
+	void testAddSoldierValidationWhenHasNoErrors() {
+		String selectableQuarter = DateUtils.toQuarterFormat(LocalDate.now());
+		victim.addSoldierValidation(selectableQuarter);
+	}
+	
+	@Test
+	void testAddSoldierToListValidationWhenYearQuarterIsMissing() {
+		assertThrows(DrawListValidationException.class, () -> victim.addSoldierValidation(null));
+		assertThrows(DrawListValidationException.class, () -> victim.addSoldierValidation(""));
+		assertThrows(DrawListValidationException.class, () -> victim.addSoldierValidation("  "));
+	}
+	
+	@Test
+	void testAddSoldierToListValidationWhenYearQuarterIsOutOfRange() {
+		assertThrows(DrawListValidationException.class, () -> victim.addSoldierValidation(OUT_OF_RANGE_YEAR_QUARTER));
 	}
 }

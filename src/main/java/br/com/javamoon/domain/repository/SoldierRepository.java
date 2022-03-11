@@ -88,6 +88,14 @@ public interface SoldierRepository extends JpaRepository<Soldier, Integer>{
 			@Param("key") String key,
 			Pageable pageable);
 	
+	@Query("SELECT s FROM Soldier s "
+			+ "JOIN s.drawList dl "
+			+ "LEFT JOIN FETCH s.militaryOrganization "
+			+ "WHERE dl.id = :drawListId "
+			+ "AND s.active = true")
+	List<Soldier> findAllActiveByDrawList(
+			@Param("drawListId") Integer drawListId);
+	
 	@Query(
 		"FROM Soldier s LEFT JOIN FETCH s.militaryOrganization " + 
 	    "WHERE s.active = true AND s.army = :army AND s.cjm = :cjm AND s.id IN :ids"

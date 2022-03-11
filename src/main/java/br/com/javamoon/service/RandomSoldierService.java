@@ -3,8 +3,13 @@ package br.com.javamoon.service;
 import static br.com.javamoon.validator.ValidationConstants.DRAW_SELECTED_RANKS;
 import static br.com.javamoon.validator.ValidationConstants.NO_AVALIABLE_SOLDIERS;
 import static br.com.javamoon.validator.ValidationConstants.REPLACE_SOLDIER_IS_NOT_IN_THE_LIST;
+
+import java.util.List;
+import java.util.Objects;
+
+import org.springframework.stereotype.Service;
+
 import br.com.javamoon.domain.cjm_user.CJM;
-import br.com.javamoon.domain.draw_exclusion.DrawExclusion;
 import br.com.javamoon.domain.entity.Army;
 import br.com.javamoon.domain.entity.MilitaryRank;
 import br.com.javamoon.domain.entity.Soldier;
@@ -19,17 +24,10 @@ import br.com.javamoon.mapper.SoldierDTO;
 import br.com.javamoon.validator.DrawValidator;
 import br.com.javamoon.validator.SoldierValidator;
 import br.com.javamoon.validator.ValidationErrors;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
-import java.util.Objects;
-import java.util.stream.Collectors;
-import org.springframework.stereotype.Service;
 
 @Service
 public class RandomSoldierService {
 
-	private DrawExclusionService drawExclusionService;
 	private SoldierRepositoryImpl soldierRepositoryImpl;
 	private SoldierRepository soldierRepository;
 	private DrawValidator drawValidator;
@@ -38,7 +36,6 @@ public class RandomSoldierService {
 	private final MilitaryRankService militaryRankService;
 
 	public RandomSoldierService(
-		DrawExclusionService drawExclusionService,
 		SoldierRepositoryImpl soldierRepositoryImpl,
 		DrawValidator drawValidator,
 		SoldierValidator soldierValidator,
@@ -46,7 +43,6 @@ public class RandomSoldierService {
 		MilitaryRankService militaryRankService,
 		SoldierRepository soldierRepository) {
 		
-		this.drawExclusionService = drawExclusionService;
 		this.soldierRepositoryImpl = soldierRepositoryImpl;
 		this.drawValidator = drawValidator;
 		this.soldierValidator = soldierValidator;
@@ -84,21 +80,6 @@ public class RandomSoldierService {
 						NO_AVALIABLE_SOLDIERS + militaryRankService.getById(ranks.get(i)).getAlias())
 				);
 			}
-		}
-	}
-	
-	public void setSoldierExclusionMessages(Collection<SoldierDTO> soldiers, String selectedYearQuarter, boolean systemOnly) {
-		for (SoldierDTO soldierDTO : soldiers) {
-			List<DrawExclusion> exclusions = new ArrayList<>(0);
-			
-			if (systemOnly == Boolean.FALSE)
-				exclusions.addAll(drawExclusionService.listByAnnualQuarter(selectedYearQuarter, soldierDTO.getId()));
-			
-			exclusions.addAll(drawExclusionService.listBySelectableQuarterPeriod(soldierDTO.getId()));
-			exclusions.addAll(drawExclusionService.generateByUnfinishedCejDraw(soldierDTO.getId()));
-			soldierDTO.getExclusions().addAll(
-				exclusions.stream().map(e -> EntityMapper.fromEntityToDTO(e)).collect(Collectors.toList())
-			);
 		}
 	}
 	

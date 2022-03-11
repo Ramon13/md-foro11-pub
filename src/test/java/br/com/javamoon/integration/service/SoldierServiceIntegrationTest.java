@@ -67,7 +67,7 @@ import br.com.javamoon.validator.ValidationError;
 @SpringBootTest
 @ActiveProfiles("test")
 @DirtiesContext(classMode = ClassMode.BEFORE_EACH_TEST_METHOD)
-public class SoldierServiceUnitTest {
+public class SoldierServiceIntegrationTest {
 	
 	@Autowired
 	private SoldierService victim;
@@ -213,6 +213,7 @@ public class SoldierServiceUnitTest {
 		armyRepository.saveAndFlush(army2);
 		
 		MilitaryRank rank2 = TestDataCreator.newMilitaryRank();
+		rank2.setId(null);
 		rank2.setAlias(DEFAULT_RANK_ALIAS + "x");
 		rank2.setName(DEFAULT_RANK_NAME + "x");
 		army2.getMilitaryRanks().add(rank2);

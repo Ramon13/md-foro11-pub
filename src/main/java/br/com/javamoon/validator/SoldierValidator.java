@@ -23,6 +23,7 @@ import br.com.javamoon.domain.repository.MilitaryOrganizationRepository;
 import br.com.javamoon.domain.repository.MilitaryRankRepository;
 import br.com.javamoon.domain.repository.SoldierRepository;
 import br.com.javamoon.exception.DrawValidationException;
+import br.com.javamoon.exception.SoldierHasExclusionException;
 import br.com.javamoon.exception.SoldierValidationException;
 import br.com.javamoon.mapper.DrawDTO;
 import br.com.javamoon.mapper.SoldierDTO;
@@ -92,6 +93,15 @@ public class SoldierValidator {
 	
 	public void replaceSoldierValidation(DrawDTO drawDTO, int replaceIndex) throws DrawValidationException{
 		validateIfRankBelongsToArmy(drawDTO.getArmy(), List.of(drawDTO.getSelectedRanks().get(replaceIndex)));
+	}
+	
+	public void addToDrawListValidation(SoldierDTO soldierDTO) throws SoldierHasExclusionException{
+		validateIfSoldierHasExclusions(soldierDTO);
+	}
+	
+	private void validateIfSoldierHasExclusions(SoldierDTO soldierDTO) throws SoldierHasExclusionException{
+		if (!soldierDTO.getExclusions().isEmpty())
+			throw new SoldierHasExclusionException();
 	}
 	
 	private boolean validateSoldierRank(ValidationErrors validationErrors, List<Integer> rankIds, List<SoldierDTO> soldiers) {

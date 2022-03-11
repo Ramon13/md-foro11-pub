@@ -28,6 +28,7 @@ import br.com.javamoon.exception.DrawListValidationException;
 import br.com.javamoon.infrastructure.web.model.PaginationFilter;
 import br.com.javamoon.infrastructure.web.model.PaginationSearchFilter;
 import br.com.javamoon.infrastructure.web.model.SoldiersPagination;
+import br.com.javamoon.mapper.AddSoldierToListDTO;
 import br.com.javamoon.mapper.DrawListDTO;
 import br.com.javamoon.mapper.SoldierDTO;
 import br.com.javamoon.service.DrawListService;
@@ -150,8 +151,14 @@ public class DrawListController {
 	
 	@SuppressWarnings("rawtypes")
 	@RequestMapping(method = RequestMethod.POST, path = "/list/add", consumes = MediaType.APPLICATION_JSON_VALUE)
-	public ResponseEntity addSoldier(@RequestBody String yearQuarter) {
-		System.out.println(yearQuarter);
-		return ResponseEntity.ok().build();
+	public ResponseEntity addSoldier(@RequestBody AddSoldierToListDTO addSoldierToListDTO) throws InterruptedException {
+		try {
+			GroupUser loggedUser = SecurityUtils.groupUser();
+			drawListService.addSoldierToList(addSoldierToListDTO, loggedUser.getCjm(), loggedUser.getArmy());
+			return ResponseEntity.status(HttpStatus.CREATED).build();
+		}catch(Exception e) {
+			e.printStackTrace();
+			return ResponseEntity.status(HttpStatus.UNPROCESSABLE_ENTITY).build();
+		}
 	}
 }

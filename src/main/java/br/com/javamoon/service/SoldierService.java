@@ -1,5 +1,7 @@
 package br.com.javamoon.service;
 
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
@@ -155,6 +157,13 @@ public class SoldierService{
 				.collect(Collectors.toList());
 	}
 	
+	public List<SoldierDTO> listAllByDrawList(Integer listId){
+		return soldierRepository.findAllActiveByDrawList(listId)
+				.stream()
+				.map(r -> EntityMapper.fromEntityToDTO(r))
+				.collect(Collectors.toList());
+	}
+	
 	public List<Soldier> listSoldierContaining(String key, Army army, CJM cjm){
 		return soldierRepository.findActiveByArmyAndCJMContaining(key, army.getId(), cjm.getId());
 	}
@@ -177,6 +186,28 @@ public class SoldierService{
 			DrawExclusion exclusion = drawExclusionService.generateIfSoldierAlreadyInList(soldierDTO.getId(), listId);
 			if (Objects.nonNull(exclusion))
 				soldierDTO.getExclusions().add(EntityMapper.fromEntityToDTO(exclusion));
+		}
+	}
+	
+	public void setSoldierExclusionMessages(Collection<SoldierDTO> soldiers, String selectedYearQuarter, boolean systemOnly) {
+		for (SoldierDTO soldierDTO : soldiers) {
+			List<DrawExclusion> exclusions = new ArrayList<>(0);
+			
+			if (systemOnly == Boolean.FALSE)
+				exclusions.addAll(drawExclusionService.listByAnnualQuarter(selectedYearQuarter, soldierDTO.getId()));
+			
+			exclusions.addAll(drawExclusionService.listBySelectableQuarterPeriod(soldierDTO.getId()));
+			exclusions.addAll(drawExclusionService.generateByUnfinishedCejDraw(soldierDTO.getId()));
+			soldierDTO.getExclusions().addAll(
+				exclusions.stream().map(e -> EntityMapper.fromEntityToDTO(e)).collect(Collectors.toList())
+			);
+		}
+	}
+	
+	public void setSystemOnlyExclusionMessages(List<SoldierDTO> soldiers, String yearQuarter, Integer listId) {
+		if (Objects.nonNull(yearQuarter) && Objects.nonNull(listId)) {
+			setSoldierExclusionMessages(soldiers, yearQuarter, true);
+			generateExclusionIfSoldierAlreadyInList(soldiers, listId);
 		}
 	}
 	

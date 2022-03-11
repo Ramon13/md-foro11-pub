@@ -1,7 +1,8 @@
-package br.com.javamoon.unit.service;
+package br.com.javamoon.integration.service;
 
 import static br.com.javamoon.util.Constants.DEFAULT_ARMY_NAME;
 import static br.com.javamoon.util.Constants.DEFAULT_DRAW_LIST_DESCRIPTION;
+import static br.com.javamoon.util.Constants.DEFAULT_DRAW_LIST_QUARTER_YEAR;
 import static br.com.javamoon.util.Constants.DEFAULT_SOLDIER_NAME;
 import static br.com.javamoon.util.Constants.DEFAULT_USER_EMAIL;
 import static br.com.javamoon.util.TestDataCreator.getPersistedArmy;
@@ -34,8 +35,11 @@ import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.annotation.DirtiesContext.ClassMode;
 import org.springframework.test.context.ActiveProfiles;
 
+import br.com.javamoon.domain.cjm_user.AuditorshipRepository;
 import br.com.javamoon.domain.cjm_user.CJM;
 import br.com.javamoon.domain.cjm_user.CJMRepository;
+import br.com.javamoon.domain.draw.Draw;
+import br.com.javamoon.domain.draw.JusticeCouncilRepository;
 import br.com.javamoon.domain.entity.Army;
 import br.com.javamoon.domain.entity.DrawList;
 import br.com.javamoon.domain.entity.GroupUser;
@@ -43,13 +47,17 @@ import br.com.javamoon.domain.entity.MilitaryOrganization;
 import br.com.javamoon.domain.entity.MilitaryRank;
 import br.com.javamoon.domain.entity.Soldier;
 import br.com.javamoon.domain.repository.ArmyRepository;
+import br.com.javamoon.domain.repository.CJMUserRepository;
 import br.com.javamoon.domain.repository.DrawListRepository;
+import br.com.javamoon.domain.repository.DrawRepository;
 import br.com.javamoon.domain.repository.GroupUserRepository;
 import br.com.javamoon.domain.repository.MilitaryOrganizationRepository;
 import br.com.javamoon.domain.repository.MilitaryRankRepository;
 import br.com.javamoon.domain.repository.SoldierRepository;
 import br.com.javamoon.exception.DrawListNotFoundException;
 import br.com.javamoon.exception.DrawListValidationException;
+import br.com.javamoon.exception.SoldierHasExclusionException;
+import br.com.javamoon.mapper.AddSoldierToListDTO;
 import br.com.javamoon.mapper.DrawListDTO;
 import br.com.javamoon.mapper.DrawListsDTO;
 import br.com.javamoon.mapper.EntityMapper;
@@ -62,7 +70,7 @@ import br.com.javamoon.validator.ValidationError;
 @SpringBootTest
 @ActiveProfiles("test")
 @DirtiesContext(classMode = ClassMode.BEFORE_EACH_TEST_METHOD)
-public class DrawListServiceUnitTest {
+public class DrawListServiceIntegrationTest {
 
 	@Autowired
 	private DrawListService victim;
@@ -87,6 +95,18 @@ public class DrawListServiceUnitTest {
 	
 	@Autowired
 	private SoldierRepository soldierRepository;
+	
+	@Autowired
+	private JusticeCouncilRepository justiceCouncilRepository;
+	
+	@Autowired
+	private AuditorshipRepository auditorshipRepository;
+	
+	@Autowired
+	private CJMUserRepository cjmUserRepository;
+	
+	@Autowired
+	private DrawRepository drawRepository;
 
 	@Test
 	void testListSuccessfully() {
@@ -506,5 +526,87 @@ public class DrawListServiceUnitTest {
 		assertEquals(3, drawListsDTO.size());
 		assertEquals(futureQuarter, drawListsDTO.get(0).getYearQuarter());
 		assertEquals(previousQuarter, drawListsDTO.get(drawListsDTO.size() - 1).getYearQuarter());
+	}
+	
+	@Test
+	void testAddSoldierToListSuccessfully() {
+		DrawList list = getPersistedDrawList(5);
+		Soldier baseSoldier = list.getSoldiers().stream().findFirst().get();
+		
+		Soldier newSoldier = getPersistedSoldier(
+				baseSoldier.getArmy(),
+				baseSoldier.getCjm(),
+				baseSoldier.getMilitaryOrganization(),
+				baseSoldier.getMilitaryRank());
+		
+		
+		AddSoldierToListDTO addSoldierToListDTO = 
+				new AddSoldierToListDTO(newSoldier.getId(), list.getId(), DEFAULT_DRAW_LIST_QUARTER_YEAR);
+		
+		assertEquals(5, list.getSoldiers().size());
+		
+		victim.addSoldierToList(addSoldierToListDTO, list.getCreationUser().getCjm(), list.getArmy());
+		
+		assertEquals(6, soldierRepository.findAllActiveByDrawList(list.getId()).size());
+	}
+	
+	@Test
+	void testaddSoldierToListWhenSoldierIsAlreadyInList() {
+		DrawList list = getPersistedDrawList(5);
+		Soldier baseSoldier = list.getSoldiers().stream().findFirst().get();
+		
+		AddSoldierToListDTO addSoldierToListDTO = 
+				new AddSoldierToListDTO(baseSoldier.getId(), list.getId(), DEFAULT_DRAW_LIST_QUARTER_YEAR);
+		
+		assertThrows(SoldierHasExclusionException.class, 
+				() -> victim.addSoldierToList(addSoldierToListDTO, list.getCreationUser().getCjm(), list.getArmy()) );
+	}
+	
+	@Test
+	void testAddSoldierToListWhenSoldierHasSystemExclusions() {
+		Draw draw = getPersistedDraw(DRAW_LIST_QUARTER_YEAR);
+		DrawList list = draw.getDrawList();
+		Soldier soldier = draw.getSoldiers().get(0);
+		
+		AddSoldierToListDTO addSoldierToListDTO = 
+				new AddSoldierToListDTO(soldier.getId(), list.getId(), DEFAULT_DRAW_LIST_QUARTER_YEAR);
+		
+		assertThrows(SoldierHasExclusionException.class, 
+				() -> victim.addSoldierToList(addSoldierToListDTO, list.getCreationUser().getCjm(), list.getArmy()) );
+	}
+	
+	private DrawList getPersistedDrawList(int numOfSoldiers) {
+		return TestDataCreator.getPersistedDrawLists(
+				armyRepository,
+				cjmRepository,
+				militaryOrganizationRepository,
+				militaryRankRepository,
+				groupUserRepository,
+				soldierRepository,
+				drawListRepository,
+				1,
+				numOfSoldiers).get(0);
+	}
+	
+	private Soldier getPersistedSoldier(Army army, CJM cjm, MilitaryOrganization organization, MilitaryRank rank) {
+		Soldier soldier = TestDataCreator.newSoldier();
+		soldier.setArmy(army);
+		soldier.setCjm(cjm);
+		soldier.setMilitaryOrganization(organization);
+		soldier.setMilitaryRank(rank);
+		return soldierRepository.saveAndFlush(soldier);
+	}
+	
+	private Draw getPersistedDraw(String yearQuarter) {
+		DrawList drawList = getPersistedDrawList(10);
+		
+		return TestDataCreator.getPersistedCPJDraw(
+				TestDataCreator.getPersistedJusticeCouncil(justiceCouncilRepository),
+				TestDataCreator.getPersistedCJMUser(cjmUserRepository, auditorshipRepository, cjmRepository),
+				drawList.getArmy(),
+				drawList.getSoldiers().stream().filter(x -> x.getId() > 0).limit(5).collect(Collectors.toList()),
+				drawList,
+				drawRepository
+				);
 	}
 }

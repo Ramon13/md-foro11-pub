@@ -26,6 +26,10 @@ public class DrawListValidator {
 
 	private DrawListRepository drawListRepository;
 	
+	public DrawListValidator(DrawListRepository drawListRepository) {
+		this.drawListRepository = drawListRepository;
+	}
+	
 	public void saveListValidation(DrawListDTO drawListDTO, Army army, CJM cjm) {
 		ValidationErrors validationErrors = new ValidationErrors();
 		
@@ -38,6 +42,14 @@ public class DrawListValidator {
 			validateMinSoldierListSize(drawListDTO.getId(), drawListDTO.getSelectedSoldiers().size(), validationErrors);
 		}
 		
+		ValidationUtils.throwOnErrors(DrawListValidationException.class, validationErrors);
+	}
+	
+	public void addSoldierValidation(String yearQuarter) {
+		ValidationErrors validationErrors = new ValidationErrors();
+		
+		ValidationUtils.validateRequired(yearQuarter, DRAW_LIST_QUARTER_YEAR, validationErrors);
+		validateSelectableQuarter(yearQuarter, validationErrors);
 		ValidationUtils.throwOnErrors(DrawListValidationException.class, validationErrors);
 	}
 	
