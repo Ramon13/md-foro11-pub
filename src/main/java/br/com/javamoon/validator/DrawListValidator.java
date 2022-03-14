@@ -45,6 +45,20 @@ public class DrawListValidator {
 		ValidationUtils.throwOnErrors(DrawListValidationException.class, validationErrors);
 	}
 	
+	public void duplicateListValidation(DrawListDTO drawListDTO, Army army, CJM cjm) {
+		ValidationErrors validationErrors = new ValidationErrors();
+		
+		if (
+		    validateDescription(drawListDTO.getDescription(), validationErrors) &&
+		    validateQuarterYear(drawListDTO.getYearQuarter(), validationErrors)
+		) {
+			validateDuplicatedDescription(drawListDTO.getDescription(), drawListDTO.getId(), army, cjm, validationErrors);
+			validateSelectableQuarter(drawListDTO.getYearQuarter(), validationErrors);
+		}
+		
+		ValidationUtils.throwOnErrors(DrawListValidationException.class, validationErrors);
+	}
+	
 	public void addSoldierValidation(String yearQuarter) {
 		ValidationErrors validationErrors = new ValidationErrors();
 		

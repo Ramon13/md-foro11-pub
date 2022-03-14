@@ -85,8 +85,6 @@ public class DrawListController {
 		return new ResponseEntity<String>(errorMsg, HttpStatus.BAD_REQUEST);
 	}
 	
-	//TODO: bug fix - clone node with empty list generates an error because the list has no elements to clone
-
 	@GetMapping("/list/edit/{listId}")
 	public String editHome(
 			@ModelAttribute("paginationFilter") PaginationFilter paginationFilter,

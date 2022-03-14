@@ -76,13 +76,9 @@ public class DrawList implements Comparable<DrawList>{
 	private void prePersist() {
 		if (Objects.isNull(id)) {
 			yearQuarter = DateUtils.toQuarterFormat(LocalDate.now());
-			description = String.format("Nova lista %s %s", army.getAlias(), yearQuarter);
-		}
-		
-		if (Objects.isNull(active))
 			active = true;
-		if (Objects.isNull(enableForDraw))
 			enableForDraw = false;
+		}
 	}
 
 	@Override

@@ -111,6 +111,7 @@ public class DrawListService {
 			
 		}else {
 			drawList = EntityMapper.fromDTOToEntity(drawListDTO);
+			drawList.setDescription(getDefaultNewListDescription(army, drawListDTO.getYearQuarter()));
     		drawList.getSoldiers().addAll(selectedSoldiers);
     		drawList.setArmy(army);
     		drawList.setCreationUser(creationUser);
@@ -125,20 +126,23 @@ public class DrawListService {
 		drawListRepo.disable(listId);
 	}
 	
+	@Transactional
 	public DrawList duplicate(Integer listId, Army army, CJM cjm, GroupUser creationUser) {
 		DrawList drawList = getListOrElseThrow(listId, army, cjm);
+		DrawList copyOfList = new DrawList();
 		
-		DrawListDTO copyOfDrawList = new DrawListDTO();
-		copyOfDrawList.getSelectedSoldiers().addAll(
-			soldierService.listAllByDrawList(listId)
+		copyOfList.getSoldiers().addAll(
+				soldierService.listAllByDrawList(listId)
 				.stream()
-				.map(s -> s.getId())
-				.collect(Collectors.toList())
-		);
+				.map(s -> EntityMapper.fromDTOToEntity(s))
+				.collect(Collectors.toList()));
 		
-		copyOfDrawList.setDescription("Cópia de " + drawList.getDescription());
-		copyOfDrawList.setYearQuarter(DateUtils.toQuarterFormat(LocalDate.now()));
-		return save(copyOfDrawList, army, cjm, creationUser);
+		copyOfList.setDescription("Cópia de " + drawList.getDescription());
+		copyOfList.setYearQuarter(DateUtils.toQuarterFormat(LocalDate.now()));
+		copyOfList.setArmy(army);
+		copyOfList.setCreationUser(creationUser);
+		System.out.println(copyOfList);
+		return drawListRepo.save(copyOfList);
 	}
 	
 	public List<DrawListsDTO> getListsByQuarter(List<DrawList> lists) {
@@ -218,5 +222,9 @@ public class DrawListService {
 	
 	private List<DrawListDTO> toDrawListDTO(List<DrawList> list){
 		return list.stream().map(r -> EntityMapper.fromEntityToDTO(r)).collect(Collectors.toList());
+	}
+	
+	private String getDefaultNewListDescription(Army army, String yearQuarter) {
+		return String.format("Nova lista %s %s", army.getAlias(), yearQuarter);
 	}
 }
