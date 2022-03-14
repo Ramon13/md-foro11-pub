@@ -55,6 +55,7 @@ public final class Constants {
     public static final List<Integer> DEFAULT_CEJ_RANKS = List.of(1,2,3,4);
     public static final List<Integer> DEFAULT_CPJ_SOLDIERS = List.of(1,2,3,4,5);
     public static final List<Integer> DEFAULT_CEJ_SOLDIERS = List.of(1,2,3,4);
+    public static final Integer DEFAULT_SOLDIER_ID = 1;
     public static final Integer DEFAULT_REPLACE_SOLDIER_ID = 1;
     public static final Integer DEFAULT_REPLACE_RANK_ID = 1;
     

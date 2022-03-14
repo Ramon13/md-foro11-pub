@@ -12,8 +12,6 @@ import org.springframework.data.domain.Sort;
 import br.com.javamoon.exception.InvalidOrderByFieldException;
 
 public class PageableUtils {
-
-	public static final Integer DEFAULT_PAGE = 0;
 	
 	public static Pageable newPageable(
 			Integer page,

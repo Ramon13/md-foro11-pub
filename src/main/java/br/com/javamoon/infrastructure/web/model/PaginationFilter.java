@@ -1,6 +1,5 @@
 package br.com.javamoon.infrastructure.web.model;
 
-import br.com.javamoon.util.PageableUtils;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
@@ -10,8 +9,8 @@ import lombok.ToString;
 @ToString
 public class PaginationFilter {
 
-	private int page = PageableUtils.DEFAULT_PAGE;
-	private Integer total;
+	private int page;
+	private int total;
 	private Integer maxLimit;
 	private String key;
 	

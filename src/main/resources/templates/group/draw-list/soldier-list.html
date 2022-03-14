@@ -39,7 +39,7 @@
             <p class="list-header" th:text="${soldier.idInfoAsText}"></p>
             <br />
             <p class="list-info" th:text="${soldier.oMAndRankAsText}"></p>
-            <button class="remove-soldier">----</button>
+            <button class="remove-soldier" th:attr="data-soldierid=${soldier.id}">----</button>
           </div>
         </div>
         <br />
@@ -85,7 +85,7 @@
       <!-- ======================================================================= -->
       <!-- ================Base div to generate display found soldiers============ -->
       <!-- ======================================================================= -->
-      <div id="baseListTuple" class="app-div-list" style="display: none">
+      <div id="baseListTuple" class="app-div-list soldier-info" style="display: none">
         <input class="soldier-id" type="hidden"/>
         <p class="list-header"></p>
         <br />
@@ -96,10 +96,16 @@
       <!-- ======================================================================= -->
       <!-- ================Snack status bar======================================= -->
       <!-- ======================================================================= -->
-      <div id="snackbar">Adicionando à lista...</div>
+      <div id="snackbar"></div>
       
       <script th:inline="javascript">
-        const addSoldierEndpoint = '[(@{/gp/dw/list/add})]'; 
+        const addSoldierEndpoint = '[(@{/gp/dw/list/add})]';
+        const removeSoldierEndpoint = '[(@{/gp/dw/list/remove})]';
+        
+        const backBtn = document.querySelector("button#back");
+        backBtn.addEventListener('click', function(){
+          location.href = historyPop();
+        });
       </script>      
       <script type="text/javascript" th:src="@{/scripts/modal-box.js}"></script>
       <script type="text/javascript" th:src="@{/scripts/snackbar.js}"></script>

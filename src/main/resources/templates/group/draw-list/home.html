@@ -94,7 +94,7 @@ button#newList:hover, img.more:hover {
           <br /> <span th:classappend="${drawList.listPhase}"
             th:text="${drawList.listPhaseDescription}"></span>
         </div>
-        <br /> <a th:href="@{/gp/dw/list/} + '' + ${drawList.id}">exibir</a>
+        <br /> <a th:href="@{/gp/dw/list/edit/} + '' + ${drawList.id}">exibir</a>
       </div>
     </div>
 
@@ -105,7 +105,7 @@ button#newList:hover, img.more:hover {
       historyPush();
     	const newListBtn = document.querySelector("button#newList");
     	addListener(newListBtn, "click", function(){
-    	  location.href = '[(@{/gp/dw/list/new/home})]';
+    	  location.href = '[(@{/gp/dw/list/new})]';
 		  }); 
     	
     	setRemoveListBtnListerner()

@@ -164,4 +164,22 @@ public class DrawListValidatorUnitTest {
 	void testAddSoldierToListValidationWhenYearQuarterIsOutOfRange() {
 		assertThrows(DrawListValidationException.class, () -> victim.addSoldierValidation(OUT_OF_RANGE_YEAR_QUARTER));
 	}
+	
+	@Test
+	void testRemoveoldierValidationWhenHasNoErrors() {
+		String selectableQuarter = DateUtils.toQuarterFormat(LocalDate.now());
+		victim.removeSoldierValidation(selectableQuarter);
+	}
+	
+	@Test
+	void testRemoveSoldierFromListValidationWhenYearQuarterIsMissing() {
+		assertThrows(DrawListValidationException.class, () -> victim.removeSoldierValidation(null));
+		assertThrows(DrawListValidationException.class, () -> victim.removeSoldierValidation(""));
+		assertThrows(DrawListValidationException.class, () -> victim.removeSoldierValidation("  "));
+	}
+	
+	@Test
+	void testRemoveSoldierFromListValidationWhenYearQuarterIsOutOfRange() {
+		assertThrows(DrawListValidationException.class, () -> victim.removeSoldierValidation(OUT_OF_RANGE_YEAR_QUARTER));
+	}
 }

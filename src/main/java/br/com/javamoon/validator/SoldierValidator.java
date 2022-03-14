@@ -5,6 +5,8 @@ import static br.com.javamoon.validator.ValidationConstants.DRAW_LIST_SELECTED_S
 import static br.com.javamoon.validator.ValidationConstants.INCONSISTENT_DATA;
 import static br.com.javamoon.validator.ValidationConstants.SOLDIER_EMAIL;
 import static br.com.javamoon.validator.ValidationConstants.SOLDIER_EMAIL_MAX_LEN;
+import static br.com.javamoon.validator.ValidationConstants.SOLDIER_ID;
+import static br.com.javamoon.validator.ValidationConstants.SOLDIER_IS_NOT_ON_THE_LIST;
 import static br.com.javamoon.validator.ValidationConstants.SOLDIER_LIST_INVALID_RANK;
 import static br.com.javamoon.validator.ValidationConstants.SOLDIER_NAME;
 import static br.com.javamoon.validator.ValidationConstants.SOLDIER_NAME_ALREADY_EXISTS;
@@ -97,6 +99,22 @@ public class SoldierValidator {
 	
 	public void addToDrawListValidation(SoldierDTO soldierDTO) throws SoldierHasExclusionException{
 		validateIfSoldierHasExclusions(soldierDTO);
+	}
+	
+	public void removeFromDrawListValidation(Integer listId, Integer soldierId) {
+		ValidationErrors validationErrors = new ValidationErrors();
+		validateIfSoldierIsOnList(listId, soldierId, validationErrors);
+		
+		ValidationUtils.throwOnErrors(SoldierValidationException.class, validationErrors);
+	}
+	
+	private boolean validateIfSoldierIsOnList(Integer listId, Integer soldierId, ValidationErrors validationErrors) {
+		if ( soldierRepository.findActiveByDrawList(soldierId, listId).isEmpty() ) {
+			validationErrors.add(SOLDIER_ID, SOLDIER_IS_NOT_ON_THE_LIST);
+			return false;
+		}
+		
+		return true;
 	}
 	
 	private void validateIfSoldierHasExclusions(SoldierDTO soldierDTO) throws SoldierHasExclusionException{

@@ -130,13 +130,6 @@ public class SoldierService{
 		return soldierRepository.countActiveByArmyAndCjmContaining(listId, key, army.getId(), cjm.getId());
 	}
 	
-	public SoldiersPagination listPagination(Integer drawListId, PaginationSearchFilter filter) {
-		return new SoldiersPagination(
-			soldierRepositoryImpl.findAllByDrawListPaginable(drawListId, filter),
-			soldierRepositoryImpl.countAllByDrawListPaginable(drawListId, filter)
-		);
-	}
-	
 	public List<SoldierDTO> listAll(Army army, CJM cjm){
 		Pageable pageable = PageableUtils.newPageable(0, null, maxLImit, "id", Soldier.SORTABLE_FIELDS);
 		
@@ -205,10 +198,12 @@ public class SoldierService{
 	}
 	
 	public void setSystemOnlyExclusionMessages(List<SoldierDTO> soldiers, String yearQuarter, Integer listId) {
-		if (Objects.nonNull(yearQuarter) && Objects.nonNull(listId)) {
-			setSoldierExclusionMessages(soldiers, yearQuarter, true);
+		Objects.requireNonNull(yearQuarter);
+		
+		if (Objects.nonNull(listId)) 
 			generateExclusionIfSoldierAlreadyInList(soldiers, listId);
-		}
+		
+		setSoldierExclusionMessages(soldiers, yearQuarter, true);
 	}
 	
 	private Soldier getSoldierOrElseThrow(Integer soldierId, CJM cjm) {

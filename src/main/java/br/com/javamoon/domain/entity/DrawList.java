@@ -17,6 +17,8 @@ import javax.persistence.PrePersist;
 import javax.persistence.Table;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
+
+import br.com.javamoon.util.DateUtils;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
@@ -72,6 +74,11 @@ public class DrawList implements Comparable<DrawList>{
 	
 	@PrePersist
 	private void prePersist() {
+		if (Objects.isNull(id)) {
+			yearQuarter = DateUtils.toQuarterFormat(LocalDate.now());
+			description = String.format("Nova lista %s %s", army.getAlias(), yearQuarter);
+		}
+		
 		if (Objects.isNull(active))
 			active = true;
 		if (Objects.isNull(enableForDraw))

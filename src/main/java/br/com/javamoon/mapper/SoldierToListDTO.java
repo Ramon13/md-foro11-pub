@@ -9,7 +9,7 @@ import lombok.ToString;
 @ToString
 @AllArgsConstructor
 @NoArgsConstructor
-public class AddSoldierToListDTO {
+public class SoldierToListDTO {
 
 	private Integer soldierId;
 	private Integer listId;

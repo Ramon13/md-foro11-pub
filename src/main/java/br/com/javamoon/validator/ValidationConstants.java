@@ -12,6 +12,7 @@ public final class ValidationConstants {
     public static final String PASSWORD_DOES_NOT_HAVE_LOWERCASE = "A senha deve conter letras minúsculas.";
     public static final String PASSWORD_DOES_NOT_HAVE_NUMBER = "A senha deve conter algum número.";
     
+    public static final String SOLDIER_ID = "id";
     public static final String SOLDIER_NAME = "name";
     public static final String SOLDIER_EMAIL = "email";
     public static final String SOLDIER_ORGANIZATION = "militaryOrganization";
@@ -60,6 +61,7 @@ public final class ValidationConstants {
     public static final String DRAW_LIST_SELECTED_SOLDIERS_BELOW_MIN_LEN = "A lista deve ser composta por no mínimo 5 militares";
     public static final String DRAW_LIST_SOLDIERS = "soldiers";
     public static final String DRAW_LIST_SOLDIER_HAS_EXCLUSIONS = "Não foi possível adicionar o militar. O militar possui impedimentos gerados pelo sistema.";
+    public static final String SOLDIER_IS_NOT_ON_THE_LIST = "O Militar não está na lista";
     
     public static final String NO_PERMISSION = "You do not have permision to edit this property.";
     private ValidationConstants() {}

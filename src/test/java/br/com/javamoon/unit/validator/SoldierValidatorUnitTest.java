@@ -1,14 +1,18 @@
 package br.com.javamoon.unit.validator;
 
 import static br.com.javamoon.util.Constants.DEFAULT_CPJ_RANKS;
+import static br.com.javamoon.util.Constants.DEFAULT_DRAW_LIST_ID;
 import static br.com.javamoon.util.Constants.DEFAULT_RANK_ID;
 import static br.com.javamoon.util.Constants.DEFAULT_REPLACE_RANK_ID;
+import static br.com.javamoon.util.Constants.DEFAULT_SOLDIER_ID;
 import static br.com.javamoon.util.TestDataCreator.newDrawDTO;
 import static br.com.javamoon.validator.ValidationConstants.ACCOUNT_EMAIL_ALREADY_EXISTS;
 import static br.com.javamoon.validator.ValidationConstants.INCONSISTENT_DATA;
 import static br.com.javamoon.validator.ValidationConstants.REQUIRED_FIELD;
 import static br.com.javamoon.validator.ValidationConstants.SOLDIER_EMAIL;
 import static br.com.javamoon.validator.ValidationConstants.SOLDIER_EMAIL_MAX_LEN;
+import static br.com.javamoon.validator.ValidationConstants.SOLDIER_ID;
+import static br.com.javamoon.validator.ValidationConstants.SOLDIER_IS_NOT_ON_THE_LIST;
 import static br.com.javamoon.validator.ValidationConstants.SOLDIER_NAME;
 import static br.com.javamoon.validator.ValidationConstants.SOLDIER_NAME_ALREADY_EXISTS;
 import static br.com.javamoon.validator.ValidationConstants.SOLDIER_NAME_MAX_LEN;
@@ -248,5 +252,24 @@ public class SoldierValidatorUnitTest {
 		soldierDTO.getExclusions().add(new DrawExclusionDTO());
 		
 		assertThrows(SoldierHasExclusionException.class, () -> victim.addToDrawListValidation(soldierDTO));
+	}
+	
+	@Test
+	void testRemoveFromDrawListValidationSuccessfully() {
+		Mockito.when( soldierRepository.findActiveByDrawList(DEFAULT_SOLDIER_ID, DEFAULT_DRAW_LIST_ID) )
+			.thenReturn(Optional.of(TestDataCreator.newSoldier()));
+		
+		victim.removeFromDrawListValidation(DEFAULT_DRAW_LIST_ID, DEFAULT_SOLDIER_ID);
+	}
+	
+	@Test
+	void testRemoveFromDrawListValidationWhenSoldierIsNotOnTheList() {
+		Mockito.when( soldierRepository.findActiveByDrawList(DEFAULT_SOLDIER_ID, DEFAULT_DRAW_LIST_ID) )
+		.thenReturn(Optional.empty());
+	
+		SoldierValidationException exception = assertThrows(SoldierValidationException.class, 
+				() -> victim.removeFromDrawListValidation(DEFAULT_DRAW_LIST_ID, DEFAULT_SOLDIER_ID));
+		
+		assertEquals(exception.getValidationErrors().getError(0), new ValidationError(SOLDIER_ID, SOLDIER_IS_NOT_ON_THE_LIST));
 	}
 }

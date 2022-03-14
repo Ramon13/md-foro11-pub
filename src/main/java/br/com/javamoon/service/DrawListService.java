@@ -23,11 +23,11 @@ import br.com.javamoon.domain.entity.GroupUser;
 import br.com.javamoon.domain.entity.Soldier;
 import br.com.javamoon.domain.repository.DrawListRepository;
 import br.com.javamoon.exception.DrawListNotFoundException;
-import br.com.javamoon.mapper.AddSoldierToListDTO;
 import br.com.javamoon.mapper.DrawListDTO;
 import br.com.javamoon.mapper.DrawListsDTO;
 import br.com.javamoon.mapper.EntityMapper;
 import br.com.javamoon.mapper.SoldierDTO;
+import br.com.javamoon.mapper.SoldierToListDTO;
 import br.com.javamoon.util.DateUtils;
 import br.com.javamoon.validator.DrawListValidator;
 import br.com.javamoon.validator.SoldierValidator;
@@ -75,6 +75,14 @@ public class DrawListService {
 	
 	public List<DrawList> listByCjm(CJM cjm){
 		return drawListRepo.findAllActiveByCjm(cjm.getId()).get();
+	}
+	
+	public DrawList create(GroupUser creationUser) {
+		DrawList drawList = new DrawList();
+		drawList.setCreationUser(creationUser);
+		drawList.setArmy(creationUser.getArmy());
+		
+		return drawListRepo.save(drawList);
 	}
 	
 	@Transactional
@@ -150,7 +158,7 @@ public class DrawListService {
 	}
 	
 	@Transactional
-	public void addSoldierToList(AddSoldierToListDTO soldierToListDTO, CJM cjm, Army army) {
+	public void addSoldierToList(SoldierToListDTO soldierToListDTO, CJM cjm, Army army) {
 		DrawList drawList = getListOrElseThrow(soldierToListDTO.getListId(), army, cjm);
 		
 		Soldier soldier = soldierService.getSoldier(soldierToListDTO.getSoldierId(), army, cjm);
@@ -164,6 +172,17 @@ public class DrawListService {
 		soldierValidator.addToDrawListValidation( soldierDTO );
 		
 		drawList.getSoldiers().add(soldier);
+	}
+	
+	@Transactional
+	public void removeSoldierFromList(SoldierToListDTO soldierToListDTO, CJM cjm, Army army) {
+		DrawList drawList = getListOrElseThrow(soldierToListDTO.getListId(), army, cjm);
+		Soldier soldier = soldierService.getSoldier(soldierToListDTO.getSoldierId(), army, cjm);
+		
+		drawListValidator.removeSoldierValidation(soldierToListDTO.getYearQuarter());
+		soldierValidator.removeFromDrawListValidation(drawList.getId(), soldier.getId());
+		
+		drawList.getSoldiers().remove(soldier);
 	}
 	
 	private Map<String, List<DrawList>> mapListByQuarter(List<DrawList> lists){

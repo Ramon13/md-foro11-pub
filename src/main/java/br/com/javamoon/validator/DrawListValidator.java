@@ -53,6 +53,14 @@ public class DrawListValidator {
 		ValidationUtils.throwOnErrors(DrawListValidationException.class, validationErrors);
 	}
 	
+	public void removeSoldierValidation(String yearQuarter) {
+		ValidationErrors validationErrors = new ValidationErrors();
+		
+		ValidationUtils.validateRequired(yearQuarter, DRAW_LIST_QUARTER_YEAR, validationErrors);
+		validateSelectableQuarter(yearQuarter, validationErrors);
+		ValidationUtils.throwOnErrors(DrawListValidationException.class, validationErrors);
+	}
+	
 	private boolean validateDescription(String description, ValidationErrors validationErrors) {
 		return (
 			ValidationUtils.validateRequired(description, DRAW_LIST_DESCRIPTION, validationErrors) &&

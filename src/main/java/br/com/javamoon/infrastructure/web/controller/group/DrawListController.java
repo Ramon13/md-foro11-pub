@@ -1,6 +1,5 @@
 package br.com.javamoon.infrastructure.web.controller.group;
 
-import java.time.LocalDate;
 import java.util.List;
 
 import javax.validation.Valid;
@@ -26,11 +25,9 @@ import br.com.javamoon.domain.entity.Army;
 import br.com.javamoon.domain.entity.GroupUser;
 import br.com.javamoon.exception.DrawListValidationException;
 import br.com.javamoon.infrastructure.web.model.PaginationFilter;
-import br.com.javamoon.infrastructure.web.model.PaginationSearchFilter;
-import br.com.javamoon.infrastructure.web.model.SoldiersPagination;
-import br.com.javamoon.mapper.AddSoldierToListDTO;
 import br.com.javamoon.mapper.DrawListDTO;
 import br.com.javamoon.mapper.SoldierDTO;
+import br.com.javamoon.mapper.SoldierToListDTO;
 import br.com.javamoon.service.DrawListService;
 import br.com.javamoon.service.SoldierService;
 import br.com.javamoon.util.DateUtils;
@@ -61,32 +58,10 @@ public class DrawListController {
 		return "group/draw-list/home";
 	}
 	
-	@GetMapping("/list/{listId}")
-	public String getDrawList(@PathVariable Integer listId, PaginationSearchFilter filter, Model model) {
-		GroupUser loggedUser = SecurityUtils.groupUser();
-		DrawListDTO drawList = drawListService.getList(listId, loggedUser.getArmy(), loggedUser.getCjm());
-		
-		SoldiersPagination soldiersPagination = soldierService.listPagination(drawList.getId(), filter);
-		filter.setTotal(soldiersPagination.getTotal().intValue());
-		
-		model.addAttribute("drawList", drawList);
-		model.addAttribute("soldiersPagination", soldiersPagination);
-		model.addAttribute("filter", filter);
-		return  "group/draw-list/list";
-	}
-	
-	@GetMapping("/list/new/home")
-	public String createHome(Model model) {
-		GroupUser loggedUser = SecurityUtils.groupUser();
-		
-		DrawListDTO drawList = new DrawListDTO();
-		drawList.setYearQuarter(DateUtils.toQuarterFormat(LocalDate.now()));
-		
-		model.addAttribute("quarters", DateUtils.getSelectableQuarters());
-		model.addAttribute("drawList", drawList);
-		model.addAttribute("soldiers", soldierService.listAll(loggedUser.getArmy(), loggedUser.getCjm()));
-		
-		return "group/draw-list/soldier-list";
+	@GetMapping("/list/new")
+	public String createHome() {
+		drawListService.create(SecurityUtils.groupUser());
+		return "redirect:/gp/dw/list";
 	}
 	
 	@PostMapping("/list/new/save")
@@ -151,14 +126,26 @@ public class DrawListController {
 	
 	@SuppressWarnings("rawtypes")
 	@RequestMapping(method = RequestMethod.POST, path = "/list/add", consumes = MediaType.APPLICATION_JSON_VALUE)
-	public ResponseEntity addSoldier(@RequestBody AddSoldierToListDTO addSoldierToListDTO) throws InterruptedException {
+	public ResponseEntity addSoldier(@RequestBody SoldierToListDTO soldierToListDTO) throws InterruptedException {
 		try {
 			GroupUser loggedUser = SecurityUtils.groupUser();
-			drawListService.addSoldierToList(addSoldierToListDTO, loggedUser.getCjm(), loggedUser.getArmy());
+			drawListService.addSoldierToList(soldierToListDTO, loggedUser.getCjm(), loggedUser.getArmy());
 			return ResponseEntity.status(HttpStatus.CREATED).build();
 		}catch(Exception e) {
 			e.printStackTrace();
 			return ResponseEntity.status(HttpStatus.UNPROCESSABLE_ENTITY).build();
+		}
+	}
+	
+	@RequestMapping(method = RequestMethod.POST, path = "/list/remove", consumes = MediaType.APPLICATION_JSON_VALUE)
+	public ResponseEntity<String> removeSoldier(@RequestBody SoldierToListDTO soldierToListDTO) {
+		try {
+			GroupUser loggedUser = SecurityUtils.groupUser();
+			drawListService.removeSoldierFromList(soldierToListDTO, loggedUser.getCjm(), loggedUser.getArmy());
+			return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
+		} catch (Exception e) {
+			e.printStackTrace();
+			return ResponseEntity.status(HttpStatus.UNPROCESSABLE_ENTITY).body(e.getMessage());
 		}
 	}
 }

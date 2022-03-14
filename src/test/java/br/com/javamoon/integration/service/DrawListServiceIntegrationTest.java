@@ -19,6 +19,8 @@ import static br.com.javamoon.validator.ValidationConstants.DRAW_LIST_QUARTER_YE
 import static br.com.javamoon.validator.ValidationConstants.DRAW_LIST_SELECTED_SOLDIERS;
 import static br.com.javamoon.validator.ValidationConstants.DRAW_LIST_SELECTED_SOLDIERS_BELOW_MIN_LEN;
 import static br.com.javamoon.validator.ValidationConstants.REQUIRED_FIELD;
+import static br.com.javamoon.validator.ValidationConstants.SOLDIER_ID;
+import static br.com.javamoon.validator.ValidationConstants.SOLDIER_IS_NOT_ON_THE_LIST;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -57,10 +59,11 @@ import br.com.javamoon.domain.repository.SoldierRepository;
 import br.com.javamoon.exception.DrawListNotFoundException;
 import br.com.javamoon.exception.DrawListValidationException;
 import br.com.javamoon.exception.SoldierHasExclusionException;
-import br.com.javamoon.mapper.AddSoldierToListDTO;
+import br.com.javamoon.exception.SoldierValidationException;
 import br.com.javamoon.mapper.DrawListDTO;
 import br.com.javamoon.mapper.DrawListsDTO;
 import br.com.javamoon.mapper.EntityMapper;
+import br.com.javamoon.mapper.SoldierToListDTO;
 import br.com.javamoon.service.DrawListService;
 import br.com.javamoon.util.Constants;
 import br.com.javamoon.util.DateUtils;
@@ -540,12 +543,12 @@ public class DrawListServiceIntegrationTest {
 				baseSoldier.getMilitaryRank());
 		
 		
-		AddSoldierToListDTO addSoldierToListDTO = 
-				new AddSoldierToListDTO(newSoldier.getId(), list.getId(), DEFAULT_DRAW_LIST_QUARTER_YEAR);
+		SoldierToListDTO soldierToListDTO = 
+				new SoldierToListDTO(newSoldier.getId(), list.getId(), DEFAULT_DRAW_LIST_QUARTER_YEAR);
 		
 		assertEquals(5, list.getSoldiers().size());
 		
-		victim.addSoldierToList(addSoldierToListDTO, list.getCreationUser().getCjm(), list.getArmy());
+		victim.addSoldierToList(soldierToListDTO, list.getCreationUser().getCjm(), list.getArmy());
 		
 		assertEquals(6, soldierRepository.findAllActiveByDrawList(list.getId()).size());
 	}
@@ -555,11 +558,11 @@ public class DrawListServiceIntegrationTest {
 		DrawList list = getPersistedDrawList(5);
 		Soldier baseSoldier = list.getSoldiers().stream().findFirst().get();
 		
-		AddSoldierToListDTO addSoldierToListDTO = 
-				new AddSoldierToListDTO(baseSoldier.getId(), list.getId(), DEFAULT_DRAW_LIST_QUARTER_YEAR);
+		SoldierToListDTO soldierToListDTO = 
+				new SoldierToListDTO(baseSoldier.getId(), list.getId(), DEFAULT_DRAW_LIST_QUARTER_YEAR);
 		
 		assertThrows(SoldierHasExclusionException.class, 
-				() -> victim.addSoldierToList(addSoldierToListDTO, list.getCreationUser().getCjm(), list.getArmy()) );
+				() -> victim.addSoldierToList(soldierToListDTO, list.getCreationUser().getCjm(), list.getArmy()) );
 	}
 	
 	@Test
@@ -568,11 +571,60 @@ public class DrawListServiceIntegrationTest {
 		DrawList list = draw.getDrawList();
 		Soldier soldier = draw.getSoldiers().get(0);
 		
-		AddSoldierToListDTO addSoldierToListDTO = 
-				new AddSoldierToListDTO(soldier.getId(), list.getId(), DEFAULT_DRAW_LIST_QUARTER_YEAR);
+		SoldierToListDTO soldierToListDTO = 
+				new SoldierToListDTO(soldier.getId(), list.getId(), DEFAULT_DRAW_LIST_QUARTER_YEAR);
 		
 		assertThrows(SoldierHasExclusionException.class, 
-				() -> victim.addSoldierToList(addSoldierToListDTO, list.getCreationUser().getCjm(), list.getArmy()) );
+				() -> victim.addSoldierToList(soldierToListDTO, list.getCreationUser().getCjm(), list.getArmy()) );
+	}
+	
+	@Test
+	void testRemoveSoldierFromListSuccessFully() {
+		DrawList list = getPersistedDrawList(5);
+		Soldier removeSoldier = list.getSoldiers().stream().findFirst().get();
+		
+		SoldierToListDTO soldierToListDTO = 
+				new SoldierToListDTO(removeSoldier.getId(), list.getId(), DEFAULT_DRAW_LIST_QUARTER_YEAR);
+		
+		victim.removeSoldierFromList(soldierToListDTO, list.getCreationUser().getCjm(), list.getArmy());
+		
+		assertEquals(4, soldierRepository.findAllActiveByDrawList(list.getId()).size());
+	}
+	
+	@Test
+	void testRemoveSoldierFromListWhenYearQuarterIsInvalid() {
+		DrawList list = getPersistedDrawList(5);
+		Soldier removeSoldier = list.getSoldiers().stream().findFirst().get();
+		
+		SoldierToListDTO soldierToListDTO = 
+				new SoldierToListDTO(removeSoldier.getId(), list.getId(), DRAW_LIST_QUARTER_YEAR_OUT_OF_BOUNDS);
+		
+		DrawListValidationException exception = assertThrows(DrawListValidationException.class, 
+				() -> victim.removeSoldierFromList(soldierToListDTO, list.getCreationUser().getCjm(), list.getArmy()));
+		
+		assertEquals(exception.getValidationErrors().getError(0),
+				new ValidationError(DRAW_LIST_QUARTER_YEAR, DRAW_LIST_QUARTER_YEAR_OUT_OF_BOUNDS));
+	}
+	
+	@Test
+	void testRemoveSoldierFromListWhenSoldierIsNotOnTheList() {
+		DrawList list = getPersistedDrawList(5);
+		Soldier baseSoldier = list.getSoldiers().stream().findFirst().get();
+		
+		Soldier newSoldier = getPersistedSoldier(
+				baseSoldier.getArmy(),
+				baseSoldier.getCjm(),
+				baseSoldier.getMilitaryOrganization(),
+				baseSoldier.getMilitaryRank());
+		
+		SoldierToListDTO soldierToListDTO = 
+				new SoldierToListDTO(newSoldier.getId(), list.getId(), DEFAULT_DRAW_LIST_QUARTER_YEAR);
+		
+		SoldierValidationException exception = assertThrows(SoldierValidationException.class, 
+				() -> victim.removeSoldierFromList(soldierToListDTO, list.getCreationUser().getCjm(), list.getArmy()));
+		
+		assertEquals(exception.getValidationErrors().getError(0),
+				new ValidationError(SOLDIER_ID, SOLDIER_IS_NOT_ON_THE_LIST));
 	}
 	
 	private DrawList getPersistedDrawList(int numOfSoldiers) {
