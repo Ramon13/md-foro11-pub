@@ -54,15 +54,15 @@ dependencies {
 	//e-mail
 	implementation 'org.springframework.boot:spring-boot-starter-mail'
 	
+	// Reports
+  implementation group: 'net.sf.jasperreports', name: 'jasperreports', version: '6.19.0'
+	
 	//Test
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
 	testImplementation 'org.springframework.security:spring-security-test'
   testImplementation group: 'com.h2database', name: 'h2', version: '2.1.210'
   testImplementation group: 'org.mockito', name: 'mockito-inline', version: '4.3.1'
     
-
-	
-	
 	//Cloud
 	// https://mvnrepository.com/artifact/com.amazonaws/aws-java-sdk-s3
 	//implementation group: 'com.amazonaws', name: 'aws-java-sdk-s3', version: '1.12.42'
