@@ -46,7 +46,7 @@ public abstract class AbstractReportHandler<T, D extends AbstractReportData>{
 
 	protected abstract AbstractReportValidator getReportValidator();
 	
-	protected abstract ReportHandlerType getReportHandlerType();
+	public abstract ReportHandlerType getReportHandlerType();
 	
 	public JRDataSource getDatasource(D reportData) {
 		return new JRDataSource() {

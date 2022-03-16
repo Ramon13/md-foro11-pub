@@ -6,7 +6,8 @@ import org.springframework.security.crypto.factory.PasswordEncoderFactories;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
 public class StringUtils {
-
+	public static final String EMPTY = "";
+	
 	public static boolean isEmpty(String str) {
 		if (str == null)
 			return true;
