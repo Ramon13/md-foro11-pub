@@ -213,7 +213,7 @@ public class DrawListService {
 				.orElseThrow(() -> new DrawListNotFoundException("list not found: " + listId));
 	}
 	
-	private DrawList getListOrElseThrow(Integer listId, Army army, CJM cjm) {
+	public DrawList getListOrElseThrow(Integer listId, Army army, CJM cjm) {
 		Objects.requireNonNull(listId);
 		
 		return drawListRepo.findActiveByIdAndArmyAndCjm(listId, army, cjm)

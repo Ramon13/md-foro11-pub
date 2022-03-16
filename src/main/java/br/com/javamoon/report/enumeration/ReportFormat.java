@@ -1,5 +1,7 @@
 package br.com.javamoon.report.enumeration;
 
+import java.util.Optional;
+
 public enum ReportFormat {
 	PDF("application/pdf"),
 	XML("application/xml");
@@ -14,7 +16,14 @@ public enum ReportFormat {
 		return "." + name().toLowerCase();
 	}
 	
-	public ReportFormat getDefaultReport() {
+	private static ReportFormat getDefaultReport() {
 		return PDF;
+	}
+	
+	public static ReportFormat fromString(String reportFormatStr) {
+		return Optional
+			.ofNullable(reportFormatStr)
+			.map(t -> valueOf(reportFormatStr))
+			.orElse(getDefaultReport());
 	}
 }

@@ -4,6 +4,8 @@ import java.util.List;
 
 import javax.validation.Valid;
 
+import org.springframework.http.ContentDisposition;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -28,7 +30,9 @@ import br.com.javamoon.infrastructure.web.model.PaginationFilter;
 import br.com.javamoon.mapper.DrawListDTO;
 import br.com.javamoon.mapper.SoldierDTO;
 import br.com.javamoon.mapper.SoldierToListDTO;
+import br.com.javamoon.report.model.GeneratedReport;
 import br.com.javamoon.service.DrawListService;
+import br.com.javamoon.service.ReportCreationService;
 import br.com.javamoon.service.SoldierService;
 import br.com.javamoon.util.DateUtils;
 import br.com.javamoon.util.SecurityUtils;
@@ -40,14 +44,17 @@ public class DrawListController {
 	private DrawListService drawListService;
 	private SoldierService soldierService;
 	private PaginationConfigProperties paginationConfigProperties;
+	private ReportCreationService reportCreationService;
 	
 	public DrawListController(
 			DrawListService drawListService,
 			SoldierService soldierService,
-			PaginationConfigProperties paginationConfigProperties) {
+			PaginationConfigProperties paginationConfigProperties,
+			ReportCreationService reportCreationService) {
 		this.drawListService = drawListService;
 		this.soldierService = soldierService;
 		this.paginationConfigProperties = paginationConfigProperties;
+		this.reportCreationService = reportCreationService;
 	}
 
 	@GetMapping("/list")
@@ -145,5 +152,21 @@ public class DrawListController {
 			e.printStackTrace();
 			return ResponseEntity.status(HttpStatus.UNPROCESSABLE_ENTITY).body(e.getMessage());
 		}
+	}
+	
+	@RequestMapping(method = RequestMethod.GET, path="/list/report/{listId}", produces = MediaType.APPLICATION_PDF_VALUE)
+	public ResponseEntity<byte[]> generateReport(@PathVariable("listId") Integer listId) {
+		GroupUser loggedUser = SecurityUtils.groupUser();
+		GeneratedReport generatedReport = 
+				reportCreationService.createDrawListReport(listId, loggedUser.getArmy(), loggedUser.getCjm());
+		
+		final var httpHeaders = new HttpHeaders();
+		httpHeaders.setContentDisposition(
+			ContentDisposition
+				.builder("inline")
+				.filename(generatedReport.getFileName())
+				.build());
+		
+		return new ResponseEntity<byte[]>(generatedReport.getBytes(), httpHeaders, HttpStatus.OK);
 	}
 }

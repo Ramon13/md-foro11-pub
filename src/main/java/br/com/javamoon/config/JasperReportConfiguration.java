@@ -12,6 +12,7 @@ import net.sf.jasperreports.engine.JasperReport;
 public class JasperReportConfiguration {
 
 	private static final String JASPER_FOLDER  = "/jasper-reports";
+	public static final String JASPER_IMAGES_FOLDER = JASPER_FOLDER + "/images";
 	
 	@Bean
 	public JasperReport drawListReport() {
