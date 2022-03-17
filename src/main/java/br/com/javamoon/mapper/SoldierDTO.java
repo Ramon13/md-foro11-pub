@@ -1,5 +1,6 @@
 package br.com.javamoon.mapper;
 
+import static br.com.javamoon.util.ReportConstants.SOLDIER_AVAILABLE;
 import br.com.javamoon.domain.entity.Army;
 import br.com.javamoon.domain.entity.MilitaryOrganization;
 import br.com.javamoon.domain.entity.MilitaryRank;
@@ -119,5 +120,24 @@ public class SoldierDTO{
 			return exclusions.get(exclusions.size() - 1).getMessage();
 		
 		return "";
+	}
+	
+	public String prettyPrintExclusions() {
+		StringBuilder sb = new StringBuilder();
+		for (DrawExclusionDTO exclusion : exclusions) {
+			sb.append(" - ");
+			sb.append(exclusion.getMessage());
+			sb.append(System.lineSeparator());
+		}
+		
+		return StringUtils.isEmpty(sb.toString()) ? SOLDIER_AVAILABLE : sb.toString();
+	}
+	
+	public String prettyPrintEmail() {
+		return StringUtils.isEmpty(email) ? "" : email;
+	}
+	
+	public String prettyPrintPhone() {
+		return StringUtils.isEmpty(phone) ? "" : phone;
 	}
 }

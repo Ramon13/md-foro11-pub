@@ -74,9 +74,9 @@ public class DrawListReportHandler extends AbstractReportHandler<SoldierDTO, Dra
 				case FIELD_MILITARY_ORGANIZATION: return soldier.getMilitaryOrganization().getAlias();
 				case FIELD_MILITARY_RANK: return soldier.getMilitaryRank().getAlias();
 				case FIELD_SOLDIER_NAME: return soldier.getName();
-				case FIELD_PHONE_NUMBER: return soldier.getPhone();
-				case FIELD_SOLDIER_EMAIL: return soldier.getEmail();
-				case FIELD_SOLDIER_EXCLUSION: return soldier.getExclusions().toString(); 
+				case FIELD_PHONE_NUMBER: return soldier.prettyPrintPhone();
+				case FIELD_SOLDIER_EMAIL: return soldier.prettyPrintEmail();
+				case FIELD_SOLDIER_EXCLUSION: return soldier.prettyPrintExclusions(); 
 				default: return StringUtils.EMPTY;
 			}
 		});

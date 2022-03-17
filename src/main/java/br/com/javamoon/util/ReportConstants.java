@@ -5,4 +5,5 @@ public final class ReportConstants {
 	
 	public static final String REPORT = "report";
 	public static final String DRAW_LIST_TITLE = "RELAÇÃO DE OFICIAIS DO %s TRIMESTRE DE %s";
+	public static final String SOLDIER_AVAILABLE = "Disponível";
 }
