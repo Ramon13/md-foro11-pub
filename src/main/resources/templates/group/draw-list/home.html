@@ -80,8 +80,9 @@ button#newList:hover, img.more:hover {
             <img class="more dropdown" th:src="@{/images/hmore.svg}" />
             <div class="dropdown-content"
               th:attr="data-listid=${drawList.id}">
-              <a class="removeList" href="#">Remover</a> <a
-                class="duplicateList" href="#">Duplicar</a>
+              <a class="removeList" href="#">Remover</a> 
+              <a class="duplicateList" href="#">Duplicar</a>
+              <a class="duplicateList" target="_blank" th:href="@{/gp/dw/list/report/} + ${drawList.id}">Gerar Relatório</a>
             </div>
           </div>
         </div>

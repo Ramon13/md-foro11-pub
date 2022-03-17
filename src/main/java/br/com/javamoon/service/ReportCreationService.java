@@ -18,7 +18,6 @@ import br.com.javamoon.report.handler.DrawListReportHandler;
 import br.com.javamoon.report.model.DrawListReportData;
 import br.com.javamoon.report.model.GeneratedReport;
 import br.com.javamoon.report.resolver.ReportHandlerResolver;
-import br.com.javamoon.util.ReportConstants;
 
 @Service
 public class ReportCreationService {
@@ -57,10 +56,10 @@ public class ReportCreationService {
 		var reportHandler = (DrawListReportHandler) reportHandlerResolver.resolveReportHandler(handlerType);
 		byte[] reportBytes = reportHandler.createReportBytes(reportData, reportFormat);
 		
-		return new GeneratedReport( reportBytes, reportFormat, buildFileName(handlerType, reportFormat) );
+		return new GeneratedReport( reportBytes, reportFormat, buildFileName(reportData, reportFormat) );
 	}
 	
-	public String buildFileName(ReportHandlerType reportHandlerType, ReportFormat reportFormat) {
-		return ReportConstants.REPORT + reportHandlerType.name() + reportFormat.getExtension();
+	public String buildFileName(DrawListReportData reportData, ReportFormat reportFormat) {
+		return String.format(reportData.getReportTitle() + reportFormat.getExtension());
 	}
 }

@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
+  <head>
+    <meta charset="utf-8" />
+  </head>
+  <body>
+    <div th:fragment="search-soldier" id="searchSoldierModal" class="modal">
+      <input type="hidden" id="addSoldierEndpoint" th:value="@{/gp/dw/list/add}" />
+      
+      <div class="modal-content">
+        <span class="close">&times;</span>
+        <h1>Lista Trimestral - Adição de Militares</h1>
+        <hr />
+        <div>
+          <form id="soldierSearch" method="post" th:action="@{/gp/sd/search}">
+            <input name="key" type="text" placeholder="nome ou email do militar..." autocomplete="off"/>
+            <input id="selectedQuarter" name="yearQuarter" type="hidden" th:value="${drawList.yearQuarter}"/>
+            <input id="listId" name="listId" type="hidden" th:value="${drawList.id}"/>
+            <button type="button">
+              <img th:src="@{/images/search.svg}"/>
+            </button>
+          </form>
+        </div>
+        <br />
+        <div id="searchResultList"></div>
+        <div id="newSoldierProfile">
+          <a th:href="@{/gp/sd/register/home}">Criar novo perfil de militar</a>
+        </div>
+      </div>
+      
+      <script type="text/javascript" th:src="@{/scripts/group/soldier-search.js}"></script>
+    </div>
+  </body>
+</html>

@@ -1,3 +1,16 @@
+#newSoldierProfile{
+  text-align: center;
+  margin: 20px;
+}
+
+#newSoldierProfile a{
+	text-decoration: underline;
+}
+
+#newSoldierProfile a:hover{
+	cursor: pointer;
+}
+
 div#listInfo {
     display: inline-block;
     width: 100%;

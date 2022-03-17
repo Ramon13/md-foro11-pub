@@ -27,7 +27,7 @@ function saveList() {
 
 function runSavedListSuccessTasks(responseText) {
   alert(responseText);
-  window.location = '[(@{/gp/dw/list})]';
+  window.location = listsEndpoint;
 }
 
 function runSavedListFailedTasks(responseText) {
