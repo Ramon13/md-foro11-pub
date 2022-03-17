@@ -1,11 +1,10 @@
 package br.com.javamoon.domain.entity;
 
-import static br.com.javamoon.util.EntityConstants.DEFAULT_DRAW_LIST_DESCRIPTION;
-
 import java.time.LocalDate;
 import java.util.HashSet;
 import java.util.Objects;
 import java.util.Set;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -17,6 +16,7 @@ import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.PrePersist;
 import javax.persistence.Table;
+
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
@@ -77,7 +77,6 @@ public class DrawList implements Comparable<DrawList>{
 	@PrePersist
 	private void prePersist() {
 		if (Objects.isNull(id)) {
-			description = DEFAULT_DRAW_LIST_DESCRIPTION;
 			yearQuarter = DateUtils.toQuarterFormat(LocalDate.now());
 			active = true;
 			enableForDraw = false;

@@ -88,14 +88,13 @@ button#newList:hover, img.more:hover {
         </div>
 
         <div class="list-info">
-          <span>criado em:</span> <span
-            th:text="${drawList.formattedCreationDate}"></span> <span>
-            | </span> <span>ultima modificação:</span> <span
-            th:text="${drawList.formattedUpdateDate}"></span> <br />
-          <br /> <span th:classappend="${drawList.listPhase}"
-            th:text="${drawList.listPhaseDescription}"></span>
+          <span>criado em:</span> 
+          <span th:text="${drawList.formattedCreationDate}"></span> 
+          <span> | </span> <span>ultima modificação:</span> 
+          <span th:text="${drawList.formattedUpdateDate}"></span> <br /><br /> 
+          <!-- <span th:classappend="${drawList.listPhase}" th:text="${drawList.listPhaseDescription}"></span> -->
         </div>
-        <br /> <a th:href="@{/gp/dw/list/edit/} + '' + ${drawList.id}">exibir</a>
+        <br /> <a th:href="@{/gp/dw/list/edit/} + '' + ${drawList.id}">Editar</a>
       </div>
     </div>
 

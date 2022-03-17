@@ -29,6 +29,7 @@ import br.com.javamoon.mapper.EntityMapper;
 import br.com.javamoon.mapper.SoldierDTO;
 import br.com.javamoon.mapper.SoldierToListDTO;
 import br.com.javamoon.util.DateUtils;
+import br.com.javamoon.util.ServiceConstants;
 import br.com.javamoon.validator.DrawListValidator;
 import br.com.javamoon.validator.SoldierValidator;
 
@@ -79,6 +80,7 @@ public class DrawListService {
 	
 	public DrawList create(GroupUser creationUser) {
 		DrawList drawList = new DrawList();
+		drawList.setDescription(ServiceConstants.DEFAULT_DRAW_LIST_DESCRIPTION);
 		drawList.setCreationUser(creationUser);
 		drawList.setArmy(creationUser.getArmy());
 		
@@ -137,11 +139,10 @@ public class DrawListService {
 				.map(s -> EntityMapper.fromDTOToEntity(s))
 				.collect(Collectors.toList()));
 		
-		copyOfList.setDescription("Cópia de " + drawList.getDescription());
+		copyOfList.setDescription(String.format(ServiceConstants.DEFAULT_DRAW_LIST_COPY_DESCRIPTION, drawList.getDescription()));
 		copyOfList.setYearQuarter(DateUtils.toQuarterFormat(LocalDate.now()));
 		copyOfList.setArmy(army);
 		copyOfList.setCreationUser(creationUser);
-		System.out.println(copyOfList);
 		return drawListRepo.save(copyOfList);
 	}
 	

@@ -54,8 +54,8 @@ import br.com.javamoon.exception.DrawExclusionValidationException;
 import br.com.javamoon.mapper.DrawExclusionDTO;
 import br.com.javamoon.mapper.EntityMapper;
 import br.com.javamoon.service.DrawExclusionService;
-import br.com.javamoon.service.ServiceConstants;
 import br.com.javamoon.util.DateUtils;
+import br.com.javamoon.util.ServiceConstants;
 import br.com.javamoon.util.TestDataCreator;
 import br.com.javamoon.validator.ValidationError;
 

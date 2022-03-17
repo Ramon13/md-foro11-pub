@@ -1,5 +1,15 @@
 package br.com.javamoon.service;
 
+import static br.com.javamoon.util.ServiceConstants.GENERATED_SYSYEM_SOLDIER_ALREADY_IN_LIST;
+
+import java.time.LocalDate;
+import java.util.List;
+import java.util.stream.Collectors;
+
+import javax.transaction.Transactional;
+
+import org.springframework.stereotype.Service;
+
 import br.com.javamoon.domain.draw.Draw;
 import br.com.javamoon.domain.draw_exclusion.DrawExclusion;
 import br.com.javamoon.domain.draw_exclusion.DrawExclusionRepository;
@@ -11,15 +21,8 @@ import br.com.javamoon.exception.DrawExclusionNotFoundException;
 import br.com.javamoon.mapper.DrawExclusionDTO;
 import br.com.javamoon.mapper.EntityMapper;
 import br.com.javamoon.util.DateUtils;
+import br.com.javamoon.util.ServiceConstants;
 import br.com.javamoon.validator.DrawExclusionValidator;
-
-import static br.com.javamoon.service.ServiceConstants.GENERATED_SYSYEM_SOLDIER_ALREADY_IN_LIST;
-
-import java.time.LocalDate;
-import java.util.List;
-import java.util.stream.Collectors;
-import javax.transaction.Transactional;
-import org.springframework.stereotype.Service;
 
 @Service
 public class DrawExclusionService {
