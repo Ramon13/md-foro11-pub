@@ -1,5 +1,7 @@
 package br.com.javamoon.domain.entity;
 
+import static br.com.javamoon.util.EntityConstants.DEFAULT_DRAW_LIST_DESCRIPTION;
+
 import java.time.LocalDate;
 import java.util.HashSet;
 import java.util.Objects;
@@ -75,6 +77,7 @@ public class DrawList implements Comparable<DrawList>{
 	@PrePersist
 	private void prePersist() {
 		if (Objects.isNull(id)) {
+			description = DEFAULT_DRAW_LIST_DESCRIPTION;
 			yearQuarter = DateUtils.toQuarterFormat(LocalDate.now());
 			active = true;
 			enableForDraw = false;
