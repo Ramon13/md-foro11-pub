@@ -25,13 +25,13 @@ function searchSoldier(form) {
 
 function displaySearchResult(responseText) {
   let soldiers = JSON.parse(responseText);
-  
-  let resultList = document.querySelector("div#searchResultList");
-  clearChilds(resultList);
-  setTupleContent(resultList, soldiers);
+  setResultListContent(soldiers);
 }
 
-function setTupleContent(resultList, soldiers){
+function setResultListContent(soldiers){
+  let resultList = document.querySelector("div#searchResultList");
+  clearChilds(resultList);
+  
   if (soldiers.length == 0){
     let p = document.createElement("p");
     p.textContent = "Nenhum resultado encontrado.";
@@ -39,25 +39,26 @@ function setTupleContent(resultList, soldiers){
     return;
   }
   
-  let listTuple;
-  let soldier;
   for (let i = 0; i < soldiers.length; i++) {
-      soldier = soldiers[i];
-      listTuple = cloneNode( document.querySelector("div#baseListTuple") );
+   resultList.append( getTupleContent(soldiers[i]) );
+  }
+}
+
+function getTupleContent(soldier){
+  let listTuple = cloneNode( document.querySelector("div#baseListTuple") );
       
-      listTuple.querySelector(".soldier-id").value = soldier.id;
-      listTuple.querySelector(".list-header").textContent = soldier.idInfoAsText;
-      listTuple.querySelector(".list-info").textContent = soldier.omandRankAsText;
-      listTuple.style.display = "block"; 
-      
-      setTupleExclusion(listTuple, soldier);       
+  listTuple.querySelector(".soldier-id").value = soldier.id;
+  listTuple.querySelector(".list-header").textContent = soldier.idInfoAsText;
+  listTuple.querySelector(".list-info").textContent = soldier.omandRankAsText;
+  listTuple.style.display = "block"; 
   
-      listTuple.onclick = function(){ 
-        addToServerList(listTuple, soldier.id);
-      };
-      
-      resultList.append(listTuple);
-    }
+  setTupleExclusion(listTuple, soldier);       
+
+  listTuple.onclick = function(){ 
+    addToServerList(listTuple);
+  };
+  
+  return listTuple;
 }
 
 function setTupleExclusion(listTuple, soldier){

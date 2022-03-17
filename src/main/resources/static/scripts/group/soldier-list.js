@@ -4,10 +4,17 @@ const saveListBtn = document.querySelector("button#saveList");
 saveListBtn.addEventListener("click", saveList);
 hideLoadStatus();
 
+const soldierInfoTuples = document.querySelectorAll("div.soldier-info");
+for (let i = 0; i < soldierInfoTuples.length; i++){
+  soldierInfoTuples[i].onclick = function(){
+    openProfile(this);
+  }
+}
 
 const removeSoldierBtns = document.querySelectorAll("button.remove-soldier");
 for (let i = 0; i < removeSoldierBtns.length; i++){
-  removeSoldierBtns[i].onclick = function(){
+  removeSoldierBtns[i].onclick = function(event){
+    event.stopPropagation();
     let soldierId = this.dataset.soldierid;
     removeFromServerList(soldierId);
   }
@@ -53,8 +60,9 @@ function disableSoldierInfo(errorMsg, soldierInfoDiv){
   soldierInfoDiv.classList.add("disable-div");
 }
 
-function addToServerList(listTuple, soldierId){
+function addToServerList(listTuple){
   let endpoint = addSoldierEndpoint;
+  let soldierId = getSoldierId(listTuple); 
   
   showAddingSoldierSnackbar();
   let soldierListDTO = getSoldierToListDTOObj(soldierId);
@@ -134,4 +142,14 @@ function appendToHTMLList(listTuple){
 function showRemoveBtn(removeBtn, soldierId){  
   removeBtn.onclick = function(){ removeFromServerList(soldierId) }
   removeBtn.style.display = "block";  
+}
+
+function openProfile(listTuple){
+  historyPush();
+  let soldierId = getSoldierId(listTuple);
+  location.href = soldierProfileEndpoint + "/" + soldierId;
+}
+
+function getSoldierId(listTuple){
+  return listTuple.querySelectorAll(".soldier-id")[0].value;
 }

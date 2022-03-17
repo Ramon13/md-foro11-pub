@@ -128,10 +128,6 @@ img.remove-exclusion {
     <div id="exclusions">
       <h2>Adicionar Impedimentos</h2>
       
-      <div class="no-exclusions" th:if="${#lists.isEmpty(exclusions)}">
-        <span> Este usuário não possui impedimentos registrados </span>
-      </div>
-      
       <div>
         <form method="post" th:action="@{/gp/sd/exclusion/save}" th:object="${exclusionDTO}">
           <input type="hidden" name="soldier.id" th:value="${soldier.id}">
@@ -164,6 +160,10 @@ img.remove-exclusion {
             </button>          
           </div>
         </form>
+      </div>
+      
+      <div class="no-exclusions" th:if="${#lists.isEmpty(exclusions)}">
+        <span> Este usuário não possui impedimentos registrados </span>
       </div>
       
       <br/><br/>
