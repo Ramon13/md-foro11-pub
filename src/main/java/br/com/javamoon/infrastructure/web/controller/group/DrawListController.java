@@ -1,5 +1,8 @@
 package br.com.javamoon.infrastructure.web.controller.group;
 
+import static br.com.javamoon.infrastructure.web.controller.ControllerHelper.getArmy;
+import static br.com.javamoon.infrastructure.web.controller.ControllerHelper.getCJM;
+
 import java.util.List;
 
 import javax.validation.Valid;
@@ -22,12 +25,11 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.ModelAndView;
 
 import br.com.javamoon.config.properties.PaginationConfigProperties;
-import br.com.javamoon.domain.cjm_user.CJM;
-import br.com.javamoon.domain.entity.Army;
 import br.com.javamoon.domain.entity.GroupUser;
 import br.com.javamoon.exception.DrawListValidationException;
 import br.com.javamoon.infrastructure.web.model.PaginationFilter;
 import br.com.javamoon.mapper.DrawListDTO;
+import br.com.javamoon.mapper.EntityMapper;
 import br.com.javamoon.mapper.SoldierDTO;
 import br.com.javamoon.mapper.SoldierToListDTO;
 import br.com.javamoon.report.model.GeneratedReport;
@@ -59,9 +61,7 @@ public class DrawListController {
 
 	@GetMapping("/list")
 	public String listAll(Model model) {
-		GroupUser loggedUser = SecurityUtils.groupUser();
-		model.addAttribute("drawLists", drawListService.list(loggedUser.getArmy(), loggedUser.getCjm()));
-		
+		model.addAttribute( "drawLists", drawListService.list(getArmy(), getCJM(), null) );
 		return "group/draw-list/home";
 	}
 	
@@ -97,20 +97,21 @@ public class DrawListController {
 			@ModelAttribute("paginationFilter") PaginationFilter paginationFilter,
 			@PathVariable Integer listId,
 			Model model) {
-		Army army = SecurityUtils.groupUser().getArmy();
-		CJM cjm = SecurityUtils.groupUser().getCjm();
 
-		DrawListDTO drawList = drawListService.getList(listId, army, cjm);
-		model.addAttribute("drawList", drawList);
+		DrawListDTO drawList = drawListService.getList(listId, getArmy(), getCJM());
 		
-		List<SoldierDTO> soldiers = soldierService
-				.listByDrawList(drawList.getId(), paginationFilter.getPage(), paginationFilter.getKey());
-		model.addAttribute("soldiers", soldiers);
+		List<SoldierDTO> soldiers = soldierService.list( 
+			EntityMapper.fromDTOToEntity(drawList),
+			paginationFilter.getPage(),
+			paginationFilter.getKey() 
+		);
 		
-		paginationFilter.setTotal(soldierService.count(army, cjm, paginationFilter.getKey(), drawList.getId()));
+		paginationFilter.setTotal(soldierService.count(getArmy(), getCJM(), paginationFilter.getKey(), drawList.getId()));
 		paginationFilter.setMaxLimit(paginationConfigProperties.getMaxLimit());
-		model.addAttribute("paginationFilter", paginationFilter);
 	
+		model.addAttribute("drawList", drawList);
+		model.addAttribute("soldiers", soldiers);
+		model.addAttribute("paginationFilter", paginationFilter);
 		model.addAttribute("quarters", DateUtils.getSelectableQuarters());		
 		return "group/draw-list/soldier-list";
 	}

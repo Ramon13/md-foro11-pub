@@ -1,5 +1,8 @@
 package br.com.javamoon.infrastructure.web.model;
 
+import br.com.javamoon.domain.cjm_user.CJM;
+import br.com.javamoon.domain.entity.Army;
+import br.com.javamoon.service.SoldierService;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
@@ -26,5 +29,9 @@ public class PaginationFilter {
 	
 	public String getPageCount() {
 		return String.format("%d - %d de %d", getFirstResult(), getLastResult(), total);
+	}
+	
+	public void setTotal(SoldierService soldierService, Army army, CJM cjm, Integer listId) {
+		soldierService.count( army, cjm, key, listId );
 	}
 }

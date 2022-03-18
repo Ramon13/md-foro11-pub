@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
+  <head>
+    <meta charset="utf-8">
+    <link th:href="@{/styles/dropdown.css}" type="text/css" rel="stylesheet" />
+  </head>
+  <body>
+    <div th:fragment="app-dropdown" class="dropdown" th:if="${session.listScope}">
+      <img class="more dropdown" th:src="@{/images/hmore.svg}" />
+      <div class="dropdown-content"
+        th:attr="data-listid=${drawList.id}">
+        <a class="duplicateList" target="_blank" th:href="@{/gp/dw/list/report/} + ${drawList.id}">Gerar Relatório</a>
+      </div>
+      
+      <script type="text/javascript" th:src="@{/scripts/dropdown.js}"></script>
+    </div>
+  </body>
+</html>

@@ -120,7 +120,7 @@ public interface SoldierRepository extends JpaRepository<Soldier, Integer>{
 		+ "WHERE dl.id = :drawListId "
 		+ "AND s.active = true "
 		+ "AND ( :key IS NULL OR s.name like %:key% OR s.email like %:key% ) "
-		+ "AND s.army.id = :armyId "
+		+ "AND ( :armyId IS NULL OR s.army.id = :armyId ) "
 		+ "AND s.cjm.id = :cjmId "
 	)
 	Integer countActiveByArmyAndCjmContaining(

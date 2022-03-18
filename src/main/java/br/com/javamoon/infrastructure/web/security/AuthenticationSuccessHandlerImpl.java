@@ -77,6 +77,7 @@ public class AuthenticationSuccessHandlerImpl implements AuthenticationSuccessHa
 	 * Session parameters used to display view components
 	 */
 	private void setSessionScopes(HttpSession session, List<String> roles) {
+		System.out.println(roles);
 	    if (roles.contains(GROUP_MANAGE_ACCOUNT_SCOPE.toString())
 	    		|| roles.contains(CJM_MANAGE_ACCOUNT_SCOPE.toString()))
 	        session.setAttribute("accountScope", true);

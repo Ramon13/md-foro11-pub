@@ -17,6 +17,9 @@ public interface GroupUserRepository extends JpaRepository<GroupUser, Integer>{
 
 	@Query("FROM GroupUser gu WHERE gu.active = true AND gu.username = :username")
 	public Optional<User> findActiveByUsername(@Param("username") String username);
+	
+	@Query("FROM GroupUser gu WHERE gu.username = :username")
+	public Optional<User> findByUsername(@Param("username") String username);
 
 	public Optional<GroupUser> findByEmail(String email);
 

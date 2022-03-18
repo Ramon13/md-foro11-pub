@@ -37,7 +37,7 @@ public class GroupUserAccountController {
     @GetMapping("/register/home")
     public String registerHome(Model model) {
         model.addAttribute("user", new GroupUserDTO());
-        return "group/account_mngmt/gpuser-register";
+        return "group/account/register";
     }
     
     @PostMapping("/register/save")
@@ -53,9 +53,8 @@ public class GroupUserAccountController {
                 ValidationUtils.rejectValues(errors, e.getValidationErrors());
             }
         }
-        
         model.addAttribute("user", user);
-        return "group/account_mngmt/gpuser-register";
+        return "group/account/register";
     }
     
     @GetMapping(path="/list/home")
@@ -68,7 +67,7 @@ public class GroupUserAccountController {
     			.collect(Collectors.toList());
     	
     	model.addAttribute("accounts", accountsDTO);
-    	return "group/account_mngmt/list-accounts";
+    	return "group/account/list";
     }
     
     @PostMapping(path="/delete/{accountID}")

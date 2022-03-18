@@ -8,23 +8,20 @@ import java.util.stream.Collectors;
 
 import javax.transaction.Transactional;
 
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
+import br.com.javamoon.config.properties.PaginationConfigProperties;
 import br.com.javamoon.domain.cjm_user.CJM;
 import br.com.javamoon.domain.draw_exclusion.DrawExclusion;
 import br.com.javamoon.domain.entity.Army;
+import br.com.javamoon.domain.entity.DrawList;
 import br.com.javamoon.domain.entity.GroupUser;
 import br.com.javamoon.domain.entity.Soldier;
 import br.com.javamoon.domain.repository.DrawRepository;
 import br.com.javamoon.domain.repository.SoldierRepository;
-import br.com.javamoon.domain.repository.SoldierRepositoryImpl;
 import br.com.javamoon.exception.SoldierNotFoundException;
 import br.com.javamoon.exception.SoldierValidationException;
-import br.com.javamoon.infrastructure.web.model.PaginationSearchFilter;
-import br.com.javamoon.infrastructure.web.model.SoldiersPagination;
 import br.com.javamoon.mapper.EntityMapper;
 import br.com.javamoon.mapper.SoldierDTO;
 import br.com.javamoon.util.PageableUtils;
@@ -32,27 +29,22 @@ import br.com.javamoon.validator.SoldierValidator;
 
 @Service
 public class SoldierService{
-
-	@Autowired
 	private SoldierRepository soldierRepository;
-	
-	@Autowired
-	private DrawRepository drawRepo;
-	
-	private SoldierValidator soldierValidator;
-	private SoldierRepositoryImpl soldierRepositoryImpl;
+	private DrawRepository drawRepository;
 	private DrawExclusionService drawExclusionService;
-	private final int maxLImit;
+	private SoldierValidator soldierValidator;
+	private PaginationConfigProperties paginationProperties;
 	
 	public SoldierService(
-			SoldierValidator soldierValidator,
-			SoldierRepositoryImpl soldierRepositoryImpl,
+			SoldierRepository soldierRepository,
+			DrawRepository drawRepository,
 			DrawExclusionService drawExclusionService,
-			@Value("${md-foro11.drawList.defaultProperties.soldier.maxLimit}") int maxLimit) {
-		this.maxLImit = maxLimit;
-		this.soldierValidator = soldierValidator;
-		this.soldierRepositoryImpl = soldierRepositoryImpl;
+			SoldierValidator soldierValidator,
+			PaginationConfigProperties paginationProperties) {
+		this.soldierRepository = soldierRepository;
 		this.drawExclusionService = drawExclusionService;
+		this.soldierValidator = soldierValidator;
+		this.paginationProperties = paginationProperties;
 	}
 
 	public SoldierDTO getSoldierDTO(Integer id, Army army, CJM cjm) {
@@ -118,20 +110,12 @@ public class SoldierService{
 				.orElseThrow(() -> new SoldierNotFoundException("soldier not found: " + soldierId));
 	}
 	
-	@Deprecated
-	public SoldiersPagination listPagination(Army army, CJM cjm, PaginationSearchFilter filter) {
-		return new SoldiersPagination(
-			soldierRepositoryImpl.findActiveByArmyAndCJMPaginable(army, cjm, filter),
-			soldierRepositoryImpl.countActiveByArmyAndCJMPaginable(army, cjm, filter)
-		);	
-	}
-	
 	public Integer count(Army army, CJM cjm, String key, Integer listId) {
 		return soldierRepository.countActiveByArmyAndCjmContaining(listId, key, army.getId(), cjm.getId());
 	}
 	
 	public List<SoldierDTO> listAll(Army army, CJM cjm){
-		Pageable pageable = PageableUtils.newPageable(0, null, maxLImit, "id", Soldier.SORTABLE_FIELDS);
+		Pageable pageable = PageableUtils.newPageable(0, null, paginationProperties.getMaxLimit(), "id", Soldier.SORTABLE_FIELDS);
 		
 		return soldierRepository.findAllActiveByArmyAndCjm(army, cjm, pageable)
 				.stream()
@@ -143,8 +127,8 @@ public class SoldierService{
 		return soldierRepository.findByArmyAndCjmAndIdIn(army, cjm, soldierIds);
 	}
 	
-	public List<SoldierDTO> listByDrawList(Integer listId, int page, String key){
-		return soldierRepository.findAllActiveByDrawList(listId, key, getRankWeightAscPageable(page))
+	public List<SoldierDTO> list(DrawList list, int page, String key){
+		return soldierRepository.findAllActiveByDrawList(list.getId(), key, getRankWeightAscPageable(page))
 				.stream()
 				.map(r -> EntityMapper.fromEntityToDTO(r))
 				.collect(Collectors.toList());
@@ -171,7 +155,7 @@ public class SoldierService{
 	}
 	
 	public int countDrawBySoldier(Soldier soldier) {
-		return drawRepo.countDrawBySoldier(soldier.getId());
+		return drawRepository.countDrawBySoldier(soldier.getId());
 	}
 	
 	public void generateExclusionIfSoldierAlreadyInList(List<SoldierDTO> soldiers, Integer listId) {
@@ -213,6 +197,12 @@ public class SoldierService{
 	}
 	
 	private Pageable getRankWeightAscPageable(int page) {
-		return PageableUtils.newPageable(page, null, maxLImit, "militaryRank.rankWeight", Soldier.SORTABLE_FIELDS);
+		return PageableUtils.newPageable(
+			page,
+			null,
+			paginationProperties.getMaxLimit(),
+			"militaryRank.rankWeight",
+			Soldier.SORTABLE_FIELDS
+		);
 	}
 }

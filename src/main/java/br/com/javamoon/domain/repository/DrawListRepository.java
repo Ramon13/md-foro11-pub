@@ -23,7 +23,11 @@ public interface DrawListRepository extends JpaRepository<DrawList, Integer>{
 	
 	List<DrawList> findByArmyOrderByIdDesc(Army army);
 	
-	@Query("FROM DrawList dl WHERE dl.active = true AND dl.yearQuarter = :yearQuarter AND dl.army = :army AND dl.creationUser.cjm = :cjm")
+	@Query("FROM DrawList dl "
+		+ "WHERE dl.active = true "
+		+ "AND ( :yearQuarter IS NULL OR dl.yearQuarter = :yearQuarter ) "
+		+ "AND ( :army IS NULL OR dl.army = :army ) "
+		+ "AND dl.creationUser.cjm = :cjm")
 	List<DrawList> findAllActiveByQuarterAndArmyAndCJM(
 			@Param("yearQuarter") String yearQuarter,
 			@Param("army") Army army,

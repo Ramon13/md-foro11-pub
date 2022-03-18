@@ -25,8 +25,6 @@ public class UserDTO{
 	@Email(message = "O e-mail é inválido")
 	private String email;
 	
-	@NotBlank(message = "A senha deve conter no mínimo 8 caracteres")
-	@Size(min = 8, max = 32, message = "A senha deve conter entre 8 e 32 caracteres")
 	private String password;
 	
 	private String recoveryToken;

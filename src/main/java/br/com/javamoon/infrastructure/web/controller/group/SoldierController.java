@@ -26,8 +26,6 @@ import br.com.javamoon.domain.entity.GroupUser;
 import br.com.javamoon.domain.entity.Soldier;
 import br.com.javamoon.exception.SoldierValidationException;
 import br.com.javamoon.infrastructure.web.controller.ControllerHelper;
-import br.com.javamoon.infrastructure.web.model.PaginationSearchFilter;
-import br.com.javamoon.infrastructure.web.model.SoldiersPagination;
 import br.com.javamoon.mapper.DrawExclusionDTO;
 import br.com.javamoon.mapper.EntityMapper;
 import br.com.javamoon.mapper.SoldierDTO;
@@ -73,7 +71,7 @@ public class SoldierController {
 				Objects.isNull(soldierId) ? new Soldier() : soldierService.getSoldier(soldierId, army, cjm));
 		
 		ControllerHelper.setEditMode(model, Objects.nonNull(soldierId));
-		return "group/soldier-register";
+		return "group/soldier/register";
 	}
 	
 	@PostMapping("/search")
@@ -122,18 +120,6 @@ public class SoldierController {
 		return "group/soldier-register";
 	}
 	
-	@GetMapping("/list/home")
-	public String list(Model model, PaginationSearchFilter filter) {
-		GroupUser loggedUser = SecurityUtils.groupUser();
-		
-		SoldiersPagination soldiersPagination = soldierService.listPagination(loggedUser.getArmy(), loggedUser.getCjm(), filter);
-		filter.setTotal(soldiersPagination.getTotal().intValue());
-		
-		model.addAttribute("soldiersPagination", soldiersPagination);
-		model.addAttribute("filter", filter);
-		return "group/soldier/list";
-	}
-	
 	@PostMapping("/register/delete/{soldierId}")
 	public String delete(
 			@PathVariable("soldierId") Integer soldierId,
@@ -141,7 +127,7 @@ public class SoldierController {
 		GroupUser loggedUser = SecurityUtils.groupUser();	
 		soldierService.delete(soldierId, loggedUser.getArmy(), loggedUser.getCjm());
 		
-		return "redirect:/gp/sd/list/home";
+		return "redirect:/gp/dw/list";
 	}
 	
 	@GetMapping("/profile/home/{soldierId}")

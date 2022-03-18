@@ -29,10 +29,8 @@ public class UserAccountValidator {
 	public void validateCreateGroupUserAccount(UserDTO userDTO){
         ValidationErrors validationErrors = new ValidationErrors();
         
-        if (validatePassword(userDTO.getPassword(), validationErrors)) {
-        	validateDuplicatedGroupUsername(userDTO.getUsername(), validationErrors);
-        	validateDuplicatedGroupEmail(userDTO.getEmail(), validationErrors);
-        }
+        validateDuplicatedGroupUsername(userDTO.getUsername(), validationErrors);
+    	validateDuplicatedGroupEmail(userDTO.getEmail(), validationErrors);
         
         if (validationErrors.hasErrors())
             throw new AccountValidationException(validationErrors); 
@@ -66,7 +64,7 @@ public class UserAccountValidator {
     }
     
     private void validateDuplicatedGroupUsername(String username, ValidationErrors validationErrors) {
-        if (groupUserRepository.findActiveByUsername(username).isPresent())
+        if (groupUserRepository.findByUsername(username).isPresent())
             validationErrors.add(ACCOUNT_USERNAME, ACCOUNT_USERNAME_ALREADY_EXISTS);
     }
     

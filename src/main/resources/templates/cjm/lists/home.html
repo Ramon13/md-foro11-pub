@@ -47,18 +47,19 @@ div .draw-list {
         <span th:text="${listByQuarter.formattedQuarterYear}"></span>
       </div>
 
-      <div class="draw-list"
-        th:each="drawListDTO : ${listByQuarter.lists}">
+      <div class="draw-list" th:each="drawListDTO : ${listByQuarter.lists}">
+        <div th:replace="fragments/dropdown :: app-dropdown"></div>
+
         <div class="list-header">
           <span th:text="${drawListDTO.prettyPrintListTitle()}"></span>
         </div>
-
         <div class="list-info">
-          <span th:text="${drawListDTO.army.name}"></span><br /> <span
-            th:text="${drawListDTO.prettyPrintListInfo()}"></span>
+          <span th:text="${drawListDTO.army.name}"></span><br /> 
+          <span th:text="${drawListDTO.prettyPrintListInfo()}"></span>
         </div>
-        <br /> <a
-          th:href="@{/cjm/dw/lists/list/} + '' + ${drawListDTO.id}">exibir</a>
+        <div>
+          <a th:href="@{/cjm/dw/lists/list/} + '' + ${drawListDTO.id}">exibir</a>
+        </div>
       </div>
     </div>
 

@@ -64,18 +64,10 @@ public class DrawListService {
 		return EntityMapper.fromEntityToDTO(getListOrElseThrow(id, cjm));
 	}
 	
-	public List<DrawListDTO> list(Army army, CJM cjm){
-		return toDrawListDTO(drawListRepo.findAllActiveByArmyAndCjm(army, cjm).get());
-	}
-	
 	public List<DrawListDTO> list(Army army, CJM cjm, String yearQuarter){
 		return toDrawListDTO(
 				drawListRepo.findAllActiveByQuarterAndArmyAndCJM(
 						yearQuarter, army, cjm, PageRequest.of(0, maxLists, Direction.DESC, "id")));
-	}
-	
-	public List<DrawList> listByCjm(CJM cjm){
-		return drawListRepo.findAllActiveByCjm(cjm.getId()).get();
 	}
 	
 	public DrawList create(GroupUser creationUser) {
@@ -146,15 +138,14 @@ public class DrawListService {
 		return drawListRepo.save(copyOfList);
 	}
 	
-	public List<DrawListsDTO> getListsByQuarter(List<DrawList> lists) {
-		Map<String, List<DrawList>> drawListsMap = mapListByQuarter(lists);
+	public List<DrawListsDTO> getListsByQuarter(List<DrawListDTO> lists) {
+		Map<String, List<DrawListDTO>> drawListsMap = mapListByQuarter(lists);
 		return drawListsMap.keySet()
 			.stream()
 			.map(key -> {
 				List<DrawListDTO> listsByQuarter = drawListsMap.get(key)
 				.stream()
 				.sorted(Collections.reverseOrder())
-				.map(list -> EntityMapper.fromEntityToDTO(list))
 				.collect(Collectors.toList());
 				
 				return new DrawListsDTO(key, listsByQuarter);
@@ -190,15 +181,15 @@ public class DrawListService {
 		drawList.getSoldiers().remove(soldier);
 	}
 	
-	private Map<String, List<DrawList>> mapListByQuarter(List<DrawList> lists){
-		Map<String, List<DrawList>> quarterLists = new TreeMap<>(Collections.reverseOrder());
+	private Map<String, List<DrawListDTO>> mapListByQuarter(List<DrawListDTO> lists){
+		Map<String, List<DrawListDTO>> quarterLists = new TreeMap<>(Collections.reverseOrder());
 		
-		List<DrawList> list; 
-		for (DrawList drawList : lists) {
+		List<DrawListDTO> list; 
+		for (DrawListDTO drawList : lists) {
 			list = quarterLists.get(drawList.getYearQuarter());
 			
 			if (Objects.isNull(list))
-				list = new ArrayList<DrawList>();
+				list = new ArrayList<DrawListDTO>();
 			
 			list.add(drawList);
 			quarterLists.put(drawList.getYearQuarter(), list);

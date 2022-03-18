@@ -5,6 +5,7 @@ import static br.com.javamoon.mapper.MapperConstants.EDIT_PHASE_DESCRIPTION;
 import static br.com.javamoon.mapper.MapperConstants.READY_PHASE;
 import static br.com.javamoon.mapper.MapperConstants.READY_PHASE_DESCRIPTION;
 import br.com.javamoon.domain.entity.Army;
+import br.com.javamoon.domain.entity.DrawList;
 import br.com.javamoon.domain.entity.GroupUser;
 import br.com.javamoon.domain.entity.Soldier;
 import br.com.javamoon.util.DateUtils;
@@ -21,7 +22,7 @@ import lombok.Setter;
 
 @Getter
 @Setter
-public class DrawListDTO {
+public class DrawListDTO implements Comparable<DrawListDTO> {
 
 	private Integer id;
 
@@ -83,5 +84,15 @@ public class DrawListDTO {
 				getFormattedCreationDate(),
 				creationUser.getUsername(),
 				getFormattedUpdateDate());
+	}
+
+	@Override
+	public int compareTo(DrawListDTO o) {
+		if (this.getId() > o.getId())
+			return 1;
+		else if (this.getId() < o.getId())
+			return -1;
+		
+		return 0;
 	}
 }

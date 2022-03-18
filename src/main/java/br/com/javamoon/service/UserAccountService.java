@@ -31,6 +31,7 @@ import org.springframework.stereotype.Service;
 public class UserAccountService {
 
 	public static final Integer DEFAULT_CJM_USER_PERMISSION_LEVEL = 1;
+	private static final Integer GENERATED_PASSWORD_LENGTH = 10;
 	private final List<String> defaultRoles = List.of( GROUP_USER.toString(), GROUP_EDIT_LIST_SCOPE.toString());
 	
     private UserAccountValidator userAccountValidator;
@@ -54,14 +55,18 @@ public class UserAccountService {
 	@Transactional
     public GroupUserDTO createGroupUserAccount(GroupUserDTO userDTO, Army army, CJM cjm) throws AccountValidationException {
         userAccountValidator.validateCreateGroupUserAccount(userDTO);
+        String randomPass = RandomStringUtils.random(GENERATED_PASSWORD_LENGTH, true, true);
         
         GroupUser user = EntityMapper.fromDTOToEntity(userDTO);
         user.setPermissionLevel(Role.calcPermissionLevel(defaultRoles));
         user.setArmy(army);
         user.setCjm(cjm);
+        user.setPassword(randomPass);
         user.encryptPassword();
         
         userRepository.save(user);
+        emailSender.send( emailInfoBuilder.getGeneratedPasswordEmailInfo(randomPass, userDTO.getEmail()) );
+        
         return EntityMapper.fromEntityToDTO(user);
     }
     

@@ -32,7 +32,7 @@ import lombok.ToString;
 @EqualsAndHashCode(onlyExplicitlyIncluded = true)
 @Entity
 @Table(name = "DRAW_LIST")
-public class DrawList implements Comparable<DrawList>{
+public class DrawList{
 
 	@EqualsAndHashCode.Include
 	@Id
@@ -81,15 +81,5 @@ public class DrawList implements Comparable<DrawList>{
 			active = true;
 			enableForDraw = false;
 		}
-	}
-
-	@Override
-	public int compareTo(DrawList o) {
-		if (this.getId() > o.getId())
-			return 1;
-		else if (this.getId() < o.getId())
-			return -1;
-		
-		return 0;
 	}
 }

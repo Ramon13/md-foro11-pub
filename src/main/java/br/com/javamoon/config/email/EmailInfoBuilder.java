@@ -9,11 +9,14 @@ import br.com.javamoon.config.email.model.EmailInfo;
 
 @Component
 public class EmailInfoBuilder {
-
+	private final String DEFAULT_PASSWORD_SENDER = "no-reply@srvforo11.com";
+	
 	private final String FORGOT_PASSWORD_SUBJECT = "Recuperação de senha";
-	private final String FORGOT_PASSWORD_SENDER = "no-reply@srvforo11.com";
 	private final String FORGOT_PASSWORD_HTML_TEMPLATE = "email/password-recovery";
 	private final String FORGOT_PASSWORD_RECOVERY_ENDPOINT = "/credentials/forgot-password/new";
+	
+	private final String GENERATED_PASSWORD_SUBJECT = "Acesso cadastrado com sucesso!";
+	private final String GENERATED_PASSWORD_HTML_TEMPLATE = "email/password-generated";
 	
 	@Value("${md-foro11.server.dns}")
 	private String SERVER_DNS;
@@ -27,11 +30,21 @@ public class EmailInfoBuilder {
 	
 	public EmailInfo getRedefinePasswordEmailInfo(String username, String email, String recoveryToken) {
 		return createEmailInfo(
-			FORGOT_PASSWORD_SENDER,
+			DEFAULT_PASSWORD_SENDER,
 			email,
 			FORGOT_PASSWORD_SUBJECT,
 			FORGOT_PASSWORD_HTML_TEMPLATE,
 			Map.of("recoveryAddress", getRecoverAddress(username, recoveryToken))
+		);
+	}
+	
+	public EmailInfo getGeneratedPasswordEmailInfo(String generatedPassword, String emailTo) {
+		return createEmailInfo(
+			DEFAULT_PASSWORD_SENDER,
+			emailTo,
+			GENERATED_PASSWORD_SUBJECT,
+			GENERATED_PASSWORD_HTML_TEMPLATE,
+			Map.of("generatedPassword", generatedPassword)
 		);
 	}
 	

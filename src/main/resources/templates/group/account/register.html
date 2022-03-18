@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+  xmlns:th="http://www.thymeleaf.org" layout:decorate="~{group/layout}">
+
+<style layout:fragment="style">
+form {
+	width: 40%;
+}
+
+button#createUser img {
+	width: 20px;
+}
+
+button#back{
+    float: left;
+}
+
+button#createUser{
+    float: right;
+}
+</style>
+
+<body>
+  <div layout:fragment="content" class="centered-page">
+    <h1>Novo acesso pessoal de usuário</h1>
+    <hr />
+
+    <div th:if="${successMsg}" class="successMsg">
+      <span th:text="${successMsg}"></span>
+    </div>
+
+    <form id='newUserForm' method="post" th:action="@{/gp/accounts/register/save}" th:object="${user}">
+      <div>
+        <div class="form-step">
+          <div class="input-label">
+            <label for="username-input">Nome de usuário</label> <br /> <span
+              class="label-desc">ex: nomesobrenome, rafaelcunha,
+              rodrigocosta</span>
+          </div>
+          <div th:if="${#fields.hasErrors('username')}">
+            <span class="error" th:errors="*{username}"></span>
+          </div>
+          <div>
+            <input id="username-input" type="text"
+              th:field="*{username}"
+              th:classappend="${#fields.hasErrors('username')} ? 'error' : ''" />
+          </div>
+        </div>
+
+        <div class="form-step">
+          <div class="input-label">
+            <label for="email-input">Email</label>
+          </div>
+          <div th:if="${#fields.hasErrors('email')}">
+            <span class="error" th:errors="*{email}"></span>
+          </div>
+          <div>
+            <input id="email-input" type="text" th:field="*{email}" />
+          </div>
+        </div>
+      
+        <div>
+          <button type="submit" id="createUser" class="app-green-btn">
+            <span>Salvar</span>
+          </button>
+        </div>
+      </div>
+    </form>
+  </div>
+</body>
+</html>
