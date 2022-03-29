@@ -38,13 +38,17 @@ public class EmailInfoBuilder {
 		);
 	}
 	
-	public EmailInfo getGeneratedPasswordEmailInfo(String generatedPassword, String emailTo) {
+	public EmailInfo getGeneratedPasswordEmailInfo(String username, String generatedPassword, String emailTo) {
 		return createEmailInfo(
 			DEFAULT_PASSWORD_SENDER,
 			emailTo,
 			GENERATED_PASSWORD_SUBJECT,
 			GENERATED_PASSWORD_HTML_TEMPLATE,
-			Map.of("generatedPassword", generatedPassword, "appEndpoint", getBaseApplicationEndpoint())
+			Map.of(
+				"username", username,
+				"generatedPassword", generatedPassword,
+				"appEndpoint", getBaseApplicationEndpoint()
+			)
 		);
 	}
 	

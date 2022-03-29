@@ -67,7 +67,11 @@ public class UserAccountService {
         user.encryptPassword();
         
         userRepository.save(user);
-        emailSender.send( emailInfoBuilder.getGeneratedPasswordEmailInfo(randomPass, userDTO.getEmail()) );
+        emailSender.send( 
+    		emailInfoBuilder.getGeneratedPasswordEmailInfo(
+        		user.getUsername(), randomPass, userDTO.getEmail()
+    		) 
+		);
         
         return EntityMapper.fromEntityToDTO(user);
     }
@@ -85,7 +89,11 @@ public class UserAccountService {
         user.encryptPassword();
     	
     	userRepository.save(user);
-    	emailSender.send( emailInfoBuilder.getGeneratedPasswordEmailInfo(randomPass, userDTO.getEmail()) );
+    	emailSender.send(
+			emailInfoBuilder.getGeneratedPasswordEmailInfo(
+				user.getUsername(), randomPass, userDTO.getEmail()
+			) 
+		);
     	
     	return EntityMapper.fromEntityToDTO(user);
     }
