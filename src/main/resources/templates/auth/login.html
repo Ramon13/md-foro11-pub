@@ -1,103 +1,57 @@
 <!-- TODO test recaptchav3 on localhost -->
 <!DOCTYPE html>
-<html xmlns="http://www.w3.org/1999/xhtml"
-  xmlns:th="http://www.thymeleaf.org" layout:decorate="~{auth/layout}">
-  <style layout:fragment="style">
-  fieldset {
-  	margin: 64px auto;
-  	width: 400px;
-  }
-  
-  form {
-  	text-align: center;
-  	width: 50%;
-  }
-  
-  button.login-btn {
-  	background-color: #1A88FF;
-  	padding: 5px;
-  	color: #FFFFFF;
-  	border-radius: 4px;
-  	display: inline-flex;
-  }
-  
-  button.login-btn span {
-  	display: block;
-  }
-  
-  button.login-btn img {
-  	width: 20px;
-  }
-  
-  a {
-  	font-size: 12px;
-  	color: #000;
-  }
-  
-  span#sysVersion {
-  	font-family: 'Roboto';
-  	font-size: 10px;
-  	float: right;
-  	color: gray;
-  }
-  
-  body{
-      width: 50%;
-  }
-  </style>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org" layout:decorate="~{auth/layout}">
+  <head>
+    <link type="text/css" rel="stylesheet" th:href="@{/styles/auth/login.css}"></link>
+    <script th:if="${@environment.getActiveProfiles()[0] eq 'prod'}" src="https://www.google.com/recaptcha/api.js"></script>
+  </head>
   <body>
-    <script layout:fragment="head-script" th:if="${@environment.getActiveProfiles()[0] eq 'prod'}" 
-      src="https://www.google.com/recaptcha/api.js"></script>
     <div layout:fragment="content">
       <input type="hidden" id="redefinedPass" th:if="${redefinedPass}"/>
       
       <div>
         <fieldset>
           <legend>Entrar no sistema</legend>
+          
           <form id="loginForm" method="POST" th:action="@{/login}">
             <div class="error" th:if="${msg != null}">
               <span style="border: none !important;" th:text="${msg}"></span>
             </div>
-            <label for="username">Usuário</label> 
-            <br /> 
-            <input name="username" autocomplete="username" type="text" class="app-txtinput" /> 
             
-            <br /> <br /> 
-            <label for="password">Senha</label> <br /> 
-            <input name="password" autocomplete="password" type="password" class="app-txtinput" /> 
+            <div>
+              <p>Usuário</p> 
+              <input name="username" autocomplete="username" type="text" class="app-txtinput" />
+            </div>
+             
+            <div> 
+              <p>Senha</p> 
+              <input name="password" autocomplete="password" type="password" class="app-txtinput" /> 
+            </div>
             
-            <br /><br /><br />
+            <br />
             
-            <button id="loginBtn" class="login-btn g-recaptcha" data-sitekey="6LdGL3caAAAAALkTW_IF10N1e3B68ASrAOiECT6Y" data-callback='onSubmit'>
-              <span>Entrar</span> <img id="loadCircle" th:src="@{/images/load-circle.gif}" alt="carregando..." />
-            </button>
-            <br /> <br /> 
-            
-            <a th:href="@{/public/forgot-password}">Esqueci minha senha</a>
-             <br />
-            <a th:href="@{/public/forgot-password}">Fale conosco</a> 
-            <br /> <br /> <br />
-            
-            <span id="sysVersion">Versão: 1.0-release</span>
+            <div>
+              <button id="loginBtn" class="login-btn g-recaptcha app-green-btn" 
+                data-sitekey="6LdGL3caAAAAALkTW_IF10N1e3B68ASrAOiECT6Y" data-callback='onSubmit'>
+                <span>Entrar</span> 
+                <img id="loadCircle" th:src="@{/images/load-circle.gif}" alt="carregando..." />
+              </button>
+              
+              <br /> <br /> 
+              
+              <a th:href="@{/public/forgot-password}">Esqueci minha senha</a>
+              
+              <br /> 
+              
+              <a th:href="@{/public/contact}">Fale conosco</a>
+            </div>
           </form>
+          
+            <p id="sysVersion">Versão: 1.0-release</p>
         </fieldset>
       </div>
+      
+      <script type="text/javascript" th:src="@{/scripts/auth/login.js}"></script>
     </div>
-    
-    
-    <script layout:fragment="footer-script">
-      	var loadCircle = document.getElementById("loadCircle");
-      	loadCircle.style.display = "none";
-      	
-      	const redefinedPass = document.querySelector("input#redefinedPass");
-      	if (redefinedPass)
-      	  alert("Credenciais alteradas com sucesso");
-      	
-      	function onSubmit(token) {
-      		  document.getElementById("loginForm").submit();
-    	    	loadCircle.style.display = '';
-   	   	}
-      	
-      </script>
   </body>
 </html>

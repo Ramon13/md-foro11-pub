@@ -1,0 +1,46 @@
+body{
+  width: 50%;
+}
+
+form {
+  text-align: center;
+  width: 50%;
+}
+
+fieldset {
+  margin: 64px auto;
+  width: 400px;
+}
+
+a{
+  font-size: 12px;
+}
+
+p {
+	margin-bottom: 3px;
+}
+
+fieldset {
+	border: 1px solid #ccc;
+}
+
+legend, a{
+	color: #000;
+}
+
+p#sysVersion {
+  font-size: 10px;
+  float: right;
+  color: gray;
+}
+
+button.login-btn {
+  background-color: #1A88FF;
+  padding: 5px;
+  color: #FFFFFF;
+  border-radius: 4px;
+}
+
+button.login-btn img {
+  width: 20px;
+}

@@ -77,4 +77,9 @@ public class LoginController{
 		}
 		return "redirect:/public/forgot-password?emailSent=true";
 	}
+	
+	@GetMapping(path="/public/contact")
+	public String contact() {
+		return "auth/contact";
+	}
 }
