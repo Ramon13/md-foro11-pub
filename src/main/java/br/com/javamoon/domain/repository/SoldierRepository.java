@@ -37,8 +37,16 @@ public interface SoldierRepository extends JpaRepository<Soldier, Integer>{
 	@Query("select s.id from Soldier s where s.id = :id and s.army = :army")
 	Integer findByIdAndArmy(@Param("id") Integer soldierId, @Param("army") Army army);
 	
-	@Query("FROM Soldier s WHERE s.id = :id AND s.army = :army AND s.cjm = :cjm AND s.active = true")
-	Optional<Soldier> findByIdAndArmyAndCjmAndActive(@Param("id") Integer id, @Param("army") Army army, @Param("cjm") CJM cjm);
+	@Query("FROM Soldier s "
+		+ "WHERE s.id = :id "
+		+ "AND s.active = true "
+		+ "AND (:army IS NULL OR s.army = :army ) "
+		+ "AND s.cjm = :cjm")
+	Optional<Soldier> findByIdAndArmyAndCjmAndActive(
+			@Param("id") Integer id, 
+			@Param("army") Army army, 
+			@Param("cjm") CJM cjm
+		);
 	
 	@Query("FROM Soldier s WHERE s.active = true AND s.id = :soldierId AND s.cjm.id = :cjmId")
 	Optional<Soldier> findActiveByIdAndCJM(@Param("soldierId") Integer soldierId, @Param("cjmId") Integer cjmId);

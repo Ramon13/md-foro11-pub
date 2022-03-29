@@ -112,6 +112,13 @@ function historyPop(){
   return popped;
 }
 
+function returnPage() {
+  const backBtn = document.querySelector("button#back");
+  backBtn.addEventListener('click', function(){
+    location.href = historyPop();
+  });
+}
+
 function toggleName(element, value){
   if (!element.hasAttribute("name")){
     element.toggleAttribute("name");

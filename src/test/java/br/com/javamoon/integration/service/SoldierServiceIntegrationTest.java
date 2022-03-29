@@ -240,7 +240,7 @@ public class SoldierServiceIntegrationTest {
 		Soldier persistedSoldier = soldiers.get(0);
 		CJM cjm = persistedSoldier.getCjm();
 		
-		assertEquals(persistedSoldier, victim.getSoldierByCjm(persistedSoldier.getId(), cjm));
+		assertEquals(persistedSoldier, victim.getSoldier(persistedSoldier.getId(), null, cjm));
 		
 		CJM newCjm = TestDataCreator.newCjm();
 		newCjm.setAlias(DEFAULT_CJM_ALIAS + "__");
@@ -251,13 +251,13 @@ public class SoldierServiceIntegrationTest {
 		persistedSoldier.setCjm(newCjm);
 		soldierRepository.saveAndFlush(persistedSoldier);
 		
-		assertEquals(persistedSoldier, victim.getSoldierByCjm(persistedSoldier.getId(), newCjm));
+		assertEquals(persistedSoldier, victim.getSoldier(persistedSoldier.getId(), null, newCjm));
 	}
 	
 	@Test
 	void testGetSoldierByCjmWhenIdDoesNotExists() {
 		CJM cjm = getPersistedCJM(cjmRepository);
-		assertThrows(SoldierNotFoundException.class, () -> victim.getSoldierByCjm(1, cjm));
+		assertThrows(SoldierNotFoundException.class, () -> victim.getSoldier(1, null, cjm));
 	}
 	
 	@Test
@@ -267,7 +267,7 @@ public class SoldierServiceIntegrationTest {
 		Soldier persistedSoldier = soldiers.get(0);
 		CJM cjm = persistedSoldier.getCjm();
 		
-		assertEquals(persistedSoldier, victim.getSoldierByCjm(persistedSoldier.getId(), cjm));
+		assertEquals(persistedSoldier, victim.getSoldier(persistedSoldier.getId(), null, cjm));
 		
 		CJM newCjm = TestDataCreator.newCjm();
 		newCjm.setAlias(DEFAULT_CJM_ALIAS + "__");
@@ -275,7 +275,7 @@ public class SoldierServiceIntegrationTest {
 		newCjm.setRegions((DEFAULT_CJM_REGIONS + "__"));
 		cjmRepository.saveAndFlush(newCjm);
 		
-		assertThrows(SoldierNotFoundException.class, () -> victim.getSoldierByCjm(persistedSoldier.getId(), newCjm));
+		assertThrows(SoldierNotFoundException.class, () -> victim.getSoldier(persistedSoldier.getId(), null, newCjm));
 	}
 	
 	@Test

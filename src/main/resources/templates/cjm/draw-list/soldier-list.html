@@ -13,8 +13,8 @@
         <div th:replace="fragments/pagination-menu :: pagination"></div>
         <br /><br />
         <div id="soldiers">
-          <div th:each="soldier : ${soldiers}" class="app-div-list soldier-info">
-            <input class="soldier-id" type="hidden" th:value="${soldier.id}"/>
+          <div th:each="soldier : ${soldiers}" class="app-div-list soldier-info"
+            th:attr="data-sdprofile=@{/cjm/sd/profile/} + ${soldier.id}">
             <p class="list-header" th:text="${soldier.idInfoAsText}"></p>
             <br />
             <p class="list-info" th:text="${soldier.oMAndRankAsText}"></p>
@@ -29,14 +29,7 @@
       </div>
         
       <script type="text/javascript" th:src="@{/scripts/pagination-search-list.js}"></script>
-      <script th:inline="javascript">
-        focusSearchBar();
-        
-        const backBtn = document.querySelector("button#back");
-        backBtn.addEventListener('click', function(){
-          location.href = historyPop();
-        });
-      </script>
+      <script type="text/javascript" th:src="@{/scripts/cjm/soldier-list.js}"></script>
     </div>
   </body>
 </html>

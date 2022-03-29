@@ -1,5 +1,16 @@
 package br.com.javamoon.service;
 
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
+import java.util.Objects;
+import java.util.stream.Collectors;
+
+import javax.transaction.Transactional;
+
+import org.springframework.data.domain.Pageable;
+import org.springframework.stereotype.Service;
+
 import br.com.javamoon.config.properties.PaginationConfigProperties;
 import br.com.javamoon.domain.cjm_user.CJM;
 import br.com.javamoon.domain.draw_exclusion.DrawExclusion;
@@ -14,14 +25,6 @@ import br.com.javamoon.mapper.EntityMapper;
 import br.com.javamoon.mapper.SoldierDTO;
 import br.com.javamoon.util.PageableUtils;
 import br.com.javamoon.validator.SoldierValidator;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
-import java.util.Objects;
-import java.util.stream.Collectors;
-import javax.transaction.Transactional;
-import org.springframework.data.domain.Pageable;
-import org.springframework.stereotype.Service;
 
 @Service
 public class SoldierService{
@@ -54,10 +57,6 @@ public class SoldierService{
 	public Soldier getSoldier(Integer id, Integer drawListId) {
 		return soldierRepository.findActiveByDrawList(id, drawListId)
 			.orElseThrow(() -> new SoldierNotFoundException("soldier not found: " + id));
-	}
-	
-	public Soldier getSoldierByCjm(Integer id, CJM cjm) {
-		return getSoldierOrElseThrow(id, cjm);
 	}
 	
 	/**
@@ -188,12 +187,6 @@ public class SoldierService{
 			generateExclusionIfSoldierAlreadyInList(soldiers, listId);
 		
 		setSoldierExclusionMessages(soldiers, yearQuarter, true);
-	}
-	
-	private Soldier getSoldierOrElseThrow(Integer soldierId, CJM cjm) {
-		Objects.requireNonNull(soldierId);
-		return soldierRepository.findActiveByIdAndCJM(soldierId, cjm.getId())
-				.orElseThrow(() -> new SoldierNotFoundException("soldier not found: " + soldierId));
 	}
 	
 	private Pageable getRankWeightAscPageable(int page) {

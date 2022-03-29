@@ -21,6 +21,10 @@ public class ControllerHelper {
 	 }
 	 
 	 public static Army getArmy() {
-		 return SecurityUtils.groupUser().getArmy();
+		 try {
+			 return SecurityUtils.groupUser().getArmy();
+		 }catch(IllegalStateException e) {
+			 return null;
+		 }
 	 }
 }
