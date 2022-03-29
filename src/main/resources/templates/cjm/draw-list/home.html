@@ -1,79 +1,47 @@
 <!DOCTYPE html>
-<html xmlns="http://www.w3.org/1999/xhtml"
-  xmlns:th="http://www.thymeleaf.org" layout:decorate="~{cjm/layout}">
-
-<head>
-  <link th:href="@{/styles/dropdown.css}" type="text/css" rel="stylesheet" />
-</head>
-
-<style layout:fragment="style">
-h1 {
-	font-family: "Roboto", sans-serif;
-	color: #4e4848;
-	font-size: 20px;
-	font-weight: bold;
-	text-align: left;
-}
-
-div .list-header {
-	font-family: "Roboto", sans-serif;
-	color: #4e4848;
-	font-size: 20px;
-	font-weight: bold;
-	margin-bottom: 15px;
-}
-
-div .list-info {
-	color: #606060;
-	font-size: 12px;
-}
-
-div .draw-list {
-	margin: auto;
-	background-color: #eee;
-	padding: 15px;
-	margin-bottom: 15px;
-	transition: 0.3s;
-	box-shadow: 0px 3px 6px 3px #ddd;
-}
-</style>
-
-<body>
-  <div layout:fragment="content">
-    <h1>Relações de militares para sorteio</h1>
-    <hr />
-
-    <div class="empty-list" th:if="${#lists.isEmpty(listsByQuarter)}">
-      <span>Não há listas cadastradas no sistema</span>
-    </div>
-    <div th:each="listByQuarter : ${listsByQuarter}">
-      <div class="quarter">
-        <span th:text="${listByQuarter.formattedQuarterYear}"></span>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org" layout:decorate="~{cjm/layout}">
+  <head>
+    <link th:href="@{/styles/dropdown.css}" type="text/css" rel="stylesheet" />
+  </head>
+  
+  <body>
+    <div layout:fragment="content">
+      <div class="pageTitle">
+        <h1>Relações de militares para sorteio</h1>
+        <hr />
       </div>
-
-      <div class="draw-list" th:each="drawListDTO : ${listByQuarter.lists}">
-        <div class="dropdown">
-          <img class="more dropdown" th:src="@{/images/hmore.svg}" />
-          <div class="dropdown-content">
-            <a th:href="@{/cjm/dw/lists/list/} + '' + ${drawListDTO.id}">Exibir Lista</a>
-            <a target="_blank" th:href="@{/cjm/dw/lists/report/} + ${drawListDTO.id}">Gerar Relatório</a>
+  
+      <div class="empty-list" th:if="${#lists.isEmpty(listsByQuarter)}">
+        <span>Não há listas cadastradas no sistema</span>
+      </div>
+      
+      <div th:each="listByQuarter : ${listsByQuarter}">
+        <div class="app-list-category">
+          <span th:text="${listByQuarter.formattedQuarterYear}"></span>
+        </div>
+  
+        <div class="app-list" th:each="drawListDTO : ${listByQuarter.lists}">
+          <div class="dropdown">
+            <img class="more dropdown" th:src="@{/images/hmore.svg}" />
+            <div class="dropdown-content">
+              <a th:href="@{/cjm/dw/lists/list/} + '' + ${drawListDTO.id}">Exibir Lista</a>
+              <a target="_blank" th:href="@{/cjm/dw/lists/report/} + ${drawListDTO.id}">Gerar Relatório</a>
+            </div>
+          </div>
+          <div class="list-header">
+            <span th:text="${drawListDTO.prettyPrintListTitle()}"></span>
+          </div>
+          <div class="list-info">
+            <span th:text="${drawListDTO.army.name}"></span><br /> 
+            <span th:text="${drawListDTO.prettyPrintListInfo()}"></span>
           </div>
         </div>
-        <div class="list-header">
-          <span th:text="${drawListDTO.prettyPrintListTitle()}"></span>
-        </div>
-        <div class="list-info">
-          <span th:text="${drawListDTO.army.name}"></span><br /> 
-          <span th:text="${drawListDTO.prettyPrintListInfo()}"></span>
-        </div>
       </div>
+  
+      <script type="text/javascript" th:src="@{/scripts/dropdown.js}"></script>
+      <script type="text/javascript">
+        historyPush();
+      </script>
     </div>
-
-    <script type="text/javascript" th:src="@{/scripts/dropdown.js}"></script>
-  </div>
-
-  <script layout:fragment="page-script" th:inline="javascript">
-       historyPush();
-    </script>
-</body>
+  </body>
 </html>

@@ -19,10 +19,11 @@ span, p, legend, div {
 }
 
 body {
-	width: 70%;
+	width: 60%;
 	margin: 0 auto;
 	background-color: #FFFFFF;
 	padding: 0 20px 20px 20px;
+	border: 1px solid #eee;
 }
 
 html {
@@ -86,6 +87,45 @@ form {
 	width: 35%;
 	margin: auto;
 }
+
+/*=========== app list =============================*/
+div.app-list-category {
+  padding: 15px 5px;
+  background-color: #4e4848;
+  color: white;
+  width: 150px;
+  margin: 25px 0 10px 0;
+}
+
+div.app-list-category span {
+  font-weight: bold;
+  font-size: 16px;
+  padding: 0 25px;
+}
+
+div.app-list {
+  margin: auto;
+  background-color: #eee;
+  padding: 15px;
+  margin-bottom: 15px;
+  transition: 0.3s;
+  box-shadow: 0px 3px 6px 3px #ddd;
+}
+
+div.app-list .list-header {
+  font-family: "Roboto", sans-serif;
+  color: #4e4848;
+  font-size: 17px;
+  font-weight: bold;
+  margin-bottom: 15px;
+}
+
+div.app-list .list-info {
+  color: #606060;
+  font-size: 12px;
+}
+
+
 
 div.centered-page {
 	text-align: center;
@@ -311,19 +351,6 @@ div.disable-div {
 	opacity: 0.4;
 }
 
-div.quarter {
-	padding: 15px 5px;
-	background-color: #4e4848;
-	color: white;
-	width: 200px;
-	margin: 20px 0 10px 0;
-}
-
-div.draw-list .quarter span {
-	font-weight: bold;
-	padding: 0 25px;
-}
-
 table#soldiers, table.default-app-table {
 	font-family: Roboto, sans-serif;
 	border-collapse: collapse;
@@ -355,19 +382,6 @@ table#soldiers th, table.default-app-table th {
 
 #soldiers tr:hover {
 	background-color: #ddd;
-}
-
-div .list-header {
-	font-family: "Roboto", sans-serif;
-	color: #4e4848;
-	font-size: 20px;
-	font-weight: bold;
-	margin-bottom: 15px;
-}
-
-div .list-info {
-	color: #606060;
-	font-size: 12px;
 }
 
 div .draw-soldier-list {
