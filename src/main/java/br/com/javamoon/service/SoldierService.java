@@ -1,21 +1,9 @@
 package br.com.javamoon.service;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
-import java.util.Objects;
-import java.util.stream.Collectors;
-
-import javax.transaction.Transactional;
-
-import org.springframework.data.domain.Pageable;
-import org.springframework.stereotype.Service;
-
 import br.com.javamoon.config.properties.PaginationConfigProperties;
 import br.com.javamoon.domain.cjm_user.CJM;
 import br.com.javamoon.domain.draw_exclusion.DrawExclusion;
 import br.com.javamoon.domain.entity.Army;
-import br.com.javamoon.domain.entity.DrawList;
 import br.com.javamoon.domain.entity.GroupUser;
 import br.com.javamoon.domain.entity.Soldier;
 import br.com.javamoon.domain.repository.DrawRepository;
@@ -26,6 +14,14 @@ import br.com.javamoon.mapper.EntityMapper;
 import br.com.javamoon.mapper.SoldierDTO;
 import br.com.javamoon.util.PageableUtils;
 import br.com.javamoon.validator.SoldierValidator;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
+import java.util.Objects;
+import java.util.stream.Collectors;
+import javax.transaction.Transactional;
+import org.springframework.data.domain.Pageable;
+import org.springframework.stereotype.Service;
 
 @Service
 public class SoldierService{
@@ -127,8 +123,8 @@ public class SoldierService{
 		return soldierRepository.findByArmyAndCjmAndIdIn(army, cjm, soldierIds);
 	}
 	
-	public List<SoldierDTO> list(DrawList list, int page, String key){
-		return soldierRepository.findAllActiveByDrawList(list.getId(), key, getRankWeightAscPageable(page))
+	public List<SoldierDTO> list(Integer listId, int page, String key){
+		return soldierRepository.findAllActiveByDrawList(listId, key, getRankWeightAscPageable(page))
 				.stream()
 				.map(r -> EntityMapper.fromEntityToDTO(r))
 				.collect(Collectors.toList());

@@ -2,11 +2,21 @@ package br.com.javamoon.infrastructure.web.controller.group;
 
 import static br.com.javamoon.infrastructure.web.controller.ControllerHelper.getArmy;
 import static br.com.javamoon.infrastructure.web.controller.ControllerHelper.getCJM;
-
+import br.com.javamoon.config.properties.PaginationConfigProperties;
+import br.com.javamoon.domain.entity.GroupUser;
+import br.com.javamoon.exception.DrawListValidationException;
+import br.com.javamoon.infrastructure.web.model.PaginationFilter;
+import br.com.javamoon.mapper.DrawListDTO;
+import br.com.javamoon.mapper.SoldierDTO;
+import br.com.javamoon.mapper.SoldierToListDTO;
+import br.com.javamoon.report.model.GeneratedReport;
+import br.com.javamoon.service.DrawListService;
+import br.com.javamoon.service.ReportCreationService;
+import br.com.javamoon.service.SoldierService;
+import br.com.javamoon.util.DateUtils;
+import br.com.javamoon.util.SecurityUtils;
 import java.util.List;
-
 import javax.validation.Valid;
-
 import org.springframework.http.ContentDisposition;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -23,21 +33,6 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.ModelAndView;
-
-import br.com.javamoon.config.properties.PaginationConfigProperties;
-import br.com.javamoon.domain.entity.GroupUser;
-import br.com.javamoon.exception.DrawListValidationException;
-import br.com.javamoon.infrastructure.web.model.PaginationFilter;
-import br.com.javamoon.mapper.DrawListDTO;
-import br.com.javamoon.mapper.EntityMapper;
-import br.com.javamoon.mapper.SoldierDTO;
-import br.com.javamoon.mapper.SoldierToListDTO;
-import br.com.javamoon.report.model.GeneratedReport;
-import br.com.javamoon.service.DrawListService;
-import br.com.javamoon.service.ReportCreationService;
-import br.com.javamoon.service.SoldierService;
-import br.com.javamoon.util.DateUtils;
-import br.com.javamoon.util.SecurityUtils;
 
 @Controller
 @RequestMapping(path="/gp/dw")
@@ -101,7 +96,7 @@ public class DrawListController {
 		DrawListDTO drawList = drawListService.getList(listId, getArmy(), getCJM());
 		
 		List<SoldierDTO> soldiers = soldierService.list( 
-			EntityMapper.fromDTOToEntity(drawList),
+			drawList.getId(),
 			paginationFilter.getPage(),
 			paginationFilter.getKey() 
 		);

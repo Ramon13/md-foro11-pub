@@ -26,18 +26,6 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-
-import java.util.List;
-import java.util.Optional;
-
-import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.annotation.DirtiesContext;
-import org.springframework.test.annotation.DirtiesContext.ClassMode;
-import org.springframework.test.context.ActiveProfiles;
-
 import br.com.javamoon.domain.cjm_user.CJM;
 import br.com.javamoon.domain.cjm_user.CJMRepository;
 import br.com.javamoon.domain.entity.Army;
@@ -50,12 +38,20 @@ import br.com.javamoon.domain.repository.MilitaryRankRepository;
 import br.com.javamoon.domain.repository.SoldierRepository;
 import br.com.javamoon.exception.SoldierNotFoundException;
 import br.com.javamoon.exception.SoldierValidationException;
-import br.com.javamoon.infrastructure.web.model.SoldiersPagination;
 import br.com.javamoon.mapper.EntityMapper;
 import br.com.javamoon.service.SoldierService;
 import br.com.javamoon.service.ValidationException;
 import br.com.javamoon.util.TestDataCreator;
 import br.com.javamoon.validator.ValidationError;
+import java.util.List;
+import java.util.Optional;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.annotation.DirtiesContext;
+import org.springframework.test.annotation.DirtiesContext.ClassMode;
+import org.springframework.test.context.ActiveProfiles;
 
 @SpringBootTest
 @ActiveProfiles("test")
@@ -211,33 +207,6 @@ public class SoldierServiceIntegrationTest {
 		
 		assertThrows(IllegalStateException.class, 
 				() -> victim.save(EntityMapper.fromEntityToDTO(soldier), army, cjm));	
-	}
-	
-	@Test
-	void testListPaginationSuccessfully() {
-		Army army = getPersistedArmy(armyRepository);
-		CJM cjm = getPersistedCJM(cjmRepository);
-		
-		MilitaryOrganization organization = getPersistedMilitaryOrganization(army, organizationRepository);
-		MilitaryRank rank = getPersistedMilitaryRank(army, rankRepository, armyRepository);
-		
-		Army army2 = TestDataCreator.newArmy();
-		army2.setAlias(DEFAULT_ARMY_ALIAS + "x");
-		army2.setName(DEFAULT_ARMY_NAME + "x");
-		armyRepository.saveAndFlush(army2);
-		
-		List<Soldier> soldiers = newSoldierList(army, cjm, organization, rank, 3);
-		soldiers.get(0).setArmy(army2);									// setup one soldier with another army
-		
-		soldierRepository.saveAllAndFlush(soldiers);
-		
-		SoldiersPagination listPagination = victim.listPagination(army, cjm, TestDataCreator.newPaginationFilter());
-		
-		assertNotNull(listPagination);
-		assertEquals(2, listPagination.getSoldiers().size());
-		assertEquals(2, listPagination.getTotal());
-		assertEquals(soldiers.get(1).getName(), listPagination.getSoldiers().get(0).getName());
-		assertEquals(soldiers.get(2).getName(), listPagination.getSoldiers().get(1).getName());
 	}
 	
 	@Test

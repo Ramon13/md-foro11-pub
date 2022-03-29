@@ -121,13 +121,13 @@ public class DrawListServiceIntegrationTest {
 		List<DrawList> drawLists = newDrawList(army, creationUser, 3);
 		drawListRepository.saveAllAndFlush(drawLists);
 		
-		assertEquals(3, victim.list(army, cjm).size());
+		assertEquals(3, victim.list(army, cjm, null).size());
 		
 		// deleted list
 		drawLists.get(0).setActive(false);
 		drawListRepository.saveAndFlush(drawLists.get(0));
 		
-		List<DrawListDTO> drawListsDB = victim.list(army, cjm);
+		List<DrawListDTO> drawListsDB = victim.list(army, cjm, null);
 		assertEquals(2, drawListsDB.size());
 		assertEquals(drawLists.get(2).getDescription(), drawListsDB.get(0).getDescription());
 		assertEquals(drawLists.get(1).getDescription(), drawListsDB.get(1).getDescription());
@@ -141,7 +141,7 @@ public class DrawListServiceIntegrationTest {
 		drawLists.get(0).setArmy(army2);
 		drawListRepository.saveAndFlush(drawLists.get(0));
 		
-		assertEquals(2, victim.list(army, cjm).size());
+		assertEquals(2, victim.list(army, cjm, null).size());
 	}
 	
 	@Test
@@ -154,13 +154,13 @@ public class DrawListServiceIntegrationTest {
 		List<DrawList> drawLists = newDrawList(army, users.get(0), 3);
 		drawListRepository.saveAllAndFlush(drawLists);
 		
-		assertEquals(3, victim.listByCjm(cjm).size());
+		assertEquals(3, victim.list(null, cjm, null).size());
 		
 		// deleted list
 		drawLists.get(0).setActive(false);
 		drawListRepository.saveAndFlush(drawLists.get(0));
 		
-		List<DrawListDTO> drawListsDB = victim.list(army, cjm);
+		List<DrawListDTO> drawListsDB = victim.list(army, cjm, null);
 		assertEquals(2, drawListsDB.size());
 		assertEquals(drawLists.get(2).getDescription(), drawListsDB.get(0).getDescription());
 		assertEquals(drawLists.get(1).getDescription(), drawListsDB.get(1).getDescription());
@@ -178,7 +178,7 @@ public class DrawListServiceIntegrationTest {
 		drawLists.get(0).setCreationUser(users.get(1));
 		drawListRepository.saveAndFlush(drawLists.get(0));
 		
-		assertEquals(1, victim.listByCjm(newCjm).size());
+		assertEquals(1, victim.list(null, newCjm, null).size());
 	}
 
 	@Test
@@ -217,7 +217,7 @@ public class DrawListServiceIntegrationTest {
 		List<DrawList> drawLists = newDrawList(army, creationUser, 3);
 		drawListRepository.saveAllAndFlush(drawLists);
 		
-		assertEquals(3, victim.list(army, cjm).size());
+		assertEquals(3, victim.list(army, cjm, null).size());
 		
 		DrawListDTO list = victim.getList(drawLists.get(0).getId(), army, cjm);
 		assertNotNull(list);
@@ -524,7 +524,10 @@ public class DrawListServiceIntegrationTest {
 		
 		drawListRepository.saveAllAndFlush(lists);
 		
-		List<DrawListsDTO> drawListsDTO = victim.getListsByQuarter(lists);
+		List<DrawListsDTO> drawListsDTO = victim.getListsByQuarter(
+				lists.stream()
+				.map(l -> EntityMapper.fromEntityToDTO(l))
+				.collect(Collectors.toList()));
 		
 		assertEquals(3, drawListsDTO.size());
 		assertEquals(futureQuarter, drawListsDTO.get(0).getYearQuarter());

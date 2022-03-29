@@ -1,21 +1,5 @@
 package br.com.javamoon.service;
 
-import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-import java.util.TreeMap;
-import java.util.stream.Collectors;
-
-import org.hibernate.Hibernate;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Sort.Direction;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-
 import br.com.javamoon.domain.cjm_user.CJM;
 import br.com.javamoon.domain.entity.Army;
 import br.com.javamoon.domain.entity.DrawList;
@@ -32,6 +16,20 @@ import br.com.javamoon.util.DateUtils;
 import br.com.javamoon.util.ServiceConstants;
 import br.com.javamoon.validator.DrawListValidator;
 import br.com.javamoon.validator.SoldierValidator;
+import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import java.util.TreeMap;
+import java.util.stream.Collectors;
+import org.hibernate.Hibernate;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort.Direction;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 public class DrawListService {
