@@ -18,7 +18,7 @@ public class EmailInfoBuilder {
 	
 	private final String GENERATED_PASSWORD_SUBJECT = "Acesso cadastrado com sucesso!";
 	
-	@Value("${md-foro11.server.dns}")
+	@Value("${mdforo11.server.dns}")
 	private String SERVER_DNS;
 	
 	@Value("${server.servlet.context-path}")
