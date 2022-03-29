@@ -1,5 +1,6 @@
 package br.com.javamoon.domain.entity;
 
+import br.com.javamoon.domain.cjm_user.CJM;
 import br.com.javamoon.util.StringUtils;
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -53,6 +54,8 @@ public class User implements Serializable{
     private Integer permissionLevel;
 	
 	private transient List<String> permissionRoles = new ArrayList<String>(0);
+	
+	private transient CJM cjm;
 	
 	@PrePersist
 	public void prePersist() {

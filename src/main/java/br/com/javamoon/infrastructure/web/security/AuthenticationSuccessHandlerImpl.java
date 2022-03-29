@@ -3,6 +3,10 @@ package br.com.javamoon.infrastructure.web.security;
 import static br.com.javamoon.infrastructure.web.security.Role.CjmRole.CJM_MANAGE_ACCOUNT_SCOPE;
 import static br.com.javamoon.infrastructure.web.security.Role.GroupRole.GROUP_EDIT_LIST_SCOPE;
 import static br.com.javamoon.infrastructure.web.security.Role.GroupRole.GROUP_MANAGE_ACCOUNT_SCOPE;
+
+import br.com.javamoon.domain.entity.CJMUser;
+import br.com.javamoon.domain.entity.GroupUser;
+import br.com.javamoon.domain.entity.User;
 import br.com.javamoon.util.SecurityUtils;
 import java.io.IOException;
 import java.util.List;
@@ -48,10 +52,12 @@ public class AuthenticationSuccessHandlerImpl implements AuthenticationSuccessHa
 		
 		LoggedUser loggedUser = SecurityUtils.loggedUser();
 		
-		if (!loggedUser.getUser().getCredentialsExpired())
+		if (!loggedUser.getUser().getCredentialsExpired()) {
+			setUserCJM(loggedUser.getUser());
 			sendToHomePage(loggedUser, response, session);
-		else
+		}else {
 			sendToPasswordRedefinition(response);
+		}
 	}
 		
 	private void sendToPasswordRedefinition(HttpServletResponse response) throws IOException {
@@ -77,7 +83,6 @@ public class AuthenticationSuccessHandlerImpl implements AuthenticationSuccessHa
 	 * Session parameters used to display view components
 	 */
 	private void setSessionScopes(HttpSession session, List<String> roles) {
-		System.out.println(roles);
 	    if (roles.contains(GROUP_MANAGE_ACCOUNT_SCOPE.toString())
 	    		|| roles.contains(CJM_MANAGE_ACCOUNT_SCOPE.toString()))
 	        session.setAttribute("accountScope", true);
@@ -88,5 +93,14 @@ public class AuthenticationSuccessHandlerImpl implements AuthenticationSuccessHa
 
 	private void setSessionTimeOut(HttpSession session) {
 		session.setMaxInactiveInterval(30 * 60);
+	}
+	
+	private void setUserCJM(User loggedUser) {
+		if (loggedUser instanceof CJMUser) {
+			 loggedUser.setCjm( ((CJMUser) loggedUser).getAuditorship().getCjm() );
+		
+		}else {
+			loggedUser.setCjm( ((GroupUser) loggedUser).getCjm() );
+		}
 	}
 }

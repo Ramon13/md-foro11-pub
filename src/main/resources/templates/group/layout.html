@@ -19,9 +19,9 @@
 <body>
   <header>
     <div id="appHBar">
-      <a id="appTitle" th:href="@{/gp/home}">Sorteio de Juízes
-        Militares</a> <span id="spanLoggedUser"
-        th:text="${#authentication.principal.user.username}"></span>
+      <a id="appTitle" th:href="@{/gp/home}">Sorteio de Juízes Militares</a> 
+      <span id="spanLoggedUser" 
+        th:text="${#authentication.principal.user.username} + ' | ' + ${#authentication.principal.user.cjm.alias}"></span>
     </div>
   </header>
   <!-- end header -->
