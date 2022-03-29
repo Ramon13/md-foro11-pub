@@ -1,6 +1,11 @@
+.dropdown {
+  position: relative;
+}
+
 .dropdown-content {
 	display: none;
-	float: right;
+	position: absolute;
+	right: 25px;
 	background-color: #f1f1f1;
 	min-width: 160px;
 	overflow: auto;
