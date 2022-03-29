@@ -107,7 +107,11 @@ public class SoldierService{
 	}
 	
 	public Integer count(Army army, CJM cjm, String key, Integer listId) {
-		return soldierRepository.countActiveByArmyAndCjmContaining(listId, key, army.getId(), cjm.getId());
+		Objects.requireNonNull(cjm);
+		
+		Integer armyId = Objects.isNull(army) ? null : army.getId();
+		
+		return soldierRepository.countActiveByArmyAndCjmContaining(listId, key, armyId, cjm.getId());
 	}
 	
 	public List<SoldierDTO> listAll(Army army, CJM cjm){

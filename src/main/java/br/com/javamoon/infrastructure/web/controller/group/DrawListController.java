@@ -141,8 +141,7 @@ public class DrawListController {
 	@RequestMapping(method = RequestMethod.POST, path = "/list/remove", consumes = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<String> removeSoldier(@RequestBody SoldierToListDTO soldierToListDTO) {
 		try {
-			GroupUser loggedUser = SecurityUtils.groupUser();
-			drawListService.removeSoldierFromList(soldierToListDTO, loggedUser.getCjm(), loggedUser.getArmy());
+			drawListService.removeSoldierFromList(soldierToListDTO, getCJM(), getArmy());
 			return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -152,9 +151,8 @@ public class DrawListController {
 	
 	@RequestMapping(method = RequestMethod.GET, path="/list/report/{listId}", produces = MediaType.APPLICATION_PDF_VALUE)
 	public ResponseEntity<byte[]> generateReport(@PathVariable("listId") Integer listId) {
-		GroupUser loggedUser = SecurityUtils.groupUser();
 		GeneratedReport generatedReport = 
-				reportCreationService.createDrawListReport(listId, loggedUser.getArmy(), loggedUser.getCjm());
+				reportCreationService.createDrawListReport(listId, getArmy(), getCJM());
 		
 		final var httpHeaders = new HttpHeaders();
 		httpHeaders.setContentDisposition(

@@ -13,14 +13,7 @@ input[type=text], input[type=password] {
 
 button#createUser {
 	float: right;
-}
-
-button#createUser img {
-	width: 20px;
-}
-
-div#form-btns #back {
-	float: left;
+  padding: 5px 17px;
 }
 
 div#form-btns {
@@ -31,7 +24,7 @@ div#form-btns {
 
 <body>
   <div layout:fragment="content" class="centered-page">
-    <h1>Novo acesso pessoal de usuário</h1>
+    <h1 class="pageTitle">Novo acesso pessoal de usuário</h1>
     <hr />
 
     <div th:if="${successMsg}" class="successMsg">
@@ -43,17 +36,14 @@ div#form-btns {
       <div>
         <div class="form-step">
           <div class="input-label">
-            <label for="username-input">Nome de usuário</label> <br /> <span
-              class="label-desc">ex: nomesobrenome, rafaelcunha,
-              rodrigocosta</span>
+            <label for="username-input">Nome de usuário</label> <br /> 
+              <span class="label-desc">ex: nomesobrenome, rafaelcunha, rodrigocosta</span>
           </div>
           <div th:if="${#fields.hasErrors('username')}">
             <span class="error" th:errors="*{username}"></span>
           </div>
           <div>
-            <input id="username-input" type="text"
-              th:field="*{username}"
-              th:classappend="${#fields.hasErrors('username')} ? 'error' : ''" />
+            <input id="username-input" type="text" th:field="*{username}" th:classappend="${#fields.hasErrors('username')} ? 'error' : ''" />
           </div>
         </div>
 
@@ -69,71 +59,13 @@ div#form-btns {
           </div>
         </div>
 
-        <div class="form-step password-step0">
-          <div class="input-label">
-            <label for="password-input">Senha de acesso</label> <br />
-            <span class="label-desc">Senha para o primeiro acesso</span>
-          </div>
-          <div th:if="${#fields.hasErrors('password')}">
-            <span class="error" th:errors="*{password}"></span>
-          </div>
-          <div>
-            <input id="password-input" type="password"
-              th:field="*{password}" />
-          </div>
-        </div>
-
-        <div class="form-step password-step1">
-          <div class="input-label">
-            <label for="password-input-confirm">Confirmar senha</label>
-          </div>
-          <div>
-            <input id="password-input-confirm" type="password" />
-          </div>
-        </div>
         <div id="form-btns">
-          <button type="button" id="back" class="app-gray-btn">
-            <span>Voltar</span>
-          </button>
-          <button type="button" id="createUser" class="app-green-btn">
-            <span>Salvar</span>
+          <button type="submit" id="createUser" class="app-green-btn">
+            <span>Criar</span>
           </button>
         </div>
       </div>
     </form>
   </div>
-
-  <script layout:fragment="page-script" th:inline="javascript">
-      const saveBtn = document.querySelector("button#createUser");
-      const form = document.querySelector("form#newUserForm");
-      let password, passwordConfirm;
-      
-      password = document.querySelector("#password-input");
-      passwordConfirm = document.querySelector("#password-input-confirm");
-      
-      saveBtn.addEventListener("click", function(){
-    	  if (validatePass(password.value, passwordConfirm.value)){
-    		  form.submit(); 
-    	  
-    	  }else{
-    		  if (document.querySelector(".diff-pass") == null){
-      		  let span = document.createElement("span");
-      		  span.classList.add("error");
-      		  span.classList.add("diff-pass");
-      		  span.style.display="block";
-      		  span.textContent = "Senhas diferentes";
-      		  
-      		  document.querySelector("div.password-step0")
-      		    .firstElementChild.append(span);
-    		  }
-    	  }
-    		  
-      });
-      
-      const backBtn = document.querySelector("button#back");
-      backBtn.addEventListener("click", function(){
-        location.href = historyPop();
-      });
-    </script>
 </body>
 </html>

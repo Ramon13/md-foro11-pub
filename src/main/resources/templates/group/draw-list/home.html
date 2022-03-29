@@ -1,7 +1,10 @@
 <!DOCTYPE html>
 <html xmlns="http://www.w3.org/1999/xhtml"
   xmlns:th="http://www.thymeleaf.org" layout:decorate="~{group/layout}">
-
+  
+  <head>
+    <link th:href="@{/styles/dropdown.css}" type="text/css" rel="stylesheet" />
+  </head>
 <style layout:fragment="style">
 h1 {
 	font-family: "Roboto", sans-serif;
@@ -33,18 +36,6 @@ div .draw-list {
 	box-shadow: 0px 3px 6px 3px #ddd;
 }
 
-img.more {
-	float: right;
-	border: none;
-	transform: rotate(90deg);
-	padding: 5px;
-	border-radius: 20%;
-}
-
-img.more:hover {
-	border: 1px solid black;
-}
-
 button#newList:hover, img.more:hover {
 	cursor: pointer;
 }
@@ -72,19 +63,17 @@ button#newList:hover, img.more:hover {
     <div th:each="drawList : ${drawLists}">
 
       <div class="draw-list">
-        <div class="list-header">
-          <span
-            th:text="'[' + ${drawList.yearQuarter} + ']' + ' ' + ${drawList.description}"></span>
-
-          <div class="dropdown" th:if="${session.listScope}">
-            <img class="more dropdown" th:src="@{/images/hmore.svg}" />
-            <div class="dropdown-content"
-              th:attr="data-listid=${drawList.id}">
-              <a class="removeList" href="#">Remover</a> 
-              <a class="duplicateList" href="#">Duplicar</a>
-              <a class="duplicateList" target="_blank" th:href="@{/gp/dw/list/report/} + ${drawList.id}">Gerar Relatório</a>
-            </div>
+        <div class="dropdown" th:if="${session.listScope}">
+          <img class="more dropdown" th:src="@{/images/hmore.svg}" />
+          <div class="dropdown-content"th:attr="data-listid=${drawList.id}">
+            <a th:href="@{/gp/dw/list/edit/} + '' + ${drawList.id}">Editar</a>
+            <a class="removeList" href="#">Remover</a> 
+            <a class="duplicateList" href="#">Duplicar</a>
+            <a class="duplicateList" target="_blank" th:href="@{/gp/dw/list/report/} + ${drawList.id}">Gerar Relatório</a>
           </div>
+        </div>
+        <div class="list-header">
+          <span th:text="${drawList.prettyPrintListTitle()}"></span>
         </div>
 
         <div class="list-info">
@@ -94,7 +83,7 @@ button#newList:hover, img.more:hover {
           <span th:text="${drawList.formattedUpdateDate}"></span> <br /><br /> 
           <!-- <span th:classappend="${drawList.listPhase}" th:text="${drawList.listPhaseDescription}"></span> -->
         </div>
-        <br /> <a th:href="@{/gp/dw/list/edit/} + '' + ${drawList.id}">Editar</a>
+        <br /> 
       </div>
     </div>
 

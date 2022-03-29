@@ -1,5 +1,6 @@
 package br.com.javamoon.service;
 
+import static br.com.javamoon.infrastructure.web.security.Role.CjmRole.CJM_USER;
 import static br.com.javamoon.infrastructure.web.security.Role.GroupRole.GROUP_EDIT_LIST_SCOPE;
 import static br.com.javamoon.infrastructure.web.security.Role.GroupRole.GROUP_USER;
 import br.com.javamoon.config.email.EmailInfoBuilder;
@@ -32,7 +33,8 @@ public class UserAccountService {
 
 	public static final Integer DEFAULT_CJM_USER_PERMISSION_LEVEL = 1;
 	private static final Integer GENERATED_PASSWORD_LENGTH = 10;
-	private final List<String> defaultRoles = List.of( GROUP_USER.toString(), GROUP_EDIT_LIST_SCOPE.toString());
+	private final List<String> DEFAULT_GROUP_ROLES = List.of( GROUP_USER.toString(), GROUP_EDIT_LIST_SCOPE.toString());
+	private final List<String> DEFAULT_CJM_ROLES = List.of( CJM_USER.toString() );
 	
     private UserAccountValidator userAccountValidator;
     private GroupUserRepository groupUserRepository;
@@ -54,11 +56,11 @@ public class UserAccountService {
 
 	@Transactional
     public GroupUserDTO createGroupUserAccount(GroupUserDTO userDTO, Army army, CJM cjm) throws AccountValidationException {
-        userAccountValidator.validateCreateGroupUserAccount(userDTO);
+        userAccountValidator.validateCreateUserAccount(userDTO);
         String randomPass = RandomStringUtils.random(GENERATED_PASSWORD_LENGTH, true, true);
         
         GroupUser user = EntityMapper.fromDTOToEntity(userDTO);
-        user.setPermissionLevel(Role.calcPermissionLevel(defaultRoles));
+        user.setPermissionLevel( Role.calcPermissionLevel(DEFAULT_GROUP_ROLES) );
         user.setArmy(army);
         user.setCjm(cjm);
         user.setPassword(randomPass);
@@ -72,13 +74,19 @@ public class UserAccountService {
     
 	@Transactional
     public CJMUserDTO createCJMUserAccount(CJMUserDTO userDTO, Auditorship auditorship) throws AccountValidationException {
-    	userAccountValidator.validateCreateCJMUserAccount(userDTO);
+	    userAccountValidator.validateCreateUserAccount(userDTO);
+        String randomPass = RandomStringUtils.random(GENERATED_PASSWORD_LENGTH, true, true);
+        
     	CJMUser user = EntityMapper.fromDTOToEntity(userDTO);
     	
+    	user.setPermissionLevel( Role.calcCJMPermissionLevel(DEFAULT_CJM_ROLES) );
     	user.setAuditorship(auditorship);
-    	user.encryptPassword();
+    	user.setPassword(randomPass);
+        user.encryptPassword();
     	
     	userRepository.save(user);
+    	emailSender.send( emailInfoBuilder.getGeneratedPasswordEmailInfo(randomPass, userDTO.getEmail()) );
+    	
     	return EntityMapper.fromEntityToDTO(user);
     }
     

@@ -2,7 +2,6 @@ package br.com.javamoon.unit.validator;
 
 import static br.com.javamoon.util.Constants.CEJ_COUNCIl_ALIAS;
 import static br.com.javamoon.util.Constants.DEFAULT_CEJ_RANKS;
-import static br.com.javamoon.util.Constants.DEFAULT_CPJ_RANKS;
 import static br.com.javamoon.util.TestDataCreator.getJusticeCouncil;
 import static br.com.javamoon.util.TestDataCreator.newDrawDTO;
 import static br.com.javamoon.validator.ValidationConstants.DRAW_JUSTICE_COUNCIL;
@@ -17,21 +16,7 @@ import static br.com.javamoon.validator.ValidationConstants.SOLDIER_LIST_INVALID
 import static br.com.javamoon.validator.ValidationConstants.STRING_EXCEEDS_MAX_LEN;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
-
-import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.List;
-
-import org.apache.commons.lang3.StringUtils;
-import org.apache.logging.log4j.util.Strings;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.Mock;
-import org.mockito.Mockito;
-import org.mockito.junit.jupiter.MockitoExtension;
-
-import br.com.javamoon.domain.draw.JusticeCouncil;
+import br.com.javamoon.domain.repository.DrawRepository;
 import br.com.javamoon.domain.repository.MilitaryRankRepository;
 import br.com.javamoon.exception.DrawValidationException;
 import br.com.javamoon.mapper.DrawDTO;
@@ -40,8 +25,18 @@ import br.com.javamoon.util.Constants;
 import br.com.javamoon.util.DateUtils;
 import br.com.javamoon.util.TestDataCreator;
 import br.com.javamoon.validator.DrawValidator;
-import br.com.javamoon.validator.ValidationConstants;
 import br.com.javamoon.validator.ValidationError;
+import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.List;
+import org.apache.commons.lang3.StringUtils;
+import org.apache.logging.log4j.util.Strings;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.Mock;
+import org.mockito.Mockito;
+import org.mockito.junit.jupiter.MockitoExtension;
 
 @ExtendWith(MockitoExtension.class)
 public class DrawValidatorUnitTest {
@@ -52,6 +47,9 @@ public class DrawValidatorUnitTest {
 	@Mock
 	private MilitaryRankRepository rankRepository;
 	
+	@Mock
+	private DrawRepository drawRepository;
+	
 	@BeforeEach
 	void setupEach() {
 		victim = TestDataCreator.newDrawValidator(null);
@@ -60,21 +58,7 @@ public class DrawValidatorUnitTest {
 	@Test
 	void testRandAllSoldiersValidationSuccessfully(){
 		DrawDTO drawDTO = newDrawDTO();
-		
-		Mockito.when(rankRepository.findAllIdsByArmiesIn(drawDTO.getArmy())).thenReturn(drawDTO.getSelectedRanks());
-		
 		victim.randAllSoldiersValidation(drawDTO);	
-	}
-	
-	@Test
-	void testRandAllSoldiersValidationWhenRankDoesNotBelongsToArmy() {
-		DrawDTO drawDTO = newDrawDTO();
-		
-		Mockito.when(rankRepository.findAllIdsByArmiesIn(drawDTO.getArmy())).thenReturn(List.of(10, 11));
-		IllegalStateException exception = assertThrows(IllegalStateException.class, 
-				() -> victim.randAllSoldiersValidation(drawDTO));
-		
-		assertEquals(ValidationConstants.INCONSISTENT_DATA, exception.getMessage());
 	}
 	
 	@Test
@@ -102,29 +86,6 @@ public class DrawValidatorUnitTest {
 		
 		DrawValidationException exception = assertThrows(DrawValidationException.class, () -> victim.saveDrawValidation(drawDTO, null));
 		assertEquals(new ValidationError(DRAW_PROCESS_NUMBER, STRING_EXCEEDS_MAX_LEN), exception.getValidationErrors().getError(0));
-	}
-	
-	@Test
-	void testValidateRankListSize() {
-		DrawDTO drawDTO = newDrawDTO();
-		JusticeCouncil justiceCouncil = getJusticeCouncil();
-		justiceCouncil.setAlias(CEJ_COUNCIl_ALIAS);
-		
-		drawDTO.setJusticeCouncil(justiceCouncil);
-		
-		drawDTO.setSelectedRanks(new ArrayList<Integer>(0));
-		assertThrows(DrawValidationException.class, 
-				() -> victim.randAllSoldiersValidation(drawDTO));
-		
-		drawDTO.setSelectedRanks(DEFAULT_CPJ_RANKS);
-		DrawValidationException exception = 
-				assertThrows(DrawValidationException.class, () -> victim.randAllSoldiersValidation(drawDTO));
-		
-		assertEquals(1, exception.getValidationErrors().getNumberOfErrors());
-		
-		assertEquals(
-				new ValidationError(DRAW_SELECTED_RANKS, RANK_LIST_INVALID_SIZE),
-				exception.getValidationErrors().getError(0));
 	}
 	
 	@Test

@@ -183,20 +183,6 @@ public class DrawServiceIntegrationTest {
 	}
 	
 	@Test
-	void testSaveDrawWhenSelectedRankDoesNotBelongsToArmy() {
-		Draw persistedDraw = getPersistedListOfDraw(1).get(0);
-		DrawDTO drawDTO = EntityMapper.fromEntityToDTO(persistedDraw);
-		
-		MilitaryRank rank = new MilitaryRank();
-		rank.setId(10);
-		
-		drawDTO.getSelectedRanks().set(0, 10);
-		drawDTO.getSoldiers().get(0).setMilitaryRank(rank);
-		assertThrows(IllegalStateException.class, 
-				() -> victim.save(drawDTO, persistedDraw.getCjmUser()));
-	}
-	
-	@Test
 	void testListByAuditorshipSuccessfully() {
 		final int listSize = 5;
 		List<Draw> listOfDraw = getPersistedListOfDraw(listSize);

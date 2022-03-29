@@ -86,7 +86,7 @@ public class RandomSoldierService {
 	public int replaceRandomSoldier(DrawDTO drawDTO) throws DrawValidationException{
 		Integer selectedIndex = getSelectedIndex(drawDTO.getSoldiers(), drawDTO.getReplaceSoldierId());
 		soldierValidator.replaceSoldierValidation(drawDTO, selectedIndex);
-		getSoldierOrElseThrow(drawDTO.getId(), drawDTO.getSelectedDrawList());
+		getSoldierOrElseThrow(drawDTO.getReplaceSoldierId(), drawDTO.getSelectedDrawList());
 		
 		Soldier randomSoldier;
 		MilitaryRank replaceRank = militaryRankService.getById(drawDTO.getReplaceRankId());

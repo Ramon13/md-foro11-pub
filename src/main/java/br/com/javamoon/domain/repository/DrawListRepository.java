@@ -15,8 +15,17 @@ import br.com.javamoon.domain.entity.DrawList;
 
 public interface DrawListRepository extends JpaRepository<DrawList, Integer>{
 
-	@Query("FROM DrawList dl WHERE dl.active = true AND dl.id = :id AND dl.army = :army AND dl.creationUser.cjm = :cjm")
-	Optional<DrawList> findActiveByIdAndArmyAndCjm(@Param("id") Integer id, @Param("army") Army army, @Param("cjm") CJM cjm);
+	@Query("FROM DrawList dl "
+		+ "WHERE dl.active = true "
+		+ "AND dl.id = :id "
+		+ "AND ( :army IS NULL OR dl.army = :army ) "
+		+ "AND dl.creationUser.cjm = :cjm"
+	)
+	Optional<DrawList> findActiveByIdAndArmyAndCjm(
+		@Param("id") Integer id, 
+		@Param("army") Army army, 
+		@Param("cjm") CJM cjm
+	);
 	
 	@Query("FROM DrawList dl WHERE dl.active = true AND dl.id = :id AND dl.creationUser.cjm = :cjm")
 	Optional<DrawList> findActiveByIdAndCjm(@Param("id") Integer id, @Param("cjm") CJM cjm);

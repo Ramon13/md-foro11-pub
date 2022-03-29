@@ -14,6 +14,8 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.Mockito.doNothing;
+import br.com.javamoon.config.email.EmailSender;
 import br.com.javamoon.domain.cjm_user.Auditorship;
 import br.com.javamoon.domain.cjm_user.AuditorshipRepository;
 import br.com.javamoon.domain.cjm_user.CJM;
@@ -39,8 +41,11 @@ import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 import org.apache.commons.lang3.StringUtils;
 import org.junit.jupiter.api.Test;
+import org.mockito.Mock;
+import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.annotation.DirtiesContext.ClassMode;
 import org.springframework.test.context.ActiveProfiles;
@@ -68,12 +73,17 @@ public class UserAccountServiceUnitTest {
 	@Autowired
 	private CJMUserRepository cjmUserRepository;
 	
+	@MockBean
+	private EmailSender emailSender;
+	
 	@Test
 	void testCreateCJMAccountSuccessfully() {
 		CJMUserDTO newUser = TestDataCreator.newCJMUserDTO();
 		Auditorship auditorship = getPersistedAuditorship();
 		
 		assertTrue(cjmUserRepository.findAll().isEmpty());
+		
+		Mockito.doNothing().when(emailSender).send(Mockito.any());
 		
 		victim.createCJMUserAccount(newUser, auditorship);
 		
@@ -127,31 +137,6 @@ public class UserAccountServiceUnitTest {
 		assertEquals(
 				new ValidationError(ACCOUNT_EMAIL, ACCOUNT_EMAIL_ALREADY_EXISTS),
 				exception.getValidationErrors().getError(0));
-	}
-	
-	@Test
-	void testCreateCJMAccountWhenPasswordIsInvalid() {
-		CJMUserDTO newUser = TestDataCreator.newCJMUserDTO();
-		Auditorship auditorship = getPersistedAuditorship();
-		
-		newUser.setPassword("123qqq");
-		AccountValidationException exception = 
-				assertThrows(AccountValidationException.class, () -> victim.createCJMUserAccount(newUser, auditorship));
-		
-		assertEquals(1, exception.getValidationErrors().getNumberOfErrors());
-		assertEquals(new ValidationError(ACCOUNT_PASSWORD, PASSWORD_DOES_NOT_HAVE_UPPERCASE), exception.getValidationErrors().getError(0));
-		
-		newUser.setPassword("123QQQ");
-		exception = assertThrows(AccountValidationException.class, () -> victim.createCJMUserAccount(newUser, auditorship));
-		
-		assertEquals(1, exception.getValidationErrors().getNumberOfErrors());
-		assertEquals(new ValidationError(ACCOUNT_PASSWORD, PASSWORD_DOES_NOT_HAVE_LOWERCASE), exception.getValidationErrors().getError(0));
-		
-		newUser.setPassword("qqqQQQ");
-		exception = assertThrows(AccountValidationException.class, () -> victim.createCJMUserAccount(newUser, auditorship));
-		
-		assertEquals(1, exception.getValidationErrors().getNumberOfErrors());
-		assertEquals(new ValidationError(ACCOUNT_PASSWORD, PASSWORD_DOES_NOT_HAVE_NUMBER), exception.getValidationErrors().getError(0));
 	}
 	
 	@Test

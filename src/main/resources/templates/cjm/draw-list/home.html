@@ -1,6 +1,10 @@
 <!DOCTYPE html>
 <html xmlns="http://www.w3.org/1999/xhtml"
-  xmlns:th="http://www.thymeleaf.org" layout:decorate="~{group/layout}">
+  xmlns:th="http://www.thymeleaf.org" layout:decorate="~{cjm/layout}">
+
+<head>
+  <link th:href="@{/styles/dropdown.css}" type="text/css" rel="stylesheet" />
+</head>
 
 <style layout:fragment="style">
 h1 {
@@ -8,6 +12,7 @@ h1 {
 	color: #4e4848;
 	font-size: 20px;
 	font-weight: bold;
+	text-align: left;
 }
 
 div .list-header {
@@ -28,73 +33,39 @@ div .draw-list {
 	background-color: #eee;
 	padding: 15px;
 	margin-bottom: 15px;
-	width: 92%;
 	transition: 0.3s;
 	box-shadow: 0px 3px 6px 3px #ddd;
-}
-
-img.more {
-	float: right;
-	border: none;
-	transform: rotate(90deg);
-	padding: 5px;
-	border-radius: 20%;
-}
-
-img.more:hover {
-	border: 1px solid black;
-}
-
-button#newList:hover, img.more:hover {
-	cursor: pointer;
-}
-
-.edit_phase {
-	color: #1A88FF;
-}
-
-.ready_phase {
-	color: #2EA44F;
 }
 </style>
 
 <body>
   <div layout:fragment="content">
     <h1>Relações de militares para sorteio</h1>
-    <div th:if="${session.listScope}">
-      <button id="newList" class="app-green-btn">Nova Relação</button>
-    </div>
     <hr />
 
-    <div class="empty-list" th:if="${#lists.isEmpty(drawLists)}">
+    <div class="empty-list" th:if="${#lists.isEmpty(listsByQuarter)}">
       <span>Não há listas cadastradas no sistema</span>
     </div>
-    <div th:each="drawList : ${drawLists}">
+    <div th:each="listByQuarter : ${listsByQuarter}">
+      <div class="quarter">
+        <span th:text="${listByQuarter.formattedQuarterYear}"></span>
+      </div>
 
-      <div class="draw-list">
-        <div class="list-header">
-          <span
-            th:text="'[' + ${drawList.yearQuarter} + ']' + ' ' + ${drawList.description}"></span>
-
-          <div class="dropdown" th:if="${session.listScope}">
-            <img class="more dropdown" th:src="@{/images/hmore.svg}" />
-            <div class="dropdown-content"
-              th:attr="data-listid=${drawList.id}">
-              <a class="removeList" href="#">Remover</a> 
-              <a class="duplicateList" href="#">Duplicar</a>
-              <a class="duplicateList" target="_blank" th:href="@{/gp/dw/list/report/} + ${drawList.id}">Gerar Relatório</a>
-            </div>
+      <div class="draw-list" th:each="drawListDTO : ${listByQuarter.lists}">
+        <div class="dropdown">
+          <img class="more dropdown" th:src="@{/images/hmore.svg}" />
+          <div class="dropdown-content">
+            <a th:href="@{/cjm/dw/lists/list/} + '' + ${drawListDTO.id}">Exibir Lista</a>
+            <a target="_blank" th:href="@{/cjm/dw/lists/report/} + ${drawListDTO.id}">Gerar Relatório</a>
           </div>
         </div>
-
-        <div class="list-info">
-          <span>criado em:</span> 
-          <span th:text="${drawList.formattedCreationDate}"></span> 
-          <span> | </span> <span>ultima modificação:</span> 
-          <span th:text="${drawList.formattedUpdateDate}"></span> <br /><br /> 
-          <!-- <span th:classappend="${drawList.listPhase}" th:text="${drawList.listPhaseDescription}"></span> -->
+        <div class="list-header">
+          <span th:text="${drawListDTO.prettyPrintListTitle()}"></span>
         </div>
-        <br /> <a th:href="@{/gp/dw/list/edit/} + '' + ${drawList.id}">Editar</a>
+        <div class="list-info">
+          <span th:text="${drawListDTO.army.name}"></span><br /> 
+          <span th:text="${drawListDTO.prettyPrintListInfo()}"></span>
+        </div>
       </div>
     </div>
 
@@ -102,45 +73,7 @@ button#newList:hover, img.more:hover {
   </div>
 
   <script layout:fragment="page-script" th:inline="javascript">
-      historyPush();
-    	const newListBtn = document.querySelector("button#newList");
-    	addListener(newListBtn, "click", function(){
-    	  location.href = '[(@{/gp/dw/list/new})]';
-		  }); 
-    	
-    	setRemoveListBtnListerner()
-    	
-    	function setRemoveListBtnListerner(){
-    		const dropdownMenu = document.querySelectorAll("div .dropdown-content");
-    		let form;
-    		
-    		form = document.createElement("form");
-    		form.method = "POST";
-    		form.style.display = "none";
-    		document.body.appendChild(form);
-    		
-    		let listId, removeList, duplicateList;
-    		for (let i = 0; i < dropdownMenu.length; i++){
-    			removeList = dropdownMenu[i].querySelector(".removeList");
-    			duplicateList = dropdownMenu[i].querySelector(".duplicateList");
-    			
-    			removeList.addEventListener("click", function(){
-    				if (window.confirm("Após deletar uma lista esta operação não poderá mais ser desfeita. Deseja prosseguir com a deleção?")){
-      				listId = dropdownMenu[i].dataset.listid;	
-      				form.action = '[(@{/gp/dw/list/remove/})]' + listId;
-      				console.log(form.action);
-      				form.submit();
-    				}
-    			});
-    			
-    			duplicateList.addEventListener("click", function(){
-    				listId = dropdownMenu[i].dataset.listid;
-    				form.action = '[(@{/gp/dw/list/duplicate/})]' + listId;
-    				console.log(form.action);
-    				form.submit();
-    			});
-    		}	
-    	}
+       historyPush();
     </script>
 </body>
 </html>

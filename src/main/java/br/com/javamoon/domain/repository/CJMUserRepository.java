@@ -14,6 +14,8 @@ public interface CJMUserRepository extends JpaRepository<CJMUser, Integer>{
 	@Query("FROM CJMUser c WHERE c.active = true AND c.username = :username")
 	Optional<User> findActiveByUsername(@Param("username") String username);
 	
+	Optional<User> findByUsername(@Param("username") String username);
+	
 	@Query("FROM CJMUser c WHERE c.active = true AND c.auditorship.id = :auditorshipId")
 	Optional<List<CJMUser>> findActiveByAuditorship(@Param("auditorshipId") Integer auditorshipId);
 	
@@ -28,6 +30,8 @@ public interface CJMUserRepository extends JpaRepository<CJMUser, Integer>{
 	
 	@Query("FROM CJMUser c WHERE c.active = true AND c.email = :email")
 	Optional<User> findActiveByEmail(@Param("email") String email);
+	
+	Optional<User> findByEmail(@Param("email") String email);
 	
 	@Query("FROM CJMUser c WHERE c.active = true AND c.recoveryToken = :recoveryToken")
 	Optional<User> findActiveByRecoveryToken(@Param("recoveryToken") String recoveryToken);

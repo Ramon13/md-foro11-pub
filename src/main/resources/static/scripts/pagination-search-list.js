@@ -39,5 +39,9 @@ function setupBtns(){
     pagPrev.disabled = true;
 }
 
+function focusSearchBar(){
+  searchInput.focus();
+}
+
 
              

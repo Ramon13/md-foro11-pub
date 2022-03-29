@@ -23,3 +23,15 @@
 .show {
 	display: block;
 }
+
+img.more {
+  float: right;
+  border: none;
+  transform: rotate(90deg);
+  padding: 5px;
+  border-radius: 20%;
+}
+
+img.more:hover {
+  border: 1px solid black;
+}

@@ -1,7 +1,10 @@
 <!DOCTYPE html>
 <html xmlns="http://www.w3.org/1999/xhtml"
   xmlns:th="http://www.thymeleaf.org" layout:decorate="~{cjm/layout}">
-
+<head>
+  <link th:href="@{/styles/multiple-form.css}" type="text/css" rel="stylesheet" />
+  <link th:href="@{/styles/cjm/draw-home.css}" type="text/css" rel="stylesheet" />
+</head>
 <style layout:fragment="style">
 div .list-header {
 	float: right;
@@ -234,6 +237,8 @@ div#multipleFormBtns {
         </div>
       </div>
     </form>
+    
+    <script type="text/javascript" th:src="@{/scripts/multiple-form.js}"></script>
   </div>
 
   <script layout:fragment="page-script" th:inline="javascript">

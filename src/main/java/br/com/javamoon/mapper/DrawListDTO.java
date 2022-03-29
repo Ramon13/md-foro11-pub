@@ -5,7 +5,6 @@ import static br.com.javamoon.mapper.MapperConstants.EDIT_PHASE_DESCRIPTION;
 import static br.com.javamoon.mapper.MapperConstants.READY_PHASE;
 import static br.com.javamoon.mapper.MapperConstants.READY_PHASE_DESCRIPTION;
 import br.com.javamoon.domain.entity.Army;
-import br.com.javamoon.domain.entity.DrawList;
 import br.com.javamoon.domain.entity.GroupUser;
 import br.com.javamoon.domain.entity.Soldier;
 import br.com.javamoon.util.DateUtils;

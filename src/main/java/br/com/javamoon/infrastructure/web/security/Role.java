@@ -65,4 +65,14 @@ public class Role {
         
         return level;
     }
+    
+    public static int calcCJMPermissionLevel(List<String> selectedRoles) {
+        int level = 0;
+        for (int i = 0; i < CjmRole.values().length; i++) {
+            if (selectedRoles.contains(CjmRole.values()[i].toString()))
+                level += Math.pow(2, i);
+        }
+        
+        return level;
+    }
 }

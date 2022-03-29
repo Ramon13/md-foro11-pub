@@ -13,10 +13,10 @@ public class EmailInfoBuilder {
 	
 	private final String FORGOT_PASSWORD_SUBJECT = "Recuperação de senha";
 	private final String FORGOT_PASSWORD_HTML_TEMPLATE = "email/password-recovery";
+	private final String GENERATED_PASSWORD_HTML_TEMPLATE = "email/password-generated";
 	private final String FORGOT_PASSWORD_RECOVERY_ENDPOINT = "/credentials/forgot-password/new";
 	
 	private final String GENERATED_PASSWORD_SUBJECT = "Acesso cadastrado com sucesso!";
-	private final String GENERATED_PASSWORD_HTML_TEMPLATE = "email/password-generated";
 	
 	@Value("${md-foro11.server.dns}")
 	private String SERVER_DNS;
@@ -44,12 +44,16 @@ public class EmailInfoBuilder {
 			emailTo,
 			GENERATED_PASSWORD_SUBJECT,
 			GENERATED_PASSWORD_HTML_TEMPLATE,
-			Map.of("generatedPassword", generatedPassword)
+			Map.of("generatedPassword", generatedPassword, "appEndpoint", getBaseApplicationEndpoint())
 		);
 	}
 	
 	private String getRecoverAddress(String username, String recoveryToken){
 		return String.format( "%s%s%s?recoveryToken=%s",
 				SERVER_DNS, CONTEXT_PATH, FORGOT_PASSWORD_RECOVERY_ENDPOINT, recoveryToken);
+	}
+	
+	private String getBaseApplicationEndpoint() {
+		return String.format("%s/%s", SERVER_DNS, CONTEXT_PATH);
 	}
 }

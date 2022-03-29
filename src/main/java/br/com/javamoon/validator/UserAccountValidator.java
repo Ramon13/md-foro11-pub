@@ -26,23 +26,13 @@ public class UserAccountValidator {
 		this.cjmUserRepository = cjmUserRepository;
 	}
 
-	public void validateCreateGroupUserAccount(UserDTO userDTO){
+	public void validateCreateUserAccount(UserDTO userDTO){
         ValidationErrors validationErrors = new ValidationErrors();
         
         validateDuplicatedGroupUsername(userDTO.getUsername(), validationErrors);
     	validateDuplicatedGroupEmail(userDTO.getEmail(), validationErrors);
-        
-        if (validationErrors.hasErrors())
-            throw new AccountValidationException(validationErrors); 
-    }
-	
-	public void validateCreateCJMUserAccount(UserDTO userDTO){
-        ValidationErrors validationErrors = new ValidationErrors();
-        
-        if (validatePassword(userDTO.getPassword(), validationErrors)) {
-        	validateDuplicatedCJMUsername(userDTO.getUsername(), validationErrors);
-        	validateDuplicatedCJMEmail(userDTO.getEmail(), validationErrors);
-        }
+    	validateDuplicatedCJMUsername(userDTO.getUsername(), validationErrors);
+    	validateDuplicatedCJMEmail(userDTO.getEmail(), validationErrors);
         
         if (validationErrors.hasErrors())
             throw new AccountValidationException(validationErrors); 
@@ -69,7 +59,7 @@ public class UserAccountValidator {
     }
     
     private void validateDuplicatedCJMUsername(String username, ValidationErrors validationErrors) {
-        if (cjmUserRepository.findActiveByUsername(username).isPresent())
+        if (cjmUserRepository.findByUsername(username).isPresent())
             validationErrors.add(ACCOUNT_USERNAME, ACCOUNT_USERNAME_ALREADY_EXISTS);
     }
     
@@ -79,7 +69,7 @@ public class UserAccountValidator {
     }
     
     private void validateDuplicatedCJMEmail(String email, ValidationErrors validationErrors) {
-        if (cjmUserRepository.findActiveByEmail(email).isPresent())
+        if (cjmUserRepository.findByEmail(email).isPresent())
             validationErrors.add(ACCOUNT_EMAIL, ACCOUNT_EMAIL_ALREADY_EXISTS);
     }
     
