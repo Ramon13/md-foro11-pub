@@ -11,6 +11,8 @@ import br.com.javamoon.mapper.SoldierDTO;
 import br.com.javamoon.mapper.SoldierToListDTO;
 import br.com.javamoon.report.model.GeneratedReport;
 import br.com.javamoon.service.DrawListService;
+import br.com.javamoon.service.MilitaryOrganizationService;
+import br.com.javamoon.service.MilitaryRankService;
 import br.com.javamoon.service.ReportCreationService;
 import br.com.javamoon.service.SoldierService;
 import br.com.javamoon.util.DateUtils;
@@ -42,16 +44,22 @@ public class DrawListController {
 	private SoldierService soldierService;
 	private PaginationConfigProperties paginationConfigProperties;
 	private ReportCreationService reportCreationService;
+	private MilitaryOrganizationService militaryOrganizationService;
+	private MilitaryRankService militaryRankService;
 	
 	public DrawListController(
 			DrawListService drawListService,
 			SoldierService soldierService,
 			PaginationConfigProperties paginationConfigProperties,
-			ReportCreationService reportCreationService) {
+			ReportCreationService reportCreationService,
+			MilitaryOrganizationService militaryOrganizationService,
+			MilitaryRankService militaryRankService) {
 		this.drawListService = drawListService;
 		this.soldierService = soldierService;
 		this.paginationConfigProperties = paginationConfigProperties;
 		this.reportCreationService = reportCreationService;
+		this.militaryOrganizationService = militaryOrganizationService;
+		this.militaryRankService = militaryRankService;
 	}
 
 	@GetMapping("/list")
@@ -107,7 +115,11 @@ public class DrawListController {
 		model.addAttribute("drawList", drawList);
 		model.addAttribute("soldiers", soldiers);
 		model.addAttribute("paginationFilter", paginationFilter);
-		model.addAttribute("quarters", DateUtils.getSelectableQuarters());		
+		model.addAttribute("quarters", DateUtils.getSelectableQuarters());
+		
+		model.addAttribute("soldier", new SoldierDTO());
+		model.addAttribute("oms", militaryOrganizationService.listOrganizationsByArmy( getArmy() ));
+		model.addAttribute("ranks", militaryRankService.listRanksByArmy( getArmy() ));
 		return "group/draw-list/soldier-list";
 	}
 		

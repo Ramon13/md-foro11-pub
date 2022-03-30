@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
+  <head>
+    <meta charset="utf-8" />
+  </head>
+  <body>
+    <div th:fragment="soldier-register" id="soldierRegister" class="modal">
+      
+      <div class="modal-content">
+        <span class="close">&times;</span>
+        
+        <h1 th:text="${editMode} ? 'Editar informações do militar' : 'Cadastrar novo militar'"></h1>
+        <hr />
+        
+        <form method="post" th:object="${soldier}" th:action="@{/gp/sd/register/save}">
+          <input type="hidden" th:field="*{id}" />
+
+          <div class="form-step">
+            <div class="input-label">
+              <label>Nome* </label><br />
+            </div>
+            <div>
+              <input type="text" id="sdName" name="name" placeholder="Nome do militar..." th:field="*{name}" class="app-txtinput"/>
+            </div>
+          </div>
+          
+          <div class="form-step">
+            <div class="input-label">
+              <label for="om">OM* </label><br />
+            </div>
+            
+            <div>
+              <select id="sdOm" name="militaryOrganization" class="app-select">
+                <option value="0">Selecione...</option>
+                <option th:each="om : ${oms}" th:value="${om.id}"
+                  th:text="${om.name} + ' (' + ${om.alias} + ')'"
+                  th:selected="${soldier.militaryOrganization != null and om.id == soldier.militaryOrganization.id}">
+                </option>
+              </select>
+            </div>
+          </div>
+          
+          <div class="form-step">
+            <div class="input-label">
+              <label for="rank">Posto* </label>
+            </div>
+            <div>
+              <select id="sdRank" class="app-select" name="militaryRank">
+                <option value="0">Selecione...</option>
+                <option th:each="rank : ${ranks}" th:value="${rank.id}"
+                  th:text="${rank.name}"
+                  th:selected="${soldier.militaryRank != null and rank.id == soldier.militaryRank.id}"></option>
+              </select>
+            </div>
+          </div>
+          
+          <div class="form-step">
+            <div class="input-label">
+              <label>Telefone</label>
+            </div>
+            <div>
+              <input type="text" id="sdPhone" name="phone" placeholder="Telefone residencial ou celular..."
+                th:field="*{phone}" class="app-txtinput"/>
+            </div>
+          </div>
+          
+          <div class="form-step">
+            <div class="input-label">
+              <label>E-mail*</label>
+            </div>
+            <div>
+              <input type="text" id="sdEmail" name="email" placeholder="Email ativo do militar..."
+                th:field="*{email}" class="app-txtinput" />
+            </div>
+          </div>
+          
+          <div>
+            <button type="submit" class="app-green-btn">
+              <span>Salvar</span>
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </body>
+</html>

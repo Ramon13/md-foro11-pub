@@ -5,6 +5,11 @@
   </head>
   <body>
     <div th:fragment="search-soldier" id="searchSoldierModal" class="modal">
+      <!-- ======================================================================= -->
+      <!-- ================Soldier register modal=================================== -->
+      <!-- ======================================================================= -->
+      <div th:replace="group/modal/soldier-register :: soldier-register"></div>
+    
       <input type="hidden" id="addSoldierEndpoint" th:value="@{/gp/dw/list/add}" />
       
       <div class="modal-content">
@@ -24,7 +29,7 @@
         <br />
         <div id="searchResultList"></div>
         <div id="newSoldierProfile">
-          <a th:href="@{/gp/sd/register/home}">Criar novo perfil de militar</a>
+          <a href="#">Criar novo perfil de militar</a>
         </div>
       </div>
       

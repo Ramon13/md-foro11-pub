@@ -1,0 +1,7 @@
+div#soldierRegister form {
+	width: 50% !important;
+}
+
+div#soldierRegister select.app-select {
+	width: 100%;
+}

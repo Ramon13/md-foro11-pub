@@ -1,8 +1,8 @@
 const newSoldierBtn = document.querySelector("div#newSoldierProfile a");
 newSoldierBtn.onclick = function(event){
   event.preventDefault();
-  historyPush();
-  location.href = this.href;
+  const soldierRegister = document.querySelector("div#soldierRegister");
+  displayModal( soldierRegister );
 }
 
 const searchSoldierBtn = document.querySelector("button#openModalBtn");
