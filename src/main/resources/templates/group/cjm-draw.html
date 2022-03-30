@@ -1,30 +1,20 @@
 <!DOCTYPE html>
-<html xmlns="http://www.w3.org/1999/xhtml"
-  xmlns:th="http://www.thymeleaf.org" layout:decorate="~{group/layout}">
-
-<style layout:fragment="style">
-h1 {
-	font-family: "Roboto", sans-serif;
-	color: #4e4848;
-	font-size: 20px;
-	font-weight: bold;
-}
-</style>
-
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org" layout:decorate="~{group/layout}">
+<head>
+  <link type="text/css" rel="stylesheet" th:href="@{/styles/accordeon.css}"/>
+</head>
 <body>
   <div layout:fragment="content">
-    <h1 th:text="${cjm.name} + ' - Sorteios'"></h1>
-
+    <h1 class="pageTitle" th:text="${cjm.name} + ' - Sorteios'"></h1>
     <hr />
 
     <div class="draw-list" th:each="drawMap : ${quarterDrawMap}">
-      <div class="quarter">
+      <div class="quarter app-list-category">
         <span th:text="${drawMap.key}"></span>
       </div>
+      
       <div th:each="draw : ${drawMap.value}">
-        <button
-          th:text="${draw.cjmUser.auditorship.name} + ' (' + ${draw.justiceCouncil.name} + ')'"
-          class="accordion"></button>
+        <button th:text="${draw.cjmUser.auditorship.name} + ' (' + ${draw.justiceCouncil.name} + ')'" class="accordion"></button>
 
         <div class="panel">
           <table>
@@ -51,10 +41,10 @@ h1 {
         </div>
       </div>
     </div>
-  </div>
-
-  <script layout:fragment="page-script" th:inline="javascript">
-    	accordion(document.getElementsByClassName("accordion"));
+    
+    <script th:inline="javascript">
+      accordion(document.getElementsByClassName("accordion"));
     </script>
+  </div>
 </body>
 </html>

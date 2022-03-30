@@ -34,11 +34,14 @@
         
         <hr />
         <div id="soldiers">
-          <div th:each="soldier : ${soldiers}" class="app-div-list soldier-info">
+          <div th:each="soldier : ${soldiers}" class="app-list soldier-info">
             <input class="soldier-id" type="hidden" th:value="${soldier.id}"/>
-            <p class="list-header" th:text="${soldier.idInfoAsText}"></p>
-            <br />
-            <p class="list-info" th:text="${soldier.oMAndRankAsText}"></p>
+            <div class="list-header">
+              <p th:text="${soldier.idInfoAsText}"></p>
+            </div>
+            <div class="list-info" >
+              <p th:text="${soldier.oMAndRankAsText}"></p>
+            </div>
             <button class="remove-soldier" th:attr="data-soldierid=${soldier.id}">----</button>
           </div>
         </div>
@@ -63,7 +66,7 @@
       <!-- ======================================================================= -->
       <!-- ================Base div to generate display found soldiers============ -->
       <!-- ======================================================================= -->
-      <div id="baseListTuple" class="app-div-list soldier-info" style="display: none">
+      <div id="baseListTuple" class="app-list soldier-info" style="display: none">
         <input class="soldier-id" type="hidden"/>
         <p class="list-header"></p>
         <br />

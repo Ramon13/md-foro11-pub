@@ -1,3 +1,11 @@
+div.app-list{
+	position: relative;
+}
+
+div.list-header p{
+	font-size: 14px;
+}
+
 #newSoldierProfile{
   text-align: center;
   margin: 20px;
@@ -87,10 +95,6 @@ form#soldierSearch button{
 	border-radius: 0;
 }
 
-div.app-div-list:hover{
-    background-color: #eee;
-}
-
 div#soldiers{
 	height: 56vh;
 	overflow: auto;
@@ -103,20 +107,16 @@ div#foundSoldiers {
 
 button.remove-soldier{
 	position: absolute;
-    right: 5px;
-    top: 30%;
-    border: none;
-    border-radius: 50%;
-    background-color: #d75b49;
-    color: #fff;
-    width: 25px;
-    height: 25px;
-    padding-left: 5px;
-    padding-top: 3px;
-}
-
-div.soldier-info:hover{
-	background-color: #ddd;
+  right: 10px;
+  top: 30%;
+  border: none;
+  border-radius: 50%;
+  background-color: #d75b49;
+  color: #fff;
+  width: 25px;
+  height: 25px;
+  padding-left: 5px;
+  padding-top: 3px;
 }
 
 button.remove-soldier:hover{
