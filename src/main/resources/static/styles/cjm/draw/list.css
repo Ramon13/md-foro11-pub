@@ -1,0 +1,31 @@
+.panel table {
+  font-family: Roboto, sans-serif;
+  border-collapse: collapse;
+  width: 100%;
+}
+
+.panel table td {
+  font-size: 14px;
+}
+
+.panel table td, .panel table soldiers th {
+  border: 1px solid #ddd;
+  padding: 8px;
+}
+
+.panel table th {
+  padding-top: 12px;
+  padding-bottom: 12px;
+  text-align: left;
+  background-color: #ffffff;
+  color: #808080;
+  font-weight: bold;
+}
+
+.panel table tr:nth-child(even) {
+  background-color: #f2f2f2;
+}
+
+.panel table tr:hover {
+  background-color: #ddd;
+}

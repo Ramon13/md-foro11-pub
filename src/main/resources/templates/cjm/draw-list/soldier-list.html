@@ -2,6 +2,14 @@
 <html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org" layout:decorate="~{cjm/layout}">
   <head>
     <link th:href="@{/styles/pagination-search-list.css}" type="text/css" rel="stylesheet"/>
+    <style type="text/css">
+      div#soldiers{
+        height: 65vh;
+        overflow: auto;
+        border: 1px solid #eee;
+        padding: 8px;
+      }
+    </style>
   </head>
   <body>
     <div layout:fragment="content">
@@ -13,7 +21,7 @@
         <div th:replace="fragments/pagination-menu :: pagination"></div>
         <br /><br />
         <div id="soldiers">
-          <div th:each="soldier : ${soldiers}" class="app-div-list soldier-info"
+          <div th:each="soldier : ${soldiers}" class="app-list soldier-info"
             th:attr="data-sdprofile=@{/cjm/sd/profile/} + ${soldier.id}">
             <p class="list-header" th:text="${soldier.idInfoAsText}"></p>
             <br />

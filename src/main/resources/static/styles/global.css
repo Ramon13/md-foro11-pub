@@ -88,6 +88,27 @@ form {
 	margin: auto;
 }
 
+/*=========== input fields ===========================*/
+input[type=text], input[type=password], input[type=date], select.app-select{
+  font-family: "Roboto", sans-serif;
+  width: 100%;
+  padding: 6px;
+  margin: 8px 0;
+  display: inline-block;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  box-sizing: border-box;
+  background-color: #fff;
+}
+
+select.no-border {
+  font-size: 20px;
+  border: none;
+  width: 40%;
+  color: #505050;
+  outline: none;
+}
+
 /*=========== app list =============================*/
 div.app-list-category {
   padding: 15px 5px;
@@ -112,6 +133,14 @@ div.app-list {
   box-shadow: 0px 3px 6px 3px #ddd;
 }
 
+div.app-list:hover{
+  background-color: #ddd;
+}
+
+div.app-list p{
+  display: inline;
+}
+
 div.app-list .list-header {
   font-family: "Roboto", sans-serif;
   color: #4e4848;
@@ -120,10 +149,22 @@ div.app-list .list-header {
   margin-bottom: 15px;
 }
 
+div.app-list p.list-header{
+  font-size: 14px;
+}
+
 div.app-list .list-info {
   color: #606060;
   font-size: 12px;
 }
+
+div.app-list p.list-info{
+  color: #606060;
+  font-size: 12px;
+}
+
+
+
 
 
 
@@ -219,19 +260,6 @@ div#content {
 	padding: 10px;
 }
 
-input[type=text], input[type=password], input[type=date], select.app-select
-	{
-	font-family: "Roboto", sans-serif;
-	width: 100%;
-	padding: 6px;
-	margin: 8px 0;
-	display: inline-block;
-	border: 1px solid #ccc;
-	border-radius: 4px;
-	box-sizing: border-box;
-	background-color: #fff;
-}
-
 div.error span, span.error, p.error {
 	color: #FF0000;
 }
@@ -249,76 +277,6 @@ div.successMsg {
 	font-family: "Roboto", sans-serif;
 	border-radius: 4px;
 	margin-bottom: 20px;
-}
-
-.accordion {
-	background-color: #eee;
-	color: #444;
-	cursor: pointer;
-	padding: 18px;
-	width: 100%;
-	border: none;
-	text-align: left;
-	outline: none;
-	font-size: 15px;
-	transition: 0.4s;
-	margin: 2px 0;
-}
-
-.active, .accordion:hover {
-	background-color: #ccc;
-}
-
-.accordion:after {
-	content: '\002B';
-	color: #777;
-	font-weight: bold;
-	float: right;
-	margin-left: 5px;
-}
-
-.active:after {
-	content: "\2212";
-}
-
-.panel {
-	padding: 0 18px;
-	background-color: white;
-	max-height: 0;
-	overflow: hidden;
-	transition: max-height 0.2s ease-out;
-}
-
-.panel table {
-	font-family: Roboto, sans-serif;
-	border-collapse: collapse;
-	width: 100%;
-}
-
-.panel table td {
-	font-size: 14px;
-}
-
-.panel table td, .panel table soldiers th {
-	border: 1px solid #ddd;
-	padding: 8px;
-}
-
-.panel table th {
-	padding-top: 12px;
-	padding-bottom: 12px;
-	text-align: left;
-	background-color: #ffffff;
-	color: #808080;
-	font-weight: bold;
-}
-
-.panel table tr:nth-child(even) {
-	background-color: #f2f2f2;
-}
-
-.panel table tr:hover {
-	background-color: #ddd;
 }
 
 tbody.highlight-sup, button.highlight-sup, select.highlight-sup {
@@ -406,32 +364,4 @@ div.form-step .label-desc {
 	font-style: italic;
 	font-size: 14px;
 	color: #57606a;
-}
-
-div.app-div-list{
-  margin: auto;
-  background-color: #eee;
-  padding: 15px;
-  margin-bottom: 15px;
-  width: 92%;
-  transition: 0.3s;
-  box-shadow: 0px 3px 6px 3px #ddd;
-  position: relative;
-}
-
-div.app-div-list:hover{
-	background-color: #ddd;
-}
-
-div.app-div-list p{
-	display: inline;
-}
-
-div.app-div-list p.list-info{
-  color: #606060;
-  font-size: 12px;
-}
-
-div.app-div-list p.list-header{
-  font-size: 14px;
 }

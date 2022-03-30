@@ -1,9 +1,9 @@
 <!DOCTYPE html>
-<html xmlns="http://www.w3.org/1999/xhtml"
-  xmlns:th="http://www.thymeleaf.org" layout:decorate="~{cjm/layout}">
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org" layout:decorate="~{cjm/layout}">
 <head>
   <link th:href="@{/styles/multiple-form.css}" type="text/css" rel="stylesheet" />
   <link th:href="@{/styles/cjm/draw-home.css}" type="text/css" rel="stylesheet" />
+  <link th:href="@{/styles/accordeon.css}" type="text/css" rel="stylesheet" />
 </head>
 <style layout:fragment="style">
 div .list-header {
@@ -104,8 +104,7 @@ div#multipleFormBtns {
         <h2>Seleção de lista:</h2>
 
         <div class="empty-list" th:if="${#lists.isEmpty(drawLists)}">
-          <span>Não foram encontradas listas para este trimestre.
-          </span>
+          <span>Não foram encontradas listas para este trimestre. </span>
         </div>
 
         <div th:if="${#fields.hasErrors('drawDTO.selectedDrawList')}">
@@ -114,15 +113,15 @@ div#multipleFormBtns {
         </div>
 
         <div th:each="selectDrawList : ${drawLists}">
-          <div class="draw-soldier-list">
-            <input class="selDrawList" name="selectedDrawList"
-              th:value="${selectDrawList.id}" type="radio"
+          <div class="draw-soldier-list app-list">
+            <input class="selDrawList" name="selectedDrawList" th:value="${selectDrawList.id}" type="radio"
               th:checked="${drawDTO.isSameDrawList(selectDrawList.id)}" />
+              
             <div class="list-header">
-              <span th:text="${selectDrawList.prettyPrintListTitle()}"></span>
+              <p th:text="${selectDrawList.prettyPrintListTitle()}"></p>
             </div>
             <div class="list-info">
-              <span th:text="${selectDrawList.prettyPrintListInfo()}"></span>
+              <p th:text="${selectDrawList.prettyPrintListInfo()}"></p>
             </div>
             <br />
           </div>
@@ -138,8 +137,7 @@ div#multipleFormBtns {
             data-tabid="2"></span>
         </div>
         <div>
-          <select class="app-select ranks" th:name="selectedRanks"
-            th:each="selectedRank, iStat : ${drawDTO.selectedRanks}">
+          <select class="app-select ranks" th:name="selectedRanks" th:each="selectedRank, iStat : ${drawDTO.selectedRanks}">
             <option th:each="rank : ${ranks}" th:value="${rank.id}"
               th:text="${rank.getRankDescription(drawDTO.councilType, iStat.count)}"
               th:selected="${selectedRank != null and rank.id eq selectedRank}">
@@ -162,18 +160,17 @@ div#multipleFormBtns {
         <h2>Militares sorteados:</h2>
 
         <div class="soldiers" th:each="soldier : ${drawDTO.soldiers}">
-          <input type="hidden" class="sdId" name="soldiers"
-            th:value="${soldier.id}">
+          <input type="hidden" class="sdId" name="soldiers" th:value="${soldier.id}">
 
-          <button class="replaceSoldier" type="button"
-            title="substituir"
-            th:attr="data-replaceurl=@{/cjm/dw/sdrand/replace}">
+          <button class="replaceSoldier" type="button" title="substituir" th:attr="data-replaceurl=@{/cjm/dw/sdrand/replace}">
             <img th:src="@{/images/refresh.svg}">
           </button>
 
           <button type="button" class="accordion"
             th:text="${soldier.name} + ' ' + ${soldier.impedimentStatusAsText}"
-            th:classappend="${soldier.hasImpediment() ? 'highlight-impediment' : ''}"></button>
+            th:classappend="${soldier.hasImpediment() ? 'highlight-impediment' : ''}">
+          </button>
+          
           <div class="panel">
             <div class="sdInfo">
               <div>
