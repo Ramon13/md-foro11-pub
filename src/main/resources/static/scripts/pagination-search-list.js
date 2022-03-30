@@ -18,6 +18,11 @@ searchInput.addEventListener('keydown', function(event){
   }
 });
 
+const searchBtn = document.querySelector(".search-btn");
+searchBtn.addEventListener('click', function() {
+  getPage(0);
+});
+
 setupBtns();
 
 function getPage(pageNumber){

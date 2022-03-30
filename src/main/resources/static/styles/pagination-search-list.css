@@ -47,7 +47,7 @@ div.search-bar {
 div.search-bar .search-btn {
   padding: 9.5px 11px;
   border: none;
-  background-color: #ddd;
+  background-color: #eee;
   border-radius: 0;
   position: absolute;
   right: 0;
@@ -61,4 +61,10 @@ div.search-bar .search-btn img{
 div.search-bar .search-input {
     width: 83%;
     border-radius: 0;
+    outline: none;
+}
+
+div.search-bar .search-btn:hover {
+		background-color: #ddd;
+		cursor: pointer;
 }
