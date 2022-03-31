@@ -43,7 +43,7 @@ public class SoldierDTO{
 	@Size(max = 64, message = "O campo email deve conter no máximo 64 caracteres")
 	@Email(message = "O e-mail é inválido")
 	private String email;
-	
+
 	@JsonProperty("militaryOrganization")
 	@NotNull(message = "É necessário selecionar uma OM.")
 	private MilitaryOrganization militaryOrganization;
@@ -60,16 +60,6 @@ public class SoldierDTO{
 	
 	@JsonIgnore
 	private List<DrawExclusionDTO> exclusions = new ArrayList<>(0);
-	
-	@JsonIgnore
-	public MilitaryOrganization getMilitaryOrganization() {
-		return militaryOrganization;
-	}
-	
-	@JsonIgnore
-	public MilitaryRank getMilitaryRank() {
-		return militaryRank;
-	}
 	
 	public void capitalizeName() {
 		name = name.toUpperCase();

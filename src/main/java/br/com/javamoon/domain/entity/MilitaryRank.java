@@ -1,5 +1,7 @@
 package br.com.javamoon.domain.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import java.io.Serializable;
 import java.util.HashSet;
 import java.util.Set;
@@ -48,6 +50,7 @@ public class MilitaryRank implements Serializable{
 	@Column(name="rank_weight", nullable = false)
 	private Integer rankWeight;
 
+	@JsonIgnore
 	@ToString.Exclude
 	@ManyToMany(mappedBy = "militaryRanks")
 	private Set<Army> armies = new HashSet<>(0);

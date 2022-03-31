@@ -1,6 +1,9 @@
 package br.com.javamoon.domain.entity;
 
 import br.com.javamoon.domain.draw.Draw;
+
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import java.io.Serializable;
 import java.util.HashSet;
 import java.util.Set;

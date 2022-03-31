@@ -1,5 +1,6 @@
 package br.com.javamoon.unit.validator;
 
+import static br.com.javamoon.util.Constants.DEFAULT_ARMY_ID;
 import static br.com.javamoon.util.Constants.DEFAULT_CPJ_RANKS;
 import static br.com.javamoon.util.Constants.DEFAULT_DRAW_LIST_ID;
 import static br.com.javamoon.util.Constants.DEFAULT_RANK_ID;
@@ -7,7 +8,8 @@ import static br.com.javamoon.util.Constants.DEFAULT_REPLACE_RANK_ID;
 import static br.com.javamoon.util.Constants.DEFAULT_SOLDIER_ID;
 import static br.com.javamoon.util.TestDataCreator.newDrawDTO;
 import static br.com.javamoon.validator.ValidationConstants.ACCOUNT_EMAIL_ALREADY_EXISTS;
-import static br.com.javamoon.validator.ValidationConstants.INCONSISTENT_DATA;
+import static br.com.javamoon.validator.ValidationConstants.INVALID_SOLDIER_ORGANIZATION;
+import static br.com.javamoon.validator.ValidationConstants.INVALID_SOLDIER_RANK;
 import static br.com.javamoon.validator.ValidationConstants.REQUIRED_FIELD;
 import static br.com.javamoon.validator.ValidationConstants.SOLDIER_EMAIL;
 import static br.com.javamoon.validator.ValidationConstants.SOLDIER_EMAIL_MAX_LEN;
@@ -16,10 +18,14 @@ import static br.com.javamoon.validator.ValidationConstants.SOLDIER_IS_NOT_ON_TH
 import static br.com.javamoon.validator.ValidationConstants.SOLDIER_NAME;
 import static br.com.javamoon.validator.ValidationConstants.SOLDIER_NAME_ALREADY_EXISTS;
 import static br.com.javamoon.validator.ValidationConstants.SOLDIER_NAME_MAX_LEN;
+import static br.com.javamoon.validator.ValidationConstants.SOLDIER_ORGANIZATION;
+import static br.com.javamoon.validator.ValidationConstants.SOLDIER_RANK;
 import static br.com.javamoon.validator.ValidationConstants.STRING_EXCEEDS_MAX_LEN;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.ArgumentMatchers.any;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
@@ -33,6 +39,8 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 import br.com.javamoon.domain.cjm_user.CJM;
 import br.com.javamoon.domain.entity.Army;
+import br.com.javamoon.domain.entity.MilitaryOrganization;
+import br.com.javamoon.domain.entity.MilitaryRank;
 import br.com.javamoon.domain.entity.Soldier;
 import br.com.javamoon.domain.repository.MilitaryOrganizationRepository;
 import br.com.javamoon.domain.repository.MilitaryRankRepository;
@@ -113,15 +121,19 @@ public class SoldierValidatorUnitTest {
 	
 	@Test
 	void testDuplicatedName() {
-		Army army = TestDataCreator.newArmy();
+		Army army = getArmy();
 		CJM cjm = TestDataCreator.newCjm();
 		SoldierDTO soldierDTO = TestDataCreator.newSoldierDTO();
 		
 		Soldier soldierDB = TestDataCreator.newSoldier();
 		soldierDB.setId(1);
 		
-		Mockito.when(soldierRepository.findActiveByNameAndArmyAndCjm(soldierDTO.getName(), army, cjm))
-			.thenReturn(Optional.of(soldierDB));
+		Mockito.when( soldierRepository.findActiveByNameAndArmyAndCjm(soldierDTO.getName(), army, cjm) )
+			.thenReturn( Optional.of(soldierDB) );
+
+		mockDuplicatedEmailValidation();
+		mockMilitaryOrganizationValidation( soldierDTO.getMilitaryOrganization() );
+		mockMilitaryRankValidation( soldierDTO.getMilitaryRank() );
 		
 		SoldierValidationException exception = assertThrows(SoldierValidationException.class, 
 				() -> victim.saveSoldierValidation(soldierDTO, army, cjm));
@@ -132,7 +144,8 @@ public class SoldierValidatorUnitTest {
 	
 	@Test
 	void testDuplicatedNameInSameSoldier() {
-		Army army = TestDataCreator.newArmy();
+		Army army = getArmy();
+		
 		CJM cjm = TestDataCreator.newCjm();
 		SoldierDTO soldierDTO = TestDataCreator.newSoldierDTO();
 		soldierDTO.setId(1);
@@ -141,41 +154,46 @@ public class SoldierValidatorUnitTest {
 		soldierDB.setId(1);
 		
 		Mockito.when(soldierRepository.findActiveByNameAndArmyAndCjm(soldierDTO.getName(), army, cjm))
-			.thenReturn(Optional.of(soldierDB));
+			.thenReturn( Optional.of(soldierDB) );
 		
-		Mockito.when(organizationRepository.findByArmy(army))
-			.thenReturn(Optional.of(List.of(soldierDTO.getMilitaryOrganization()))); 				// necessary to pass through another
-																						     		// validations
-		Mockito.when(militaryRankRepository.findAllIdsByArmiesIn(army))
-			.thenReturn(DEFAULT_CPJ_RANKS);
+		mockDuplicatedEmailValidation();
+		mockMilitaryOrganizationValidation( soldierDTO.getMilitaryOrganization() );
+		mockMilitaryRankValidation( soldierDTO.getMilitaryRank() );
 		
 		victim.saveSoldierValidation(soldierDTO, army, cjm);
 	}
 	
 	@Test
 	void testDuplicatedEmail() {
-		Army army = TestDataCreator.newArmy();
+		Army army = getArmy();
 		CJM cjm = TestDataCreator.newCjm();
 		SoldierDTO soldierDTO = TestDataCreator.newSoldierDTO();
 		
 		Soldier soldierDB = TestDataCreator.newSoldier();
 		soldierDB.setId(1);
 		
-		Mockito.when(soldierRepository.findActiveByEmailAndArmyAndCjm(
-				soldierDTO.getEmail(), army, cjm))
-					.thenReturn(Optional.of(soldierDB));
+		Mockito.when( soldierRepository.findActiveByEmailAndArmyAndCjm( soldierDTO.getEmail(), army, cjm) )
+			.thenReturn( Optional.of(soldierDB) );
+		
+		mockDuplicatedNameValidation();
+		mockMilitaryOrganizationValidation( soldierDTO.getMilitaryOrganization() );
+		mockMilitaryRankValidation( soldierDTO.getMilitaryRank() );
 		
 		SoldierValidationException exception = assertThrows(SoldierValidationException.class, 
 				() -> victim.saveSoldierValidation(soldierDTO, army, cjm));
 		
 		assertEquals(1, exception.getValidationErrors().getNumberOfErrors());
-		assertEquals(new ValidationError(SOLDIER_EMAIL, ACCOUNT_EMAIL_ALREADY_EXISTS), exception.getValidationErrors().getError(0));
+		assertEquals(
+			new ValidationError(SOLDIER_EMAIL, ACCOUNT_EMAIL_ALREADY_EXISTS), 
+			exception.getValidationErrors().getError(0)
+		);
 	}
 	
 	@Test
 	void testDuplicatedEmailInSameSoldier() {
-		Army army = TestDataCreator.newArmy();
+		Army army = getArmy();
 		CJM cjm = TestDataCreator.newCjm();
+		
 		SoldierDTO soldierDTO = TestDataCreator.newSoldierDTO();
 		soldierDTO.setId(1);
 		
@@ -185,47 +203,60 @@ public class SoldierValidatorUnitTest {
 		Mockito.when(soldierRepository.findActiveByEmailAndArmyAndCjm(soldierDTO.getEmail(), army, cjm))
 			.thenReturn(Optional.of(soldierDB));
 		
-		Mockito.when(organizationRepository.findByArmy(army))
-			.thenReturn(Optional.of(List.of(soldierDTO.getMilitaryOrganization()))); 				// necessary to pass through another
-																						     		// validations
-		Mockito.when(militaryRankRepository.findAllIdsByArmiesIn(army))
-			.thenReturn(DEFAULT_CPJ_RANKS);
+		mockDuplicatedNameValidation();
+		mockMilitaryOrganizationValidation( soldierDTO.getMilitaryOrganization() );
+		mockMilitaryRankValidation( soldierDTO.getMilitaryRank() );
 		
 		victim.saveSoldierValidation(soldierDTO, army, cjm);
 	}
 	
 	@Test
 	void testOrganizationFromDifferentArmy() {
-		Army army = TestDataCreator.newArmy();
+		Army army = getArmy();
+		
 		CJM cjm = TestDataCreator.newCjm();
 		SoldierDTO soldierDTO = TestDataCreator.newSoldierDTO();
 		
-		Mockito.when(organizationRepository.findByArmy(army))
-			.thenReturn(Optional.empty());
+		Mockito.when( organizationRepository.findByArmy( army.getId() ) )
+			.thenReturn( Collections.emptyList() );
 		
-		IllegalStateException exception = assertThrows(IllegalStateException.class, 
+		mockDuplicatedNameValidation();
+		mockDuplicatedEmailValidation();
+		mockMilitaryRankValidation( soldierDTO.getMilitaryRank() );
+		
+		SoldierValidationException exception = assertThrows(SoldierValidationException.class, 
 				() -> victim.saveSoldierValidation(soldierDTO, army, cjm));
 		
-		assertEquals(INCONSISTENT_DATA, exception.getMessage());
+		assertEquals(1, exception.getErrorList().size() );
+		assertEquals(
+			new ValidationError(SOLDIER_ORGANIZATION, INVALID_SOLDIER_ORGANIZATION),
+			exception.getValidationErrors().getError(0)
+		);
 	}
 	
 	@Test
 	void testRankFromDifferentArmy() {
-		Army army = TestDataCreator.newArmy();
+		Army army = getArmy();
 		CJM cjm = TestDataCreator.newCjm();
 		
 		SoldierDTO soldierDTO = TestDataCreator.newSoldierDTO();
 		soldierDTO.getMilitaryOrganization().setId(1);
 		
-		Mockito.when(organizationRepository.findByArmy(army))				// Necessary to pass in the organization validatior
-			.thenReturn(Optional.of(List.of(soldierDTO.getMilitaryOrganization())));
+		Mockito.when( militaryRankRepository.findAllIdsByArmiesIn( army.getId() ) )
+			.thenReturn( List.of(DEFAULT_RANK_ID + 1) );
 		
-		Mockito.when(militaryRankRepository.findAllIdsByArmiesIn(army)).thenReturn(List.of(DEFAULT_RANK_ID + 1));
+		mockDuplicatedNameValidation();
+		mockDuplicatedEmailValidation();
+		mockMilitaryOrganizationValidation( soldierDTO.getMilitaryOrganization() );
 		
-		IllegalStateException exception = assertThrows(IllegalStateException.class, 
+		SoldierValidationException exception = assertThrows(SoldierValidationException.class, 
 				() -> victim.saveSoldierValidation(soldierDTO, army, cjm));
 		
-		assertEquals(INCONSISTENT_DATA, exception.getMessage());
+		assertEquals(1, exception.getErrorList().size() );
+		assertEquals(
+			new ValidationError(SOLDIER_RANK, INVALID_SOLDIER_RANK),
+			exception.getErrorList().get(0)
+		);
 	}
 	
 	@Test
@@ -233,7 +264,8 @@ public class SoldierValidatorUnitTest {
 		DrawDTO drawDTO = newDrawDTO();
 		drawDTO.setSelectedRanks(DEFAULT_CPJ_RANKS);
 		
-		Mockito.when(militaryRankRepository.findAllIdsByArmiesIn(drawDTO.getArmy())).thenReturn(DEFAULT_CPJ_RANKS);
+		Mockito.when( militaryRankRepository.findAllIdsByArmiesIn( drawDTO.getArmy().getId() ) )
+			.thenReturn(DEFAULT_CPJ_RANKS);
 		
 		victim.replaceSoldierValidation(drawDTO, DEFAULT_REPLACE_RANK_ID);
 	}
@@ -271,5 +303,35 @@ public class SoldierValidatorUnitTest {
 				() -> victim.removeFromDrawListValidation(DEFAULT_DRAW_LIST_ID, DEFAULT_SOLDIER_ID));
 		
 		assertEquals(exception.getValidationErrors().getError(0), new ValidationError(SOLDIER_ID, SOLDIER_IS_NOT_ON_THE_LIST));
+	}
+	
+	private void mockDuplicatedNameValidation() {
+		Mockito.when( soldierRepository.findActiveByNameAndArmyAndCjm( any(), any(), any()) )
+			.thenReturn( Optional.empty() );
+	}
+	
+	private void mockDuplicatedEmailValidation() {
+		Mockito.when(
+			soldierRepository.findActiveByEmailAndArmyAndCjm( any(), any(), any() )
+		).thenReturn( Optional.empty() );
+	}
+	
+	private void mockMilitaryOrganizationValidation(MilitaryOrganization militaryOrganization) {
+		Mockito.when( organizationRepository.findById(any()) )
+			.thenReturn( Optional.of(militaryOrganization) );
+		
+		Mockito.when( organizationRepository.findByArmy( any() ) )
+			.thenReturn( List.of(militaryOrganization) );
+	}
+	
+	private void mockMilitaryRankValidation(MilitaryRank rank) {
+		Mockito.when( militaryRankRepository.findAllIdsByArmiesIn( any() ) )
+			.thenReturn( List.of(rank.getId()) );
+	}
+	
+	private Army getArmy() {
+		Army army = TestDataCreator.newArmy();
+		army.setId(DEFAULT_ARMY_ID);
+		return army;
 	}
 }

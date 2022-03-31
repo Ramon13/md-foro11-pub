@@ -169,3 +169,11 @@ function removeClassErrors() {
   const errors = document.querySelectorAll(".error");
   for (let i = 0; i < errors.length; i++) errors[i].classList.remove("error");
 }
+
+function clearInputFields(node) {
+  const inputs = node.querySelectorAll("input");
+  for (let i = 0; i < inputs.length; i++) inputs[i].value = '';
+  
+  const selects = node.querySelectorAll("select");
+  for (let i = 0; i < selects.length; i++) selects[i].options.selectedIndex = 0;
+}

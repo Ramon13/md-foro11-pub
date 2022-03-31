@@ -16,6 +16,6 @@ public class MilitaryOrganizationService {
 	}
 	
 	public List<MilitaryOrganization> listOrganizationsByArmy(Army army){
-		return militaryOrganizationRepository.findByArmy(army).get();
+		return militaryOrganizationRepository.findByArmy( army.getId() );
 	}
 }

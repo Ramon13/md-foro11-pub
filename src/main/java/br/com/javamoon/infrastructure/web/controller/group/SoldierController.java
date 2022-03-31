@@ -129,15 +129,13 @@ public class SoldierController {
 	@RequestMapping(method = RequestMethod.POST, path = "/register/save", produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity save(@RequestBody SoldierDTO soldierDTO) {
 		try {
-			System.out.println(soldierDTO);
-			soldierService.save( soldierDTO, getArmy(), getCJM() );
-		
+			SoldierDTO newSoldier = soldierService.save( soldierDTO, getArmy(), getCJM() );
+
+			return ResponseEntity.status(HttpStatus.CREATED).body(newSoldier);
 		}catch(SoldierValidationException e) {
 			e.printStackTrace();
 			return ResponseEntity.status( HttpStatus.UNPROCESSABLE_ENTITY ).body( e.getErrorList() );
 		}
-		
-		return ResponseEntity.ok().build();
 	}
 	
 	@PostMapping("/register/delete/{soldierId}")
@@ -150,6 +148,7 @@ public class SoldierController {
 		return "redirect:/gp/dw/list";
 	}
 	
+	@Deprecated
 	@GetMapping("/profile/home/{soldierId}")
 	public String profile(@PathVariable("soldierId") Integer soldierId, Model model) {
 		GroupUser loggedUser = SecurityUtils.groupUser();
@@ -165,4 +164,6 @@ public class SoldierController {
 		model.addAttribute("soldier", EntityMapper.fromEntityToDTO(soldier));
 		return "group/soldier/profile";
 	}
+	
+	public ResponseEntity<SoldierDTO>
 }

@@ -21,6 +21,8 @@ public final class ValidationConstants {
     public static final Integer SOLDIER_EMAIL_MAX_LEN = 64;
     
     public static final String INCONSISTENT_DATA = "Dados válidos mas não relacionáveis entre si.";
+    public static final String INVALID_SOLDIER_ORGANIZATION = "Selecione uma OM válida";
+    public static final String INVALID_SOLDIER_RANK = "Selecione um posto válido";
     
     public static final String SOLDIER_NAME_ALREADY_EXISTS = "Militar já está cadastrado no sistema.";
     

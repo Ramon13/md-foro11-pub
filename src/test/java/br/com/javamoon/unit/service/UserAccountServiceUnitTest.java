@@ -4,17 +4,28 @@ import static br.com.javamoon.util.TestDataCreator.newAuditorship;
 import static br.com.javamoon.util.TestDataCreator.newCjm;
 import static br.com.javamoon.validator.ValidationConstants.ACCOUNT_EMAIL;
 import static br.com.javamoon.validator.ValidationConstants.ACCOUNT_EMAIL_ALREADY_EXISTS;
-import static br.com.javamoon.validator.ValidationConstants.ACCOUNT_PASSWORD;
 import static br.com.javamoon.validator.ValidationConstants.ACCOUNT_USERNAME;
 import static br.com.javamoon.validator.ValidationConstants.ACCOUNT_USERNAME_ALREADY_EXISTS;
-import static br.com.javamoon.validator.ValidationConstants.PASSWORD_DOES_NOT_HAVE_LOWERCASE;
-import static br.com.javamoon.validator.ValidationConstants.PASSWORD_DOES_NOT_HAVE_NUMBER;
-import static br.com.javamoon.validator.ValidationConstants.PASSWORD_DOES_NOT_HAVE_UPPERCASE;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.mockito.Mockito.doNothing;
+
+import java.util.List;
+import java.util.Optional;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
+
+import org.apache.commons.lang3.StringUtils;
+import org.junit.jupiter.api.Test;
+import org.mockito.Mockito;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.test.annotation.DirtiesContext;
+import org.springframework.test.annotation.DirtiesContext.ClassMode;
+import org.springframework.test.context.ActiveProfiles;
+
 import br.com.javamoon.config.email.EmailSender;
 import br.com.javamoon.domain.cjm_user.Auditorship;
 import br.com.javamoon.domain.cjm_user.AuditorshipRepository;
@@ -35,20 +46,6 @@ import br.com.javamoon.util.Constants;
 import br.com.javamoon.util.TestDataCreator;
 import br.com.javamoon.validator.ValidationConstants;
 import br.com.javamoon.validator.ValidationError;
-import java.util.List;
-import java.util.Optional;
-import java.util.stream.Collectors;
-import java.util.stream.IntStream;
-import org.apache.commons.lang3.StringUtils;
-import org.junit.jupiter.api.Test;
-import org.mockito.Mock;
-import org.mockito.Mockito;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.test.annotation.DirtiesContext;
-import org.springframework.test.annotation.DirtiesContext.ClassMode;
-import org.springframework.test.context.ActiveProfiles;
 
 @SpringBootTest
 @ActiveProfiles("test")

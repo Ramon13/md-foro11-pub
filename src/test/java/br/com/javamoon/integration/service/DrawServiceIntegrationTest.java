@@ -13,6 +13,18 @@ import static br.com.javamoon.validator.ValidationConstants.DRAW_PROCESS_NUMBER;
 import static br.com.javamoon.validator.ValidationConstants.PROCESS_NUMBER_ALREADY_EXISTS;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.stream.Collectors;
+
+import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.annotation.DirtiesContext;
+import org.springframework.test.annotation.DirtiesContext.ClassMode;
+import org.springframework.test.context.ActiveProfiles;
+
 import br.com.javamoon.domain.cjm_user.Auditorship;
 import br.com.javamoon.domain.cjm_user.AuditorshipRepository;
 import br.com.javamoon.domain.cjm_user.CJMRepository;
@@ -21,7 +33,6 @@ import br.com.javamoon.domain.draw.JusticeCouncil;
 import br.com.javamoon.domain.draw.JusticeCouncilRepository;
 import br.com.javamoon.domain.entity.CJMUser;
 import br.com.javamoon.domain.entity.DrawList;
-import br.com.javamoon.domain.entity.MilitaryRank;
 import br.com.javamoon.domain.repository.ArmyRepository;
 import br.com.javamoon.domain.repository.CJMUserRepository;
 import br.com.javamoon.domain.repository.DrawListRepository;
@@ -41,15 +52,6 @@ import br.com.javamoon.service.DrawService;
 import br.com.javamoon.util.Constants;
 import br.com.javamoon.util.TestDataCreator;
 import br.com.javamoon.validator.ValidationError;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.stream.Collectors;
-import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.annotation.DirtiesContext;
-import org.springframework.test.annotation.DirtiesContext.ClassMode;
-import org.springframework.test.context.ActiveProfiles;
 
 @SpringBootTest
 @ActiveProfiles("test")

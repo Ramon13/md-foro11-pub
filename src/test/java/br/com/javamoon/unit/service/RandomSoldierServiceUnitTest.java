@@ -3,11 +3,24 @@ package br.com.javamoon.unit.service;
 import static br.com.javamoon.util.Constants.DEFAULT_REPLACE_SOLDIER_ID;
 import static br.com.javamoon.util.TestDataCreator.newDrawDTO;
 import static br.com.javamoon.validator.ValidationConstants.DRAW_SELECTED_RANKS;
-import static br.com.javamoon.validator.ValidationConstants.INCONSISTENT_DATA;
+import static br.com.javamoon.validator.ValidationConstants.INVALID_SOLDIER_RANK;
 import static br.com.javamoon.validator.ValidationConstants.NO_AVALIABLE_SOLDIERS;
 import static br.com.javamoon.validator.ValidationConstants.REPLACE_SOLDIER_IS_NOT_IN_THE_LIST;
+import static br.com.javamoon.validator.ValidationConstants.SOLDIER_RANK;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+
+import java.util.Arrays;
+import java.util.List;
+import java.util.stream.Collectors;
+
+import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.annotation.DirtiesContext;
+import org.springframework.test.annotation.DirtiesContext.ClassMode;
+import org.springframework.test.context.ActiveProfiles;
+
 import br.com.javamoon.domain.cjm_user.CJM;
 import br.com.javamoon.domain.cjm_user.CJMRepository;
 import br.com.javamoon.domain.entity.Army;
@@ -22,6 +35,7 @@ import br.com.javamoon.domain.repository.SoldierRepository;
 import br.com.javamoon.exception.DrawListNotFoundException;
 import br.com.javamoon.exception.DrawValidationException;
 import br.com.javamoon.exception.NoAvaliableSoldierException;
+import br.com.javamoon.exception.SoldierValidationException;
 import br.com.javamoon.mapper.DrawDTO;
 import br.com.javamoon.mapper.EntityMapper;
 import br.com.javamoon.mapper.SoldierDTO;
@@ -29,15 +43,6 @@ import br.com.javamoon.service.RandomSoldierService;
 import br.com.javamoon.util.Constants;
 import br.com.javamoon.util.TestDataCreator;
 import br.com.javamoon.validator.ValidationError;
-import java.util.Arrays;
-import java.util.List;
-import java.util.stream.Collectors;
-import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.annotation.DirtiesContext;
-import org.springframework.test.annotation.DirtiesContext.ClassMode;
-import org.springframework.test.context.ActiveProfiles;
 
 @SpringBootTest
 @ActiveProfiles("test")
@@ -111,13 +116,24 @@ public class RandomSoldierServiceUnitTest {
 		
 		drawDTO.setArmy(newArmy);												// Rank exists, but with different army
 		
-		assertThrows(IllegalStateException.class,
-			() -> victim.randomAllSoldiers(drawDTO, drawList.getCreationUser().getCjm()));
+		SoldierValidationException exception = assertThrows(
+			SoldierValidationException.class,
+			() -> victim.randomAllSoldiers( drawDTO, drawList.getCreationUser().getCjm() )
+		);
 		
-		drawDTO.setSelectedRanks(List.of(2,1,1,1,1));							// Rank does not exists
+		assertEquals(1, exception.getValidationErrors().getNumberOfErrors() );
+		assertEquals(
+			new ValidationError(SOLDIER_RANK, INVALID_SOLDIER_RANK),
+			exception.getValidationErrors().getError(0)
+		);
 		
-		assertThrows(IllegalStateException.class,
-				() -> victim.randomAllSoldiers(drawDTO, drawList.getCreationUser().getCjm()));
+		drawDTO.setSelectedRanks( List.of(2,1,1,1,1) );
+		
+		assertEquals(1, exception.getValidationErrors().getNumberOfErrors() );
+		assertEquals(
+			new ValidationError(SOLDIER_RANK, INVALID_SOLDIER_RANK),
+			exception.getValidationErrors().getError(0)
+		);
 	}
 	
 	@Test
@@ -186,14 +202,24 @@ public class RandomSoldierServiceUnitTest {
 		
 		drawDTO.setArmy(newArmy);												// Rank exists, but with different army
 		
-		IllegalStateException exception = 
-				assertThrows(IllegalStateException.class, () -> victim.replaceRandomSoldier(drawDTO));
-		assertEquals(INCONSISTENT_DATA, exception.getMessage());
+		SoldierValidationException exception = assertThrows(
+			SoldierValidationException.class,
+			() -> victim.replaceRandomSoldier(drawDTO)
+		);
+		
+		assertEquals(1, exception.getValidationErrors().getNumberOfErrors() );
+		assertEquals(
+			new ValidationError(SOLDIER_RANK, INVALID_SOLDIER_RANK),
+			exception.getValidationErrors().getError(0)
+		);
 		
 		drawDTO.setSelectedRanks(List.of(2,1,1,1,1));							// Rank does not exists
 		
-		exception = assertThrows(IllegalStateException.class, () -> victim.replaceRandomSoldier(drawDTO));
-		assertEquals(INCONSISTENT_DATA, exception.getMessage());
+		assertEquals(1, exception.getValidationErrors().getNumberOfErrors() );
+		assertEquals(
+			new ValidationError(SOLDIER_RANK, INVALID_SOLDIER_RANK),
+			exception.getValidationErrors().getError(0)
+		);
 	}
 	
 	@Test

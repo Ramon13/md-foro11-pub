@@ -1,5 +1,7 @@
 package br.com.javamoon.domain.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import java.io.Serializable;
 import java.util.HashSet;
 import java.util.Set;
@@ -36,10 +38,12 @@ public class MilitaryOrganization implements Serializable{
 	@Column(name = "military_base_alias", unique = true, nullable = false, length = 16)
 	private String alias;
 	
+	@JsonIgnore
 	@ManyToOne
 	@JoinColumn(name="army_id", nullable=false)
 	private Army army;
 	
+	@JsonIgnore
 	@OneToMany(mappedBy = "militaryOrganization")
 	private Set<Soldier> soldiers = new HashSet<>(0);
 

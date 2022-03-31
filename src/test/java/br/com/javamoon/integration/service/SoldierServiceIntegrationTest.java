@@ -19,9 +19,11 @@ import static br.com.javamoon.util.TestDataCreator.getPersistedMilitaryOrganizat
 import static br.com.javamoon.util.TestDataCreator.getPersistedMilitaryRank;
 import static br.com.javamoon.util.TestDataCreator.newSoldierList;
 import static br.com.javamoon.validator.ValidationConstants.ACCOUNT_EMAIL_ALREADY_EXISTS;
+import static br.com.javamoon.validator.ValidationConstants.INVALID_SOLDIER_RANK;
 import static br.com.javamoon.validator.ValidationConstants.SOLDIER_EMAIL;
 import static br.com.javamoon.validator.ValidationConstants.SOLDIER_NAME;
 import static br.com.javamoon.validator.ValidationConstants.SOLDIER_NAME_ALREADY_EXISTS;
+import static br.com.javamoon.validator.ValidationConstants.SOLDIER_RANK;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -42,6 +44,7 @@ import br.com.javamoon.mapper.EntityMapper;
 import br.com.javamoon.service.SoldierService;
 import br.com.javamoon.service.ValidationException;
 import br.com.javamoon.util.TestDataCreator;
+import br.com.javamoon.validator.ValidationConstants;
 import br.com.javamoon.validator.ValidationError;
 import java.util.List;
 import java.util.Optional;
@@ -178,8 +181,16 @@ public class SoldierServiceIntegrationTest {
 		
 		Soldier soldier = newSoldierList(army2, cjm, organization2, rank, 1).get(0);
 		
-		assertThrows(IllegalStateException.class, 
-				() -> victim.save(EntityMapper.fromEntityToDTO(soldier), army, cjm));
+		SoldierValidationException exception = assertThrows(
+				SoldierValidationException.class, 
+				() -> victim.save( EntityMapper.fromEntityToDTO(soldier), army, cjm) 
+		);
+		
+		assertEquals(1, exception.getValidationErrors().getNumberOfErrors() );
+		assertEquals(
+			new ValidationError(ValidationConstants.SOLDIER_ORGANIZATION, ValidationConstants.INVALID_SOLDIER_ORGANIZATION),
+			exception.getValidationErrors().getError(0)
+		);
 	}
 	
 	@Test
@@ -205,8 +216,16 @@ public class SoldierServiceIntegrationTest {
 		
 		Soldier soldier = newSoldierList(army2, cjm, organization, rank2, 1).get(0);
 		
-		assertThrows(IllegalStateException.class, 
-				() -> victim.save(EntityMapper.fromEntityToDTO(soldier), army, cjm));	
+		SoldierValidationException exception = assertThrows(
+				SoldierValidationException.class, 
+				() -> victim.save( EntityMapper.fromEntityToDTO(soldier), army, cjm) 
+		);
+		
+		assertEquals(1, exception.getValidationErrors().getNumberOfErrors() );
+		assertEquals(
+			new ValidationError(SOLDIER_RANK, INVALID_SOLDIER_RANK),
+			exception.getValidationErrors().getError(0)
+		);	
 	}
 	
 	@Test

@@ -11,6 +11,22 @@ for (let i = 0; i < soldierInfoTuples.length; i++){
   }
 }
 
+function openProfile(listTuple){
+  let soldierId = getSoldierId(listTuple);
+  let endpoint = soldierProfileEndpoint + "/" + soldierId;
+  
+  sendAjaxRequest(
+    GET_METHOD,
+    endpoint,
+    null, 
+    function() {},
+    function() {},
+    JSON_CONTENT_TYPE
+  );
+}
+
+
+
 const removeSoldierBtns = document.querySelectorAll("button.remove-soldier");
 for (let i = 0; i < removeSoldierBtns.length; i++){
   removeSoldierBtns[i].onclick = function(event){
@@ -142,12 +158,6 @@ function appendToHTMLList(listTuple){
 function showRemoveBtn(removeBtn, soldierId){  
   removeBtn.onclick = function(){ removeFromServerList(soldierId) }
   removeBtn.style.display = "block";  
-}
-
-function openProfile(listTuple){
-  historyPush();
-  let soldierId = getSoldierId(listTuple);
-  location.href = soldierProfileEndpoint + "/" + soldierId;
 }
 
 function getSoldierId(listTuple){
