@@ -260,8 +260,9 @@ div#content {
 	padding: 10px;
 }
 
-div.error span, span.error, p.error {
+div.error span, span.error, div.error p, p.error {
 	color: #FF0000;
+	margin: 0;
 }
 
 div.error input, input.error, select.error, textarea.error {

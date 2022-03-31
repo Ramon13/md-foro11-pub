@@ -20,7 +20,7 @@
               <label>Nome* </label><br />
             </div>
             <div>
-              <input type="text" id="sdName" name="name" placeholder="Nome do militar..." th:field="*{name}" class="app-txtinput"/>
+              <input type="text" name="name" placeholder="Nome do militar..." th:field="*{name}" class="name app-txtinput"/>
             </div>
           </div>
           
@@ -30,7 +30,7 @@
             </div>
             
             <div>
-              <select id="sdOm" name="militaryOrganization" class="app-select">
+              <select name="militaryOrganization" class="militaryOrganization app-select">
                 <option value="0">Selecione...</option>
                 <option th:each="om : ${oms}" th:value="${om.id}"
                   th:text="${om.name} + ' (' + ${om.alias} + ')'"
@@ -45,7 +45,7 @@
               <label for="rank">Posto* </label>
             </div>
             <div>
-              <select id="sdRank" class="app-select" name="militaryRank">
+              <select class="militaryRank app-select" name="militaryRank">
                 <option value="0">Selecione...</option>
                 <option th:each="rank : ${ranks}" th:value="${rank.id}"
                   th:text="${rank.name}"
@@ -59,8 +59,8 @@
               <label>Telefone</label>
             </div>
             <div>
-              <input type="text" id="sdPhone" name="phone" placeholder="Telefone residencial ou celular..."
-                th:field="*{phone}" class="app-txtinput"/>
+              <input type="text" name="phone" placeholder="Telefone residencial ou celular..."
+                th:field="*{phone}" class="phone app-txtinput"/>
             </div>
           </div>
           
@@ -69,8 +69,8 @@
               <label>E-mail*</label>
             </div>
             <div>
-              <input type="text" id="sdEmail" name="email" placeholder="Email ativo do militar..."
-                th:field="*{email}" class="app-txtinput" />
+              <input type="text" name="email" placeholder="Email ativo do militar..."
+                th:field="*{email}" class="email app-txtinput" />
             </div>
           </div>
           

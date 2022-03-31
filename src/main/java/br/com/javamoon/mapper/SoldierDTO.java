@@ -8,7 +8,7 @@ import br.com.javamoon.domain.entity.Soldier;
 import br.com.javamoon.util.StringUtils;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-
+import com.fasterxml.jackson.annotation.JsonProperty;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -44,11 +44,11 @@ public class SoldierDTO{
 	@Email(message = "O e-mail é inválido")
 	private String email;
 	
-	@JsonIgnore
+	@JsonProperty("militaryOrganization")
 	@NotNull(message = "É necessário selecionar uma OM.")
 	private MilitaryOrganization militaryOrganization;
 	
-	@JsonIgnore
+	@JsonProperty("militaryRank")
 	@NotNull(message = "É necessário selecionar um posto.")
 	private MilitaryRank militaryRank;
 	
@@ -60,6 +60,16 @@ public class SoldierDTO{
 	
 	@JsonIgnore
 	private List<DrawExclusionDTO> exclusions = new ArrayList<>(0);
+	
+	@JsonIgnore
+	public MilitaryOrganization getMilitaryOrganization() {
+		return militaryOrganization;
+	}
+	
+	@JsonIgnore
+	public MilitaryRank getMilitaryRank() {
+		return militaryRank;
+	}
 	
 	public void capitalizeName() {
 		name = name.toUpperCase();

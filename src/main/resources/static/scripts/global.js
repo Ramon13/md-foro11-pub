@@ -137,3 +137,35 @@ function cloneNode(node){
   clonedNode.id = "";
   return clonedNode;
 }
+
+function getSuccessMessage(message) {
+  const div = document.createElement("div");
+  const p = document.createElement("p");
+  
+  p.textContent = message;
+  div.classList.add = "successMsg";
+  
+  div.append(p);
+  return div; 
+}
+
+function getErrorMessage(message) {
+  const div = document.createElement("div");
+  const p = document.createElement("p");
+  
+  p.textContent = message;
+  div.classList.add("error");
+  
+  div.append(p);
+  return div;
+}
+
+function removeErrorNodes() {
+  const errors = document.querySelectorAll("div.error");
+  for (let i = 0; i < errors.length; i++) errors[i].remove();
+}
+
+function removeClassErrors() {
+  const errors = document.querySelectorAll(".error");
+  for (let i = 0; i < errors.length; i++) errors[i].classList.remove("error");
+}
