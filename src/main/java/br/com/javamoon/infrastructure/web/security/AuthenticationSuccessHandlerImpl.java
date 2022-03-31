@@ -53,18 +53,19 @@ public class AuthenticationSuccessHandlerImpl implements AuthenticationSuccessHa
 		LoggedUser loggedUser = SecurityUtils.loggedUser();
 		
 		if (!loggedUser.getUser().getCredentialsExpired()) {
-			setUserCJM(loggedUser.getUser());
 			sendToHomePage(loggedUser, response, session);
 		}else {
-			sendToPasswordRedefinition(response);
+			sendToPasswordRedefinition(loggedUser, response);
 		}
 	}
 		
-	private void sendToPasswordRedefinition(HttpServletResponse response) throws IOException {
+	private void sendToPasswordRedefinition(LoggedUser loggedUser, HttpServletResponse response) throws IOException {
+		setUserCJM(loggedUser.getUser());
 		response.sendRedirect(applicationContext + resetPasswordIndexPage);
 	}
 	
 	public void sendToHomePage(LoggedUser loggedUser, HttpServletResponse response, HttpSession session) throws IOException {
+		setUserCJM(loggedUser.getUser());
 		setSessionScopes(session, loggedUser.getUser().getPermissionRoles());
 		String mainRole = loggedUser.getMainRole();
 		
