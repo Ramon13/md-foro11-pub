@@ -60,6 +60,8 @@ public class DrawExclusionValidator {
 	
 	private boolean validateDates(LocalDate startDate, LocalDate endDate, ValidationErrors validationErrors) {
 		return (
+			ValidationUtils.validateRequired(startDate, DRAW_EXCLUSION_START_DATE, validationErrors) &&
+			ValidationUtils.validateRequired(endDate, DRAW_EXCLUSION_END_DATE, validationErrors) &&
 			validateDatesEqualsDay(startDate, endDate, validationErrors) &&
 			validateDatesInThePast(startDate, endDate, validationErrors) &&
 			validateInconsistentDates(startDate, endDate, validationErrors)

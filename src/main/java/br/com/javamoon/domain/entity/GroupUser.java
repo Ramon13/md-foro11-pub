@@ -1,6 +1,7 @@
 package br.com.javamoon.domain.entity;
 
 import br.com.javamoon.domain.cjm_user.CJM;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import javax.persistence.Entity;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
@@ -19,6 +20,7 @@ import lombok.ToString;
 @Table(name="GROUP_USER")
 public class GroupUser extends User{
 
+	@JsonIgnore
 	@ToString.Exclude
 	@NotNull(message = "É necessário selecionar uma força armada.")
 	@ManyToOne

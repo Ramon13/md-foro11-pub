@@ -1,21 +1,21 @@
 package br.com.javamoon.infrastructure.web.controller.group;
 
+import static br.com.javamoon.infrastructure.web.controller.ControllerHelper.getArmy;
+import static br.com.javamoon.infrastructure.web.controller.ControllerHelper.getCJM;
 import br.com.javamoon.domain.entity.GroupUser;
 import br.com.javamoon.domain.entity.Soldier;
 import br.com.javamoon.exception.DrawExclusionValidationException;
+import br.com.javamoon.exception.SoldierNotFoundException;
 import br.com.javamoon.mapper.DrawExclusionDTO;
-import br.com.javamoon.mapper.EntityMapper;
 import br.com.javamoon.service.DrawExclusionService;
 import br.com.javamoon.service.SoldierService;
 import br.com.javamoon.util.SecurityUtils;
-import br.com.javamoon.validator.ValidationUtils;
-import javax.validation.Valid;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
-import org.springframework.validation.Errors;
-import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 @Controller
@@ -31,28 +31,21 @@ public class DrawExclusionController {
 		this.drawExclusionService = drawExclusionService;
 	}
 
-	@PostMapping("/save")
-	public String save(
-			@Valid @ModelAttribute("exclusionDTO") DrawExclusionDTO exclusionDTO, 
-			Errors errors,
-			Model model) {
-		GroupUser loggedUser = SecurityUtils.groupUser();
-		Soldier soldier = soldierService.getSoldier(exclusionDTO.getSoldier().getId(), loggedUser.getArmy(), loggedUser.getCjm());
+	@SuppressWarnings("rawtypes")
+	@PostMapping
+	public ResponseEntity save(@RequestBody DrawExclusionDTO exclusionDTO) {
+		try {
+			Soldier soldier = soldierService.getSoldier(exclusionDTO.getSoldierId(), getArmy(), getCJM());
 		
-		if (!errors.hasErrors()) {
-			try {
-				drawExclusionService.save(exclusionDTO, loggedUser, soldier);
-				
-				return "redirect:/gp/sd/profile/home/" + soldier.getId();
-			} catch (DrawExclusionValidationException e) {
-				ValidationUtils.rejectValues(errors, e.getValidationErrors());
-			}
+			DrawExclusionDTO newExclusion = 
+					drawExclusionService.save(exclusionDTO, SecurityUtils.groupUser(), soldier);
+			
+			return ResponseEntity.status(HttpStatus.CREATED).body(newExclusion);
+		} catch (DrawExclusionValidationException e) {
+			return ResponseEntity.unprocessableEntity().body( e.getErrorList() );
+		} catch (SoldierNotFoundException e) {
+			return ResponseEntity.notFound().build();
 		}
-		
-		model.addAttribute("exclusions", drawExclusionService.listBySoldier(soldier));
-		model.addAttribute("exclusion", exclusionDTO);
-		model.addAttribute("soldier", EntityMapper.fromEntityToDTO(soldier));
-		return "group/soldier/profile";
 	}
 	
 	@PostMapping("/delete/{exclusionId}")

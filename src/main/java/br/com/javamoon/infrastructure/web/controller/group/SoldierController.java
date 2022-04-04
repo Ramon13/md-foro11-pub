@@ -1,13 +1,32 @@
 package br.com.javamoon.infrastructure.web.controller.group;
 
+import static br.com.javamoon.infrastructure.web.controller.ControllerHelper.getArmy;
+import static br.com.javamoon.infrastructure.web.controller.ControllerHelper.getCJM;
+import br.com.javamoon.domain.cjm_user.CJM;
+import br.com.javamoon.domain.entity.Army;
+import br.com.javamoon.domain.entity.GroupUser;
+import br.com.javamoon.domain.entity.Soldier;
+import br.com.javamoon.exception.SoldierNotFoundException;
+import br.com.javamoon.exception.SoldierValidationException;
+import br.com.javamoon.infrastructure.web.controller.ControllerHelper;
+import br.com.javamoon.infrastructure.web.model.SearchSoldierDTO;
+import br.com.javamoon.mapper.DrawExclusionDTO;
+import br.com.javamoon.mapper.EntityMapper;
+import br.com.javamoon.mapper.GetSoldierDTO;
+import br.com.javamoon.mapper.SoldierDTO;
+import br.com.javamoon.service.DrawExclusionService;
+import br.com.javamoon.service.MilitaryOrganizationService;
+import br.com.javamoon.service.MilitaryRankService;
+import br.com.javamoon.service.SoldierService;
+import br.com.javamoon.util.DateUtils;
+import br.com.javamoon.util.SecurityUtils;
+import br.com.javamoon.validator.ValidationUtils;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
-
 import javax.servlet.http.HttpSession;
 import javax.validation.Valid;
-
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -21,25 +40,6 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
-import static br.com.javamoon.infrastructure.web.controller.ControllerHelper.getArmy;
-import static br.com.javamoon.infrastructure.web.controller.ControllerHelper.getCJM;
-import br.com.javamoon.domain.cjm_user.CJM;
-import br.com.javamoon.domain.entity.Army;
-import br.com.javamoon.domain.entity.GroupUser;
-import br.com.javamoon.domain.entity.Soldier;
-import br.com.javamoon.exception.SoldierValidationException;
-import br.com.javamoon.infrastructure.web.controller.ControllerHelper;
-import br.com.javamoon.mapper.DrawExclusionDTO;
-import br.com.javamoon.mapper.EntityMapper;
-import br.com.javamoon.mapper.SoldierDTO;
-import br.com.javamoon.service.DrawExclusionService;
-import br.com.javamoon.service.MilitaryOrganizationService;
-import br.com.javamoon.service.MilitaryRankService;
-import br.com.javamoon.service.SoldierService;
-import br.com.javamoon.util.DateUtils;
-import br.com.javamoon.util.SecurityUtils;
-import br.com.javamoon.validator.ValidationUtils;
 
 @Controller
 @RequestMapping("/gp/sd")
@@ -79,24 +79,38 @@ public class SoldierController {
 	}
 	
 	@PostMapping("/search")
-	public ResponseEntity<List<SoldierDTO>> search(
-			@RequestParam("key") String key,
-			@RequestParam(name = "yearQuarter", required = false) String yearQuarter,
-			@RequestParam(name = "listId", required = false) Integer listId) {
-		
-		GroupUser loggedUser = SecurityUtils.groupUser();
-		
+	public ResponseEntity<List<SoldierDTO>> search(@RequestBody SearchSoldierDTO searchSoldierDTO) {
 		List<SoldierDTO> foundSoldiers = soldierService
-			.listSoldierContaining(key, loggedUser.getArmy(), loggedUser.getCjm())
+			.listSoldierContaining( searchSoldierDTO.getKey(), getArmy(), getCJM() )
 			.stream()
 			.map(s -> EntityMapper.fromEntityToDTO(s))
 			.collect(Collectors.toList());
 		
-		soldierService.setSystemOnlyExclusionMessages(foundSoldiers, yearQuarter, listId);
+		soldierService.setSystemOnlyExclusionMessages(
+				foundSoldiers, 
+				searchSoldierDTO.getYearQuarter(), 
+				searchSoldierDTO.getListId());
 		
 		return ResponseEntity
 				.status(HttpStatus.OK)
 				.body(foundSoldiers);
+	}
+	
+	@GetMapping("/{soldierId}")
+	public ResponseEntity<GetSoldierDTO> getSoldier(@PathVariable Integer soldierId) {
+		try {
+			Soldier soldier = soldierService.getSoldier(soldierId, getArmy(), getCJM());
+			
+			GetSoldierDTO getSoldierDTO = EntityMapper.fromEntityToGetSoldierDTO(soldier);
+			
+			List<DrawExclusionDTO> exclusions = drawExclusionService.listBySoldier(soldier);
+			getSoldierDTO.setExclusions(exclusions);
+			
+			return ResponseEntity.ok(getSoldierDTO);
+		} catch (SoldierNotFoundException e) {
+			e.printStackTrace();
+			return ResponseEntity.notFound().build();
+		}
 	}
 	
 	@Deprecated
@@ -165,5 +179,5 @@ public class SoldierController {
 		return "group/soldier/profile";
 	}
 	
-	public ResponseEntity<SoldierDTO>
+	
 }

@@ -6,29 +6,10 @@ div.list-header p{
 	font-size: 14px;
 }
 
-#newSoldierProfile{
-  text-align: center;
-  margin: 20px;
-}
-
-#newSoldierProfile a{
-	text-decoration: underline;
-}
-
-#newSoldierProfile a:hover{
-	cursor: pointer;
-}
-
 div#listInfo {
     display: inline-block;
     width: 100%;
     margin-bottom: 10px;
-}
-
-div#listInfo form, div.modal-content form {
-  text-align: inherit;
-  width: 100%;
-  margin: auto;
 }
 
 input#listDescription {
@@ -69,40 +50,9 @@ div#quarter select{
   width: 20%;
 }
 
-div#addSoldiers{
-  width: 100%;
-  text-align: right;
-}
-
-form#soldierSearch input[type=text]{
-	width: 94%;
-	padding: 10px;
-	float: left;
-	margin: 0;
-	border-radius: 0;
-	border: none;
-	border-bottom: 1px solid #ddd;
-}
-
-form#soldierSearch input[type=text]:focus{
-	outline: none;
-}
-
-form#soldierSearch button{
-	padding: 11px 11px;
-	border: none;
-	background-color: #ddd;
-	border-radius: 0;
-}
-
 div#soldiers{
 	height: 56vh;
 	overflow: auto;
-}
-
-div#foundSoldiers {
-    height: 400px;
-    overflow: auto;
 }
 
 button.remove-soldier{
@@ -121,17 +71,4 @@ button.remove-soldier{
 
 button.remove-soldier:hover{
 	background-color: #d53720;
-}
-
-p.error{
-	margin: 0;
-}
-
-div.disable-div {
-  opacity: 0.6;
-}
-
-div#searchResultList {
-    overflow: auto;
-    height: 60vh;
 }

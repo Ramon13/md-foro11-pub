@@ -4,36 +4,38 @@
     <meta charset="utf-8" />
   </head>
   <body>
-    <div th:fragment="search-soldier" id="searchSoldierModal" class="modal">
+    <div th:fragment="search-soldier-modal" id="searchSoldierModal" class="modal">
       <!-- ======================================================================= -->
       <!-- ================Soldier register modal=================================== -->
-      <!-- ======================================================================= -->
-      <div th:replace="group/modal/soldier-register :: soldier-register"></div>
+      <!-- ======================================================================= --> 
+      <div th:replace="group/modal/soldier-register-modal :: soldier-register-modal"></div>
+      
     
       <input type="hidden" id="addSoldierEndpoint" th:value="@{/gp/dw/list/add}" />
       
       <div class="modal-content">
         <span class="close">&times;</span>
+        
         <h1>Lista Trimestral - Adição de Militares</h1>
         <hr />
+        
         <div>
           <form id="soldierSearch" method="post" th:action="@{/gp/sd/search}">
-            <input name="key" type="text" placeholder="nome ou email do militar..." autocomplete="off"/>
-            <input id="selectedQuarter" name="yearQuarter" type="hidden" th:value="${drawList.yearQuarter}"/>
-            <input id="listId" name="listId" type="hidden" th:value="${drawList.id}"/>
-            <button type="button">
+            <input id="searchKey" type="text" placeholder="nome ou email do militar..." autocomplete="off"/>
+            
+            <button type="submit">
               <img th:src="@{/images/search.svg}"/>
             </button>
           </form>
         </div>
+        
         <br />
         <div id="searchResultList"></div>
+        
         <div id="newSoldierProfile">
           <a href="#">Criar novo perfil de militar</a>
         </div>
       </div>
-      
-      <script type="text/javascript" th:src="@{/scripts/group/soldier-search.js}"></script>
     </div>
   </body>
 </html>

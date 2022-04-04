@@ -176,4 +176,10 @@ function clearInputFields(node) {
   
   const selects = node.querySelectorAll("select");
   for (let i = 0; i < selects.length; i++) selects[i].options.selectedIndex = 0;
+  
+  node.querySelectorAll("textarea").forEach(textarea => { textarea.value = ''; });
+}
+
+function getSelectedValue(selectNode) {
+   return selectNode.options[ selectNode.selectedIndex ].value;
 }

@@ -1,17 +1,21 @@
 const snackbar = document.querySelector("div#snackbar");
+const registerForm = document.querySelector("div#soldierRegister form");
 
-const soldierRegisterForm = document.querySelector("div#soldierRegister form");
-soldierRegisterForm.onsubmit = function(event) {
-  event.preventDefault();
-  
-  removeErrorNodes();
-  removeClassErrors();
-  showCreatingSoldierSnackbar(); 
-  
-  save(getSoldier(), saveSoldierEndpoint);
-  
-  hideSnackbar(snackbar);
-  return false;
+onSubmitRegisterForm();
+
+function onSubmitRegisterForm() {
+  registerForm.onsubmit = function(event) {
+    event.preventDefault();
+    
+    removeErrorNodes();
+    removeClassErrors();
+    showCreatingSoldierSnackbar(); 
+    
+    save(getSoldier(), this.action);
+    
+    hideSnackbar(snackbar);
+    return false;
+  } 
 }
 
 function save(soldier, endpoint) {
@@ -26,7 +30,7 @@ function save(soldier, endpoint) {
       
       if (xhr.status == HTTP_CREATED) {
         showCreatedSoldierSnackbar();
-        clearInputFields(soldierRegisterForm);
+        clearInputFields(registerForm);
       
       }else if (xhr.status == HTTP_UNPROCESSABLE_ENTITY) {
         const validationErrors = JSON.parse(xhr.responseText);
@@ -47,7 +51,7 @@ function showErrors(validationErrors) {
     fieldName = validationErrors[i].fieldName;
     errorMessage = validationErrors[i].errorMessage;
     
-    const inputNode = soldierRegisterForm.querySelector("." + fieldName);
+    const inputNode = registerForm.querySelector("." + fieldName);
     const errorNode = getErrorMessage(errorMessage);
     
     inputNode.classList.add("error");
@@ -63,11 +67,11 @@ function showSaveSoldierSnackbar(){
 
 function getSoldier() {
   let soldier = {
-    name: soldierRegister.querySelector("input[type=text].name").value,
-    militaryOrganization: { id: soldierRegister.querySelector("select.militaryOrganization").value },
-    militaryRank: { id: soldierRegister.querySelector("select.militaryRank").value },
-    phone: soldierRegister.querySelector("input[type=text].phone").value,
-    email: soldierRegister.querySelector("input[type=text].email").value
+    name: registerForm.querySelector("input[type=text].name").value,
+    militaryOrganization: { id: registerForm.querySelector("select.militaryOrganization").value },
+    militaryRank: { id: registerForm.querySelector("select.militaryRank").value },
+    phone: registerForm.querySelector("input[type=text].phone").value,
+    email: registerForm.querySelector("input[type=text].email").value
   };
   
   return soldier;

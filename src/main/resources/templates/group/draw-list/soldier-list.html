@@ -1,11 +1,13 @@
 <!DOCTYPE html>
 <html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org" layout:decorate="~{group/layout}">
   <head>
-    <link th:href="@{/styles/group/soldier-list.css}" type="text/css" rel="stylesheet">
     <link th:href="@{/styles/modal-box.css}" type="text/css" rel="stylesheet">
-    <link th:href="@{/styles/pagination-search-list.css}" type="text/css" rel="stylesheet"/>
-    <link th:href="@{/styles/group/soldier/register.css}" type="text/css" rel="stylesheet"/>
     <link th:href="@{/styles/snackbar.css}" type="text/css" rel="stylesheet"/>
+    <link th:href="@{/styles/pagination-search-list.css}" type="text/css" rel="stylesheet"/>
+    <link th:href="@{/styles/group/soldier-list.css}" type="text/css" rel="stylesheet">
+    <link th:href="@{/styles/group/modal/search-soldier-modal.css}" type="text/css" rel="stylesheet"/>
+    <link th:href="@{/styles/group/modal/soldier-register-modal.css}" type="text/css" rel="stylesheet"/>
+    <link th:href="@{/styles/group/modal/soldier-profile-modal.css}" type="text/css" rel="stylesheet"/>
   </head>
   <body>
     <div layout:fragment="content">
@@ -20,7 +22,7 @@
           
           <div id="quarter" th:if="${quarters != null}">
             <label>Trimestre:</label>
-            <select class="app-select" th:field="*{yearQuarter}">
+            <select id="yearQuarter" class="app-select" th:field="*{yearQuarter}">
               <option th:each="quarter : ${quarters}" th:value="${quarter}" th:text="${quarter}"></option>
             </select>
           </div>  
@@ -28,9 +30,10 @@
       </div>
       
       <div id="soldiersList">
-        <div id="addSoldiers">
-          <button type="button" id="openModalBtn" class="app-green-btn">+ Adicionar Militar</button>
+        <div>
+          <button id="addSoldier" class="app-green-btn" type="button">+ Adicionar Militar</button>
         </div>  
+        
         <div th:replace="fragments/pagination-menu :: pagination"></div>
         
         <hr />
@@ -61,12 +64,12 @@
       <!-- ======================================================================= -->
       <!-- ================Found soldiers modal=================================== -->
       <!-- ======================================================================= -->
-      <div th:replace="group/modal/search-soldier :: search-soldier"></div>
+      <div th:replace="group/modal/search-soldier-modal :: search-soldier-modal"></div>
       
       <!-- ======================================================================= -->
       <!-- ================soldier profile modal fragment=================================== -->
       <!-- ======================================================================= -->
-      <div th:replace="group/modal/soldier-profile :: soldier-profile"></div>
+      <div th:replace="group/modal/soldier-profile-modal :: soldier-profile-modal"></div>
       
       <!-- ======================================================================= -->
       <!-- ================Base div to generate display found soldiers============ -->
@@ -85,11 +88,10 @@
       <div id="snackbar"></div>
       
       <script th:inline="javascript">
-        const soldierProfileEndpoint = '[(@{/gp/sd/profile/home})]' 
+        const getSoldierEndpoint = '[(@{/gp/sd})]' 
         const listsEndpoint = '[(@{/gp/dw/list})]';
         const addSoldierEndpoint = '[(@{/gp/dw/list/add})]';
         const removeSoldierEndpoint = '[(@{/gp/dw/list/remove})]';
-        const saveSoldierEndpoint = '[(@{/gp/sd/register/save})]';
         
         const backBtn = document.querySelector("button#back");
         backBtn.addEventListener('click', function(){
@@ -98,9 +100,12 @@
       </script>      
       <script type="text/javascript" th:src="@{/scripts/modal-box.js}"></script>
       <script type="text/javascript" th:src="@{/scripts/snackbar.js}"></script>
-      <script type="text/javascript" th:src="@{/scripts/group/soldier-list.js}"></script>
       <script type="text/javascript" th:src="@{/scripts/pagination-search-list.js}"></script>
-      <script type="text/javascript" th:src="@{/scripts/modal/soldier-register.js}"></script>
+      <script type="text/javascript" th:src="@{/scripts/group/soldier-list.js}"></script>
+      <script type="text/javascript" th:src="@{/scripts/group/modal/search-soldier-modal.js}"></script>
+      <script type="text/javascript" th:src="@{/scripts/group/modal/soldier-register-modal.js}"></script>
+      <script type="text/javascript" th:src="@{/scripts/group/modal/soldier-profile-modal.js}"></script>
     </div>
   </body>
 </html>
+

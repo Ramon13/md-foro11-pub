@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
+  <head>
+    <meta charset="utf-8" />
+  </head>
+  <body>
+    <div th:fragment="soldier-profile-modal" id="soldierProfileModal" class="modal">
+      
+      <div class="modal-content">
+        <span class="close">&times;</span>
+        
+        <h1 class="pageTitle"></h1>
+        <hr />  
+        
+        <div id="sdProfile">
+          <p class="input-label">OM</p>
+          <p class="label-content" id="omName"></p>
+          
+          <p class="input-label">Posto</p>
+          <p class="label-content" id="rankName"></p>
+          
+          <p class="input-label">Telefone</p>
+          <p class="label-content" id="soldierPhone"></p>
+          
+          <p class="input-label">E-mail</p>
+          <p class="label-content" id="soldierEmail"></p>
+        </div>
+        
+        <hr />
+        <h2>Impedimentos</h2>
+        
+        <div>
+          <form id="newExclusion" method="post" th:action="@{/gp/sd/exclusion}">
+            <input id="soldierId" type="hidden" />
+            
+            <span>De: </span>
+            <input type="date" id="startDate" class="app-dateinput"/>
+            
+            <span>Até: </span>
+            <input type="date" id="endDate" class="app-dateinput" /><br/>
+            
+            <div>
+              <textarea id="message" rows="5" cols="50" placeholder="Adicionar novo impedimento..."></textarea>
+              <br/>
+            </div>
+            
+            <div>
+              <button id="addExclusion" class="app-green-btn" type="submit">
+                <span>Adicionar</span>
+              </button>          
+            </div>
+          </form>
+        </div>
+          
+        <div id="exclusions">
+          <div id="exclusionList"></div>
+        </div>
+      </div>
+    </div>
+  </body>
+</html>

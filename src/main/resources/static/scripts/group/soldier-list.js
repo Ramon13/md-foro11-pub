@@ -1,5 +1,15 @@
 listDescription.focus();
 
+openSearchSoldierModalListener();
+
+function openSearchSoldierModalListener() {
+  document.querySelector("button#addSoldier").onclick = function() {
+    const soldierModal = document.querySelector("div#searchSoldierModal");
+    
+    displayModal( soldierModal );            
+  };  
+}
+
 const saveListBtn = document.querySelector("button#saveList");
 saveListBtn.addEventListener("click", saveList);
 hideLoadStatus();

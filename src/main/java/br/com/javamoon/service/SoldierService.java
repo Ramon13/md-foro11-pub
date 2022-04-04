@@ -50,7 +50,7 @@ public class SoldierService{
 		return EntityMapper.fromEntityToDTO(getSoldierOrElseThrow(id, army , cjm));
 	}
 	
-	public Soldier getSoldier(Integer id, Army army, CJM cjm) {
+	public Soldier getSoldier(Integer id, Army army, CJM cjm) throws SoldierNotFoundException{
 		return getSoldierOrElseThrow(id, army , cjm);
 	}
 	
@@ -99,7 +99,7 @@ public class SoldierService{
 		soldierRepository.delete(soldierId);
 	}
 	
-	public Soldier getSoldierOrElseThrow(Integer soldierId, Army army, CJM cjm) {
+	public Soldier getSoldierOrElseThrow(Integer soldierId, Army army, CJM cjm) throws SoldierNotFoundException {
 		Objects.requireNonNull(soldierId);
 		return soldierRepository.findByIdAndArmyAndCjmAndActive(soldierId, army, cjm)
 				.orElseThrow(() -> new SoldierNotFoundException("soldier not found: " + soldierId));

@@ -80,6 +80,16 @@ button.app-gray-btn:hover{
   cursor: pointer;
 }
 
+/*============= text definitions =======================*/
+p.input-label {
+  margin: 5px;    
+}
+
+p.label-content {
+  font-size: 14px;
+  color: #5f6368;
+  margin: 5px 5px 10px 5px;
+}
 
 /*============= form definitions =======================*/
 form {
@@ -161,6 +171,17 @@ div.app-list .list-info {
 div.app-list p.list-info{
   color: #606060;
   font-size: 12px;
+}
+
+div.empty-list {
+  text-align: center;
+  padding: 50px 0;
+}
+
+div.empty-list span {
+  font-family: 'Roboto';
+  font-size: 17px;
+  color: gray;
 }
 
 
@@ -282,17 +303,6 @@ div.successMsg {
 
 tbody.highlight-sup, button.highlight-sup, select.highlight-sup {
 	color: #4343ff !important;
-}
-
-div.empty-list {
-	text-align: center;
-	padding: 50px 0;
-}
-
-div.empty-list span {
-	font-family: 'Roboto';
-	font-size: 20px;
-	color: gray;
 }
 
 span#spanLoggedUser {

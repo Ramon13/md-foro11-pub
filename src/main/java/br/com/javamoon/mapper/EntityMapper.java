@@ -90,6 +90,17 @@ public final class EntityMapper {
     	return soldierDTO;
     }
     
+    public static GetSoldierDTO fromEntityToGetSoldierDTO(Soldier soldier) {
+    	GetSoldierDTO getSoldierDTO = new GetSoldierDTO();
+    	getSoldierDTO.setId(soldier.getId());
+    	getSoldierDTO.setName(soldier.getName());
+    	getSoldierDTO.setPhone(soldier.getPhone());
+    	getSoldierDTO.setEmail(soldier.getEmail());
+    	getSoldierDTO.setMilitaryOrganization(soldier.getMilitaryOrganization());
+    	getSoldierDTO.setMilitaryRank(soldier.getMilitaryRank());
+    	return getSoldierDTO;
+    }
+    
     public static DrawExclusionDTO fromEntityToDTO(DrawExclusion drawExclusion) {
     	DrawExclusionDTO drawExclusionDTO = new DrawExclusionDTO();
     	drawExclusionDTO.setId(drawExclusion.getId());
