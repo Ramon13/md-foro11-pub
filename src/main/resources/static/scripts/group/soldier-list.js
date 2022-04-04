@@ -1,6 +1,21 @@
 listDescription.focus();
 
 openSearchSoldierModalListener();
+onclickToOpenProfile();
+onclickToRemoveSoldier();
+onSaveList();
+
+const listInfo = document.querySelector("div#listInfo");
+
+function onclickToOpenProfile() {
+  document.querySelectorAll("div.soldier-info").forEach(soldier => {
+    soldier.onclick = async function() {
+      let soldierId = soldier.querySelector(".soldier-id").value;
+      
+      displayProfileModal(await getSoldierOnServer(soldierId));
+    }
+  }); 
+}
 
 function openSearchSoldierModalListener() {
   document.querySelector("button#addSoldier").onclick = function() {
@@ -10,74 +25,82 @@ function openSearchSoldierModalListener() {
   };  
 }
 
-const saveListBtn = document.querySelector("button#saveList");
-saveListBtn.addEventListener("click", saveList);
-hideLoadStatus();
-
-const soldierInfoTuples = document.querySelectorAll("div.soldier-info");
-for (let i = 0; i < soldierInfoTuples.length; i++){
-  soldierInfoTuples[i].onclick = function(){
-    openProfile(this);
-  }
+function onclickToRemoveSoldier() {
+  document.querySelectorAll("button.remove-soldier").forEach(removeBtn => {
+    removeBtn.onclick = function(event) {
+      event.stopPropagation();
+      
+      const soldier = {
+        soldierId: removeBtn.dataset.soldierid,
+        listId: document.querySelector("input[type=hidden]#listId").value,
+        yearQuarter: document.querySelector("select#yearQuarter").value,
+        endpoint: removeSoldierEndpoint,
+        
+        removeSoldier() {
+          removeBtn.closest("div.soldier-info").remove();
+        }
+      }
+      
+      showRemoveSoldierSnackbar();
+      if ( window.confirm(REMOVE_SOLDIER_FROM_LIST) ) removeFromServerList(soldier);
+      hideSnackbar(snackbar);
+    }
+  });
 }
 
-function openProfile(listTuple){
-  let soldierId = getSoldierId(listTuple);
-  let endpoint = soldierProfileEndpoint + "/" + soldierId;
+function onSaveList() {
+  document.querySelector("button#saveList").onclick = function(event) {
+    event.preventDefault();
+    
+    drawList = {
+      id: listInfo.querySelector("input#listId").value,
+      description: listInfo.querySelector("input#listDescription").value,
+      yearQuarter: listInfo.querySelector("select#yearQuarter").value,
+      endpoint: listInfo.querySelector("form#formList").action
+    };
+    
+    saveList(drawList);
+  } 
+}
+
+function getSoldierOnServer(soldierId) {
+  const endpoint = getSoldierEndpoint + "/" + soldierId;
   
-  sendAjaxRequest(
-    GET_METHOD,
-    endpoint,
-    null, 
-    function() {},
-    function() {},
-    JSON_CONTENT_TYPE
-  );
+  return new Promise (resolve => {
+    sendAjaxRequest(
+      GET_METHOD,
+      endpoint,
+      null,
+      function(responseText) {
+        resolve(JSON.parse(responseText));       
+      }
+    ); 
+  });
 }
 
-
-
-const removeSoldierBtns = document.querySelectorAll("button.remove-soldier");
-for (let i = 0; i < removeSoldierBtns.length; i++){
-  removeSoldierBtns[i].onclick = function(event){
-    event.stopPropagation();
-    let soldierId = this.dataset.soldierid;
-    removeFromServerList(soldierId);
+function saveList(drawList) {
+  const xhr = new XMLHttpRequest();
+  
+  xhr.open(PUT_METHOD, drawList.endpoint, true);
+  xhr.setRequestHeader(requestHeader.contentType, JSON_CONTENT_TYPE);
+  
+  xhr.send( JSON.stringify(drawList) );
+  
+  xhr.onreadystatechange = function() {
+    if (xhr.readyState == XMLHttpRequest.DONE) {
+      
+      if (xhr.status == HTTP_OK) {
+        window.location = listsEndpoint;
+      
+      }else if (xhr.status == HTTP_UNPROCESSABLE_ENTITY) {
+        const validationErrors = JSON.parse(xhr.responseText);
+        console.log(validationErrors);
+      }else{
+        alert(INTERNAL_SERVER_ERROR_ALERT);
+      }
+        
+    }
   }
-}
-
-function saveList() {
-  const form = document.querySelector("#formList");
-  showLoadStatus();
-
-  sendAjaxRequest(
-    'POST',
-    form.action,
-    new FormData(form),
-    runSavedListSuccessTasks,
-    runSavedListFailedTasks);
-}
-
-function runSavedListSuccessTasks(responseText) {
-  alert(responseText);
-  window.location = listsEndpoint;
-}
-
-function runSavedListFailedTasks(responseText) {
-  let spanError = document.querySelector(".error");
-  spanError.textContent = responseText;
-  spanError.style.display = "";
-  saveListBtn.disabled = false;
-  hideLoadStatus();
-}
-
-function showLoadStatus() {
-  saveListBtn.querySelector('#loadCircle').style.display = '';
-  saveListBtn.disabled = true;
-}
-
-function hideLoadStatus() {
-  saveListBtn.querySelector('#loadCircle').style.display = 'none';
 }
 
 function disableSoldierInfo(errorMsg, soldierInfoDiv){
@@ -101,6 +124,7 @@ function addToServerList(listTuple){
         listTuple.onclick = function(e){ e.stopPropagation(); };    
         showRemoveBtn( listTuple.querySelector(".remove-soldier"), soldierId );
         appendToHTMLList(listTuple);
+        onclickToOpenProfile();
       }
       
       hideSnackbar(snackbar);
@@ -108,25 +132,24 @@ function addToServerList(listTuple){
   );
 }
 
-function removeFromServerList(soldierId){
-  let endpoint = removeSoldierEndpoint;
-  let soldierListDTO = getSoldierToListDTOObj(soldierId);
+function removeFromServerList(soldier){
+  let xhr = new XMLHttpRequest();
   
+  xhr.open(POST_METHOD, soldier.endpoint, true);
+  xhr.setRequestHeader(requestHeader.contentType, JSON_CONTENT_TYPE);
   
-  showRemoveSoldierSnackbar();
-  sendJSONAsyncRequest(
-    endpoint,
-    JSON.stringify(soldierListDTO),
-    function(xhr){
-      if (xhr.status === 204){
-        location.reload();
-      }else{
-        alert("O militar não pôde ser removido da lista.");
-      }
+  xhr.send( JSON.stringify(soldier) );
+  
+  xhr.onreadystatechange = function() {
+    if (xhr.readyState == XMLHttpRequest.DONE) {
+      if (xhr.status == HTTP_NO_CONTENT) {
+        soldier.removeSoldier();
       
-      hideSnackbar(snackbar);
+      }else{
+        alert(SOLDIER_CANNOT_BE_REMOVED);
+      }
     }
-  );
+  }
 }
 
 function sendJSONAsyncRequest(endpoint, content, onReadyTask){
@@ -143,12 +166,6 @@ function sendJSONAsyncRequest(endpoint, content, onReadyTask){
   }
 }
 
-function getSoldierToListDTOObj(soldierId){
-  let listId = document.querySelector("input[type=hidden]#listId").value;
-  let yearQuarter = document.querySelector("select#yearQuarter").value;
-  return {soldierId: soldierId, listId: listId, yearQuarter: yearQuarter};
-}
-
 function showAddingSoldierSnackbar(){
   const snackbar = document.querySelector("div#snackbar");
   snackbar.textContent = "Adicionando militar à lista..."
@@ -162,7 +179,7 @@ function showRemoveSoldierSnackbar(){
 }
 
 function appendToHTMLList(listTuple){
-  document.querySelector("div#soldiers").prepend(listTuple);  
+  document.querySelector("div#soldiers").prepend(listTuple);
 }
 
 function showRemoveBtn(removeBtn, soldierId){  

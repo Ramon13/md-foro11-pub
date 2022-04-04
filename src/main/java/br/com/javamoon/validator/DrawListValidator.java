@@ -78,6 +78,7 @@ public class DrawListValidator {
 	private boolean validateDescription(String description, ValidationErrors validationErrors) {
 		return (
 			ValidationUtils.validateRequired(description, DRAW_LIST_DESCRIPTION, validationErrors) &&
+			ValidationUtils.validateMinLength(description, DRAW_LIST_DESCRIPTION, 8, validationErrors) &&
 			ValidationUtils.validateMaxLength(description, DRAW_LIST_DESCRIPTION, DRAW_LIST_DESCRIPTION_MAX_LEN, validationErrors)
 		);
 	}

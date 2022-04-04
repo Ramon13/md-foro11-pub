@@ -1,5 +1,8 @@
 package br.com.javamoon.exception;
 
+import java.util.List;
+
+import br.com.javamoon.validator.ValidationError;
 import br.com.javamoon.validator.ValidationErrors;
 import lombok.Getter;
 
@@ -13,5 +16,9 @@ public class DrawListValidationException extends RuntimeException{
     public DrawListValidationException(ValidationErrors validationErrors) {
         super(validationErrors.toString());
         this.validationErrors = validationErrors;
+    }
+    
+    public List<ValidationError> getErrorList() {
+    	return validationErrors.getValidationErrors();
     }
 }

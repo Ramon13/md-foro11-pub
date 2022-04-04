@@ -4,33 +4,35 @@ import static br.com.javamoon.mapper.MapperConstants.EDIT_PHASE;
 import static br.com.javamoon.mapper.MapperConstants.EDIT_PHASE_DESCRIPTION;
 import static br.com.javamoon.mapper.MapperConstants.READY_PHASE;
 import static br.com.javamoon.mapper.MapperConstants.READY_PHASE_DESCRIPTION;
-import br.com.javamoon.domain.entity.Army;
-import br.com.javamoon.domain.entity.GroupUser;
-import br.com.javamoon.domain.entity.Soldier;
-import br.com.javamoon.util.DateUtils;
+
 import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-import javax.validation.constraints.NotEmpty;
-import javax.validation.constraints.Size;
+
+import br.com.javamoon.domain.entity.Army;
+import br.com.javamoon.domain.entity.GroupUser;
+import br.com.javamoon.domain.entity.Soldier;
+import br.com.javamoon.util.DateUtils;
 import lombok.Getter;
 import lombok.Setter;
+import lombok.ToString;
 
+@ToString
 @Getter
 @Setter
 public class DrawListDTO implements Comparable<DrawListDTO> {
 
 	private Integer id;
-
-	@NotEmpty(message = "A descrição deve conter no mínimo 16 caracteres")
-	@Size(min = 16, max = 2048, message = "A descrição deve conter entre 16 e 2048 caracteres")
+	
 	private String description;
 	
 	private String yearQuarter;
 
+	@ToString.Exclude
 	private Set<Soldier> soldiers = new HashSet<Soldier>(0);
 	
 	private LocalDate creationDate;
@@ -39,12 +41,16 @@ public class DrawListDTO implements Comparable<DrawListDTO> {
 	
 	private Boolean enableForDraw;
 	
+	@ToString.Exclude
 	private Army army;
 	
+	@ToString.Exclude
 	private GroupUser creationUser;
 	
+	@ToString.Exclude
 	private List<Integer> selectedSoldiers = new ArrayList<>(0);
 	
+	@ToString.Exclude
 	private List<Integer> deselectedSoldiers = new ArrayList<>(0);
 	
 	@JsonIgnore

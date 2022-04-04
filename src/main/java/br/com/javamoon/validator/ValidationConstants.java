@@ -54,7 +54,7 @@ public final class ValidationConstants {
     
     public static final String DRAW_LIST_DESCRIPTION = "description";
     public static final String DRAW_LIST_DESCRIPTION_ALREADY_EXISTS = "Descrição já cadastrada no sistema.";
-    public static final String DRAW_LIST_QUARTER_YEAR = "quarterYear";
+    public static final String DRAW_LIST_QUARTER_YEAR = "yearQuarter";
     public static final String DRAW_LIST_QUARTER_YEAR_OUT_OF_BOUNDS = "Trimestre inválido. O trimestre não pode ser selecionado.";
     public static final String DRAW_LIST_SELECTED_SOLDIERS = "selectedSoldiers";
     public static final Integer DRAW_LIST_DESCRIPTION_MAX_LEN = 2048;

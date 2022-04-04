@@ -19,7 +19,7 @@ span, p, legend, div {
 }
 
 body {
-	width: 60%;
+	width: 70%;
 	margin: 0 auto;
 	background-color: #FFFFFF;
 	padding: 0 20px 20px 20px;
@@ -42,7 +42,8 @@ h1, h2, h3{
 }
 
 h1.pageTitle{
-		text-align: left;
+  text-align: left;
+	font-size: 1em;	
 }
 
 h1{
@@ -50,17 +51,79 @@ h1{
 }
 
 h2{
-    font-size: 18px;    
+    font-size: 1em;    
 }
 
 h3{
     font-size: 15px;    
 }
 
+/*====================Menu and Title bar =========================*/
+div#appHBar {
+  padding: 20px;
+  background-color: #1A88FF;
+}
+
+a#appTitle {
+  font-family: "Roboto", sans-serif;
+  text-decoration: none;
+  color: #FFFFFF;
+  font-size: 20px;
+  float: left;
+  font-weight: bold;
+  margin: -12px;
+}
+
+div#vMenu {
+  height: 95vh;
+  border-right: 2px solid #CCCCCC;
+  width: 17%;
+  float: left;
+  margin: 0;
+}
+
+div#vMenu ul {
+  list-style-type: none;
+  padding: 0 10px;
+}
+
+div#vMenu .vMenu-sub span {
+  font-family: 'Roboto', sans-serif;
+  font-weight: bold;
+  font-size: 13px;
+  color: #5f6368;
+}
+
+li.vMenu-sub {
+  margin: 12px 0;
+}
+
+a {
+  font-family: 'Roboto', sans-serif;
+  color: #000;
+}
+
+li.vMenu-link {
+  padding: 5px 0;
+}
+
+div#vMenu .vMenu-link a {
+  font-family: 'Roboto', sans-serif;
+  font-size: 13px;
+  color: #5f6368;
+}
+
+div#content {
+  height: 90vh;
+  overflow: auto;
+  padding: 10px;
+}
+
 /*============= app buttons ============================*/
 button {
   font-family: "Roboto", sans-serif;
-  padding: 5px;
+  padding: 7px;
+  font-size: 12px;
   border-radius: 4px;
   display: inline-flex;
 }
@@ -69,24 +132,27 @@ button.app-green-btn, input[type=submit].app-green-btn {
   color: #ffffff;
   background-color: #2EA44F;
   font-family: "Roboto", sans-serif;
+  border: none;
 }
 
 button.app-gray-btn {
   color: #ffffff;
   background-color: #858585;
+  border: none;
 }
 
-button.app-gray-btn:hover{
+button.app-gray-btn:hover, button.app-green-btn:hover{
   cursor: pointer;
 }
 
 /*============= text definitions =======================*/
 p.input-label {
-  margin: 5px;    
+  margin: 5px;
+  font-size: 0.9em; 
 }
 
 p.label-content {
-  font-size: 14px;
+  font-size: 0.8em;
   color: #5f6368;
   margin: 5px 5px 10px 5px;
 }
@@ -137,16 +203,16 @@ div.app-list-category span {
 div.app-list {
   margin: auto;
   background-color: #eee;
-  padding: 15px;
+  padding: 10px;
   margin-bottom: 15px;
   transition: 0.3s;
   box-shadow: 0px 3px 6px 3px #ddd;
 }
-
+/*
 div.app-list:hover{
   background-color: #ddd;
 }
-
+*/
 div.app-list p{
   display: inline;
 }
@@ -154,23 +220,23 @@ div.app-list p{
 div.app-list .list-header {
   font-family: "Roboto", sans-serif;
   color: #4e4848;
-  font-size: 17px;
+  font-size: 0.8em;
   font-weight: bold;
   margin-bottom: 10px;
 }
 
 div.app-list p.list-header{
-  font-size: 14px;
+  font-size: 0.8em;
 }
 
 div.app-list .list-info {
   color: #606060;
-  font-size: 12px;
+  font-size: 0.7em;
 }
 
 div.app-list p.list-info{
   color: #606060;
-  font-size: 12px;
+  font-size: 0.7em;
 }
 
 div.empty-list {
@@ -223,62 +289,6 @@ table.searchableTb tr:nth-child(even) {
 
 table.searchableTb tr:hover {
 	background-color: #ddd;
-}
-
-div#appHBar {
-	padding: 20px;
-	background-color: #1A88FF;
-}
-
-a#appTitle {
-	font-family: "Roboto", sans-serif;
-	text-decoration: none;
-	color: #FFFFFF;
-	font-size: 20px;
-	float: left;
-	font-weight: bold;
-	margin: -12px;
-}
-
-div#vMenu {
-	height: 95vh;
-	border-right: 2px solid #CCCCCC;
-	width: 15%;
-	float: left;
-	margin: 0;
-}
-
-div#vMenu ul {
-	list-style-type: none;
-	padding: 0 10px;
-}
-
-div#vMenu .vMenu-sub span {
-	font-family: 'Roboto', sans-serif;
-	font-weight: bold;
-	font-size: 13px;
-	color: #5f6368;
-}
-
-a {
-	font-family: 'Roboto', sans-serif;
-	color: #000;
-}
-
-li.vMenu-link {
-	padding: 5px 0;
-}
-
-div#vMenu .vMenu-link a {
-	font-family: 'Roboto', sans-serif;
-	font-size: 13px;
-	color: #5f6368;
-}
-
-div#content {
-	height: 90vh;
-	overflow: auto;
-	padding: 10px;
 }
 
 div.error span, span.error, div.error p, p.error {

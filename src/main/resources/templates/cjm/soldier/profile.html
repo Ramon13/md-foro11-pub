@@ -36,7 +36,7 @@
           <span> Este usuário não possui impedimentos registrados </span>
         </div>
         
-        <div class="impediment app-div-list" th:each="exclusion : ${exclusions}">
+        <div class="impediment app-list" th:each="exclusion : ${exclusions}">
           <div>
             <p class="list-header" th:text="${exclusion.periodAsText}"></p>
             <br /><br />

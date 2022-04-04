@@ -12,16 +12,16 @@
   <body>
     <div layout:fragment="content">
       <div id="listInfo">
-        <form id="formList" method="get" th:action="@{/gp/dw/list/new/save}" th:object="${drawList}">
+        <form id="formList" method="get" th:action="@{/gp/dw}" th:object="${drawList}">
           <input id="listId" name="id" type="hidden" th:field="*{id}" />          
           <div>
-            <span class="error" style="display: none"></span> <br />
-             <label>Descrição:</label><br />
+            <span class="error" style="display: none"></span><br/>
+             <p>Descrição:</p>
             <input id="listDescription" th:field="*{description}" class="app-txtinput" type="text" placeholder="nome ou descrição..." />
           </div>
           
           <div id="quarter" th:if="${quarters != null}">
-            <label>Trimestre:</label>
+            <p>Trimestre:</p>
             <select id="yearQuarter" class="app-select" th:field="*{yearQuarter}">
               <option th:each="quarter : ${quarters}" th:value="${quarter}" th:text="${quarter}"></option>
             </select>
@@ -54,9 +54,8 @@
           <button type="button" id="back" class="app-gray-btn">
             <span>Voltar</span>
           </button>
-          <button type="button" id="saveList">
-            <span>Salvar</span> <img id="loadCircle"
-              th:src="@{/images/load-green.gif}" alt="carregando..." />
+          <button type="button" id="saveList" class="app-green-btn">
+            <span>Salvar</span>
           </button>
         </div>
       </div>
@@ -92,6 +91,8 @@
         const listsEndpoint = '[(@{/gp/dw/list})]';
         const addSoldierEndpoint = '[(@{/gp/dw/list/add})]';
         const removeSoldierEndpoint = '[(@{/gp/dw/list/remove})]';
+        const removeExclusionImgSrc = '[(@{/images/delete.svg})]';
+        const removeExclusionEndpoint = '[(@{/gp/sd/exclusion})]'
         
         const backBtn = document.querySelector("button#back");
         backBtn.addEventListener('click', function(){

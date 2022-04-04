@@ -92,6 +92,7 @@ public class DrawService {
 			EntityMapper.fromDTOToEntity(drawListService.getList(drawDTO.getSelectedDrawList(), cjm))
 		);
 		editDraw.setSoldiers(drawDTO.getSoldiers().stream().map(s -> EntityMapper.fromDTOToEntity(s)).collect(Collectors.toList()));
+		editDraw.setSubstitute(drawDTO.getSubstitute());
 		
 		drawRepository.save(editDraw);
 	}

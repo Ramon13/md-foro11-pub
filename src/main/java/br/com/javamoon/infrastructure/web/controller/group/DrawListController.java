@@ -3,6 +3,7 @@ package br.com.javamoon.infrastructure.web.controller.group;
 import static br.com.javamoon.infrastructure.web.controller.ControllerHelper.getArmy;
 import static br.com.javamoon.infrastructure.web.controller.ControllerHelper.getCJM;
 import br.com.javamoon.config.properties.PaginationConfigProperties;
+import br.com.javamoon.domain.entity.DrawList;
 import br.com.javamoon.domain.entity.GroupUser;
 import br.com.javamoon.exception.DrawListValidationException;
 import br.com.javamoon.infrastructure.web.model.PaginationFilter;
@@ -31,6 +32,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -70,29 +72,26 @@ public class DrawListController {
 	
 	@GetMapping("/list/new")
 	public String createHome() {
-		drawListService.create(SecurityUtils.groupUser());
-		return "redirect:/gp/dw/list";
+		DrawList newList = drawListService.create(SecurityUtils.groupUser());
+		
+		return "redirect:/gp/dw/list/edit/" + newList.getId();
 	}
 	
-	@PostMapping("/list/new/save")
-	public ResponseEntity<String> saveDrawList(@Valid @ModelAttribute("drawList") DrawListDTO drawListDTO,
-			Errors errors) throws IllegalStateException, InterruptedException{
-		String errorMsg;
-
-		if (!errors.hasErrors()) {
-			try {
-				GroupUser loggedUser = SecurityUtils.groupUser();
-				drawListService.save(drawListDTO, loggedUser.getArmy(), loggedUser.getCjm(), loggedUser);
-				
-				return new ResponseEntity<String>("A lista foi salva", HttpStatus.OK);
-			} catch (DrawListValidationException e) {
-				errorMsg = e.getValidationErrors().getError(0).getErrorMessage();
-			}
-		}else {
-			errorMsg = errors.getFieldError().getDefaultMessage();
-		}
+	@SuppressWarnings("rawtypes")
+	@PutMapping
+	public ResponseEntity update(@RequestBody DrawListDTO drawListDTO){
+		System.out.println(drawListDTO);
+		try {
+			GroupUser loggedUser = SecurityUtils.groupUser();
+			drawListService.save(drawListDTO, getArmy(), getCJM(), loggedUser);
 			
-		return new ResponseEntity<String>(errorMsg, HttpStatus.BAD_REQUEST);
+			return ResponseEntity.ok().build();
+		} catch (DrawListValidationException e) {
+			return ResponseEntity.status(HttpStatus.UNPROCESSABLE_ENTITY).body( e.getErrorList() );
+		
+		} catch (Exception e) {
+			return ResponseEntity.notFound().build();
+		}
 	}
 	
 	@GetMapping("/list/edit/{listId}")

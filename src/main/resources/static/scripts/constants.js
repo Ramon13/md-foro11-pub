@@ -9,6 +9,8 @@ const SOLDIER_HAS_NO_EXCLUSION = "Este usuário não possui impedimentos registr
 
 const GET_METHOD = "GET";
 const POST_METHOD = "POST";
+const DELETE_METHOD = "DELETE";
+const PUT_METHOD = "PUT";
 const JSON_CONTENT_TYPE = "application/json";
 const requestHeader = {
   contentType: "Content-Type"
@@ -16,4 +18,10 @@ const requestHeader = {
 
 const HTTP_OK = 200;
 const HTTP_CREATED = 201;
+const HTTP_NO_CONTENT = 204;
 const HTTP_UNPROCESSABLE_ENTITY = 422;
+
+
+const DELETE_EXCLUSION_CONFIRMATION_MESSAGE = "Após a deleção deste impedimento, esta operação não poderá ser desfeita. Deseja prosseguir?";
+const REMOVE_SOLDIER_FROM_LIST = "Remover este militar da lista?"
+const SOLDIER_CANNOT_BE_REMOVED = "O militar não pôde ser removido da lista.";

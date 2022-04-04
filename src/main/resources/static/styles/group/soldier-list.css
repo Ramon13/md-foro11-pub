@@ -2,28 +2,27 @@ div.app-list{
 	position: relative;
 }
 
-div.list-header p{
-	font-size: 14px;
-}
 
 div#listInfo {
     display: inline-block;
     width: 100%;
+    height: 21%;
     margin-bottom: 10px;
 }
 
-input#listDescription {
-  font-size: 16px;
+div#listInfo p{
+	margin: 0;
+  font-size: 14px;
 }
+
+div#listInfo input#listDescription, div#listInfo select {
+  font-size: 12px;
+}
+
+
 
 button#saveList {
   float: right;
-  background-color: #2EA44F;
-  color: #eee;
-}
-
-button#saveList img {
-  width: 20px;
 }
 
 label {
@@ -51,24 +50,31 @@ div#quarter select{
 }
 
 div#soldiers{
-	height: 56vh;
+	height: 70%;
 	overflow: auto;
 }
 
 button.remove-soldier{
 	position: absolute;
+	padding: 5px;
   right: 10px;
+  font-size: 13px;
   top: 30%;
   border: none;
   border-radius: 50%;
   background-color: #d75b49;
   color: #fff;
-  width: 25px;
-  height: 25px;
+  width: 23px;
+  height: 23px;
   padding-left: 5px;
   padding-top: 3px;
 }
 
 button.remove-soldier:hover{
 	background-color: #d53720;
+}
+
+div#soldiersList {
+  height: 76%;
+  overflow: auto;
 }

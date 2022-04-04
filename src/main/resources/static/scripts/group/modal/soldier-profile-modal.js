@@ -5,6 +5,35 @@ const exclusionList = modal.querySelector("div#exclusionList");
 
 onSubmitNewExclusionForm();
 
+function displayProfileModal(soldier) {
+  modal.querySelector("h1.pageTitle").textContent = soldier.name;
+  modal.querySelector("p#omName").textContent = soldier.militaryOrganization.name;
+  modal.querySelector("p#rankName").textContent = soldier.militaryRank.name;
+  modal.querySelector("p#soldierPhone").textContent = soldier.phone;
+  modal.querySelector("p#soldierEmail").textContent = soldier.email;
+
+  displayExclusions(soldier.exclusions);
+  onRemoveExclusion();
+  
+  displayModal( modal );
+  
+  modal.querySelector("input#soldierId").value = soldier.id;
+}
+
+function displayExclusions(exclusions) {
+  clearChilds(exclusionList);
+  
+  if (exclusions.length > 0){
+    
+    exclusions.forEach(exclusion => {
+      addExclusion(exclusion);    
+    });  
+         
+  }else {
+    displayEmptyListMessage();
+  }
+}
+
 function onSubmitNewExclusionForm() {
   const form = document.querySelector("form#newExclusion")
   form.onsubmit = function(event) {
@@ -50,42 +79,41 @@ function saveExclusion(exclusion) {
   }
 }
 
-function showErrors(validationErrors) {
-  const form = document.querySelector("form#newExclusion")
-  
-  validationErrors.forEach(validationError => {
-    let inputNode = form.querySelector("#" + validationError.fieldName);
-    let errorNode = getErrorMessage( validationError.errorMessage );
-    
-    inputNode.classList.add("error");
-    form.prepend(errorNode);
+function onRemoveExclusion() {
+  exclusionList.querySelectorAll("img.remove-exclusion").forEach(removeImage => {
+    removeImage.onclick = function() {
+      const exclusion = {
+        id: removeImage.dataset.exclusionid,
+        
+        getEndpoint() {
+          return removeExclusionEndpoint + "/" + this.id;
+        },
+        
+        removeTuple() {
+          removeImage.closest(".app-list").remove();
+        }
+      }
+      
+      if ( window.confirm(DELETE_EXCLUSION_CONFIRMATION_MESSAGE) ) removeExclusion(exclusion) ;
+    }
   });
 }
 
-function displayProfileModal(soldier) {
-  modal.querySelector("h1.pageTitle").textContent = soldier.name;
-  modal.querySelector("p#omName").textContent = soldier.militaryOrganization.name;
-  modal.querySelector("p#rankName").textContent = soldier.militaryRank.name;
-  modal.querySelector("p#soldierPhone").textContent = soldier.phone;
-  modal.querySelector("p#soldierEmail").textContent = soldier.email;
+function removeExclusion(exclusion) {
+  const xhr = new XMLHttpRequest();
 
-  displayExclusions(soldier.exclusions);
-  displayModal( modal );
+  xhr.open(DELETE_METHOD, exclusion.getEndpoint(), true);
+  xhr.send();
   
-  modal.querySelector("input#soldierId").value = soldier.id;
-}
-
-function displayExclusions(exclusions) {
-  clearChilds(exclusionList);
-  
-  if (exclusions.length > 0){
-    
-    exclusions.forEach(exclusion => {
-      addExclusion(exclusion);    
-    });  
-         
-  }else {
-    displayEmptyListMessage();
+  xhr.onreadystatechange = function() {
+    if (xhr.readyState == XMLHttpRequest.DONE) {
+      
+      if (xhr.status == HTTP_NO_CONTENT) {
+         exclusion.removeTuple();
+      }else{
+        alert(INTERNAL_SERVER_ERROR_ALERT);
+      }
+    }
   }
 }
 
@@ -105,6 +133,13 @@ function addExclusion(exclusion) {
   listInfo.textContent = exclusion.message;
   div.append(listInfo);
   
+   
+  const removeImage = new Image;
+  removeImage.classList.add("remove-exclusion");
+  removeImage.dataset.exclusionid = exclusion.id;
+  div.prepend(removeImage);
+  removeImage.src = removeExclusionImgSrc;
+  
   exclusionList.prepend(div);
 }
 
@@ -122,4 +157,16 @@ function displayEmptyListMessage() {
 function hideEmptyMessageIfExists() {
   if ( exclusionList.querySelector(".empty-list") )
     exclusionList.querySelector(".empty-list").style.display = "none";
+}
+
+function showErrors(validationErrors) {
+  const form = document.querySelector("form#newExclusion")
+  
+  validationErrors.forEach(validationError => {
+    let inputNode = form.querySelector("#" + validationError.fieldName);
+    let errorNode = getErrorMessage( validationError.errorMessage );
+    
+    inputNode.classList.add("error");
+    form.prepend(errorNode);
+  });
 }

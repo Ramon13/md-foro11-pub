@@ -1,17 +1,5 @@
 onSubmitSearchForm();
 onClickNewSoldierBtn();
-onClickSoldierTuple();
-
-function onClickSoldierTuple() {
-  let soldiers = document.querySelectorAll("div.soldier-info");
-  soldiers.forEach(soldier => {
-    soldier.onclick = async function() {
-      let soldierId = soldier.querySelector(".soldier-id").value;
-      
-      displayProfileModal(await getSoldierOnServer(soldierId));
-    }
-  }); 
-}
 
 function onClickNewSoldierBtn() {
   document.querySelector("div#newSoldierProfile a").onclick = function( event ){
