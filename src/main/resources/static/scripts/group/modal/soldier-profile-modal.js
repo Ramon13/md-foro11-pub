@@ -1,37 +1,21 @@
 "use strict"
 
-const modal = document.querySelector("div#soldierProfileModal");
-const exclusionList = modal.querySelector("div#exclusionList");
+const profileModal = document.querySelector("div#soldierProfileModal");
+const exclusionList = profileModal.querySelector("div#exclusionList");
 
 onSubmitNewExclusionForm();
 
 function displayProfileModal(soldier) {
-  modal.querySelector("h1.pageTitle").textContent = soldier.name;
-  modal.querySelector("p#omName").textContent = soldier.militaryOrganization.name;
-  modal.querySelector("p#rankName").textContent = soldier.militaryRank.name;
-  modal.querySelector("p#soldierPhone").textContent = soldier.phone;
-  modal.querySelector("p#soldierEmail").textContent = soldier.email;
-
+  
+  displaySoldierInfo(soldier);
   displayExclusions(soldier.exclusions);
   onRemoveExclusion();
+  onEditProfile(soldier);
   
-  displayModal( modal );
+  displayModal( profileModal );
   
-  modal.querySelector("input#soldierId").value = soldier.id;
-}
-
-function displayExclusions(exclusions) {
-  clearChilds(exclusionList);
+  profileModal.querySelector("input#soldierId").value = soldier.id;
   
-  if (exclusions.length > 0){
-    
-    exclusions.forEach(exclusion => {
-      addExclusion(exclusion);    
-    });  
-         
-  }else {
-    displayEmptyListMessage();
-  }
 }
 
 function onSubmitNewExclusionForm() {
@@ -51,6 +35,40 @@ function onSubmitNewExclusionForm() {
     removeClassErrors();
     saveExclusion(exclusion);    
   }  
+}
+
+function onEditProfile(soldier) {
+  document.querySelector("a#editProfile").onclick = function() {
+    const soldierRegister = document.querySelector("div#soldierRegister");
+    displayModal( soldierRegister, 2 );
+    
+    setEditProfileModalTexts(soldier);
+    fillRegisterForm(soldier);
+  } 
+}
+
+function displaySoldierInfo(soldier) {
+  console.log(soldier);
+  profileModal.querySelector("h1.pageTitle").textContent = soldier.name;
+  profileModal.querySelector("#sdId").value = 1;
+  profileModal.querySelector("p#omName").textContent = soldier.militaryOrganization.name;
+  profileModal.querySelector("p#rankName").textContent = soldier.militaryRank.name;
+  profileModal.querySelector("p#soldierPhone").textContent = soldier.phone;
+  profileModal.querySelector("p#soldierEmail").textContent = soldier.email;
+}
+
+function displayExclusions(exclusions) {
+  clearChilds(exclusionList);
+  
+  if (exclusions.length > 0){
+    
+    exclusions.forEach(exclusion => {
+      addExclusion(exclusion);    
+    });  
+         
+  }else {
+    displayEmptyListMessage();
+  }
 }
 
 function saveExclusion(exclusion) {

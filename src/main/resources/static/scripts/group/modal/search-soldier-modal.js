@@ -6,7 +6,7 @@ function onClickNewSoldierBtn() {
     event.preventDefault();
     
     const soldierRegister = document.querySelector("div#soldierRegister");
-    displayModal( soldierRegister );
+    displayModal( soldierRegister, 2 );
   }  
 }
 

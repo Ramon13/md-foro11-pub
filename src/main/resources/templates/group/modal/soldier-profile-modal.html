@@ -13,6 +13,8 @@
         <hr />  
         
         <div id="sdProfile">
+          <input type="hidden" id="sdId" />
+          
           <p class="input-label">OM</p>
           <p class="label-content" id="omName"></p>
           
@@ -25,6 +27,12 @@
           <p class="input-label">E-mail</p>
           <p class="label-content" id="soldierEmail"></p>
         </div>
+        <div>
+          <a id="editProfile" href="#">alterar</a>
+        <span>|</span> 
+          <a id="deleteProfile" href="#"
+            th:attr="data-url=@{/gp/sd/register/delete/} + ${soldier.id}">excluir</a>
+      </div>
         
         <hr />
         <h2>Impedimentos</h2>

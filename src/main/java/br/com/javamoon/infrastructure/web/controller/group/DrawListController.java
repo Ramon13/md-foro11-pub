@@ -2,6 +2,26 @@ package br.com.javamoon.infrastructure.web.controller.group;
 
 import static br.com.javamoon.infrastructure.web.controller.ControllerHelper.getArmy;
 import static br.com.javamoon.infrastructure.web.controller.ControllerHelper.getCJM;
+
+import java.util.List;
+
+import org.springframework.http.ContentDisposition;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.servlet.ModelAndView;
+
 import br.com.javamoon.config.properties.PaginationConfigProperties;
 import br.com.javamoon.domain.entity.DrawList;
 import br.com.javamoon.domain.entity.GroupUser;
@@ -18,25 +38,6 @@ import br.com.javamoon.service.ReportCreationService;
 import br.com.javamoon.service.SoldierService;
 import br.com.javamoon.util.DateUtils;
 import br.com.javamoon.util.SecurityUtils;
-import java.util.List;
-import javax.validation.Valid;
-import org.springframework.http.ContentDisposition;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
-import org.springframework.http.ResponseEntity;
-import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
-import org.springframework.validation.Errors;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.servlet.ModelAndView;
 
 @Controller
 @RequestMapping(path="/gp/dw")
@@ -80,7 +81,6 @@ public class DrawListController {
 	@SuppressWarnings("rawtypes")
 	@PutMapping
 	public ResponseEntity update(@RequestBody DrawListDTO drawListDTO){
-		System.out.println(drawListDTO);
 		try {
 			GroupUser loggedUser = SecurityUtils.groupUser();
 			drawListService.save(drawListDTO, getArmy(), getCJM(), loggedUser);

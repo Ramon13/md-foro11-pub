@@ -1,4 +1,5 @@
 const snackbar = document.querySelector("div#snackbar");
+const soldierRegister = document.querySelector("div#soldierRegister");
 const registerForm = document.querySelector("div#soldierRegister form");
 
 onSubmitRegisterForm();
@@ -7,14 +8,19 @@ function onSubmitRegisterForm() {
   registerForm.onsubmit = function(event) {
     event.preventDefault();
     
-    removeErrorNodes();
-    removeClassErrors();
-    showCreatingSoldierSnackbar(); 
-    
-    save(getSoldier(), this.action);
-    
-    hideSnackbar(snackbar);
-    return false;
+    if ( registerForm.querySelector("button.editProfile") ) {
+      
+      edit(getSoldier(), getSoldierEndpoint);
+    }else {
+      removeErrorNodes();
+      removeClassErrors();
+      showCreatingSoldierSnackbar(); 
+      
+      save(getSoldier(), this.action);
+      
+      hideSnackbar(snackbar);
+      return false; 
+    }
   } 
 }
 
@@ -34,7 +40,7 @@ function save(soldier, endpoint) {
       
       }else if (xhr.status == HTTP_UNPROCESSABLE_ENTITY) {
         const validationErrors = JSON.parse(xhr.responseText);
-        showErrors(validationErrors);
+        showRegisterErrors(validationErrors);
       
       }else{
         alert(INTERNAL_SERVER_ERROR_ALERT);
@@ -43,7 +49,56 @@ function save(soldier, endpoint) {
   }
 }
 
-function showErrors(validationErrors) {
+function edit(soldier, endpoint) {
+  showModifingSoldierSnackbar();
+  
+  putRequest(
+    endpoint, 
+    JSON.stringify(soldier),
+    
+    function() { 
+      hideSnackbar(snackbar);
+    },
+    
+    function(responseContent) {
+      const soldier = JSON.parse(responseContent); 
+      displaySoldierInfo(soldier)
+      closeModal(soldierRegister); 
+    },
+     
+    function(responseContent) {
+      const validationErrors = JSON.parse(responseContent);
+      showRegisterErrors(validationErrors);
+    }
+  );
+}
+
+function fillRegisterForm(soldier) {
+  registerForm.querySelector(".name").value = soldier.name;
+  
+  const organizationSelect = registerForm.querySelector(".militaryOrganization");
+  selectOptionByStartText(organizationSelect, soldier.militaryOrganization.name);
+  
+  const rankSelect = registerForm.querySelector(".militaryRank");
+  selectOptionByStartText(rankSelect, soldier.militaryRank.name);
+  
+  registerForm.querySelector(".phone").value = soldier.phone;
+  
+  registerForm.querySelector(".email").value = soldier.email;
+}
+
+function setEditProfileModalTexts(soldier) {
+  
+  
+  soldierRegister.querySelector(".pageTitle").textContent = EDIT_SOLDIER_TITLE + ` [${soldier.name}]`;
+  toggleEditMode();
+}
+
+function toggleEditMode() {
+  registerForm.querySelector("button[type=submit]").classList.toggle("editProfile");
+}
+
+function showRegisterErrors(validationErrors) {
   let fieldName;
   let errorMessage;
   
@@ -67,6 +122,7 @@ function showSaveSoldierSnackbar(){
 
 function getSoldier() {
   let soldier = {
+    id: registerForm.querySelector("input[type=hidden].id").value,
     name: registerForm.querySelector("input[type=text].name").value,
     militaryOrganization: { id: registerForm.querySelector("select.militaryOrganization").value },
     militaryRank: { id: registerForm.querySelector("select.militaryRank").value },
@@ -75,6 +131,11 @@ function getSoldier() {
   };
   
   return soldier;
+}
+
+function showModifingSoldierSnackbar() {
+  snackbar.textContent = MODIFING_SOLDIER;
+  showSnackbar(snackbar, 2);
 }
 
 function showCreatingSoldierSnackbar(){

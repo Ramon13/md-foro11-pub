@@ -70,6 +70,28 @@ function sendAjaxRequest(
   httpRequest.send(sendContent);
 }
 
+function putRequest(endpoint, content, onReady, onSuccess, onError) {
+  const xhr = new XMLHttpRequest();
+  xhr.open(PUT_METHOD, endpoint, true);
+  xhr.setRequestHeader(requestHeader.contentType, JSON_CONTENT_TYPE);
+  
+  xhr.send(content);
+  
+  xhr.onreadystatechange = function() {
+    if (xhr.readyState == XMLHttpRequest.DONE) {
+      
+      onReady();
+      
+      if (xhr.status == HTTP_OK) onSuccess( xhr.responseText );
+      
+      else if (xhr.status == HTTP_UNPROCESSABLE_ENTITY) onError( xhr.responseText );
+      
+      else displayServerError();
+      
+    }
+  }
+}
+
 function includeJs(jsFilePath){
   let js = document.createElement("script");
   
@@ -182,4 +204,19 @@ function clearInputFields(node) {
 
 function getSelectedValue(selectNode) {
    return selectNode.options[ selectNode.selectedIndex ].value;
+}
+
+function selectOptionByStartText(selectElement, text) {
+  let option;
+  for (let i = 1; i < selectElement.options.length; i++) {
+    option = selectElement.options[i];
+    
+    if ( option.textContent.startsWith(text) ) {
+      option.selected = "selected";
+    }
+  }
+}
+
+function displayServerError() {
+  alert(INTERNAL_SERVER_ERROR_ALERT);
 }

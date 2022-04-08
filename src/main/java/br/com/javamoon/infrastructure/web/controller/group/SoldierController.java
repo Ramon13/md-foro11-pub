@@ -37,6 +37,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -148,6 +149,19 @@ public class SoldierController {
 			return ResponseEntity.status(HttpStatus.CREATED).body(newSoldier);
 		}catch(SoldierValidationException e) {
 			e.printStackTrace();
+			return ResponseEntity.status( HttpStatus.UNPROCESSABLE_ENTITY ).body( e.getErrorList() );
+		}
+	}
+	
+	@SuppressWarnings("rawtypes")
+	@PutMapping
+	public ResponseEntity edit(@RequestBody SoldierDTO soldierDTO) {
+		try {
+			System.out.println(soldierDTO);
+			SoldierDTO modifiedSoldier = soldierService.edit( soldierDTO, getArmy(), getCJM() );
+			
+			return ResponseEntity.ok(modifiedSoldier);
+		}catch (SoldierValidationException e) {
 			return ResponseEntity.status( HttpStatus.UNPROCESSABLE_ENTITY ).body( e.getErrorList() );
 		}
 	}

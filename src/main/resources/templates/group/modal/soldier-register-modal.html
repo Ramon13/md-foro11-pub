@@ -9,18 +9,18 @@
       <div class="modal-content">
         <span class="close">&times;</span>
         
-        <h1 th:text="${editMode} ? 'Editar informações do militar' : 'Cadastrar novo militar'"></h1>
+        <h1 class="pageTitle">Cadastrar novo militar</h1>
         <hr />
         
-        <form method="post" th:object="${soldier}" th:action="@{/gp/sd/register/save}">
-          <input type="hidden" th:field="*{id}" />
+        <form>
+          <input type="hidden" name="id" class="id"/>
 
           <div class="form-step">
             <div class="input-label">
               <label>Nome* </label><br />
             </div>
             <div>
-              <input type="text" name="name" placeholder="Nome do militar..." th:field="*{name}" class="name app-txtinput"/>
+              <input type="text" placeholder="Nome do militar..." class="name app-txtinput"/>
             </div>
           </div>
           
@@ -30,12 +30,9 @@
             </div>
             
             <div>
-              <select name="militaryOrganization" class="militaryOrganization app-select">
+              <select class="militaryOrganization app-select">
                 <option value="0">Selecione...</option>
-                <option th:each="om : ${oms}" th:value="${om.id}"
-                  th:text="${om.name} + ' (' + ${om.alias} + ')'"
-                  th:selected="${soldier.militaryOrganization != null and om.id == soldier.militaryOrganization.id}">
-                </option>
+                <option th:each="om : ${oms}" th:text="${om.name} + ' (' + ${om.alias} + ')'"></option>
               </select>
             </div>
           </div>
@@ -45,11 +42,9 @@
               <label for="rank">Posto* </label>
             </div>
             <div>
-              <select class="militaryRank app-select" name="militaryRank">
+              <select class="militaryRank app-select">
                 <option value="0">Selecione...</option>
-                <option th:each="rank : ${ranks}" th:value="${rank.id}"
-                  th:text="${rank.name}"
-                  th:selected="${soldier.militaryRank != null and rank.id == soldier.militaryRank.id}"></option>
+                <option th:each="rank : ${ranks}" th:text="${rank.name}"></option>
               </select>
             </div>
           </div>
@@ -59,8 +54,7 @@
               <label>Telefone</label>
             </div>
             <div>
-              <input type="text" name="phone" placeholder="Telefone residencial ou celular..."
-                th:field="*{phone}" class="phone app-txtinput"/>
+              <input type="text" placeholder="Telefone residencial ou celular..."  class="phone app-txtinput"/>
             </div>
           </div>
           
@@ -69,14 +63,13 @@
               <label>E-mail*</label>
             </div>
             <div>
-              <input type="text" name="email" placeholder="Email ativo do militar..."
-                th:field="*{email}" class="email app-txtinput" />
+              <input type="text" name="email" placeholder="Email ativo do militar..." class="email app-txtinput" />
             </div>
           </div>
           
           <div>
             <button type="submit" class="app-green-btn">
-              <span>Salvar</span>
+              <span>Enviar</span>
             </button>
           </div>
         </form>

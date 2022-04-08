@@ -3,8 +3,9 @@ function temporarySnackbar(snackbar) {
   setTimeout(function(){ hideSnackbar(snackbar); }, 3000);
 }
 
-function showSnackbar(snackbar){
+function showSnackbar(snackbar, zIndex){
   snackbar.className = "show";
+  snackbar.style.zIndex = zIndex;
 }
 
 function hideSnackbar(snackbar){

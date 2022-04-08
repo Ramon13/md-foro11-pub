@@ -58,6 +58,12 @@ h3{
     font-size: 15px;    
 }
 
+a {
+  font-family: 'Roboto', sans-serif;
+  color: #000;
+  font-size: 0.8em;
+}
+
 /*====================Menu and Title bar =========================*/
 div#appHBar {
   padding: 20px;
@@ -96,11 +102,6 @@ div#vMenu .vMenu-sub span {
 
 li.vMenu-sub {
   margin: 12px 0;
-}
-
-a {
-  font-family: 'Roboto', sans-serif;
-  color: #000;
 }
 
 li.vMenu-link {
@@ -164,9 +165,25 @@ form {
 	margin: auto;
 }
 
+div.form-step {
+  margin-bottom: 20px;
+}
+
+div.form-step .input-label {
+  font-weight: bold;
+  font-size: 0.9em;
+}
+
+div.form-step .label-desc {
+  font-style: italic;
+  font-size: 14px;
+  color: #57606a;
+}
+
 /*=========== input fields ===========================*/
 input[type=text], input[type=password], input[type=date], select.app-select{
   font-family: "Roboto", sans-serif;
+  font-size: 0.8em;
   width: 100%;
   padding: 6px;
   margin: 8px 0;
@@ -371,18 +388,4 @@ div .draw-soldier-list {
 	width: 92%;
 	transition: 0.3s;
 	box-shadow: 0px 3px 6px 3px #ddd;
-}
-
-div.form-step {
-	margin-bottom: 20px;
-}
-
-div.form-step .input-label {
-	font-weight: bold;
-}
-
-div.form-step .label-desc {
-	font-style: italic;
-	font-size: 14px;
-	color: #57606a;
 }

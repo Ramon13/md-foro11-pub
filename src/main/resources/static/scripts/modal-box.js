@@ -6,9 +6,10 @@ for (let i = 0; i < spanList.length; i++){
   }
 }
 
-function displayModal(modal){
+function displayModal(modal, zIndex){
   clearInputFields(modal);
   modal.style.display = "block";
+  modal.style.zIndex = zIndex;
 }
 
 function closeModal(modal){
