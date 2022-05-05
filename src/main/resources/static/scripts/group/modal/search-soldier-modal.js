@@ -29,6 +29,9 @@ function onSubmitSearchForm() {
       void async function() {
         let soldiers = await searchSoldier(search);
         displaySearchResult(soldiers);
+        
+        if (soldiers.length == 0)
+          console.log(`[${key}] not found.`);
       }();
     }
     
