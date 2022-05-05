@@ -14,27 +14,50 @@ function onSubmitSearchForm() {
   document.querySelector("form#soldierSearch").onsubmit = function(event) {
     event.preventDefault();
     
+    const keys = getSearchedKeys();
     const form = document.querySelector("form#soldierSearch");
-    const search = {
-      key: form.querySelector("input#searchKey").value,
-      yearQuarter: document.querySelector("select#yearQuarter").value,
-      listId: document.querySelector("input#listId").value,
-      action: form.action     
-    };
-        
-    searchSoldier(search);
+    clearResultList();
+    
+    for (let key of keys) {
+      const search = {
+        key: key,
+        yearQuarter: getSelectedYearQuarter(),
+        listId: getListId(),
+        action: form.action
+      };
+      
+      void async function() {
+        let soldiers = await searchSoldier(search);
+        displaySearchResult(soldiers);
+      }();
+    }
+    
     return false;
   }  
 }
 
+function getSearchedKeys() {
+  const inputText = document.querySelector("#soldierSearch input#searchKey").value;
+  
+  let keys = inputText.split(",");
+  for (let i = 0; i < keys.length; i++) keys[i] = keys[i].trim();
+  
+  return keys;
+}
+
 function searchSoldier(search) {
-  sendAjaxRequest( 
-    POST_METHOD,
-    search.action,
-    JSON.stringify(search),
-    displaySearchResult,
-    null,
-    JSON_CONTENT_TYPE);
+  return new Promise(resolve => {
+    sendAjaxRequest( 
+      POST_METHOD,
+      search.action,
+      JSON.stringify(search),
+      function(responseText) {
+        resolve(JSON.parse(responseText));
+      },
+      null,
+      JSON_CONTENT_TYPE
+    );
+  });
 }
 
 function getSoldierOnServer(soldierId) {
@@ -52,27 +75,25 @@ function getSoldierOnServer(soldierId) {
   });
 }
 
-function displaySearchResult(responseText) {
-  let soldiers = JSON.parse(responseText);
+function displaySearchResult(soldiers) {
   setResultListContent(soldiers);
 }
 
 function setResultListContent(soldiers){
   let resultList = document.querySelector("div#searchResultList");
-  clearChilds(resultList);
   
   if (soldiers.length == 0){
     showNoContentMessage(resultList);
     return;
   }
-  
+ 
   for (let i = 0; i < soldiers.length; i++) {
    resultList.append( getTupleContent(soldiers[i]) );
   }
 }
 
 function getTupleContent(soldier){
-  let listTuple = cloneNode( document.querySelector("div#baseListTuple") );
+  const listTuple = cloneNode( document.querySelector("div#baseListTuple") );
       
   listTuple.querySelector(".soldier-id").value = soldier.id;
   listTuple.querySelector(".list-header").textContent = soldier.idInfoAsText;
@@ -113,4 +134,9 @@ function showNoContentMessage(parentNode) {
   let p = document.createElement("p");
   p.textContent = NO_CONTENT_FOUND;
   parentNode.append(p);
+}
+
+function clearResultList() {
+  let resultList = document.querySelector("div#searchResultList");
+  clearChilds(resultList);
 }

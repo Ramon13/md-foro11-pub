@@ -8,7 +8,7 @@ onSaveList();
 const listInfo = document.querySelector("div#listInfo");
 
 function onclickToOpenProfile() {
-  document.querySelectorAll("div.soldier-info").forEach(soldier => {
+  document.querySelectorAll("div#soldiers .soldier-info").forEach(soldier => {
     soldier.onclick = async function() {
       let soldierId = soldier.querySelector(".soldier-id").value;
       
@@ -32,8 +32,8 @@ function onclickToRemoveSoldier() {
       
       const soldier = {
         soldierId: removeBtn.dataset.soldierid,
-        listId: document.querySelector("input[type=hidden]#listId").value,
-        yearQuarter: document.querySelector("select#yearQuarter").value,
+        listId: getListId(),
+        yearQuarter: getSelectedYearQuarter(),
         endpoint: removeSoldierEndpoint,
         
         removeSoldier() {
@@ -53,9 +53,9 @@ function onSaveList() {
     event.preventDefault();
     
     drawList = {
-      id: listInfo.querySelector("input#listId").value,
+      id: getListId(),
       description: listInfo.querySelector("input#listDescription").value,
-      yearQuarter: listInfo.querySelector("select#yearQuarter").value,
+      yearQuarter: getSelectedYearQuarter(),
       endpoint: listInfo.querySelector("form#formList").action
     };
     
@@ -111,10 +111,14 @@ function disableSoldierInfo(errorMsg, soldierInfoDiv){
 
 function addToServerList(listTuple){
   let endpoint = addSoldierEndpoint;
-  let soldierId = getSoldierId(listTuple); 
   
   showAddingSoldierSnackbar();
-  let soldierListDTO = getSoldierToListDTOObj(soldierId);
+  
+  let soldierListDTO = {
+    soldierId: getSoldierId(listTuple),
+    listId: getListId(),
+    yearQuarter: getSelectedYearQuarter()
+  };
   
   sendJSONAsyncRequest(
     endpoint,
@@ -122,7 +126,7 @@ function addToServerList(listTuple){
     function(xhr){
       if (xhr.status === 201){
         listTuple.onclick = function(e){ e.stopPropagation(); };    
-        showRemoveBtn( listTuple.querySelector(".remove-soldier"), soldierId );
+        showRemoveBtn( listTuple.querySelector(".remove-soldier"), soldierListDTO.soldierId );
         appendToHTMLList(listTuple);
         onclickToOpenProfile();
       }
@@ -189,4 +193,12 @@ function showRemoveBtn(removeBtn, soldierId){
 
 function getSoldierId(listTuple){
   return listTuple.querySelectorAll(".soldier-id")[0].value;
+}
+
+function getListId() {
+  return document.querySelector("input[type=hidden]#listId").value;
+}
+
+function getSelectedYearQuarter() {
+  return document.querySelector("select#yearQuarter").value
 }

@@ -48,7 +48,6 @@ function onEditProfile(soldier) {
 }
 
 function displaySoldierInfo(soldier) {
-  console.log(soldier);
   profileModal.querySelector("h1.pageTitle").textContent = soldier.name;
   profileModal.querySelector("#sdId").value = 1;
   profileModal.querySelector("p#omName").textContent = soldier.militaryOrganization.name;

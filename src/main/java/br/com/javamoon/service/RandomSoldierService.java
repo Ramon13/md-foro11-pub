@@ -108,8 +108,10 @@ public class RandomSoldierService {
 			);
 		} 
 		
-		if (drawDTO.getSoldiers().get(selectedIndex).getId().equals(drawDTO.getSubstitute().getId()))					//TODO: no tested code
+		if (Objects.nonNull( drawDTO.getId() ) 
+			 && drawDTO.getSoldiers().get(selectedIndex).getId().equals(drawDTO.getSubstitute().getId()) ) {					//TODO: no tested code
 			drawDTO.setSubstitute(randomSoldier);
+		}
 		
 		drawDTO.getSoldiers().set(selectedIndex, EntityMapper.fromEntityToDTO(randomSoldier));
 		drawDTO.getSelectedRanks().set(selectedIndex, replaceRank.getId());
