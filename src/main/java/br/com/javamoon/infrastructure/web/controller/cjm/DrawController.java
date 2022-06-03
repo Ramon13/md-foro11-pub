@@ -109,7 +109,7 @@ public class DrawController {
 		try {
 			CJMUser loggedUser = SecurityUtils.cjmUser();
 			randomSoldierService.randomAllSoldiers(drawDTO, loggedUser.getAuditorship().getCjm());
-			soldierService.setSoldierExclusionMessages(drawDTO.getSoldiers(), drawDTO.getSelectedYearQuarter(), true);
+			soldierService.setSoldierExclusionMessages(drawDTO.getSoldiers(), drawDTO.getSelectedYearQuarter(), false);
 			
 		} catch (DrawValidationException e) {
 			ValidationUtils.rejectValues(errors, e.getValidationErrors());
