@@ -18,6 +18,7 @@ import static br.com.javamoon.validator.ValidationConstants.SOLDIER_RANK;
 import java.util.List;
 import java.util.Optional;
 
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Component;
 
 import br.com.javamoon.domain.cjm_user.CJM;
@@ -55,12 +56,16 @@ public class SoldierValidator {
 		
 		if (
 			validateName(soldierDTO.getName(), validationErrors)
-			&& validateEmail(soldierDTO.getEmail(), validationErrors)
 		   ) {
-			validateDuplicatedName(soldierDTO.getId(), soldierDTO.getName(), army, cjm, validationErrors);
-			validateDuplicatedEmail(soldierDTO.getId(), soldierDTO.getEmail(), army, cjm, validationErrors);
+			validateDuplicatedName(soldierDTO.getId(), soldierDTO.getName(), army, cjm, validationErrors); 
+			
 			validateMilitaryOrganization(soldierDTO.getMilitaryOrganization().getAlias(), army.getId(), validationErrors);
 			validateMilitaryRank(soldierDTO.getMilitaryRank().getAlias(), army.getId(), validationErrors);
+			
+			if (!StringUtils.isEmpty(soldierDTO.getEmail())) {
+				validateEmail(soldierDTO.getEmail(), validationErrors);
+				validateDuplicatedEmail(soldierDTO.getId(), soldierDTO.getEmail(), army, cjm, validationErrors);
+			}
 		}
 		
 		ValidationUtils.throwOnErrors(SoldierValidationException.class, validationErrors);
