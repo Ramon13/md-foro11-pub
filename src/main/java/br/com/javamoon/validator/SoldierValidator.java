@@ -23,6 +23,7 @@ import org.springframework.stereotype.Component;
 import br.com.javamoon.domain.cjm_user.CJM;
 import br.com.javamoon.domain.entity.Army;
 import br.com.javamoon.domain.entity.MilitaryOrganization;
+import br.com.javamoon.domain.entity.MilitaryRank;
 import br.com.javamoon.domain.entity.Soldier;
 import br.com.javamoon.domain.repository.MilitaryOrganizationRepository;
 import br.com.javamoon.domain.repository.MilitaryRankRepository;
@@ -58,8 +59,8 @@ public class SoldierValidator {
 		   ) {
 			validateDuplicatedName(soldierDTO.getId(), soldierDTO.getName(), army, cjm, validationErrors);
 			validateDuplicatedEmail(soldierDTO.getId(), soldierDTO.getEmail(), army, cjm, validationErrors);
-			validateMilitaryOrganization(soldierDTO.getMilitaryOrganization().getId(), army.getId(), validationErrors);
-			validateMilitaryRank(soldierDTO.getMilitaryRank().getId(), army.getId(), validationErrors);
+			validateMilitaryOrganization(soldierDTO.getMilitaryOrganization().getAlias(), army.getId(), validationErrors);
+			validateMilitaryRank(soldierDTO.getMilitaryRank().getAlias(), army.getId(), validationErrors);
 		}
 		
 		ValidationUtils.throwOnErrors(SoldierValidationException.class, validationErrors);
@@ -130,12 +131,16 @@ public class SoldierValidator {
 		);
 	}
 	
-	private boolean validateMilitaryOrganization(Integer militaryOrganizationId, Integer armyId, ValidationErrors validationErrors) {
-		return validateIfOrganizationBelongsToArmy(militaryOrganizationId, armyId, validationErrors);
+	private boolean validateMilitaryOrganization(String militaryBaseAlias, Integer armyId, ValidationErrors validationErrors) {
+		return validateIfOrganizationBelongsToArmy(militaryBaseAlias, armyId, validationErrors);
 	}
 	
 	private boolean validateMilitaryRank(Integer rankId, Integer armyId, ValidationErrors validationErrors) {
 		return validateIfRankBelongsToArmy(armyId, List.of(rankId), validationErrors);
+	}
+	
+	private boolean validateMilitaryRank(String rankAlias, Integer armyId, ValidationErrors validationErrors) {
+		return validateIfRankBelongsToArmy(armyId, rankAlias, validationErrors);
 	}
 	
 	private boolean validateIfSoldierIsOnList(Integer listId, Integer soldierId, ValidationErrors validationErrors) {
@@ -175,8 +180,8 @@ public class SoldierValidator {
 			validationErrors.add(SOLDIER_EMAIL, ACCOUNT_EMAIL_ALREADY_EXISTS);
 	}
 	
-	private boolean validateIfOrganizationBelongsToArmy(Integer organizationId, Integer armyId, ValidationErrors validationErrors) {
-		Optional<MilitaryOrganization> selectedOrganization = organizationRepository.findById(organizationId);
+	private boolean validateIfOrganizationBelongsToArmy(String militaryBaseAlias, Integer armyId, ValidationErrors validationErrors) {
+		Optional<MilitaryOrganization> selectedOrganization = organizationRepository.findByAlias(militaryBaseAlias);
 		List<MilitaryOrganization> organizations = organizationRepository.findByArmy(armyId);
 		
 		if (
@@ -195,6 +200,17 @@ public class SoldierValidator {
 		List<Integer> rankIdsByArmy = militaryRankRepository.findAllIdsByArmiesIn(armyId);
 		
 		if (rankIdsByArmy.isEmpty() || !rankIdsByArmy.containsAll(rankIds)) {
+			validationErrors.add(SOLDIER_RANK, INVALID_SOLDIER_RANK);
+			return false;
+		}
+		
+		return true;
+	}
+	
+	private boolean validateIfRankBelongsToArmy(Integer armyId, String rankAlias, ValidationErrors validationErrors) {
+		Optional<MilitaryRank> rankDb = militaryRankRepository.findByAlias(rankAlias);
+		
+		if (rankDb.isEmpty()) {
 			validationErrors.add(SOLDIER_RANK, INVALID_SOLDIER_RANK);
 			return false;
 		}

@@ -21,6 +21,8 @@
             <button type="submit">
               <img th:src="@{/images/search.svg}"/>
             </button>
+            <br />
+            <a href="#" id="searchWithJsonData">ou pesquisar utilizando um arquivo .json</a>
           </form>
         </div>
         
@@ -29,6 +31,31 @@
         
         <div id="newSoldierProfile">
           <a href="#">Criar novo perfil de militar</a>
+        </div>
+      </div>
+      
+      <div class="modal" id="searchWithJsonModal">
+        <div class="modal-content">
+          <span class="close">&times;</span>
+          
+          <div>
+            <input type="checkbox"> Criar perfil (Se não encontrar o militar cria um novo perfil com as informações fornecidas)
+          </div>
+          <div>
+            <input type="checkbox"> Atualizar perfil (Atualiza o perfil já existente com as informações fornecidas)
+          </div>
+          <div>
+            <p>Json body minimal requirements:</p>
+            <p>{"om":"", "posto":"", "nome":"", "email":""}</p>
+            <hr/>
+            <p>Json body optional fields:</p>
+            <p>{"telefone":"", "impedimentos":""}</p>
+            <textarea class="jsonData" rows="60" cols="100"></textarea>
+            <br/>
+            <div>
+              <button class="app-green-btn searchSoldier" type="button">+ Adicionar Militares</button>
+            </div>  
+          </div>
         </div>
       </div>
     </div>

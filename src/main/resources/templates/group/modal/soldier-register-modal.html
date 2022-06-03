@@ -13,7 +13,7 @@
         <hr />
         
         <form>
-          <input type="hidden" name="id" class="id"/>
+          <input type="hidden" class="sd-id"/>
 
           <div class="form-step">
             <div class="input-label">
@@ -32,7 +32,7 @@
             <div>
               <select class="militaryOrganization app-select">
                 <option value="0">Selecione...</option>
-                <option th:each="om : ${oms}" th:text="${om.name} + ' (' + ${om.alias} + ')'"></option>
+                <option th:each="om : ${oms}" th:value="${om.alias}" th:text="${om.name} + ' (' + ${om.alias} + ')'"></option>
               </select>
             </div>
           </div>
@@ -44,7 +44,7 @@
             <div>
               <select class="militaryRank app-select">
                 <option value="0">Selecione...</option>
-                <option th:each="rank : ${ranks}" th:text="${rank.name}"></option>
+                <option th:each="rank : ${ranks}" th:value="${rank.alias}" th:text="${rank.name}"></option>
               </select>
             </div>
           </div>

@@ -153,6 +153,7 @@ public class DrawListService {
 	
 	@Transactional
 	public void addSoldierToList(SoldierToListDTO soldierToListDTO, CJM cjm, Army army) {
+		System.out.println(soldierToListDTO.getYearQuarter());
 		DrawList drawList = getListOrElseThrow(soldierToListDTO.getListId(), army, cjm);
 		
 		Soldier soldier = soldierService.getSoldier(soldierToListDTO.getSoldierId(), army, cjm);

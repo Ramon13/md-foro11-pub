@@ -1,5 +1,6 @@
 onSubmitSearchForm();
 onClickNewSoldierBtn();
+onSearchSoldierWithJsonFile();
 
 function onClickNewSoldierBtn() {
   document.querySelector("div#newSoldierProfile a").onclick = function( event ){
@@ -15,16 +16,16 @@ function onSubmitSearchForm() {
     event.preventDefault();
     
     const keys = getSearchedKeys();
-    const form = document.querySelector("form#soldierSearch");
     clearResultList();
     
+    const search = {
+      key: "",
+      yearQuarter: getSelectedYearQuarter(),
+      listId: getListId()
+    };
+    
     for (let key of keys) {
-      const search = {
-        key: key,
-        yearQuarter: getSelectedYearQuarter(),
-        listId: getListId(),
-        action: form.action
-      };
+      search.key = key;
       
       void async function() {
         let soldiers = await searchSoldier(search);
@@ -36,8 +37,46 @@ function onSubmitSearchForm() {
     }
     
     return false;
-  }  
+  } 
 }
+
+function onSearchSoldierWithJsonFile() {
+  const searchJsonModal = document.querySelector("div#searchWithJsonModal");
+  
+  document.querySelector("a#searchWithJsonData").onclick = function( event ) {
+    event.preventDefault();
+    
+    displayModal(searchJsonModal, 3);
+  }
+  
+  searchJsonModal.querySelector("button.searchSoldier").onclick = function() {
+    const rawSoldiers = searchJsonModal.querySelector("textarea.jsonData").value;
+    let soldiers = JSON.parse(rawSoldiers);
+    
+    const search = {
+      key: "",
+      yearQuarter: getSelectedYearQuarter(),
+      listId: getListId()
+    };
+    
+    soldiers.forEach(soldier => {
+      void async function() {
+        search.key = soldier.name;
+        
+        let resultList = await searchSoldier(search);
+        displaySearchResult(resultList);
+        
+        if (resultList.length == 0) {
+          console.log(`[${key}] not found... Trying to create a new profile`);
+          saveSoldier(soldier);
+        }
+          
+      }();
+    });
+  }
+}
+
+
 
 function getSearchedKeys() {
   const inputText = document.querySelector("#soldierSearch input#searchKey").value;
@@ -52,7 +91,7 @@ function searchSoldier(search) {
   return new Promise(resolve => {
     sendAjaxRequest( 
       POST_METHOD,
-      search.action,
+      getSearchEndpoint(),
       JSON.stringify(search),
       function(responseText) {
         resolve(JSON.parse(responseText));
@@ -142,4 +181,8 @@ function showNoContentMessage(parentNode) {
 function clearResultList() {
   let resultList = document.querySelector("div#searchResultList");
   clearChilds(resultList);
+}
+
+function getSearchEndpoint() {
+  return getSoldierEndpoint + "/search";
 }

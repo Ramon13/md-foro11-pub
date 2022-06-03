@@ -15,7 +15,23 @@ function displayProfileModal(soldier) {
   displayModal( profileModal );
   
   profileModal.querySelector("input#soldierId").value = soldier.id;
+  profileModal.querySelector("input#startDate").value = getInputStarterDate().toISOString().split('T')[0];
+  profileModal.querySelector("input#endDate").value = getInputEndDate().toISOString().split('T')[0];
+}
+
+function getInputStarterDate() {
+  const currDate = new Date(); 
   
+  const nextYearQuarter = getYearQuarter( new Date(currDate.setMonth(currDate.getMonth() + 3)) );
+  
+  const starterDate = fromYearQuarterToDate(nextYearQuarter);
+  return starterDate;
+}
+
+function getInputEndDate() {
+  const starterDate = getInputStarterDate();
+  let endDate = new Date(starterDate.setMonth(starterDate.getMonth() + 3));
+  return new Date(endDate - 1);
 }
 
 function onSubmitNewExclusionForm() {

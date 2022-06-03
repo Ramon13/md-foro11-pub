@@ -220,3 +220,18 @@ function selectOptionByStartText(selectElement, text) {
 function displayServerError() {
   alert(INTERNAL_SERVER_ERROR_ALERT);
 }
+
+function getYearQuarter(date) {
+  const quarter = parseInt( (date.getMonth() - 1) / 3 + 1 );
+  const year = date.getFullYear();
+  
+  return `${year}'${quarter}`;
+}
+
+function fromYearQuarterToDate(yearQuarter) {
+  const year = +yearQuarter.split("'")[0];
+  const quarter = +yearQuarter.split("'")[1];
+  
+  const month = quarter * 3 - 2;
+  return new Date(year, (month - 1), 1);   // zero index based month
+}

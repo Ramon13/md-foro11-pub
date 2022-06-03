@@ -24,4 +24,9 @@ public class MilitaryRankService {
 		return militaryRankRepository.findById(rankId)
 				.orElseThrow(() -> new MilitaryRankNotFoundException("rank not found for: " + rankId));
 	}
+	
+	public MilitaryRank getByAlias(String alias) {
+		return militaryRankRepository.findByAlias(alias)
+				.orElseThrow(() -> new MilitaryRankNotFoundException("rank not found for: " + alias));
+	}
 }

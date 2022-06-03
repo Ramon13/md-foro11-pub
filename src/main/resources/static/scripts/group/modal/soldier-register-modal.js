@@ -8,15 +8,24 @@ function onSubmitRegisterForm() {
   registerForm.onsubmit = function(event) {
     event.preventDefault();
     
-    if ( registerForm.querySelector("button.editProfile") ) {
-      
+    if ( registerForm.querySelector(".sd-id").value ) {
       edit(getSoldier(), getSoldierEndpoint);
     }else {
       removeErrorNodes();
       removeClassErrors();
       showCreatingSoldierSnackbar(); 
       
-      save(getSoldier(), this.action);
+      saveSoldier(
+        getSoldier(),
+        function() {
+          showCreatedSoldierSnackbar();
+          clearInputFields(registerForm);
+        },
+        function(responseText) {
+          const validationErrors = JSON.parse(responseText);
+          showRegisterErrors(validationErrors);
+        }
+      );
       
       hideSnackbar(snackbar);
       return false; 
@@ -24,24 +33,25 @@ function onSubmitRegisterForm() {
   } 
 }
 
-function save(soldier, endpoint) {
+function saveSoldier(soldier, successTask, validationErrorTask) {
+  const endpoint = `${getSoldierEndpoint}/register/save`;
+  
   const xhr = new XMLHttpRequest();
   xhr.open(POST_METHOD, endpoint, true);
   xhr.setRequestHeader(requestHeader.contentType, JSON_CONTENT_TYPE);
   
   xhr.send( JSON.stringify(soldier) );
+  console.log(JSON.stringify(soldier) );
   
   xhr.onreadystatechange = function() {
     if (xhr.readyState == XMLHttpRequest.DONE) {
       
       if (xhr.status == HTTP_CREATED) {
-        showCreatedSoldierSnackbar();
-        clearInputFields(registerForm);
-      
+        successTask(xhr.responseText);
+        
       }else if (xhr.status == HTTP_UNPROCESSABLE_ENTITY) {
-        const validationErrors = JSON.parse(xhr.responseText);
-        showRegisterErrors(validationErrors);
-      
+        validationErrorTask(xhr.responseText);
+        
       }else{
         alert(INTERNAL_SERVER_ERROR_ALERT);
       }
@@ -74,6 +84,8 @@ function edit(soldier, endpoint) {
 }
 
 function fillRegisterForm(soldier) {
+  registerForm.querySelector(".sd-id").value = soldier.id;
+  
   registerForm.querySelector(".name").value = soldier.name;
   
   const organizationSelect = registerForm.querySelector(".militaryOrganization");
@@ -122,10 +134,10 @@ function showSaveSoldierSnackbar(){
 
 function getSoldier() {
   let soldier = {
-    id: registerForm.querySelector("input[type=hidden].id").value,
+    id: registerForm.querySelector("input[type=hidden].sd-id").value,
     name: registerForm.querySelector("input[type=text].name").value,
-    militaryOrganization: { id: registerForm.querySelector("select.militaryOrganization").value },
-    militaryRank: { id: registerForm.querySelector("select.militaryRank").value },
+    militaryOrganization: { alias: registerForm.querySelector("select.militaryOrganization").value },
+    militaryRank: { alias: registerForm.querySelector("select.militaryRank").value },
     phone: registerForm.querySelector("input[type=text].phone").value,
     email: registerForm.querySelector("input[type=text].email").value
   };

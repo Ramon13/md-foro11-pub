@@ -2,6 +2,25 @@ package br.com.javamoon.infrastructure.web.controller.group;
 
 import static br.com.javamoon.infrastructure.web.controller.ControllerHelper.getArmy;
 import static br.com.javamoon.infrastructure.web.controller.ControllerHelper.getCJM;
+
+import java.time.LocalDate;
+import java.util.List;
+import java.util.Objects;
+import java.util.stream.Collectors;
+
+import javax.servlet.http.HttpSession;
+
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+
 import br.com.javamoon.domain.cjm_user.CJM;
 import br.com.javamoon.domain.entity.Army;
 import br.com.javamoon.domain.entity.GroupUser;
@@ -20,27 +39,6 @@ import br.com.javamoon.service.MilitaryRankService;
 import br.com.javamoon.service.SoldierService;
 import br.com.javamoon.util.DateUtils;
 import br.com.javamoon.util.SecurityUtils;
-import br.com.javamoon.validator.ValidationUtils;
-import java.time.LocalDate;
-import java.util.List;
-import java.util.Objects;
-import java.util.stream.Collectors;
-import javax.servlet.http.HttpSession;
-import javax.validation.Valid;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
-import org.springframework.http.ResponseEntity;
-import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
-import org.springframework.validation.Errors;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
 
 @Controller
 @RequestMapping("/gp/sd")
@@ -114,34 +112,8 @@ public class SoldierController {
 		}
 	}
 	
-	@Deprecated
-	@PostMapping("/old/register/save")
-	public String save(@Valid @ModelAttribute("soldier") SoldierDTO soldierDTO, Errors errors, Model model) {
-		GroupUser loggedUser = SecurityUtils.groupUser();
-		if (!errors.hasErrors()) {
-			try {
-				if (Objects.isNull(soldierDTO.getId()))
-					soldierDTO = soldierService.save(soldierDTO, loggedUser.getArmy(), loggedUser.getCjm());
-				else
-					soldierDTO = soldierService.edit(soldierDTO, loggedUser.getArmy(), loggedUser.getCjm());
-			
-				model.addAttribute("successMsg", "Informações salvas com sucesso");
-				
-				return "redirect:/gp/sd/profile/home/" + soldierDTO.getId();
-			}catch(SoldierValidationException e) {
-				 ValidationUtils.rejectValues(errors, e.getValidationErrors());
-			}
-		}
-		
-		ControllerHelper.setEditMode(model, false);
-		model.addAttribute("soldier", soldierDTO);
-		model.addAttribute("oms", militaryOrganizationService.listOrganizationsByArmy(loggedUser.getArmy()));
-		model.addAttribute("ranks", militaryRankService.listRanksByArmy(loggedUser.getArmy()));
-		return "group/soldier-register";
-	}
-	
 	@SuppressWarnings("rawtypes")
-	@RequestMapping(method = RequestMethod.POST, path = "/register/save", produces = MediaType.APPLICATION_JSON_VALUE)
+	@PostMapping("/register/save")
 	public ResponseEntity save(@RequestBody SoldierDTO soldierDTO) {
 		try {
 			SoldierDTO newSoldier = soldierService.save( soldierDTO, getArmy(), getCJM() );
@@ -157,7 +129,6 @@ public class SoldierController {
 	@PutMapping
 	public ResponseEntity edit(@RequestBody SoldierDTO soldierDTO) {
 		try {
-			System.out.println(soldierDTO);
 			SoldierDTO modifiedSoldier = soldierService.edit( soldierDTO, getArmy(), getCJM() );
 			
 			return ResponseEntity.ok(modifiedSoldier);

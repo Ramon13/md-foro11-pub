@@ -31,6 +31,8 @@ public class SoldierService{
 	private SoldierRepository soldierRepository;
 	private DrawRepository drawRepository;
 	private DrawExclusionService drawExclusionService;
+	private MilitaryOrganizationService militaryOrganizationService;
+	private MilitaryRankService militaryRankService;
 	private SoldierValidator soldierValidator;
 	private PaginationConfigProperties paginationProperties;
 	
@@ -38,11 +40,15 @@ public class SoldierService{
 			SoldierRepository soldierRepository,
 			DrawRepository drawRepository,
 			DrawExclusionService drawExclusionService,
+			MilitaryOrganizationService militaryOrganizationService,
+			MilitaryRankService militaryRankService,
 			SoldierValidator soldierValidator,
 			PaginationConfigProperties paginationProperties) {
 		this.soldierRepository = soldierRepository;
 		this.drawExclusionService = drawExclusionService;
 		this.soldierValidator = soldierValidator;
+		this.militaryOrganizationService = militaryOrganizationService;
+		this.militaryRankService = militaryRankService;
 		this.paginationProperties = paginationProperties;
 	}
 
@@ -71,6 +77,8 @@ public class SoldierService{
 		Soldier soldier = EntityMapper.fromDTOToEntity(soldierDTO);
 		soldier.setArmy(army);
 		soldier.setCjm(cjm);
+		soldier.setMilitaryOrganization( militaryOrganizationService.getByAlias(soldierDTO.getMilitaryOrganization().getAlias()) );
+		soldier.setMilitaryRank( militaryRankService.getByAlias(soldierDTO.getMilitaryRank().getAlias()) );
 		
 		soldierRepository.save(soldier);
 		

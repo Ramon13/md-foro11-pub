@@ -1,0 +1,26 @@
+[
+ {
+   "militaryOrganization": {"alias": "11°RM"},
+   "militaryRank": {"alias": "CEL"},
+   "seniority": 1,
+   "specialization": "QCO",
+   "name": "EVALDO JOSÉ PEREIRA DE LIMA",
+   "cpf": "369.660.450-04",
+   "last_rise": "30/04/20",
+   "phone": "61 99925-6304",
+   "email": "airtonbutzke@gmail.com",
+   "exclusion": "Férias 2021: de 05/12/22 à 03/01/23"
+ },
+ {
+   "militaryOrganization": {"alias": "11°RM"},
+   "militaryRank": {"alias": "CEL"},
+   "seniority": 1,
+   "specialization": "INTENDÊNCIA",
+   "name": "FÁBIO VILLELA MENDES",
+   "cpf": "180.777.828-25",
+   "last_rise": "30/04/20",
+   "phone": "61 99266-0693",
+   "email": "flu.mendes@hotmail.com",
+   "exclusion": "Férias 2021: de 05/12/22 à 03/01/23"
+ }
+]

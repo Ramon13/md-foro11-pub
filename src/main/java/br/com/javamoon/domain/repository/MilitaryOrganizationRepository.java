@@ -1,6 +1,7 @@
 package br.com.javamoon.domain.repository;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -17,5 +18,5 @@ public interface MilitaryOrganizationRepository extends JpaRepository<MilitaryOr
 	@Query("FROM MilitaryOrganization om WHERE om.army.id = :armyId")
 	public List<MilitaryOrganization> findByArmy(@Param("armyId") Integer armyId);
 	
-	public MilitaryOrganization findByAlias(String alias);
+	public Optional<MilitaryOrganization> findByAlias(String alias);
 }
