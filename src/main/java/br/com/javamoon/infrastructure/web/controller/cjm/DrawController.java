@@ -131,7 +131,7 @@ public class DrawController {
 			soldierService.setSoldierExclusionMessages(
 				Arrays.asList(drawDTO.getSoldiers().get(replacedIndex)),
 				drawDTO.getSelectedYearQuarter(),
-				true
+				false
 			);
 		} catch (DrawValidationException e) {
 			e.printStackTrace();

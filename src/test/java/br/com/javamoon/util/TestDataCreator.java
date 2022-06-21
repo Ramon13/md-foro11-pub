@@ -49,6 +49,7 @@ import br.com.javamoon.domain.repository.GroupUserRepository;
 import br.com.javamoon.domain.repository.MilitaryOrganizationRepository;
 import br.com.javamoon.domain.repository.MilitaryRankRepository;
 import br.com.javamoon.domain.repository.SoldierRepository;
+import br.com.javamoon.infrastructure.web.model.CreateSoldierDTO;
 import br.com.javamoon.mapper.CJMUserDTO;
 import br.com.javamoon.mapper.DrawDTO;
 import br.com.javamoon.mapper.DrawListDTO;
@@ -159,6 +160,15 @@ public final class TestDataCreator {
 		soldierDTO.setMilitaryOrganization(newMilitaryOrganization());
 		soldierDTO.setMilitaryRank(newMilitaryRank());
 		return soldierDTO;
+	}
+	
+	public static CreateSoldierDTO newCreateSoldierDTO() {
+		CreateSoldierDTO createSoldierDTO = new CreateSoldierDTO();
+		createSoldierDTO.setName(DEFAULT_SOLDIER_NAME);
+		createSoldierDTO.setEmail(DEFAULT_USER_EMAIL);
+		createSoldierDTO.setMilitaryBase(newMilitaryOrganization().getAlias());
+		createSoldierDTO.setMilitaryRank(newMilitaryRank().getAlias());
+		return createSoldierDTO;
 	}
 	
 	public static MilitaryOrganization newMilitaryOrganization(){

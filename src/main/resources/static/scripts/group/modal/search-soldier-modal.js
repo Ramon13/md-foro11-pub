@@ -67,16 +67,22 @@ function onSearchSoldierWithJsonFile() {
         displaySearchResult(resultList);
         
         if (resultList.length == 0) {
-          console.log(`[${key}] not found... Trying to create a new profile`);
-          saveSoldier(soldier);
+          console.log(`[${soldier.name}] not found... Trying to create a new profile`);
+          saveSoldier(
+            soldier,
+            function() {
+              console.log(`${soldier.name} was created.`);
+            },
+            function(responseText) {
+              console.log(`validation error when trying to create ${soldier.name}. see log for details: ${responseText}`)
+            }
+          );
         }
           
       }();
     });
   }
 }
-
-
 
 function getSearchedKeys() {
   const inputText = document.querySelector("#soldierSearch input#searchKey").value;

@@ -5,9 +5,11 @@ import br.com.javamoon.domain.draw_exclusion.DrawExclusion;
 import br.com.javamoon.domain.entity.CJMUser;
 import br.com.javamoon.domain.entity.DrawList;
 import br.com.javamoon.domain.entity.GroupUser;
+import br.com.javamoon.domain.entity.MilitaryOrganization;
 import br.com.javamoon.domain.entity.MilitaryRank;
 import br.com.javamoon.domain.entity.Soldier;
 import br.com.javamoon.domain.entity.User;
+import br.com.javamoon.infrastructure.web.model.CreateSoldierDTO;
 import br.com.javamoon.infrastructure.web.security.Role;
 import java.util.stream.Collectors;
 
@@ -77,6 +79,26 @@ public final class EntityMapper {
     	return soldier;
     }
     
+    public static Soldier fromDTOTOEntity(CreateSoldierDTO createSoldierDTO) {
+    	Soldier soldier = new Soldier();
+    	soldier.setId(createSoldierDTO.getId());
+    	soldier.setName(createSoldierDTO.getName() != null ? createSoldierDTO.getName().trim() : null);
+    	soldier.setEmail(createSoldierDTO.getEmail() != null ? createSoldierDTO.getEmail().trim() : null);
+    	soldier.setPhone(createSoldierDTO.getPhone() != null ? createSoldierDTO.getPhone().trim() : null);
+    	
+    	MilitaryOrganization militaryOrganization = new MilitaryOrganization();
+    	militaryOrganization.setAlias(
+    	    createSoldierDTO.getMilitaryBase() != null ? createSoldierDTO.getMilitaryBase().trim() : null);
+    	soldier.setMilitaryOrganization(militaryOrganization);
+    	
+    	MilitaryRank rank = new MilitaryRank();
+    	rank.setAlias(
+    	    createSoldierDTO.getMilitaryRank() != null ? createSoldierDTO.getMilitaryRank().trim() : null);
+    	soldier.setMilitaryRank(rank);
+    	
+    	return soldier;
+    }
+    
     public static SoldierDTO fromEntityToDTO(Soldier soldier) {
     	SoldierDTO soldierDTO = new SoldierDTO();
     	soldierDTO.setId(soldier.getId());
@@ -88,6 +110,17 @@ public final class EntityMapper {
     	soldierDTO.setMilitaryRank(soldier.getMilitaryRank());	
     	soldierDTO.setArmy(soldier.getArmy());
     	return soldierDTO;
+    }
+    
+    public static CreateSoldierDTO fromSoldierToCreateSoldierDTO(Soldier soldier) {
+    	CreateSoldierDTO createSoldierDTO = new CreateSoldierDTO();
+    	createSoldierDTO.setId(soldier.getId());
+    	createSoldierDTO.setName(soldier.getName());
+    	createSoldierDTO.setEmail(soldier.getEmail());
+    	createSoldierDTO.setPhone(soldier.getPhone());
+    	createSoldierDTO.setMilitaryBase(soldier.getMilitaryOrganization().getAlias());
+    	createSoldierDTO.setMilitaryRank(soldier.getMilitaryRank().getAlias());
+    	return createSoldierDTO;
     }
     
     public static GetSoldierDTO fromEntityToGetSoldierDTO(Soldier soldier) {

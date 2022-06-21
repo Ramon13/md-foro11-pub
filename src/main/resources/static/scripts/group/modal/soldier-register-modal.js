@@ -41,7 +41,6 @@ function saveSoldier(soldier, successTask, validationErrorTask) {
   xhr.setRequestHeader(requestHeader.contentType, JSON_CONTENT_TYPE);
   
   xhr.send( JSON.stringify(soldier) );
-  console.log(JSON.stringify(soldier) );
   
   xhr.onreadystatechange = function() {
     if (xhr.readyState == XMLHttpRequest.DONE) {
@@ -136,8 +135,8 @@ function getSoldier() {
   let soldier = {
     id: registerForm.querySelector("input[type=hidden].sd-id").value,
     name: registerForm.querySelector("input[type=text].name").value,
-    militaryOrganization: { alias: registerForm.querySelector("select.militaryOrganization").value },
-    militaryRank: { alias: registerForm.querySelector("select.militaryRank").value },
+    militaryBase: registerForm.querySelector("select.militaryOrganization").value,
+    militaryRank: registerForm.querySelector("select.militaryRank").value,
     phone: registerForm.querySelector("input[type=text].phone").value,
     email: registerForm.querySelector("input[type=text].email").value
   };

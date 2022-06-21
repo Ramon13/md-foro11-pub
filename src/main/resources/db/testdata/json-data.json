@@ -1,26 +1,170 @@
 [
  {
-   "militaryOrganization": {"alias": "11°RM"},
-   "militaryRank": {"alias": "CEL"},
-   "seniority": 1,
-   "specialization": "QCO",
-   "name": "EVALDO JOSÉ PEREIRA DE LIMA",
-   "cpf": "369.660.450-04",
-   "last_rise": "30/04/20",
-   "phone": "61 99925-6304",
-   "email": "airtonbutzke@gmail.com",
-   "exclusion": "Férias 2021: de 05/12/22 à 03/01/23"
+   "militaryBase": "11°RM",
+   "militaryRank": "CEL",
+   "name": "LUIZ EDUARDO MELLO CORRÊA DA SILVA",
+   "phone": "3415-5782",
+   "email": "luiz.eduardo@eb.mil.br",
+   "IMPEDIMENTOS": "Férias 25 dias – 30 JUN 22 à 24 JUL 22"
  },
  {
-   "militaryOrganization": {"alias": "11°RM"},
-   "militaryRank": {"alias": "CEL"},
-   "seniority": 1,
-   "specialization": "INTENDÊNCIA",
+   "militaryBase": "11°RM",
+   "militaryRank": "CEL",
+   "name": "ROGÉRIO MARTINS MOURA",
+   "phone": "3415-4718",
+   "email": "agsass2@dct.eb.mil.br",
+   "IMPEDIMENTOS": "SEM IMPEDIMENTO"
+ },
+ {
+   "militaryBase": "11°RM",
+   "militaryRank": "CEL",
+   "name": "FRAIDE BARRÊTO SALES",
+   "phone": "3415-5037",
+   "email": "atticadj5@dct.eb.mil.br",
+   "IMPEDIMENTOS": "Férias 15 dias – 19 JUL 22 à 02 AGO 22"
+ },
+ {
+   "militaryBase": "11º GAAAE",
+   "militaryRank": "CEL",
+   "name": "ALEXANDRE MAGNO DEVEZA PEREIRA",
+   "phone": "94 98117-3446",
+   "email": "alexmdp@gmail.com",
+   "IMPEDIMENTOS": "SEM IMPEDIMENTO"
+ },
+ {
+   "militaryBase": "11º GAAAE",
+   "militaryRank": "CEL",
+   "name": "WENCESLAU DE ALMEIDA LOPES",
+   "phone": "9 8179-1117",
+   "email": "wenecsalava@outlook.com",
+   "IMPEDIMENTOS": "SEM IMPEDIMENTO"
+ },
+ {
+   "militaryBase": "11º GAAAE",
+   "militaryRank": "CEL",
+   "name": "MARCIO DE CARVALHO KAULINO",
+   "phone": "61 9 98117162",
+   "email": "kaulino@gmail.com",
+   "IMPEDIMENTOS": "SEM IMPEDIMENTO"
+ },
+ {
+   "militaryBase": "11º GAAAE",
+   "militaryRank": "CEL",
+   "name": "FLÁVIO DO PRADO",
+   "phone": "68 99625-2016",
+   "email": "flavioprado72@gmail.com",
+   "IMPEDIMENTOS": "SEM IMPEDIMENTO"
+ },
+ {
+   "militaryBase": "DPGO",
+   "militaryRank": "CEL",
+   "name": "AIRTON PEDRO BUTZKE",
+   "phone": "61 99925-6304",
+   "email": "airtonbutzke@gmail.com",
+   "IMPEDIMENTOS": "Férias 2021: de 05/12/22 à 03/01/23"
+ },
+ {
+   "militaryBase": "DPGO",
+   "militaryRank": "CEL",
    "name": "FÁBIO VILLELA MENDES",
-   "cpf": "180.777.828-25",
-   "last_rise": "30/04/20",
    "phone": "61 99266-0693",
    "email": "flu.mendes@hotmail.com",
-   "exclusion": "Férias 2021: de 05/12/22 à 03/01/23"
+   "IMPEDIMENTOS": "Férias 2021: de 05/12/22 à 03/01/23"
+ },
+ {
+   "militaryBase": "DSG",
+   "militaryRank": "CEL",
+   "name": "CÉSAR AUGUSTO DE CALASANS CARVALHO",
+   "phone": "61 99867-1052",
+   "email": "cesar.calasans@eb.mil.br",
+   "IMPEDIMENTOS": "SEM IMPEDIMENTO"
+ },
+ {
+   "militaryBase": "DSG",
+   "militaryRank": "CEL",
+   "name": "MÁRCIO AZEREDO",
+   "phone": "61 99305-7097",
+   "email": "azeredo.marcio@eb.mil.br",
+   "IMPEDIMENTOS": "FÉRIAS: 25 JUL a 3 AGO 22."
+ },
+ {
+   "militaryBase": "DOM",
+   "militaryRank": "CEL",
+   "name": "MARCOS LUIS ALVES DA SILVA",
+   "phone": "3415-6662",
+   "email": "luisalves.marcos@eb.mil.br",
+   "IMPEDIMENTOS": "SEM IMPEDIMENTO"
+ },
+ {
+   "militaryBase": "DOM",
+   "militaryRank": "CEL",
+   "name": "ANTÔNIO CARLOS PAVÃO MADUREIRA",
+   "phone": "3415-6642",
+   "email": "pavaomadureira@gmail.com",
+   "IMPEDIMENTOS": "SEM IMPEDIMENTO"
+ },
+ {
+   "militaryBase": "DMAVEX",
+   "militaryRank": "CEL",
+   "name": "GLÍCIO IDNEY ALVES FONSECA",
+   "phone": "3415-5469",
+   "email": "gliciofonseca@ig.com.br",
+   "IMPEDIMENTOS": "SEM IMPEDIMENTO"
+ },
+ {
+   "militaryBase": "DMAVEX",
+   "militaryRank": "CEL",
+   "name": "EDUARDO ARUME",
+   "phone": "3415-6646",
+   "email": "arume.eduardo@eb.mil.br",
+   "IMPEDIMENTOS": "SEM IMPEDIMENTO"
+ },
+ {
+   "militaryBase": "DMAVEX",
+   "militaryRank": "CEL",
+   "name": "DANIEL GUILHERME DA SILVA JUNIOR",
+   "phone": "3415-6336",
+   "email": "danieljunior.silva@eb.mil.br",
+   "IMPEDIMENTOS": "SEM IMPEDIMENTO"
+ },
+ {
+   "militaryBase": "CMP",
+   "militaryRank": "CEL",
+   "name": "SIVONEY NOGUEIRA MILANEZ",
+   "phone": "41 99705-7549",
+   "email": "m.milanez1970@gmail.com",
+   "IMPEDIMENTOS": "SEM IMPEDIMENTO"
+ },
+ {
+   "militaryBase": "CMP",
+   "militaryRank": "CEL",
+   "name": "ALLAN DANILO PAIVA SALAZAR",
+   "phone": "24 992139002",
+   "email": "allandiver@yahoo.com.br",
+   "IMPEDIMENTOS": "SEM IMPEDIMENTO"
+ },
+ {
+   "militaryBase": "CMP",
+   "militaryRank": "CEL",
+   "name": "MARCUS AURÉLIO DE ALBUQUERQUE PINTO",
+   "phone": "2035-2041",
+   "email": "marcusaurelios96@gmail.com",
+   "IMPEDIMENTOS": "SEM IMPEDIMENTO"
+ },
+ {
+   "militaryBase": "CMP",
+   "militaryRank": "CEL",
+   "name": "RODRIGO SANTOS BOUERI",
+   "phone": "98165-4348",
+   "email": "rodrigoboueri@yahoo.com.br",
+   "IMPEDIMENTOS": "SEM IMPEDIMENTO"
+ },
+ {
+   "militaryBase": "SEF",
+   "militaryRank": "CEL",
+   "name": "MARCELO LUIZ ALMEIDA DE JESUS",
+   "phone": "61 99228-9707",
+   "email": "mlaj@ibest.com.br",
+   "IMPEDIMENTOS": "SEM IMPEDIMENTO"
  }
 ]

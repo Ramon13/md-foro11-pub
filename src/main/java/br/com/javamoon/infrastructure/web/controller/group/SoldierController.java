@@ -28,6 +28,7 @@ import br.com.javamoon.domain.entity.Soldier;
 import br.com.javamoon.exception.SoldierNotFoundException;
 import br.com.javamoon.exception.SoldierValidationException;
 import br.com.javamoon.infrastructure.web.controller.ControllerHelper;
+import br.com.javamoon.infrastructure.web.model.CreateSoldierDTO;
 import br.com.javamoon.infrastructure.web.model.SearchSoldierDTO;
 import br.com.javamoon.mapper.DrawExclusionDTO;
 import br.com.javamoon.mapper.EntityMapper;
@@ -114,9 +115,9 @@ public class SoldierController {
 	
 	@SuppressWarnings("rawtypes")
 	@PostMapping("/register/save")
-	public ResponseEntity save(@RequestBody SoldierDTO soldierDTO) {
+	public ResponseEntity save(@RequestBody CreateSoldierDTO createSoldierDTO) {
 		try {
-			SoldierDTO newSoldier = soldierService.save( soldierDTO, getArmy(), getCJM() );
+			SoldierDTO newSoldier = soldierService.save(createSoldierDTO, getArmy(), getCJM() );
 
 			return ResponseEntity.status(HttpStatus.CREATED).body(newSoldier);
 		}catch(SoldierValidationException e) {
@@ -127,9 +128,9 @@ public class SoldierController {
 	
 	@SuppressWarnings("rawtypes")
 	@PutMapping
-	public ResponseEntity edit(@RequestBody SoldierDTO soldierDTO) {
+	public ResponseEntity edit(@RequestBody CreateSoldierDTO createSoldierDTO) {
 		try {
-			SoldierDTO modifiedSoldier = soldierService.edit( soldierDTO, getArmy(), getCJM() );
+			SoldierDTO modifiedSoldier = soldierService.edit( createSoldierDTO, getArmy(), getCJM() );
 			
 			return ResponseEntity.ok(modifiedSoldier);
 		}catch (SoldierValidationException e) {

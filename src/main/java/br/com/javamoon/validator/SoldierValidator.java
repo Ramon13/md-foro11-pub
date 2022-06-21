@@ -32,6 +32,7 @@ import br.com.javamoon.domain.repository.SoldierRepository;
 import br.com.javamoon.exception.DrawValidationException;
 import br.com.javamoon.exception.SoldierHasExclusionException;
 import br.com.javamoon.exception.SoldierValidationException;
+import br.com.javamoon.infrastructure.web.model.CreateSoldierDTO;
 import br.com.javamoon.mapper.DrawDTO;
 import br.com.javamoon.mapper.SoldierDTO;
 
@@ -51,20 +52,20 @@ public class SoldierValidator {
 		this.militaryRankRepository = rankRepository;
 	}
 
-	public void saveSoldierValidation(SoldierDTO soldierDTO, Army army, CJM cjm) throws SoldierValidationException {
+	public void saveSoldierValidation(CreateSoldierDTO createSoldierDTO, Army army, CJM cjm) throws SoldierValidationException {
 		ValidationErrors validationErrors = new ValidationErrors();
 		
 		if (
-			validateName(soldierDTO.getName(), validationErrors)
+			validateName(createSoldierDTO.getName(), validationErrors)
 		   ) {
-			validateDuplicatedName(soldierDTO.getId(), soldierDTO.getName(), army, cjm, validationErrors); 
+			validateDuplicatedName(createSoldierDTO.getId(), createSoldierDTO.getName(), army, cjm, validationErrors); 
 			
-			validateMilitaryOrganization(soldierDTO.getMilitaryOrganization().getAlias(), army.getId(), validationErrors);
-			validateMilitaryRank(soldierDTO.getMilitaryRank().getAlias(), army.getId(), validationErrors);
+			validateMilitaryOrganization(createSoldierDTO.getMilitaryBase(), army.getId(), validationErrors);
+			validateMilitaryRank(createSoldierDTO.getMilitaryRank(), army.getId(), validationErrors);
 			
-			if (!StringUtils.isEmpty(soldierDTO.getEmail())) {
-				validateEmail(soldierDTO.getEmail(), validationErrors);
-				validateDuplicatedEmail(soldierDTO.getId(), soldierDTO.getEmail(), army, cjm, validationErrors);
+			if (!StringUtils.isEmpty(createSoldierDTO.getEmail())) {
+				validateEmail(createSoldierDTO.getEmail(), validationErrors);
+				validateDuplicatedEmail(createSoldierDTO.getId(), createSoldierDTO.getEmail(), army, cjm, validationErrors);
 			}
 		}
 		
@@ -185,7 +186,7 @@ public class SoldierValidator {
 			validationErrors.add(SOLDIER_EMAIL, ACCOUNT_EMAIL_ALREADY_EXISTS);
 	}
 	
-	private boolean validateIfOrganizationBelongsToArmy(String militaryBaseAlias, Integer armyId, ValidationErrors validationErrors) {
+	public boolean validateIfOrganizationBelongsToArmy(String militaryBaseAlias, Integer armyId, ValidationErrors validationErrors) {
 		Optional<MilitaryOrganization> selectedOrganization = organizationRepository.findByAlias(militaryBaseAlias);
 		List<MilitaryOrganization> organizations = organizationRepository.findByArmy(armyId);
 		
@@ -213,7 +214,7 @@ public class SoldierValidator {
 	}
 	
 	private boolean validateIfRankBelongsToArmy(Integer armyId, String rankAlias, ValidationErrors validationErrors) {
-		Optional<MilitaryRank> rankDb = militaryRankRepository.findByAlias(rankAlias);
+		Optional<MilitaryRank> rankDb = militaryRankRepository.findByAliasAndbyArmiesIn(rankAlias, armyId);
 		
 		if (rankDb.isEmpty()) {
 			validationErrors.add(SOLDIER_RANK, INVALID_SOLDIER_RANK);

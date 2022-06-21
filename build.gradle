@@ -5,6 +5,10 @@ plugins {
 	id 'war'
 }
 
+war {
+  archiveName = 'sorteio.war'
+}
+
 group = 'br.com.javamoon'
 version = '0.0.1-SNAPSHOT'
 sourceCompatibility = 11

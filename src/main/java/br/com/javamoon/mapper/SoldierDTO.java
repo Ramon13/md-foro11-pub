@@ -61,10 +61,6 @@ public class SoldierDTO{
 	@JsonIgnore
 	private List<DrawExclusionDTO> exclusions = new ArrayList<>(0);
 	
-	public void capitalizeName() {
-		name = name.toUpperCase();
-	}
-	
 	@JsonIgnore
 	public String getInfoAsText() {
 		return StringUtils.concatenate("\n", Arrays.asList(email, 
@@ -139,5 +135,9 @@ public class SoldierDTO{
 	
 	public String prettyPrintPhone() {
 		return StringUtils.isEmpty(phone) ? "" : phone;
+	}
+	
+	public void capitalizeName() {
+		name = name.toUpperCase();
 	}
 }

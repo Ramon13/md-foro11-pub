@@ -21,6 +21,7 @@ import br.com.javamoon.domain.repository.DrawRepository;
 import br.com.javamoon.domain.repository.SoldierRepository;
 import br.com.javamoon.exception.SoldierNotFoundException;
 import br.com.javamoon.exception.SoldierValidationException;
+import br.com.javamoon.infrastructure.web.model.CreateSoldierDTO;
 import br.com.javamoon.mapper.EntityMapper;
 import br.com.javamoon.mapper.SoldierDTO;
 import br.com.javamoon.util.PageableUtils;
@@ -69,33 +70,34 @@ public class SoldierService{
 	 * @param army logged user army. Assumes that is not null
 	 * @param cjm logged user cjm. Assumes that is not null
 	 */
-	public SoldierDTO save(SoldierDTO soldierDTO, Army army, CJM cjm) throws SoldierValidationException {
-		soldierDTO.capitalizeName();
+	public SoldierDTO save(CreateSoldierDTO createSoldierDTO, Army army, CJM cjm) throws SoldierValidationException {
+		createSoldierDTO.capitalizeName();
 		
-		soldierValidator.saveSoldierValidation(soldierDTO, army, cjm);
+		soldierValidator.saveSoldierValidation(createSoldierDTO, army, cjm);
 		
-		Soldier soldier = EntityMapper.fromDTOToEntity(soldierDTO);
+		Soldier soldier = EntityMapper.fromDTOTOEntity(createSoldierDTO);
 		soldier.setArmy(army);
 		soldier.setCjm(cjm);
-		soldier.setMilitaryOrganization( militaryOrganizationService.getByAlias(soldierDTO.getMilitaryOrganization().getAlias()) );
-		soldier.setMilitaryRank( militaryRankService.getByAlias(soldierDTO.getMilitaryRank().getAlias()) );
-		
+		soldier.setMilitaryOrganization( militaryOrganizationService.getByAlias(soldier.getMilitaryOrganization().getAlias()) );
+		soldier.setMilitaryRank( militaryRankService.getByAlias(soldier.getMilitaryRank().getAlias()) );
 		soldierRepository.save(soldier);
 		
 		return EntityMapper.fromEntityToDTO(soldier);
 	}
 	
 	@Transactional
-	public SoldierDTO edit(SoldierDTO soldierDTO, Army army, CJM cjm) throws SoldierValidationException {
-		soldierDTO.capitalizeName();
-		soldierValidator.saveSoldierValidation(soldierDTO, army, cjm);
+	public SoldierDTO edit(CreateSoldierDTO createSoldierDTO, Army army, CJM cjm) throws SoldierValidationException {
+		createSoldierDTO.capitalizeName();
+		soldierValidator.saveSoldierValidation(createSoldierDTO, army, cjm);
 		
-		Soldier soldierDB = getSoldierOrElseThrow(soldierDTO.getId(), army, cjm);
+		Soldier soldierDB = getSoldierOrElseThrow(createSoldierDTO.getId(), army, cjm);
 		
-		soldierDB.setName(soldierDTO.getName());
-		soldierDB.setEmail(soldierDTO.getEmail());
-		soldierDB.setMilitaryOrganization(soldierDTO.getMilitaryOrganization());
-		soldierDB.setMilitaryRank(soldierDTO.getMilitaryRank());
+		soldierDB.setName(createSoldierDTO.getName());
+		soldierDB.setEmail(createSoldierDTO.getEmail());
+		soldierDB.setMilitaryOrganization( 
+				militaryOrganizationService.getByAlias(createSoldierDTO.getMilitaryBase()) );
+		soldierDB.setMilitaryRank( 
+				militaryRankService.getByAlias(createSoldierDTO.getMilitaryRank()) );
 		
 		soldierRepository.save(soldierDB);
 		return EntityMapper.fromEntityToDTO(soldierDB);

@@ -88,7 +88,7 @@ public class SoldierServiceIntegrationTest {
 		MilitaryRank rank = getPersistedMilitaryRank(army, rankRepository, armyRepository);
 		Soldier soldier = newSoldierList(army, cjm, organization, rank, 1).get(0);
 		
-		Integer soldierId = victim.save(EntityMapper.fromEntityToDTO(soldier), army, cjm).getId();
+		Integer soldierId = victim.save(EntityMapper.fromSoldierToCreateSoldierDTO(soldier), army, cjm).getId();
 		
 		Optional<Soldier> soldierDB = soldierRepository.findById(soldierId);
 		assertTrue(soldierDB.isPresent());
@@ -110,7 +110,7 @@ public class SoldierServiceIntegrationTest {
 		Soldier soldier = soldiers.get(0);
 		soldier.setName(DEFAULT_SOLDIER_NAME + "xxxxX");
 		
-		victim.edit(EntityMapper.fromEntityToDTO(soldier), army, cjm);
+		victim.edit(EntityMapper.fromSoldierToCreateSoldierDTO(soldier), army, cjm);
 		
 		Optional<Soldier> soldierDB = soldierRepository.findById(soldier.getId());
 		
@@ -154,7 +154,7 @@ public class SoldierServiceIntegrationTest {
 		soldierRepository.saveAndFlush(soldiers.get(0));
 		
 		SoldierValidationException exception = Assertions.assertThrows(SoldierValidationException.class, 
-				() -> victim.save(EntityMapper.fromEntityToDTO(soldiers.get(1)), army, cjm));
+				() -> victim.save(EntityMapper.fromSoldierToCreateSoldierDTO(soldiers.get(1)), army, cjm));
 		assertEquals(2, exception.getValidationErrors().getNumberOfErrors());
 		assertEquals(new ValidationError(SOLDIER_NAME, SOLDIER_NAME_ALREADY_EXISTS), exception.getValidationErrors().getError(0));
 		assertEquals(new ValidationError(SOLDIER_EMAIL, ACCOUNT_EMAIL_ALREADY_EXISTS), exception.getValidationErrors().getError(1));
@@ -183,7 +183,7 @@ public class SoldierServiceIntegrationTest {
 		
 		SoldierValidationException exception = assertThrows(
 				SoldierValidationException.class, 
-				() -> victim.save( EntityMapper.fromEntityToDTO(soldier), army, cjm) 
+				() -> victim.save( EntityMapper.fromSoldierToCreateSoldierDTO(soldier), army, cjm) 
 		);
 		
 		assertEquals(1, exception.getValidationErrors().getNumberOfErrors() );
@@ -202,6 +202,7 @@ public class SoldierServiceIntegrationTest {
 		getPersistedMilitaryRank(army, rankRepository, armyRepository);
 		
 		Army army2 = TestDataCreator.newArmy();
+		army2.setId(null);
 		army2.setAlias(DEFAULT_ARMY_ALIAS + "x");
 		army2.setName(DEFAULT_ARMY_NAME + "x");
 		armyRepository.saveAndFlush(army2);
@@ -210,6 +211,7 @@ public class SoldierServiceIntegrationTest {
 		rank2.setId(null);
 		rank2.setAlias(DEFAULT_RANK_ALIAS + "x");
 		rank2.setName(DEFAULT_RANK_NAME + "x");
+		rank2.getArmies().add(army2);
 		army2.getMilitaryRanks().add(rank2);
 		rankRepository.saveAndFlush(rank2);
 		armyRepository.saveAndFlush(army2);
@@ -218,7 +220,7 @@ public class SoldierServiceIntegrationTest {
 		
 		SoldierValidationException exception = assertThrows(
 				SoldierValidationException.class, 
-				() -> victim.save( EntityMapper.fromEntityToDTO(soldier), army, cjm) 
+				() -> victim.save( EntityMapper.fromSoldierToCreateSoldierDTO(soldier), army, cjm) 
 		);
 		
 		assertEquals(1, exception.getValidationErrors().getNumberOfErrors() );
