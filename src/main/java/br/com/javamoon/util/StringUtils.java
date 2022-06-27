@@ -6,7 +6,8 @@ import org.springframework.security.crypto.factory.PasswordEncoderFactories;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
 public class StringUtils {
-
+	public static final String EMPTY = "";
+	
 	public static boolean isEmpty(String str) {
 		if (str == null)
 			return true;
@@ -20,6 +21,13 @@ public class StringUtils {
 				return true;
 		return false;
 	}
+	
+	public static boolean hasAnyLowerCase(String str) {
+        for (char c : str.toCharArray())
+            if (c >= 97 && c <= 122)
+                return true;
+        return false;
+    }
 	
 	public static boolean hasAnyNumber(String str) {
 		for (char c : str.toCharArray())

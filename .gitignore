@@ -1,8 +1,4 @@
 !.gitignore
-.*
-./*
 /bin/*
 /build/*
-/gradle/*
-gradlew*
-
+.gradle/*

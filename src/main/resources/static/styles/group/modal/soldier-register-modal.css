@@ -1,0 +1,12 @@
+div#soldierRegister form {
+	width: 50% !important;
+}
+
+div#soldierRegister select.app-select {
+	width: 100%;
+}
+
+div#soldierRegister .modal-content {
+  width: 35%;
+  height: 58%;
+}

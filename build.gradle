@@ -1,7 +1,12 @@
 plugins {
-	id 'org.springframework.boot' version '2.5.1'
+	id 'org.springframework.boot' version '2.6.3'
 	id 'io.spring.dependency-management' version '1.0.11.RELEASE'
 	id 'java'
+	id 'war'
+}
+
+war {
+  archiveName = 'sorteio.war'
 }
 
 group = 'br.com.javamoon'
@@ -47,16 +52,26 @@ dependencies {
 	runtimeOnly 'nz.net.ultraq.thymeleaf:thymeleaf-layout-dialect'
 	
 	//Devtools
-	
 	compileOnly group: 'org.projectlombok', name: 'lombok', version: '1.18.20'
 	developmentOnly 'org.springframework.boot:spring-boot-devtools'
 	annotationProcessor 'org.projectlombok:lombok'
 	
+	//e-mail
+	implementation 'org.springframework.boot:spring-boot-starter-mail'
+	
+	// Reports
+  implementation group: 'net.sf.jasperreports', name: 'jasperreports', version: '6.19.0'
+  
+  //Util
+  implementation group: 'org.apache.commons', name: 'commons-lang3', version: '3.12.0'
+  
+	
 	//Test
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
 	testImplementation 'org.springframework.security:spring-security-test'
-	//testRuntime group: 'com.h2database', name: 'h2', version: '1.4.200'
-	
+  testImplementation group: 'com.h2database', name: 'h2', version: '2.1.210'
+  testImplementation group: 'org.mockito', name: 'mockito-inline', version: '4.3.1'
+    
 	//Cloud
 	// https://mvnrepository.com/artifact/com.amazonaws/aws-java-sdk-s3
 	//implementation group: 'com.amazonaws', name: 'aws-java-sdk-s3', version: '1.12.42'

@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+  xmlns:th="http://www.thymeleaf.org" layout:decorate="~{cjm/layout}">
+
+<style layout:fragment="style">
+form {
+	width: 100%;
+}
+
+input[type=text], input[type=password] {
+	width: 30%;
+}
+
+button#createUser {
+	float: right;
+  padding: 5px 17px;
+}
+
+div#form-btns {
+	display: inline-block;
+	width: 300px;
+}
+</style>
+
+<body>
+  <div layout:fragment="content" class="centered-page">
+    <h1 class="pageTitle">Novo acesso pessoal de usuário</h1>
+    <hr />
+
+    <div th:if="${successMsg}" class="successMsg">
+      <span th:text="${successMsg}"></span>
+    </div>
+
+    <form id='newUserForm' method="post"
+      th:action="@{/cjm/accounts/register/save}" th:object="${user}">
+      <div>
+        <div class="form-step">
+          <div class="input-label">
+            <label for="username-input">Nome de usuário</label> <br /> 
+              <span class="label-desc">ex: nomesobrenome, rafaelcunha, rodrigocosta</span>
+          </div>
+          <div th:if="${#fields.hasErrors('username')}">
+            <span class="error" th:errors="*{username}"></span>
+          </div>
+          <div>
+            <input id="username-input" type="text" th:field="*{username}" th:classappend="${#fields.hasErrors('username')} ? 'error' : ''" />
+          </div>
+        </div>
+
+        <div class="form-step">
+          <div class="input-label">
+            <label for="email-input">Email</label>
+          </div>
+          <div th:if="${#fields.hasErrors('email')}">
+            <span class="error" th:errors="*{email}"></span>
+          </div>
+          <div>
+            <input id="email-input" type="text" th:field="*{email}" />
+          </div>
+        </div>
+
+        <div id="form-btns">
+          <button type="submit" id="createUser" class="app-green-btn">
+            <span>Criar</span>
+          </button>
+        </div>
+      </div>
+    </form>
+  </div>
+</body>
+</html>

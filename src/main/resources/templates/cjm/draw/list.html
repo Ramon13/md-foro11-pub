@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org" layout:decorate="~{cjm/layout}">
+  <head>
+    <link type="text/css" rel="stylesheet" th:href="@{/styles/accordeon.css}"/>
+  </head>
+  <body>
+    <div layout:fragment="content">
+      <select id="auditorship" class="app-select no-border">
+        <option th:each="auditorship : ${auditorships}" 
+          th:value="${auditorship.id}" 
+          th:text="${auditorship.name}"
+          th:selected="${selectedAuditorship eq auditorship.id}" 
+          th:attr="data-url=@{/cjm/dw/list/} + ${auditorship.id}">
+        </option>
+      </select>
+    
+      <hr />
+      
+      <div class="draw-list" th:each="drawMap : ${quarterDrawMap}">
+        <div class="app-list-category">
+          <span th:text="${drawMap.key}"></span>
+        </div>
+        
+        <div th:each="draw : ${drawMap.value}">
+          <button th:text="${draw.CJMListHeader}" class="accordion"></button>
+          
+          <div class="panel">
+            <table>
+              <thead>
+                <tr>
+                  <th>Nome</th>
+                  <th>OM</th>
+                  <th>Posto</th>
+                  <th>Arma</th>
+                </tr>
+              </thead>
+              
+              <tbody th:each="soldier : ${draw.soldiers}">
+                <tr>
+                  <td><span th:text="${soldier.getNameForDrawHeader(draw.substitute)}"></span></td>
+                  <td><span th:text="${soldier.militaryOrganization.alias}"></span></td>
+                  <td><span th:text="${soldier.militaryRank.alias}"></span></td>
+                  <td><span th:text="${soldier.army.alias}"></span></td>
+                </tr>
+              </tbody>
+            </table>
+            
+            <br />
+            
+            <div class="dw-options">
+              <a href="#" th:if="${userAuditorship} eq ${selectedAuditorship}" class="edit-draw" 
+                th:attr="data-url=@{/cjm/dw/edit/} + ${draw.id}">editar | </a>
+                
+              <a th:href="@{/cjm/dw/export/pdf/} + ${draw.id}" target="_blank" class="exportPdf">gerar pdf</a>
+            </div>
+          </div>
+        </div>
+      </div>
+  
+      <script type="text/javascript" th:src="@{/scripts/cjm/draw/list.js}"></script>
+    </div>
+  </body>
+</html>

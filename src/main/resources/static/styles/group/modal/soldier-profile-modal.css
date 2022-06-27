@@ -1,0 +1,45 @@
+div#soldierProfileModal div.app-list{
+	padding: 4px;
+}
+
+div#soldierProfileModal div.app-list p {
+	display: block;
+}
+
+div#soldierProfileModal div.app-list p.list-header{
+	font-size: 12px;
+  color: blue;
+  letter-spacing: 1px;
+}
+
+input[type=date].app-dateinput {
+  width: 30% !important;
+  padding: 2px !important;
+  font-size: 0.8em;
+}
+
+div#content textarea {
+  font-family: "Roboto", sans-serif;
+  width: 99%;
+  height: 70px;
+  border-color: #c5c7cb;
+  font-size: 0.8em;
+}
+
+div#exclusions {
+	margin-top: 50px;
+}
+
+button#addExclusion {
+	float: right;
+}
+
+img.remove-exclusion {
+  position: absolute;
+  right: 10px;
+  top: 25px;
+}
+
+div.app-list:hover {
+	cursor: pointer;
+}

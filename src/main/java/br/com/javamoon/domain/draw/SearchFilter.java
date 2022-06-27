@@ -1,5 +1,7 @@
 package br.com.javamoon.domain.draw;
 
+import br.com.javamoon.util.DateUtils;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -17,9 +19,10 @@ public class SearchFilter {
 	
 	public SearchFilter() {}
 	
-	public SearchFilter(JusticeCouncil council, AnnualQuarter annualQuarter) {
+	public SearchFilter(JusticeCouncil council, String quarterYear) {
+		LocalDate quarterDate = DateUtils.fromYearQuarter(quarterYear);
 		this.council = council;
-		this.quarter = annualQuarter.getQuarter();
-		this.year = annualQuarter.getYear();
+		this.quarter = DateUtils.getQuarter(quarterDate);
+		this.year = quarterDate.getYear();
 	}
 }

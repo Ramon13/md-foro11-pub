@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
+  <head>
+  </head>
+  <body>
+    <div th:fragment="pagination" class="pagination-menu">
+      <form method="GET" class="pagination-form" th:object="${paginationFilter}">
+        <div class="page-count">
+          <input type="hidden" class="page-number" th:field="*{page}" />
+          <span class="counter" th:text="*{pageCount}"></span>
+          <button type="button" class="previous-page">&lt;</button>
+          <button type="button" class="next-page">&gt;</button>
+        </div>
+        <div class="search-bar">
+          <input class="search-input app-txtinput" th:field="*{key}" type="text" placeholder="Pesquisar...">
+          <input type="hidden"/>
+          <button class="search-btn" type="button">
+            <img th:src="@{/images/search.svg}"/>
+          </button>
+        </div>
+      </form>
+    </div>
+  </body>
+</html>

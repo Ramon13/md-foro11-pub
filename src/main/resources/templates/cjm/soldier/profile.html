@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org" layout:decorate="~{cjm/layout}">
+  <head>
+    <link type="text/css" rel="stylesheet" th:href="@{/styles/cjm/soldier/profile.css}">
+  </head>
+  <body>
+    <div layout:fragment="content">
+      <h1 class="pageTitle" th:text="${soldier.name}"></h1>
+      <hr />
+  
+      <div id="sdProfile">
+        <p class="input-label">OM</p>
+        <p class="label-content" th:text="${soldier.militaryOrganization.name}"></p>
+        
+        <p class="input-label">Posto</p>
+        <p class="label-content" th:text="${soldier.militaryRank.name}"></p>
+        
+        <p class="input-label">Telefone</p>
+        <p class="label-content" th:text="${soldier.phone}"></p>
+        
+        <p class="input-label">E-mail</p>
+        <p class="label-content" th:text="${soldier.email}"></p>
+              
+        <div>
+          <button type="button" id="back" class="app-gray-btn">
+            <span>Voltar</span>
+          </button>
+        </div>
+      </div>
+  
+      <hr />
+      <div id="exclusions">
+        <h2>Impedimentos</h2>
+        
+        <div class="no-exclusions" th:if="${#lists.isEmpty(exclusions)}">
+          <span> Este usuário não possui impedimentos registrados </span>
+        </div>
+        
+        <div class="impediment app-list" th:each="exclusion : ${exclusions}">
+          <div>
+            <p class="list-header" th:text="${exclusion.periodAsText}"></p>
+            <br /><br />
+            <p class="list-info" th:text="${exclusion.message}"></p>
+          </div>
+          <br />
+        </div>
+      </div>
+      
+      <script type="text/javascript">
+        returnPage();
+      </script>
+    </div>
+  </body>
+</html>

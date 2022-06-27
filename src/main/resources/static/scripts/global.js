@@ -46,7 +46,8 @@ function sendAjaxRequest(
 	action,
 	sendContent, 
 	successFunction,
-	errorFunction){
+	errorFunction,
+	contentType){
 	
 	let httpRequest = new XMLHttpRequest();
 	
@@ -58,12 +59,37 @@ function sendAjaxRequest(
 				errorFunction(httpRequest.responseText);
 			}else{
 				alert("There was an internal server error. Please try again later");
+        errorFunction("There was an internal server error. Please try again later");
 			}
 		}	
 	}
 	
 	httpRequest.open(httpMethod, action, true);
-    httpRequest.send(sendContent);
+	if (contentType)
+	 httpRequest.setRequestHeader( "Content-type", (contentType));
+  httpRequest.send(sendContent);
+}
+
+function putRequest(endpoint, content, onReady, onSuccess, onError) {
+  const xhr = new XMLHttpRequest();
+  xhr.open(PUT_METHOD, endpoint, true);
+  xhr.setRequestHeader(requestHeader.contentType, JSON_CONTENT_TYPE);
+  
+  xhr.send(content);
+  
+  xhr.onreadystatechange = function() {
+    if (xhr.readyState == XMLHttpRequest.DONE) {
+      
+      onReady();
+      
+      if (xhr.status == HTTP_OK) onSuccess( xhr.responseText );
+      
+      else if (xhr.status == HTTP_UNPROCESSABLE_ENTITY) onError( xhr.responseText );
+      
+      else displayServerError();
+      
+    }
+  }
 }
 
 function includeJs(jsFilePath){
@@ -73,4 +99,139 @@ function includeJs(jsFilePath){
   js.src = jsFilePath;
   
   document.body.appendChild(js);
+}
+
+function validatePass(pass0, pass1){
+  return pass0 === pass1;
+}
+
+function addListener(element, event, executor){
+  if (element != null)
+    element.addEventListener(event, executor);
+}
+
+function historyPush(){
+  let history = JSON.parse(window.localStorage.getItem("appHistory"));
+  
+  if (history == null)
+    history = [];
+
+  let url = window.location.href;
+  let historySize = history.length;
+  
+  if (historySize > 0 && history[historySize - 1] == url)
+    return;    
+  
+  history.push(url);
+  window.localStorage.setItem("appHistory", JSON.stringify(history));  
+}
+
+function historyPop(){
+  let history = JSON.parse(window.localStorage.getItem("appHistory"));
+  let popped = history.pop();
+  
+  window.localStorage.setItem("appHistory", JSON.stringify(history));
+  return popped;
+}
+
+function returnPage() {
+  const backBtn = document.querySelector("button#back");
+  backBtn.addEventListener('click', function(){
+    location.href = historyPop();
+  });
+}
+
+function toggleName(element, value){
+  if (!element.hasAttribute("name")){
+    element.toggleAttribute("name");
+    element.name = value;
+    return;
+  } 
+  element.toggleAttribute("name");
+}
+
+function clearChilds(element) {
+  element.innerHTML = "";
+}
+
+function cloneNode(node){
+  let clonedNode = node.cloneNode(node);
+  clonedNode.id = "";
+  return clonedNode;
+}
+
+function getSuccessMessage(message) {
+  const div = document.createElement("div");
+  const p = document.createElement("p");
+  
+  p.textContent = message;
+  div.classList.add = "successMsg";
+  
+  div.append(p);
+  return div; 
+}
+
+function getErrorMessage(message) {
+  const div = document.createElement("div");
+  const p = document.createElement("p");
+  
+  p.textContent = message;
+  div.classList.add("error");
+  
+  div.append(p);
+  return div;
+}
+
+function removeErrorNodes() {
+  const errors = document.querySelectorAll("div.error");
+  for (let i = 0; i < errors.length; i++) errors[i].remove();
+}
+
+function removeClassErrors() {
+  const errors = document.querySelectorAll(".error");
+  for (let i = 0; i < errors.length; i++) errors[i].classList.remove("error");
+}
+
+function clearInputFields(node) {
+  const inputs = node.querySelectorAll("input");
+  for (let i = 0; i < inputs.length; i++) inputs[i].value = '';
+  
+  const selects = node.querySelectorAll("select");
+  for (let i = 0; i < selects.length; i++) selects[i].options.selectedIndex = 0;
+  
+  node.querySelectorAll("textarea").forEach(textarea => { textarea.value = ''; });
+}
+
+function getSelectedValue(selectNode) {
+   return selectNode.options[ selectNode.selectedIndex ].value;
+}
+
+function selectOptionByStartText(selectElement, text) {
+  let option;
+  for (let i = 1; i < selectElement.options.length; i++) {
+    option = selectElement.options[i];
+    
+    if ( option.textContent.startsWith(text) ) {
+      option.selected = "selected";
+    }
+  }
+}
+
+function displayServerError() {
+  alert(INTERNAL_SERVER_ERROR_ALERT);
+}
+
+function getYearQuarter(date) {
+  const quarter = parseInt( (date.getMonth() - 1) / 3 + 1 );
+  const year = date.getFullYear();
+  
+  return `${year}'${quarter}`;
+}
+
+function fromYearQuarterToDate(yearQuarter) {
+  const year = +yearQuarter.split("'")[0];
+  const quarter = +yearQuarter.split("'")[1];
+  
+  const month = quarter * 3 - 2;
+  return new Date(year, (month - 1), 1);   // zero index based month
 }

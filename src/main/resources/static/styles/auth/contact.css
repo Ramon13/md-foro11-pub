@@ -1,0 +1,21 @@
+div#info{
+  width: 300px;
+  margin: auto;
+}
+
+table {
+  font-family: Roboto, sans-serif;
+  border-collapse: collapse;
+  font-size: 14px;
+  width: 100%;
+}
+
+table td, table th{
+  border: 1px solid #ddd;
+  padding: 8px;
+  text-align: center;
+}
+
+span{
+  color: #654d4d;
+}

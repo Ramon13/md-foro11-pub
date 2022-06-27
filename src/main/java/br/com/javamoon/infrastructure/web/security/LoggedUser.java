@@ -1,36 +1,41 @@
 package br.com.javamoon.infrastructure.web.security;
 
+import br.com.javamoon.domain.entity.CJMUser;
+import br.com.javamoon.domain.entity.GroupUser;
+import br.com.javamoon.domain.entity.User;
+import java.util.ArrayList;
 import java.util.Collection;
-
+import java.util.List;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
-
-import br.com.javamoon.domain.cjm_user.CJMUser;
-import br.com.javamoon.domain.group_user.GroupUser;
-import br.com.javamoon.domain.user.User;
-import br.com.javamoon.util.CollectionUtils;
 
 @SuppressWarnings("serial")
 public class LoggedUser implements UserDetails{
 
 	private User user;
-	private Role role;
 	private Collection<? extends GrantedAuthority> roles;
 	
 	public LoggedUser(User user) {
 		this.user = user;
-		Role role;
 		
 		if (this.user instanceof CJMUser)
-			role = Role.CJM_USER;
-		else if (this.user instanceof GroupUser)
-			role = Role.GROUP_USER;
+			Role.setCjmPermissionRoles(user);
+		else if (this.user instanceof GroupUser) {
+			Role.setGroupPermissionRoles(user);
+		}
 		else
 			throw new IllegalStateException("The user type is invalid");
 		
-		this.role = role;
-		this.roles = CollectionUtils.listOf(new SimpleGrantedAuthority("ROLE_" + role));
+		setAuthorityRoles(user.getPermissionRoles());
+	}
+	
+	private void setAuthorityRoles(List<String> permissionRoles) {
+		List<SimpleGrantedAuthority> authRoles = new ArrayList<SimpleGrantedAuthority>();
+		for (String role : permissionRoles)
+            authRoles.add(new SimpleGrantedAuthority("ROLE_" + role));
+		
+		this.roles = authRoles;
 	}
 	
 	@Override
@@ -65,14 +70,14 @@ public class LoggedUser implements UserDetails{
 
 	@Override
 	public boolean isEnabled() {
-		return true;
-	}
-
-	public Role getRole() {
-		return role;
+		return user.getActive();
 	}
 	
 	public User getUser() {
 		return user;
+	}
+	
+	public String getMainRole() {
+	    return user.getPermissionRoles().get(0);
 	}
 }

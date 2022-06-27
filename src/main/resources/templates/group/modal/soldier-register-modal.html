@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
+  <head>
+    <meta charset="utf-8" />
+  </head>
+  <body>
+    <div th:fragment="soldier-register-modal" id="soldierRegister" class="modal">
+      
+      <div class="modal-content">
+        <span class="close">&times;</span>
+        
+        <h1 class="pageTitle">Cadastrar novo militar</h1>
+        <hr />
+        
+        <form>
+          <input type="hidden" class="sd-id"/>
+
+          <div class="form-step">
+            <div class="input-label">
+              <label>Nome* </label><br />
+            </div>
+            <div>
+              <input type="text" placeholder="Nome do militar..." class="name app-txtinput"/>
+            </div>
+          </div>
+          
+          <div class="form-step">
+            <div class="input-label">
+              <label for="om">OM* </label><br />
+            </div>
+            
+            <div>
+              <select class="militaryOrganization app-select">
+                <option value="0">Selecione...</option>
+                <option th:each="om : ${oms}" th:value="${om.alias}" th:text="${om.name} + ' (' + ${om.alias} + ')'"></option>
+              </select>
+            </div>
+          </div>
+          
+          <div class="form-step">
+            <div class="input-label">
+              <label for="rank">Posto* </label>
+            </div>
+            <div>
+              <select class="militaryRank app-select">
+                <option value="0">Selecione...</option>
+                <option th:each="rank : ${ranks}" th:value="${rank.alias}" th:text="${rank.name}"></option>
+              </select>
+            </div>
+          </div>
+          
+          <div class="form-step">
+            <div class="input-label">
+              <label>Telefone</label>
+            </div>
+            <div>
+              <input type="text" placeholder="Telefone residencial ou celular..."  class="phone app-txtinput"/>
+            </div>
+          </div>
+          
+          <div class="form-step">
+            <div class="input-label">
+              <label>E-mail*</label>
+            </div>
+            <div>
+              <input type="text" name="email" placeholder="Email ativo do militar..." class="email app-txtinput" />
+            </div>
+          </div>
+          
+          <div>
+            <button type="submit" class="app-green-btn">
+              <span>Enviar</span>
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </body>
+</html>

@@ -17,10 +17,12 @@ import javax.validation.constraints.Min;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
+import lombok.ToString;
 
 @SuppressWarnings("serial")
 @Getter
 @Setter
+@ToString
 @EqualsAndHashCode(onlyExplicitlyIncluded = true)
 @Entity
 @Table(name = "JUSTICE_COUNCIL")
@@ -42,6 +44,7 @@ public class JusticeCouncil implements Serializable{
 	@Column(name = "council_size", nullable = false)
 	private Integer councilSize;
 	
+	@ToString.Exclude
 	@OneToMany(mappedBy = "justiceCouncil")
 	private Set<Draw> drawList = new HashSet<>(0);
 }

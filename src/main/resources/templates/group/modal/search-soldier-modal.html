@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
+  <head>
+    <meta charset="utf-8" />
+  </head>
+  <body>
+    <div th:fragment="search-soldier-modal" id="searchSoldierModal" class="modal">
+    
+      <input type="hidden" id="addSoldierEndpoint" th:value="@{/gp/dw/list/add}" />
+      
+      <div class="modal-content">
+        <span class="close">&times;</span>
+        
+        <h1>Lista Trimestral - Adição de Militares</h1>
+        <hr />
+        
+        <div>
+          <form id="soldierSearch" method="post" th:action="@{/gp/sd/search}">
+            <input id="searchKey" type="text" placeholder="nome ou email do militar..." autocomplete="off"/>
+            
+            <button type="submit">
+              <img th:src="@{/images/search.svg}"/>
+            </button>
+            <br />
+            <a href="#" id="searchWithJsonData">ou pesquisar utilizando um arquivo .json</a>
+          </form>
+        </div>
+        
+        <br />
+        <div id="searchResultList"></div>
+        
+        <div id="newSoldierProfile">
+          <a href="#">Criar novo perfil de militar</a>
+        </div>
+      </div>
+      
+      <div class="modal" id="searchWithJsonModal">
+        <div class="modal-content">
+          <span class="close">&times;</span>
+          
+          <div>
+            <input type="checkbox"> Criar perfil (Se não encontrar o militar cria um novo perfil com as informações fornecidas)
+          </div>
+          <div>
+            <input type="checkbox"> Atualizar perfil (Atualiza o perfil já existente com as informações fornecidas)
+          </div>
+          <div>
+            <p>Json body minimal requirements:</p>
+            <p>{"om":"", "posto":"", "nome":"", "email":""}</p>
+            <hr/>
+            <p>Json body optional fields:</p>
+            <p>{"telefone":"", "impedimentos":""}</p>
+            <textarea class="jsonData" rows="60" cols="100"></textarea>
+            <br/>
+            <div>
+              <button class="app-green-btn searchSoldier" type="button">+ Adicionar Militares</button>
+            </div>  
+          </div>
+        </div>
+      </div>
+    </div>
+  </body>
+</html>

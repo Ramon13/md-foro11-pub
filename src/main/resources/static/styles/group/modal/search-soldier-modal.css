@@ -1,0 +1,50 @@
+div#listInfo form, div.modal-content form {
+  text-align: inherit;
+  width: 100%;
+  margin: auto;
+}
+
+form#soldierSearch input[type=text]{
+  width: 93%;
+  padding: 11px;
+  float: left;
+  margin: 0;
+  border-radius: 0;
+  border: none;
+  border-bottom: 1px solid #ddd;
+}
+
+form#soldierSearch input[type=text]:focus{
+  outline: none;
+}
+
+form#soldierSearch button{
+  padding: 11px 11px;
+  border: none;
+  background-color: #ddd;
+  border-radius: 0;
+}
+
+div#searchResultList {
+    overflow: auto;
+    height: 60vh;
+}
+
+div#foundSoldiers {
+    height: 400px;
+    overflow: auto;
+}
+
+div.disable-div {
+  opacity: 0.6;
+}
+
+p.error{
+  margin: 0;
+  font-size: 0.8em;
+}
+
+#newSoldierProfile{
+  text-align: center;
+  margin: 20px;
+}

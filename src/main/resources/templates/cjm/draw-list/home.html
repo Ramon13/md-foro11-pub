@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org" layout:decorate="~{cjm/layout}">
+  <head>
+    <link th:href="@{/styles/dropdown.css}" type="text/css" rel="stylesheet" />
+  </head>
+  
+  <body>
+    <div layout:fragment="content">
+      <div class="pageTitle">
+        <h1>Relações de militares para sorteio</h1>
+        <hr />
+      </div>
+  
+      <div class="empty-list" th:if="${#lists.isEmpty(listsByQuarter)}">
+        <span>Não há listas cadastradas no sistema</span>
+      </div>
+      
+      <div th:each="listByQuarter : ${listsByQuarter}">
+        <div class="app-list-category">
+          <span th:text="${listByQuarter.formattedQuarterYear}"></span>
+        </div>
+  
+        <div class="app-list" th:each="drawListDTO : ${listByQuarter.lists}">
+          <div class="dropdown">
+            <img class="more dropdown" th:src="@{/images/hmore.svg}" />
+            <div class="dropdown-content">
+              <a th:href="@{/cjm/dw/lists/list/} + '' + ${drawListDTO.id}">Exibir Lista</a>
+              <a target="_blank" th:href="@{/cjm/dw/lists/report/} + ${drawListDTO.id}">Gerar Relatório</a>
+            </div>
+          </div>
+          <div class="list-header">
+            <span th:text="${drawListDTO.prettyPrintListTitle()}"></span>
+          </div>
+          <div class="list-info">
+            <span th:text="${drawListDTO.army.name}"></span><br /> 
+            <span th:text="${drawListDTO.prettyPrintListInfo()}"></span>
+          </div>
+        </div>
+      </div>
+  
+      <script type="text/javascript" th:src="@{/scripts/dropdown.js}"></script>
+      <script type="text/javascript">
+        historyPush();
+      </script>
+    </div>
+  </body>
+</html>

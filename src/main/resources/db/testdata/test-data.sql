@@ -1,10 +1,11 @@
-use md_foro11;
+use md_foro11_test;
+
 #CJM
 insert into CJM (id, cjm_name, alias, regions) 
-	values
-		(1, '1ª Circunscrição Judiciária Militar', '1ª CJM', 'RJ e ES'), 
+  values
+		(1, '1ª Circunscrição Judiciária Militar', '1ª CJM', 'RJ e ES'),
 		(2, '2ª Circunscrição Judiciária Militar', '2ª CJM', 'SP');
-	
+
 #Auditorship
 insert into AUDITORSHIP (id, auditorship_name, cjm_id)
 	values 
@@ -65,143 +66,110 @@ insert into MILITARY_BASE (id, military_base_alias, military_base_name, army_id)
 		(15, 'CENIPA', 'Centro de Investigação e Prevenção de Acidentes Aeronáuticos', 3);
 		
 #soldiers EB
-insert into SOLDIER (id, email, soldier_name, phone, army_id, cjm_id, military_base_id,
-	military_rank_id, military_specialization_id)
+insert into SOLDIER (email, soldier_name, phone, army_id, cjm_id, military_base_id,
+	military_rank_id, military_specialization_id, active)
 	values
-		(1, 'secretaria@11gaaae.eb.mil.br', 'DERCI CASEMIRO NETTO', '31 99391-4842', 1, 1, 2, 1, null),
-		(2, null, 'JOHNY MIRANDA DE SOUZA MARTINS', '61 99146-7067', 1, 1, 2, 1, null),
-		(3, 'marzinho5@hotmail.com', 'MARCOS DE SOUZA MARTINS', null , 1, 1, 1, 2, null),
-		(4, null, 'FRANCISCO F DE SOUSA IBIAPINA', '61 2035-2238', 1, 1, 3, 2, null ),
-		(5, 'reldesdeandrade@yahoo.com.br', 'RELDES PEREIRA DE ANDRADE', '61 98101-6875', 1, 1, 4, 3, null),
-		(6, 'stlima@gabcmt.eb.mil.br', 'EVALDO JOSÉ PEREIRA DE LIMA', '61 98314-4520', 1, 1, 2, 3, null),
-		(7, 'edqualemane@bol.com.br', 'EDMILSON MANOEL MARTINS', '67 99251-9572', 1, 1, 3, 4, null),
-		(8, null, 'ORLAN RIBEIRO DE ALMEIDA JUNIOR', '61 99456-2148', 1, 1, 4, 4, null),
-		(9, 'r.dartagnan.s.dias@gmail.com', 'RICARDO DARTAGNAN SOARES DIAS', '12 98210-4981', 1, 1, 2, 5, null),
-		(10, 'elviton@gmail.com', 'ELVITON SOLENY GOMES PACHECO', '55 99943-9099', 1, 1, 4, 5, null);
+		('secretaria@11gaaae.eb.mil.br', 'DERCI CASEMIRO NETTO', '31 99391-4842', 1, 1, 2, 1, null, 1),
+		(null, 'JOHNY MIRANDA DE SOUZA MARTINS', '61 99146-7067', 1, 1, 2, 1, null, 1),
+		('marzinho5@hotmail.com', 'MARCOS DE SOUZA MARTINS', null , 1, 1, 1, 2, null, 1),
+		(null, 'FRANCISCO F DE SOUSA IBIAPINA', '61 2035-2238', 1, 1, 3, 2, null , 1),
+		('reldesdeandrade@yahoo.com.br', 'RELDES PEREIRA DE ANDRADE', '61 98101-6875', 1, 1, 4, 3, null, 1),
+		('stlima@gabcmt.eb.mil.br', 'EVALDO JOSÉ PEREIRA DE LIMA', '61 98314-4520', 1, 1, 2, 3, null, 1),
+		('edqualemane@bol.com.br', 'EDMILSON MANOEL MARTINS', '67 99251-9572', 1, 1, 3, 4, null, 1),
+		(null, 'ORLAN RIBEIRO DE ALMEIDA JUNIOR', '61 99456-2148', 1, 1, 4, 4, null, 1),
+		('r.dartagnan.s.dias@gmail.com', 'RICARDO DARTAGNAN SOARES DIAS', '12 98210-4981', 1, 1, 2, 5, null, 1),
+		('elviton@gmail.com', 'ELVITON SOLENY GOMES PACHECO', '55 99943-9099', 1, 1, 4, 5, null, 1),
+		('AbdulrahmanPovey@gmail.com', 'Abdulrahman Povey', '99 99999-0000', 1, 1, 4, 5, null, 1),
+		('CherishHawkins@gmail.com', 'Cherish Hawkins', '99 99999-0000', 1, 1, 4, 5, null, 1),
+		('MatiasRobinson@gmail.com', 'Matias Robinson', '99 99999-0000', 1, 1, 4, 4, null, 1),
+		('EnidMueller@gmail.com', 'Enid Mueller', '99 99999-0000', 1, 1, 4, 4, null, 1),
+		('TayyibahCartwright@gmail.com', 'Tayyibah Cartwright', '99 99999-0000', 1, 1, 4, 4, null, 1);
 
 #soldiers MB
-insert into SOLDIER (id, email, soldier_name, phone, army_id, cjm_id, military_base_id,
-	military_rank_id, military_specialization_id)
+insert into SOLDIER (email, soldier_name, phone, army_id, cjm_id, military_base_id,
+	military_rank_id, military_specialization_id, active)
 	values
-		(11, 'joselio@marinha.mil.br', 'JOSÉLIO VIEIRA DOS SANTOS', '(61) 9 9807 9284', 2, 1, 6, 5, null),
-		(12, 'davidson.david@marinha.mil.br', 'DAVIDSON JUARÊZ DAVID', '(61) 9 8103 4275', 2, 1, 6, 5, null),
-		(13, 'joao.moraes@marinha.mil.br', 'JOÃO JOSÉ BAPTISTA DE MORAES', '(21) 9 9193-0205', 2, 1, 7, 5, null),
-		(14, null, 'PEDRO LUCAS LOPES PRAXEDES', '(61)3429-1173', 2, 1, 7, 5, null),
-		(15, null, 'HYAGO LUIZ TEIXEIRA PINTO', '(61)3429-1173', 2, 2, 8, 5, null),
-		(16, 'raphael.amaral@marinha.mil.br', 'RAPHAEL DE ALBUQUERQUE DO AMARAL', '(22) 99865-1604', 2, 2, 8, 5, null),
-		(17, 'farah@marinha.mil.br', 'CAIO PEREIRA FARAH NOLASCO', '(21)99736-5766', 2, 2, 9, 5, null),
-		(18, 'sa.freire@marinha.mil.br', 'RAFAEL SÁ FREIRE DIAS', '(21) 9 8074-2842', 2, 2, 9, 6, null),
-		(19, 'paula.gonçalves@marinha.mil.br', 'ANTONIO DE BARCELLOS NETO', '3429-1025', 2, 2, 10, 9, null),
-		(20, null, 'WANDERSON MORAIS RAMOS', '3429-1825', 2, 2, 10, 9, null);
+		('joselio@marinha.mil.br', 'JOSÉLIO VIEIRA DOS SANTOS', '(61) 9 9807 9284', 2, 1, 6, 5, null, 1),
+		('davidson.david@marinha.mil.br', 'DAVIDSON JUARÊZ DAVID', '(61) 9 8103 4275', 2, 1, 6, 5, null, 1),
+		('joao.moraes@marinha.mil.br', 'JOÃO JOSÉ BAPTISTA DE MORAES', '(21) 9 9193-0205', 2, 1, 7, 5, null, 1),
+		(null, 'PEDRO LUCAS LOPES PRAXEDES', '(61)3429-1173', 2, 1, 7, 5, null, 1),
+		(null, 'HYAGO LUIZ TEIXEIRA PINTO', '(61)3429-1173', 2, 1, 8, 5, null, 1),
+		('raphael.amaral@marinha.mil.br', 'RAPHAEL DE ALBUQUERQUE DO AMARAL', '(22) 99865-1604', 2, 1, 8, 5, null, 1),
+		('farah@marinha.mil.br', 'CAIO PEREIRA FARAH NOLASCO', '(21)99736-5766', 2, 1, 9, 5, null, 1),
+		('sa.freire@marinha.mil.br', 'RAFAEL SÁ FREIRE DIAS', '(21) 9 8074-2842', 2, 1, 9, 6, null, 1),
+		('paula.gonçalves@marinha.mil.br', 'ANTONIO DE BARCELLOS NETO', '3429-1025', 2, 1, 10, 9, null, 1),
+		(null, 'WANDERSON MORAIS RAMOS', '3429-1825', 2, 1, 10, 9, null, 1);
 
 #soldiers FAB
-insert into SOLDIER (id, email, soldier_name, phone, army_id, cjm_id, military_base_id,
-	military_rank_id, military_specialization_id)
+insert into SOLDIER (email, soldier_name, phone, army_id, cjm_id, military_base_id,
+	military_rank_id, military_specialization_id, active)
 	values		
-		(21, null, 'IAGO VIEIRA DE OLIVEIRA', '61 98288-1416', 3, 1, 11, 5, null),
-		(22, null, 'KAREN DE OLIVEIRA VALVASSORI', '61 99175-9719', 3, 1, 11, 5, null),
-		(23, null, 'GUSTAVO DA MATA PETROVICH', '61 99556-7651', 3, 1, 12, 5, null),
-		(24, null, 'CHARLES JOSÉ DE OLIVEIRA', '(61) 98114-5297', 3, 1, 12, 5, null),
-		(25, null, 'FELIPE DA SILVA FERNANES', '61 98333-3040', 3, 2, 13, 5, null),
-		(26, null, 'RENATO PEDERSOLI', '69 99261-9984', 3, 2, 13, 5, null),
-		(27, null, 'FERNANDO MAYA XAVIER', '61 99639-7042', 3, 2, 14, 5, null),
-		(28, null, 'ISABELLE CECÍLIA DE ANDRADE', '61 99378-2772', 3, 2, 14, 5, null),
-		(29, null, 'SHELLY GABRIELA LEAL', '61 98243-8988', 3, 2, 15, 5, null),
-		(30, null, 'MARCO AURÉLIO LEITE DE PAULA', '61 98179-1248', 3, 2, 15, 5, null);
+		(null, 'IAGO VIEIRA DE OLIVEIRA', '61 98288-1416', 3, 2, 11, 5, null, 1),
+		(null, 'KAREN DE OLIVEIRA VALVASSORI', '61 99175-9719', 3, 2, 11, 5, null, 1),
+		(null, 'GUSTAVO DA MATA PETROVICH', '61 99556-7651', 3, 2, 12, 5, null, 1),
+		(null, 'CHARLES JOSÉ DE OLIVEIRA', '(61) 98114-5297', 3, 2, 12, 5, null, 1),
+		(null, 'FELIPE DA SILVA FERNANES', '61 98333-3040', 3, 2, 13, 5, null, 1),
+		(null, 'RENATO PEDERSOLI', '69 99261-9984', 3, 2, 13, 5, null, 1),
+		(null, 'FERNANDO MAYA XAVIER', '61 99639-7042', 3, 2, 14, 5, null, 1),
+		(null, 'ISABELLE CECÍLIA DE ANDRADE', '61 99378-2772', 3, 2, 14, 5, null, 1),
+		(null, 'SHELLY GABRIELA LEAL', '61 98243-8988', 3, 2, 15, 5, null, 1),
+		(null, 'MARCO AURÉLIO LEITE DE PAULA', '61 98179-1248', 3, 2, 15, 5, null, 1);
 
 #cjm_user 1aud1cjm
-insert into CJM_USER (id, username, email, user_password, is_credentials_expired, auditorship_id)
+insert into CJM_USER (id, username, email, user_password, active, credentials_expired, auditorship_id, permission_level, recovery_token)
 	values
-		(1, 'admin1aud1', null, '{bcrypt}$2a$10$IgXSs3978BKQMSyrIRF/ROA8V7f/v.G.Zr0F2l1yLJGamjGbYBjXe', 0, 1);
-
-#cjm_user 2aud1cjm
-insert into CJM_USER (id, username, email, user_password, is_credentials_expired, auditorship_id)
-	values
-		(2, 'admin2aud1', null, '{bcrypt}$2a$10$IgXSs3978BKQMSyrIRF/ROA8V7f/v.G.Zr0F2l1yLJGamjGbYBjXe', 0, 2);		
-		
-#cjm_user 1aud2cjm		
-insert into CJM_USER (id, username, email, user_password, is_credentials_expired, auditorship_id)
-	values
-		(3, 'admin1aud2', null, '{bcrypt}$2a$10$IgXSs3978BKQMSyrIRF/ROA8V7f/v.G.Zr0F2l1yLJGamjGbYBjXe', 0, 3);		
+		(1, 'admin1aud1', null, '{bcrypt}$2a$10$IgXSs3978BKQMSyrIRF/ROA8V7f/v.G.Zr0F2l1yLJGamjGbYBjXe', 1, 0, 1, 3, null),
+		(2, 'admin2aud1', null, '{bcrypt}$2a$10$IgXSs3978BKQMSyrIRF/ROA8V7f/v.G.Zr0F2l1yLJGamjGbYBjXe', 1, 0, 2, 1, null),
+        (3, 'admin1aud2', null, '{bcrypt}$2a$10$IgXSs3978BKQMSyrIRF/ROA8V7f/v.G.Zr0F2l1yLJGamjGbYBjXe', 1, 0, 3, 1, null);				
 
 #group_user EB 1cjm		
-insert into GROUP_USER (id, username, email, user_password, is_credentials_expired, cjm_id, army_id)
+insert into GROUP_USER (id, username, email, user_password, active, credentials_expired, cjm_id, army_id, permission_level, recovery_token)
 	values
-		(1, 'ebadmin', null, '{bcrypt}$2a$10$IgXSs3978BKQMSyrIRF/ROA8V7f/v.G.Zr0F2l1yLJGamjGbYBjXe', 0, 1, 1);		
-
-#group_user MB 1cjm		
-insert into GROUP_USER (id, username, email, user_password, is_credentials_expired, cjm_id, army_id)
-	values
-		(2, 'mbadmin', null, '{bcrypt}$2a$10$IgXSs3978BKQMSyrIRF/ROA8V7f/v.G.Zr0F2l1yLJGamjGbYBjXe', 0, 1, 2);
-		
-#group_user FAB 2cjm		
-insert into GROUP_USER (id, username, email, user_password, is_credentials_expired, cjm_id, army_id)
-	values
-		(3, 'fabadmin', null, '{bcrypt}$2a$10$IgXSs3978BKQMSyrIRF/ROA8V7f/v.G.Zr0F2l1yLJGamjGbYBjXe', 0, 2, 3);
-
-		
-		
+		(1, 'ebadmin', 'eb@eb.com', '{bcrypt}$2a$10$IgXSs3978BKQMSyrIRF/ROA8V7f/v.G.Zr0F2l1yLJGamjGbYBjXe', 1, 0, 1, 1, 7, null),
+		(2, 'mbadmin', 'mb@mb.com', '{bcrypt}$2a$10$IgXSs3978BKQMSyrIRF/ROA8V7f/v.G.Zr0F2l1yLJGamjGbYBjXe', 1, 0, 1, 2, 7, null),
+        (3, 'fabadmin', 'fab@fab.com', '{bcrypt}$2a$10$IgXSs3978BKQMSyrIRF/ROA8V7f/v.G.Zr0F2l1yLJGamjGbYBjXe', 1, 0, 2, 3, 3, null);				
 		
 #Draw List------------------------------------------------------------------------------------------------------		
-insert into DRAW_LIST (id, creation_date, update_date, army_id, quarter_year, description, creation_user_id)
+insert into DRAW_LIST (id, creation_date, update_date, army_id, year_quarter, description, creation_user_id, active, enable_for_draw)
 	values
-		(1, '2021-10-13', '2021-10-13', 1, '4/2021', 'Primeira lista exército 4º trimestre de 2021', 1);
+		(1, '2021-10-13', '2021-10-13', 1, '2021\'4', 'Primeira lista exército 4º trimestre de 2021', 1, 1, 0),
+		(2, '2021-10-13', '2021-10-13', 2, '2022\'1', 'Primeira lista marinha 4º trimestre de 2021', 1, 1, 0),
+        (3, '2021-10-13', '2021-10-13', 3, '2021\'4', 'Primeira lista aeronáutica 4º trimestre de 2021', 3, 1, 0),
+        (4, '2021-10-14', '2021-10-14', 1, '2021\'4', 'Lista de atualização exército 4º trimestre de 2021', 1, 1, 0),
+        (5, '2022-01-01', '2022-01-01', 1, '2022\'1', 'Primeira lista exército 1º trimestre de 2022', 1, 1, 0);        		
 		
 insert into DRAW_LIST_HAS_SOLDIER (draw_list_id, soldier_id)
 	values
-		(1, 1), (1, 2), (1, 3), (1, 4), (1, 5);			
-
-
-insert into DRAW_LIST (id, creation_date, update_date, army_id, quarter_year, description, creation_user_id)
-	values
-		(2, '2021-10-13', '2021-10-13', 2, '3/2021', 'Primeira lista exército 4º trimestre de 2021', 1);
-		
-insert into DRAW_LIST_HAS_SOLDIER (draw_list_id, soldier_id)
-	values
-		(2, 11), (2, 12), (2, 13), (2, 14), (2, 15), (2, 16), (2, 18);		
-
-insert into DRAW_LIST (id, creation_date, update_date, army_id, quarter_year, description, creation_user_id)
-	values
-		(3, '2021-10-13', '2021-10-13', 3, '3/2021', 'Primeira lista exército 4º trimestre de 2021', 3);
-		
-insert into DRAW_LIST_HAS_SOLDIER (draw_list_id, soldier_id)
-	values
-		(3, 21), (3, 22), (3, 23), (3, 24), (3, 25), (3, 26), (3, 28);		
+		(1, 1), (1, 2), (1, 3), (1, 4), (1, 5), (1, 6), (1, 7), (1, 8), (1, 9), (1, 15),
+		(2, 16), (2, 17), (2, 18), (2, 19), (2, 20), (2, 21), (2, 22),
+    (3, 26), (3, 27), (3, 28), (3, 29), (3, 30), (3, 31), (3, 32),
+    (4, 1), (4, 2), (4, 3), (4, 4), (4, 5),
+    (5, 1), (5, 2), (5, 3), (5, 4), (5, 5);        
 		
 #draw----------------------------------------------------------------------------------------------------------------
 #cpj 0 EB 1aud1cjm
 insert into DRAW (id, creation_date, update_date, process_number, army_id, cjm_user_id, justice_council_id, soldier_substitute_id, draw_list_id, finished)
 	values
-		(1, '2021-06-08', '2021-06-08', null, 1, 1, 1, 1, 1, 1);
-		
+		(1, '2021-12-08', '2021-12-08', null, 1, 1, 1, 1, 1, 1),
+		(2, '2021-12-08', '2021-12-08', 1232133-33, 2, 1, 2, null, 1, 0),
+        (3, '2021-12-08', '2021-12-08', null, 3, 3, 1, 21, 1, 1),		
+        (4, '2021-12-08', '2021-12-08', null, 1, 2, 1, 4, 1, 0); 
+        
+        		
 insert into DRAW_HAS_SOLDIER (draw_id, soldier_id)
 	values
-		(1, 1), (1, 2), (1, 3), (1, 4), (1, 5);
-		
-		
-#cej 0 MB 1aud1CJM
-insert into DRAW (id, creation_date, update_date, process_number, army_id, cjm_user_id, justice_council_id, soldier_substitute_id, draw_list_id, finished)
-	values
-		(2, '2021-06-08', '2021-06-08', 1232133-33, 2, 1, 2, null, 1, 0);
-		
-insert into DRAW_HAS_SOLDIER (draw_id, soldier_id)
-	values
-		(2, 11), (2, 12), (2, 13), (2, 14);
-
-#cpj 1 fab 1aud2cjm
-insert into DRAW (id, creation_date, update_date, process_number, army_id, cjm_user_id, justice_council_id, soldier_substitute_id, draw_list_id, finished)
-	values
-		(3, '2021-06-08', '2021-06-08', null, 3, 3, 1, 21, 1, 1);
-		
-insert into DRAW_HAS_SOLDIER (draw_id, soldier_id)
-	values
-		(3, 21), (3, 22), (3, 23), (3, 24), (3, 25);				
-						
-#cpj 2 EB 2aud1CJM
-insert into DRAW (id, creation_date, update_date, process_number, army_id, cjm_user_id, justice_council_id, soldier_substitute_id, draw_list_id, finished)
-	values
-		(4, '2021-06-08', '2021-06-08', null, 1, 2, 1, 4, 1, 0);
-		
-insert into DRAW_HAS_SOLDIER (draw_id, soldier_id)
-	values
-		(4, 4), (4, 5), (4, 6), (4, 7), (4, 10);
+		(1, 1), (1, 2), (1, 3), (1, 4), (1, 5),
+		(2, 16), (2, 17), (2, 18), (2, 19),
+    (3, 26), (3, 27), (3, 28), (3, 29), (3, 30),
+    (4, 9), (4, 5), (4, 6), (4, 7), (4, 15);        
+        				
+#DRAW_EXCLUSIONS--------------------------------------------------------------------------------------->
+insert into DRAW_EXCLUSION (id, start_date, end_date, creation_date, message, group_user_id, soldier_id)
+  values
+    (1, '2022-01-01', '2022-04-01', '2022-01-01', 'Férias 01/01 a 20/01', 1, 1),
+    (2, '2022-01-01', '2022-04-01', '2022-01-01', 'Férias 01/01 a 20/01', 1, 1),
+    (3, '2022-01-01', '2022-04-01', '2022-01-01', 'Férias 01/01 a 20/01', 1, 2),
+    (4, '2022-01-01', '2022-04-01', '2022-01-01', 'Férias 01/01 a 20/01', 2, 12),
+    (5, '2022-01-01', '2022-04-01', '2022-01-01', 'Férias 01/01 a 20/01', 2, 12),
+    (6, '2022-01-01', '2022-04-01', '2022-01-01', 'Férias 01/01 a 20/01', 3, 21),
+    (7, '2022-01-01', '2022-04-01', '2022-01-01', 'Férias 01/01 a 20/01', 3, 21);

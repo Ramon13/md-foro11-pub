@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+  xmlns:th="http://www.thymeleaf.org" layout:decorate="~{group/layout}">
+<style layout:fragment="style">
+div.label-content span {
+	font-size: 14px;
+	color: #5f6368;
+}
+
+div#sdProfile {
+	margin-bottom: 45px;
+}
+
+div.label-content {
+	margin-bottom: 10px;
+}
+
+form {
+	text-align: unset;
+	margin: unset;
+	width: 100%;
+}
+
+input[type=date].app-dateinput {
+	width: 20% !important;
+	padding: 2px !important;
+}
+
+div#content textarea {
+	font-family: "Roboto", sans-serif;
+	width: 99%;
+	height: 70px;
+	border-color: #c5c7cb;
+	font-size: 14px;
+}
+
+button.add-impediments {
+	float: right;
+}
+
+div.no-exclusions {
+	text-align: center;
+	padding: 50px 0;
+}
+
+div.no-exclusions span {
+	font-family: 'Roboto';
+	font-size: 18px;
+	color: gray;
+}
+
+div.impediment-header {
+	width: 100%;
+}
+
+div.impediment {
+	float: left;
+	padding: 10px;
+	text-align: left;
+	width: 97%;
+	background-color: #E7E9EB;
+	margin: 10px 0;
+}
+
+div.impediment span {
+	font-style: italic;
+	font-size: 12px;
+}
+
+div.impediment p {
+	margin: 3px;
+}
+
+img.remove-exclusion {
+	float: right;
+	margin: 0 5px;
+}
+
+  h2{
+    font-size: 15px;
+  }
+</style>
+<body>
+  <div layout:fragment="content">
+    <h1 th:text="${soldier.name}"></h1>
+    <hr />
+
+    <div id="sdProfile">
+      <div class="input-label">
+        <label>OM</label>
+      </div>
+      <div class="label-content">
+        <span th:text="${soldier.militaryOrganization.name}"></span>
+      </div>
+      <div class="input-label">
+        <label>Posto</label>
+      </div>
+      <div class="label-content">
+        <span th:text="${soldier.militaryRank.name}"></span>
+      </div>
+      <div class="input-label">
+        <label>Telefone</label>
+      </div>
+      <div class="label-content">
+        <span th:text="${soldier.phone}"></span>
+      </div>
+      <div class="input-label">
+        <label>Email</label>
+      </div>
+      <div class="label-content">
+        <span th:text="${soldier.email}"></span>
+      </div>
+      <div>
+        <a id="editSoldier" href="#"
+          th:attr="data-url=@{/gp/sd/register/home/} + ${soldier.id}">alterar</a>
+        <span>|</span> <a id="deleteSoldier" href="#"
+          th:attr="data-url=@{/gp/sd/register/delete/} + ${soldier.id}">excluir</a>
+      </div>
+      <br />
+      <div>
+        <button type="button" id="back" class="app-gray-btn">
+          <span>Voltar</span>
+        </button>
+      </div>
+    </div>
+
+    <hr />
+    <div id="exclusions">
+      <h2>Adicionar Impedimentos</h2>
+      
+      <div>
+        <form method="post" th:action="@{/gp/sd/exclusion/save}" th:object="${exclusionDTO}">
+          <input type="hidden" name="soldier.id" th:value="${soldier.id}">
+        
+          <div th:if="${#fields.hasErrors('startDate')}">
+            <span class="error" th:errors="*{startDate}"></span>
+          </div>
+          <div th:if="${#fields.hasErrors('endDate')}">
+            <span class="error" th:errors="*{endDate}"></span>
+          </div>
+          <span>De: </span>
+          <input type="date" class="app-dateinput" th:field="*{startDate}"
+            th:classappend="${#fields.hasErrors('startDate') ? 'error' : ''}"/>
+          
+          <span>Até: </span>
+          <input type="date" class="app-dateinput" th:field="*{endDate}"
+            th:classappend="${#fields.hasErrors('endDate') ? 'error' : ''}"/><br/>
+          
+          <div th:if="${#fields.hasErrors('message')}">
+            <span class="error" th:errors="*{message}"></span>
+          </div>
+          <div>
+            <textarea rows="5" cols="50" placeholder="Adicionar novo impedimento..." th:field="*{message}"></textarea>
+            <br/>
+          </div>
+          
+          <div id="controlBtns">
+            <button type="submit" class="add-impediments app-green-btn">
+              <span>Adicionar</span>
+            </button>          
+          </div>
+        </form>
+      </div>
+      
+      <div class="no-exclusions" th:if="${#lists.isEmpty(exclusions)}">
+        <span> Este usuário não possui impedimentos registrados </span>
+      </div>
+      
+      <br/><br/>
+      <div class="impediment" th:each="exclusion : ${exclusions}">
+        <div class="impediment-header">
+          <span
+            th:text="'De:' + ${#temporals.format(exclusion.startDate, 'dd/MM/yyyy')} + ';   Até:' + ${#temporals.format(exclusion.endDate, 'dd/MM/yyyy')}"></span>
+
+          <form method="post"
+            th:action="@{/gp/sd/exclusion/delete/} + ${exclusion.id}">
+            <img class="remove-exclusion" th:src="@{/images/delete.svg}" />
+          </form>
+        </div>
+
+        <p th:text="${exclusion.message}"></p>
+        <br />
+      </div>
+    </div>
+  </div>
+</body>
+<script layout:fragment="page-script" th:inline="javascript">
+    const backBtn = document.querySelector("button#back");
+    const removeExclusions = document.querySelectorAll("img.remove-exclusion");
+    const deleteSoldier = document.querySelector("a#deleteSoldier");
+  	 
+    for (let i = 0; i < removeExclusions.length; i++){
+      removeExclusions[i].addEventListener('click', function(){
+    	  this.parentElement.submit();
+      });
+    }
+  	 
+  	 deleteSoldier.addEventListener('click', function(){
+  		  if (window.confirm("Após deletar um militar esta operação não poderá mais ser desfeita. Deseja prosseguir com a deleção?")){
+    		  let form = document.createElement("form");
+    		  form.method = "POST";
+    		  form.action = this.dataset.url;
+    		  
+    		  document.querySelector("body").append(form);
+    		  form.submit();
+  		  }
+  	 });
+  	 
+     backBtn.addEventListener('click', function(){
+       location.href = historyPop();
+     });
+     
+     const editSoldierBtn = document.querySelector("a#editSoldier");
+     editSoldierBtn.addEventListener('click', function(){
+    	 historyPush();
+    	 location.href = this.dataset.url;
+     });
+  </script>
+</html>
