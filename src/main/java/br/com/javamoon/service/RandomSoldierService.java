@@ -10,9 +10,11 @@ import java.util.Objects;
 import org.springframework.stereotype.Service;
 
 import br.com.javamoon.domain.cjm_user.CJM;
+import br.com.javamoon.domain.draw.Draw;
 import br.com.javamoon.domain.entity.Army;
 import br.com.javamoon.domain.entity.MilitaryRank;
 import br.com.javamoon.domain.entity.Soldier;
+import br.com.javamoon.domain.repository.DrawRepository;
 import br.com.javamoon.domain.repository.SoldierRepository;
 import br.com.javamoon.domain.repository.SoldierRepositoryImpl;
 import br.com.javamoon.exception.DrawValidationException;
@@ -34,6 +36,7 @@ public class RandomSoldierService {
 	private SoldierValidator soldierValidator;
 	private final DrawListService drawListService;
 	private final MilitaryRankService militaryRankService;
+	private final DrawRepository drawRepository;
 
 	public RandomSoldierService(
 		SoldierRepositoryImpl soldierRepositoryImpl,
@@ -41,7 +44,8 @@ public class RandomSoldierService {
 		SoldierValidator soldierValidator,
 		DrawListService drawListService,
 		MilitaryRankService militaryRankService,
-		SoldierRepository soldierRepository) {
+		SoldierRepository soldierRepository,
+		DrawRepository drawRepository) {
 		
 		this.soldierRepositoryImpl = soldierRepositoryImpl;
 		this.drawValidator = drawValidator;
@@ -49,6 +53,7 @@ public class RandomSoldierService {
 		this.drawListService = drawListService;
 		this.militaryRankService = militaryRankService;
 		this.soldierRepository = soldierRepository;
+		this.drawRepository = drawRepository;
 	}
 
 	public void randomAllSoldiers(DrawDTO drawDTO, CJM cjm) throws DrawValidationException{
@@ -108,9 +113,14 @@ public class RandomSoldierService {
 			);
 		} 
 		
-		if (Objects.nonNull( drawDTO.getId() ) 
-			 && drawDTO.getSoldiers().get(selectedIndex).getId().equals(drawDTO.getSubstitute().getId()) ) {					//TODO: no tested code
-			drawDTO.setSubstitute(randomSoldier);
+		if (Objects.nonNull(drawDTO.getId()) ) {					//TODO: no tested code
+			Draw draw = drawRepository.findById(drawDTO.getId()).get();
+			
+			if (draw.getJusticeCouncil().getAlias().equals("CPJ") 
+					&& drawDTO.getSoldiers().get(selectedIndex).getId().equals(drawDTO.getSubstitute().getId()) ) {
+				drawDTO.setSubstitute(randomSoldier);
+			}
+			
 		}
 		
 		drawDTO.getSoldiers().set(selectedIndex, EntityMapper.fromEntityToDTO(randomSoldier));
