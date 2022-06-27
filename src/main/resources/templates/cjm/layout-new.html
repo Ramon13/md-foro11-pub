@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="pt-br" xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <title>Sorteio de Juízes Militares</title>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="https://www.w3schools.com/w3css/3/w3.css">
+  <link rel="stylesheet" th:href="@{/styles/global-new.css}">
+  <link rel="stylesheet" th:href="@{/styles/multiple-form.css}">
+</head>
+<body>
+  <header>
+    <section class="w3-bar w3-top w3-blue w3-small" style="z-index:4">
+      <p class="w3-bar-item w3-right">
+        <span th:text="${#authentication.principal.user.username}"></span>
+        <span>|</span>
+        <span th:text="${#authentication.principal.user.cjm.alias}"></span>
+      </p>
+    </section>
+  </header>
+  <nav class="w3-sidebar w3-collapse w3-white w3-animate-left" style="z-index:3; width:300px;">
+    <hr>
+    <section >
+      <div class="w3-container">
+        <h5>Sorteios</h5>
+      </div>
+      <div class="w3-bar-block">
+        <a href="#" class="w3-bar-item w3-button w3-padding w3-blue">Novo</a>
+        <a href="#" class="w3-bar-item w3-button w3-padding">Realizados</a>
+      </div>
+    </section>
+    
+    <hr>
+    
+    <section >
+      <div class="w3-container">
+        <h5>Listas</h5>
+      </div>
+      <div class="w3-bar-block">
+        <a href="#" class="w3-bar-item w3-button w3-padding">Listas Cadastradas</a>
+      </div>
+    </section>
+    
+    <hr>
+    
+    <section >
+      <div class="w3-container">
+        <h5>Sistema</h5>
+      </div>
+      <div class="w3-bar-block">
+        <a href="#" class="w3-bar-item w3-button w3-padding">Sair</a>
+      </div>
+    </section>
+  </nav>
+  
+  <section class="w3-main" style="margin-left:300px;margin-top:43px;" layout:fragment="main"></section>
+</body>
+</html>
