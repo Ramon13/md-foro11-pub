@@ -95,7 +95,7 @@ public class DrawController {
 		
 		setDefaultHomeAttributes(model, drawDTO);
 		addSuccessMsg(successCreated, successModified, model);
-		return "cjm/draw/home";
+		return "cjm/draw/index";
 	}
 	
 	@GetMapping("/reset")
